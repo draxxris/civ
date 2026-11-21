@@ -19,17 +19,17 @@ internal static partial class GreatPersonActions
         if (Trade(sim, unit, def, position) is { } trade) actions.Add(trade);
         if (Discovery(sim, player, def) is { } discovery) actions.Add(discovery);
         if (def.GoldenAge && GoldenAgeUnits(sim, player, unit, []).Length == Required(sim, player))
-            actions.Add(new("great_people:golden_age", null, GoldenAges.Length(sim, player)));
+            actions.Add(new(GreatPersonMissions.GoldenAge, "", GoldenAges.Length(sim, player)));
         return actions.AsReadOnly();
     }
     private static void CityActions(Simulation sim, City city, S.UnitDef def, List<GreatPersonAction> actions)
     {
         foreach (var specialist in def.GreatPeoples.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal))
-            actions.Add(new("great_people:join_city", specialist.Key, 1));
+            actions.Add(new(GreatPersonMissions.Join, specialist.Key, 1));
         AddConstructionActions(sim, city, def, actions);
         if (Hurry(sim, city, def) is { } hurry) actions.Add(hurry);
         long culture = Math.Max(0, (long)def.GreatWorkCulture * GreatPeopleData.Speed(sim).UnitGreatWorkPercent / 100);
-        if (culture > 0) actions.Add(new("great_people:culture_bomb", null, culture));
+        if (culture > 0) actions.Add(new(GreatPersonMissions.Culture, "", culture));
     }
     private static GreatPersonAction? Hurry(Simulation sim, City city, S.UnitDef def)
     {
@@ -39,7 +39,7 @@ internal static partial class GreatPersonActions
         if (!production.Validate(sim, city.Id, order.Kind, order.ContentId).Success) return null;
         long capacity = Math.Max(0, ((long)def.BaseHurry + (long)def.HurryMultiplier * city.Population) * GreatPeopleData.Speed(sim).UnitHurryPercent / 100);
         long amount = Math.Min(capacity, Math.Max(0, production.Calculate(sim, city.Id, order.Kind, order.ContentId).Cost - order.Progress));
-        return amount > 0 ? new("great_people:hurry_production", order.ContentId, amount) : null;
+        return amount > 0 ? new(GreatPersonMissions.Hurry, order.ContentId, amount) : null;
     }
     private static GreatPersonAction? Discovery(Simulation sim, int player, S.UnitDef def)
     {
@@ -53,7 +53,7 @@ internal static partial class GreatPersonActions
         if (choice.Tech is null) return null;
         long remaining = research.CalculateCost(sim, sim.TeamOf(player).Id, choice.Tech.Id).Cost - sim.TeamOf(player).Research.GetValueOrDefault(choice.Tech.Id);
         long amount = Math.Min(capacity, Math.Max(0, remaining));
-        return amount > 0 ? new("great_people:discover_tech", choice.Tech.Id, amount) : null;
+        return amount > 0 ? new(GreatPersonMissions.Discover, choice.Tech.Id, amount) : null;
     }
     internal static int Required(Simulation sim, int player) => sim.Service<IGreatPeopleService>()!.GoldenAgeUnitsRequired(sim, player);
     internal static int[] GoldenAgeUnits(Simulation sim, int player, Unit initiating, IReadOnlyList<int> requested)
@@ -84,57 +84,5 @@ internal static partial class GreatPersonActions
             if (!def.GoldenAge || !classes.Add(def.DefaultUnit)) return false;
         }
         return true;
-    }
-}
-
-internal sealed class GreatPeopleCommands : IGreatPeopleCommandService
-{
-    private static string Command(string action) => action switch
-    {
-        "join" => "great_people:join_city", "discover" => "great_people:discover_tech", "hurry" => "great_people:hurry_production",
-        "culture" => "great_people:culture_bomb", "golden-age" => "great_people:golden_age",
-        "lead" => "great_people:lead_unit", "construct" => "great_people:construct_building", "trade" => "great_people:trade_mission", _ => "",
-    };
-    private static GreatPersonAction? Preview(Simulation sim, int player, int unit, string action, string? target) =>
-        GreatPersonActions.Available(sim, player, unit).FirstOrDefault(a => a.Command == Command(action) && (target is null || a.Target == target));
-    public string? Validate(Simulation sim, int player, int unit, string action, string? target, IReadOnlyList<int> units)
-    {
-        if (Preview(sim, player, unit, action, target) is null) return "Great Person action is not available";
-        if (action != "golden-age") return units.Count == 0 ? null : "This action uses one unit";
-        return GreatPersonActions.GoldenAgeUnits(sim, player, sim.State.UnitById(unit), units).Length == GreatPersonActions.Required(sim, player)
-            ? null : "Select the required number of distinct Great Person classes";
-    }
-    public void Execute(Simulation sim, int player, int unitId, string action, string? target, IReadOnlyList<int> units)
-    {
-        var preview = Preview(sim, player, unitId, action, target)!;
-        var unit = sim.State.UnitById(unitId);
-        var city = sim.State.CityAt(unit.Position);
-        switch (action)
-        {
-            case "join":
-                var state = GreatPeopleData.Edit(sim, city!);
-                state.SettledSpecialists[preview.Target!] = state.SettledSpecialists.GetValueOrDefault(preview.Target!) + 1;
-                break;
-            case "lead": GreatPersonActions.Lead(sim, unit, preview); break;
-            case "construct":
-                city!.Buildings.Add(preview.Target!);
-                sim.Events.Publish(new BuildingCompleted(city.Id, preview.Target!));
-                break;
-            case "trade": sim.State.PlayerById(player).Treasury += preview.Amount; break;
-            case "discover": sim.Rules().Research.AddProgress(sim, player, preview.Target!, preview.Amount); break;
-            case "hurry": city!.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = city.ProductionQueue[0].Progress + preview.Amount }; break;
-            case "culture":
-                int turns = GreatPeopleData.Raw(sim, "GREAT_WORKS_CULTURE_TURNS", 20) * GreatPeopleData.Speed(sim).UnitGreatWorkPercent / 100;
-                sim.Rules().CityCulture.AddCulture(sim, city!.Id, preview.Amount, turns);
-                break;
-            case "golden-age":
-                foreach (int id in GreatPersonActions.GoldenAgeUnits(sim, player, unit, units)) sim.State.RemoveUnit(id);
-                GreatPeopleData.Edit(sim, player).UnitGoldenAges++;
-                GoldenAges.Start(sim, player, false);
-                break;
-        }
-        if (sim.State.FindUnit(unitId) is not null) sim.State.RemoveUnit(unitId);
-        sim.Rules().Visibility?.Recompute(sim);
-        sim.Events.Publish(new GreatPersonUsed(player, unitId, preview.Command, preview.Target, preview.Amount));
     }
 }

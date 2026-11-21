@@ -19,13 +19,13 @@ internal static partial class GreatPersonActions
         var eligible = LeadUnits(sim, unit, def, position);
         long xp = (long)def.LeaderExperience * (100 + Math.Min(50, (eligible.Length - 1) * GreatPeopleData.Raw(sim, "WARLORD_EXTRA_EXPERIENCE_PER_UNIT_PERCENT", 0))) / 100;
         foreach (var target in eligible)
-            actions.Add(new("great_people:lead_unit", target.Id.ToString(CultureInfo.InvariantCulture), xp));
+            actions.Add(new(GreatPersonMissions.Lead, target.Id.ToString(CultureInfo.InvariantCulture), xp));
     }
     internal static void Lead(Simulation sim, Unit leader, GreatPersonAction action)
     {
         var def = sim.Content.Get<S.UnitDef>(leader.Type);
         var eligible = LeadUnits(sim, leader, def, leader.Position);
-        var target = sim.State.UnitById(int.Parse(action.Target!, CultureInfo.InvariantCulture));
+        var target = sim.State.UnitById(int.Parse(action.Subject, CultureInfo.InvariantCulture));
         if (def.LeaderPromotion is { } promotion) target.Promotions.Add(promotion);
         var state = target.Extensions.Get<MilitaryUnitState>(sim.Content) ?? new();
         state.AttachedLeaderUnitType = leader.Type;
@@ -51,7 +51,7 @@ internal static partial class GreatPersonActions
             var building = sim.Content.Get<S.BuildingDef>(pair.Key);
             if (building.GlobalReligionCommerce is not null || city.Buildings.Contains(building.Id)) continue;
             if (!pair.Value && !CanConstruct(sim, city, building.Id)) continue;
-            actions.Add(new("great_people:construct_building", building.Id, 1));
+            actions.Add(new(GreatPersonMissions.Construct, building.Id, 1));
         }
     }
     private static bool CanConstruct(Simulation sim, City city, string building) =>
@@ -67,7 +67,7 @@ internal static partial class GreatPersonActions
         long profit = CalculateCapitalTradeProfit(sim, unit.Owner, city);
         long gold = ((long)def.BaseTrade + def.TradeMultiplier * profit) * GreatPeopleData.Speed(sim).UnitTradePercent / 100;
         gold = gold * Math.Max(0, 100 + TeamTradeMissionModifier(sim, unit.Owner)) / 100;
-        return gold > 0 ? new("great_people:trade_mission", city.Id.ToString(CultureInfo.InvariantCulture), gold) : null;
+        return gold > 0 ? new(GreatPersonMissions.Trade, city.Id.ToString(CultureInfo.InvariantCulture), gold) : null;
     }
     private static long CalculateCapitalTradeProfit(Simulation sim, int player, City city)
     {

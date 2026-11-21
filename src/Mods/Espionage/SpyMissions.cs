@@ -185,7 +185,7 @@ internal sealed class SpyMission(EspionageService service, SpyMissionRules rules
 
     /// <summary>A technology theft is chosen in the technology picker, which issues the order itself, so it is not
     /// listed as one order per technology.</summary>
-    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city) =>
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) =>
         kind != EspionageMissionKind.StealTech && sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Spy ? [""] : [];
 
     public string Label(Simulation sim, string subject) => kind switch

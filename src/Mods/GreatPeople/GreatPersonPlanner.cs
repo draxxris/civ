@@ -45,14 +45,14 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
         long goldenAgeValue = GoldenAgeValue() / Math.Max(1, service.GoldenAgeUnitsRequired(ctx.Sim, ctx.PlayerId));
         var choices = CityChoices(unit, service, goldenAgeValue).Concat(LeadChoices(unit, service)).ToList();
         var actions = service.AvailableActions(ctx.Sim, ctx.PlayerId, unit.Id);
-        var discover = actions.FirstOrDefault(a => a.Command == "great_people:discover_tech");
+        var discover = actions.FirstOrDefault(a => a.Mission == GreatPersonMissions.Discover);
         long amount = discover?.Amount ?? 0;
         if (goldenAgeValue * 100 / Math.Max(1, amount) > 60 && service.GoldenAgeTurnsRemaining(ctx.Sim, ctx.PlayerId) == 0
             && ctx.Self.Extensions.Get<CityPlayerState>(ctx.Sim.Content)?.GoldenAge != true
-            && actions.Any(a => a.Command == "great_people:golden_age"))
-            choices.Add(new(unit.Position, new GoldenAgeGreatPersonCommand { Player = ctx.PlayerId, UnitId = unit.Id }, 5000, "golden-age"));
+            && actions.FirstOrDefault(a => a.Mission == GreatPersonMissions.GoldenAge) is { } goldenAge)
+            choices.Add(new(unit.Position, Command(unit, goldenAge), 5000, "golden-age"));
         if (discover is not null && (ctx.Turn > 80 || amount >= goldenAgeValue))
-            choices.Add(new(unit.Position, Command(unit, discover)!, 4000, discover.Command));
+            choices.Add(new(unit.Position, Command(unit, discover), 4000, discover.Mission));
         foreach (var choice in choices.OrderByDescending(c => c.Score)
             .ThenBy(c => ctx.Grid.Distance(unit.Position, c.Destination)).ThenBy(c => c.Key, StringComparer.Ordinal))
         {
@@ -73,8 +73,8 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
             foreach (var action in service.AvailableActions(ctx.Sim, ctx.PlayerId, unit.Id, city.Position))
             {
                 long score = CityActionScore(unit, city, action, goldenAgeValue);
-                if (score > 0 && Command(unit, action) is { } command)
-                    yield return new(city.Position, command, score, city.Id.ToString("D10", CultureInfo.InvariantCulture) + action.Command + action.Target);
+                if (score > 0)
+                    yield return new(city.Position, Command(unit, action), score, city.Id.ToString("D10", CultureInfo.InvariantCulture) + action.Mission + action.Subject);
             }
         }
     }
@@ -95,13 +95,13 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
         }
     }
 
-    private long CityActionScore(Unit unit, City city, GreatPersonAction action, long goldenAgeValue) => action.Command switch
+    private long CityActionScore(Unit unit, City city, GreatPersonAction action, long goldenAgeValue) => action.Mission switch
     {
-        "great_people:construct_building" => 8000 + ConstructionValue(city, action.Target!),
-        "great_people:hurry_production" => HurryScore(city, action),
-        "great_people:trade_mission" => action.Amount >= goldenAgeValue ? 6000 + Math.Min(500, action.Amount / 10) + (IsCapital(city) ? 100 : 0) : 0,
-        "great_people:join_city" => 1000 + SettlementValue(unit, city, action.Target!),
-        "great_people:culture_bomb" => Frontier(city) && city.Culture < action.Amount / 5 ? 3000 : 0,
+        GreatPersonMissions.Construct => 8000 + ConstructionValue(city, action.Subject),
+        GreatPersonMissions.Hurry => HurryScore(city, action),
+        GreatPersonMissions.Trade => action.Amount >= goldenAgeValue ? 6000 + Math.Min(500, action.Amount / 10) + (IsCapital(city) ? 100 : 0) : 0,
+        GreatPersonMissions.Join => 1000 + SettlementValue(unit, city, action.Subject),
+        GreatPersonMissions.Culture => Frontier(city) && city.Culture < action.Amount / 5 ? 3000 : 0,
         _ => 0,
     };
 
@@ -139,28 +139,15 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
     {
         if (!ctx.Def(unit).GreatGeneral || ctx.Team.Wars.Count == 0) yield break;
         foreach (var position in ctx.Units.Where(ctx.Alive).Where(u => ctx.Def(u).Strength > 0).Select(u => u.Position).Distinct())
-            foreach (var action in service.AvailableActions(ctx.Sim, ctx.PlayerId, unit.Id, position).Where(a => a.Command == "great_people:lead_unit"))
+            foreach (var action in service.AvailableActions(ctx.Sim, ctx.PlayerId, unit.Id, position).Where(a => a.Mission == GreatPersonMissions.Lead))
             {
-                var target = ctx.Sim.State.UnitById(int.Parse(action.Target!, CultureInfo.InvariantCulture));
-                yield return new(position, Command(unit, action)!, 9000 + Math.Min(500, ctx.Def(target).Strength * target.Health / 100), action.Target!);
+                var target = ctx.Sim.State.UnitById(int.Parse(action.Subject, CultureInfo.InvariantCulture));
+                yield return new(position, Command(unit, action), 9000 + Math.Min(500, ctx.Def(target).Strength * target.Health / 100), action.Subject);
             }
     }
 
-    private GameCommand? Command(Unit unit, GreatPersonAction action)
-    {
-        GreatPersonCommand? command = action.Command switch
-        {
-            "great_people:construct_building" => new ConstructGreatPersonCommand { Player = ctx.PlayerId, UnitId = unit.Id, Target = action.Target },
-            "great_people:hurry_production" => new HurryGreatPersonCommand { Player = ctx.PlayerId, UnitId = unit.Id, Target = action.Target },
-            "great_people:trade_mission" => new TradeGreatPersonCommand { Player = ctx.PlayerId, UnitId = unit.Id, Target = action.Target },
-            "great_people:join_city" => new JoinGreatPersonCommand { Player = ctx.PlayerId, UnitId = unit.Id, Target = action.Target },
-            "great_people:discover_tech" => new DiscoverGreatPersonCommand { Player = ctx.PlayerId, UnitId = unit.Id, Target = action.Target },
-            "great_people:culture_bomb" => new CultureGreatPersonCommand { Player = ctx.PlayerId, UnitId = unit.Id },
-            "great_people:lead_unit" => new LeadGreatPersonCommand { Player = ctx.PlayerId, UnitId = unit.Id, Target = action.Target },
-            _ => null,
-        };
-        return command;
-    }
+    private PerformMissionCommand Command(Unit unit, GreatPersonAction action) =>
+        new() { Player = ctx.PlayerId, Unit = unit.Id, Mission = action.Mission, Subject = action.Subject };
 
     private YieldVector Yields(City city)
     {

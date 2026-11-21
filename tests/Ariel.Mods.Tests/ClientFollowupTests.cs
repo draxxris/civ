@@ -184,7 +184,8 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var greatPerson = AddUnit(sim, city, "military:artist");
         s.SelectUnit(greatPerson.Id);
         Assert.Contains(s.DescribeUnit(greatPerson)!.Actions,
-            action => action.Id == "great_people:join_city" && action.Command is JoinGreatPersonCommand);
+            action => action.Id == GreatPersonMissions.Join + ":foundation:specialist_great_artist" && action.Label == "Join city"
+                && action.Command is PerformMissionCommand { Mission: GreatPersonMissions.Join, Subject: "foundation:specialist_great_artist" });
     }
 
     [Fact]

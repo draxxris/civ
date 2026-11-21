@@ -288,9 +288,9 @@ requires the owning namespace. Overrides can replace earlier content.
 - A feature that gives units an order registers an `IUnitActionSource`, which offers
   ready-made `(id, label, command)` candidates for a unit. The client validates and
   lists every source's offers (`GameRules.UnitActions`) without naming the commands, so
-  a mod adds an order without a client change. Artillery (the RangedCombat mod), air
-  missions (the AirCombat mod) and great people (the GreatPeople mod) use it, and so does
-  the base game's mission support; cargo and promotions are still listed by the client
+  a mod adds an order without a client change. Artillery (the RangedCombat mod) and air
+  missions (the AirCombat mod) use it, and so does the base game's mission support, which
+  offers religion, corporation, spy and great person missions; cargo and promotions are still listed by the client
   itself and should move to sources.
 - A feature that lets a unit hurt a tile without entering it registers an
   `ISupportFire`. AI assaults ask every kind in registration order
@@ -311,19 +311,23 @@ requires the owning namespace. Overrides can replace earlier content.
   offers `IUnitService.ValidateRebase`, `Rebase` and `Destroy`, and
   `ICombatService.CanDefend`, `AirStrikeModifier` and `AwardExperience`, beside the
   entry points ranged fire uses.
-- A mission is something a unit does to the city it stands in. A feature registers each
-  kind as an `IMission` (`Subjects`, `Label`, `Validate`, `Terms`, `Resolve`), and the
-  base game's `IMissionService` (`GameRules.Missions`, in Military) does what every
-  mission shares: it checks that the unit is the player's, alive, able to act and in a
-  city, rolls `MissionTerms.Chance` once, removes the unit as `MissionTerms.Fate` says,
-  publishes `MissionResolved`, refreshes sight, and offers every legal mission in the
-  unit's panel. One command, `PerformMissionCommand`, carries them all. Religion
-  (`religion:spread`, `religion:inquisition`, `religion:shrine`), the Corporations mod
-  (`corporations:found`, `corporations:spread`) and the Espionage mod (one
-  `espionage:*` kind per spy mission) are built on it. A mission collects its own
-  price and publishes its own event for what it changed. Great person actions have the
-  same shape and are not ported yet. Planners still choose missions per feature: the
-  contract says what is possible and on what terms, not what it is worth.
+- A mission is something a unit does where it stands, usually to the city it stands in.
+  A feature registers each kind as an `IMission` (`Subjects`, `Label`, `Validate`,
+  `Terms`, `Resolve`), and the base game's `IMissionService` (`GameRules.Missions`, in
+  Military) does what every mission shares: it checks that the unit is the player's,
+  alive, able to act (moves left) and, unless the kind says `NeedsCity` is false, in a
+  city; it rolls `MissionTerms.Chance` once, removes the unit as `MissionTerms.Fate`
+  says, publishes `MissionResolved`, refreshes sight, and offers every legal mission in
+  the unit's panel. A mission that needs no city reads `MissionOrder.Site`, the city the
+  unit stands in or null, and `MissionResolved.City` is then -1; `MissionOrder.City` is
+  the checked city of a mission that needs one. One command, `PerformMissionCommand`,
+  carries them all. Religion (`religion:spread`, `religion:inquisition`,
+  `religion:shrine`), the Corporations mod (`corporations:found`, `corporations:spread`),
+  the Espionage mod (one `espionage:*` kind per spy mission) and the GreatPeople mod (one
+  `great_people:*` kind per great person action) are built on it. A mission collects its
+  own price and publishes its own event for what it changed. Planners still choose
+  missions per feature: the contract says what is possible and on what terms, not what
+  it is worth.
 - `ITurnSystem` retains explicit `(Order, Id)` execution order.
 
 Registries freeze after load. Definitions and their nested collections must not change
@@ -1022,7 +1026,7 @@ Combat and system mechanics:
   domestic city, increments `GreatGeneralsCreated`, and escalates both personal and team
   thresholds.
 - **Warlord attachments & leader promotions**: Great Generals attaching via
-  `LeadGreatPersonCommand` grant `military:leader`, record `AttachedLeaderUnitType`, and
+  the `great_people:lead_unit` mission grant `military:leader`, record `AttachedLeaderUnitType`, and
   distribute bonus experience across the plot stack. Units with an attached leader
   qualify for exclusive `PromotionDef.Leader` promotions (e.g. Morale).
 - **City defense damage & recovery**: City fortifications provide defensive percentage
@@ -1243,7 +1247,7 @@ settlement, unit actions, Golden Age timers and Great General births. Its API
 (`Ariel.Mods.GreatPeople.Api`) holds `IGreatPeopleService`, which supplies
 read-only progress, rate ledgers, thresholds, settled specialists, timers, and available
 actions, `ICityGreatPeopleService` (the city screen's view of the same calculation), the
-commands, state and events. Cities no longer runs a birth system. The mod answers two
+mission ids (`GreatPersonMissions`), state and events. Cities no longer runs a birth system. The mod answers two
 base seams: `ICombatLeaders` (combat adds general points to `MilitaryPlayerState`, and the
 mod spends them on Great Generals at once, inside the fight) and `ICapitalWeight`
 (settled great people weigh toward a new capital). Threshold increases include both the personal
@@ -1251,21 +1255,26 @@ increase and the team increase for the creator, as in the source. Births use one
 simulation RNG draw, resolve civilization replacements, and publish `UnitCreated` and
 `GreatPersonBorn`.
 
-Commands include:
+Great person actions are missions (`IMission`, see Mod registration), performed with
+`PerformMissionCommand` and offered in the unit panel by the base mission support; the
+mod registers no command of its own. Every one uses up the person (`MissionUnitFate.Spent`)
+and needs moves left, its tooltip is the amount it yields, and `GreatPersonUsed` reports
+what was done. `GreatPersonMissions` in the API names them. Each kind validates, prices
+and resolves from `IGreatPeopleService.AvailableActions`, the same calculation the
+planner previews at a destination, so an offer and its result always agree.
 
-- `great_people:join_city`, `discover_tech`, `hurry_production`, `culture_bomb`, and
-  `golden_age`.
-- `great_people:lead_unit` (`LeadGreatPersonCommand`): Attaches a Great General to a
-  friendly combat unit on the same tile, granting `military:leader`, setting
-  `AttachedLeaderUnitType`, and distributing experience across the stack. Unlocks
-  `PromotionDef.Leader` promotions (e.g. Morale).
-- `great_people:construct_building` (`ConstructGreatPersonCommand`): Constructs special
-  Great Person buildings (Academies by Scientists, Military Academies by Great
-  Generals).
-- `great_people:trade_mission` (`TradeGreatPersonCommand`): Great Merchants can traverse
-  peaceful foreign borders without open borders agreements. Executing a trade mission in
-  a foreign city awards instant gold calculated from distance and capital trade route
-  profit.
+- `great_people:join_city` (subject: the specialist), `hurry_production` (the building)
+  and `culture_bomb` act on an own city that is not in disorder.
+- `great_people:construct_building` (the building): Constructs special Great Person
+  buildings (Academies by Scientists, Military Academies by Great Generals).
+- `great_people:trade_mission` (the foreign city's id): Great Merchants can traverse
+  peaceful foreign borders without open borders agreements. A trade mission in a foreign
+  city awards instant gold calculated from distance and capital trade route profit.
+- Needing no city: `great_people:discover_tech` (the technology), `golden_age` (empty,
+  or the participants' unit ids separated by commas) and `lead_unit` (the id of a
+  friendly combat unit on the same plot): Attaches a Great General, granting
+  `military:leader`, setting `AttachedLeaderUnitType`, and distributing experience across
+  the stack. Unlocks `PromotionDef.Leader` promotions (e.g. Morale).
 
 Great People mechanics:
 
@@ -1292,8 +1301,8 @@ Great People mechanics:
   production to the current eligible building. Cities completes it during the normal
   completion phase. Culture works use `ICityCultureService` to update city history,
   surrounding plots, and ownership immediately. Golden Ages consume distinct unit
-  classes. Optional command `Units` lists all participants, including the initiating
-  unit. An omitted list selects nearest eligible units, then unit ids. Wonder completion
+  classes. The golden age mission's subject may list all participants, including the
+  initiating unit. An empty subject selects nearest eligible units, then unit ids. Wonder completion
   also starts a Golden Age without increasing unit requirements. Golden Ages add
   threshold-based plot production and commerce through `IPlotYieldFinalizer`, and
   additive GP rate modifiers. Wonder-triggered timers retain their full duration until

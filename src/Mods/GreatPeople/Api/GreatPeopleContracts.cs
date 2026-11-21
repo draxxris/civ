@@ -6,7 +6,30 @@ namespace Ariel.Mods.GreatPeople;
 /// <summary>Historical progress and current whole-point rate. Class points are unmodified source weights.</summary>
 public sealed record GreatPeopleCityResult(long Progress, long Threshold, long Rate,
     IReadOnlyDictionary<string, long> ClassPoints, Ledger Ledger);
-public sealed record GreatPersonAction(string Command, string? Target, long Amount);
+/// <summary>One action open to a great person: the mission (<see cref="GreatPersonMissions"/>), its subject (empty when
+/// there is nothing to choose) and what it yields (gold, research, production, culture, experience or turns).</summary>
+public sealed record GreatPersonAction(string Mission, string Subject, long Amount);
+/// <summary>The great person missions, carried out with <see cref="PerformMissionCommand"/>. Each uses up the person.</summary>
+public static class GreatPersonMissions
+{
+    /// <summary>Settle in an own city as a free specialist. The subject is the specialist id.</summary>
+    public const string Join = "great_people:join_city";
+    /// <summary>Put research into the technology the person favours. The subject is the technology id; no city needed.</summary>
+    public const string Discover = "great_people:discover_tech";
+    /// <summary>Add production to the building an own city is constructing. The subject is the building id.</summary>
+    public const string Hurry = "great_people:hurry_production";
+    /// <summary>A great work: culture for an own city. No subject.</summary>
+    public const string Culture = "great_people:culture_bomb";
+    /// <summary>Start a golden age, anywhere. The subject is empty, so the nearest great people of distinct classes
+    /// join in, or the participants' unit ids separated by commas, the performing unit included.</summary>
+    public const string GoldenAge = "great_people:golden_age";
+    /// <summary>A great general joins a combat unit on its plot, outside a city too. The subject is that unit's id.</summary>
+    public const string Lead = "great_people:lead_unit";
+    /// <summary>Construct a special building in an own city. The subject is the building id.</summary>
+    public const string Construct = "great_people:construct_building";
+    /// <summary>Gold from a trade mission to a foreign city at peace. The subject is that city's id.</summary>
+    public const string Trade = "great_people:trade_mission";
+}
 /// <summary>Read-only queries. Queries must not change state or consume RNG.</summary>
 public interface IGreatPeopleService
 {
@@ -27,31 +50,6 @@ public interface ICityGreatPeopleService
 {
     CityGreatPeopleResult Calculate(Simulation sim, int city);
 }
-/// <summary>Command boundary shared by previews and execution.</summary>
-public interface IGreatPeopleCommandService
-{
-    string? Validate(Simulation sim, int player, int unit, string action, string? target, IReadOnlyList<int> units);
-    void Execute(Simulation sim, int player, int unit, string action, string? target, IReadOnlyList<int> units);
-}
-public abstract class GreatPersonCommand : GameCommand
-{
-    public int UnitId { get; init; }
-    public string? Target { get; init; }
-    public int[] Units { get; init; } = [];
-    protected abstract string Action { get; }
-    public override string? Validate(Simulation sim) => Commands(sim).Validate(sim, Player, UnitId, Action, Target, Units);
-    public override void Apply(Simulation sim) => Commands(sim).Execute(sim, Player, UnitId, Action, Target, Units);
-    private static IGreatPeopleCommandService Commands(Simulation sim) => sim.Service<IGreatPeopleCommandService>()
-        ?? throw new InvalidOperationException("the Great People mod is not loaded");
-}
-public sealed class LeadGreatPersonCommand : GreatPersonCommand { protected override string Action => "lead"; }
-public sealed class ConstructGreatPersonCommand : GreatPersonCommand { protected override string Action => "construct"; }
-public sealed class TradeGreatPersonCommand : GreatPersonCommand { protected override string Action => "trade"; }
-public sealed class JoinGreatPersonCommand : GreatPersonCommand { protected override string Action => "join"; }
-public sealed class DiscoverGreatPersonCommand : GreatPersonCommand { protected override string Action => "discover"; }
-public sealed class HurryGreatPersonCommand : GreatPersonCommand { protected override string Action => "hurry"; }
-public sealed class CultureGreatPersonCommand : GreatPersonCommand { protected override string Action => "culture"; }
-public sealed class GoldenAgeGreatPersonCommand : GreatPersonCommand { protected override string Action => "golden-age"; }
 public sealed class GreatPeopleCityState
 {
     public long Progress { get; set; }
@@ -69,4 +67,5 @@ public sealed class GreatPeoplePlayerState
 public sealed record GreatGeneralBorn(int Player, int City, int Unit, string UnitType) : DomainEvent;
 public sealed record GreatPersonBorn(int Player, int City, int Unit, string UnitClass) : DomainEvent;
 public sealed record GoldenAgeStarted(int Player, int Turns) : DomainEvent;
-public sealed record GreatPersonUsed(int Player, int Unit, string Action, string? Target, long Amount) : DomainEvent;
+/// <summary>A great person carried out a mission (<see cref="GreatPersonMissions"/>) and what it yielded.</summary>
+public sealed record GreatPersonUsed(int Player, int Unit, string Mission, string Subject, long Amount) : DomainEvent;

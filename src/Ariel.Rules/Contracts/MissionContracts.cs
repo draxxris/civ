@@ -1,8 +1,21 @@
 namespace Ariel.Game;
 
-/// <summary>One unit carrying out one mission: who orders it, the unit, the city it stands in, and what the mission
-/// is about (a religion, a corporation, a building, a technology), empty for a mission with nothing to choose.</summary>
-public readonly record struct MissionOrder(int Player, Unit Unit, City City, string Subject);
+/// <summary>One unit carrying out one mission: who orders it, the unit, the city it stands in (<see cref="Site"/>, null
+/// when it stands outside one), and what the mission is about (a religion, a corporation, a building, a technology),
+/// empty for a mission with nothing to choose.</summary>
+public readonly record struct MissionOrder(int Player, Unit Unit, City? Site, string Subject)
+{
+    /// <summary>The city of a mission that needs one (<see cref="IMission.NeedsCity"/>), which the base game has
+    /// already checked the unit stands in.</summary>
+    public City City => Site ?? throw new InvalidOperationException("This mission is not carried out in a city");
+
+    // The positional members only: City throws for an order outside a city.
+    private bool PrintMembers(System.Text.StringBuilder builder)
+    {
+        builder.Append($"Player = {Player}, Unit = {Unit.Id}, Site = {Site?.Id.ToString() ?? "none"}, Subject = {Subject}");
+        return true;
+    }
+}
 
 /// <summary>What becomes of the unit once its mission is resolved.</summary>
 public enum MissionUnitFate
@@ -26,20 +39,25 @@ public sealed record MissionTerms(int? Chance = null, string Note = "", MissionU
     public string Summary => Chance is { } chance ? (Note.Length == 0 ? $"{chance}% chance" : $"{Note}, {chance}% chance") : Note;
 }
 
-/// <summary>A kind of mission: something a unit does to the city it stands in. A feature registers each kind it
-/// adds as a service; the base game checks the unit, rolls the chance, removes a spent unit, publishes
-/// <see cref="MissionResolved"/> and refreshes sight, and offers every legal mission in the unit's panel.</summary>
+/// <summary>A kind of mission: something a unit does where it stands, usually to the city it stands in. A feature
+/// registers each kind it adds as a service; the base game checks the unit, rolls the chance, removes a spent unit,
+/// publishes <see cref="MissionResolved"/> and refreshes sight, and offers every legal mission in the unit's panel.</summary>
 public interface IMission
 {
     /// <summary>Stable namespaced id, saved in commands, such as "religion:spread".</summary>
     string Id { get; }
+    /// <summary>Whether the unit must stand in a city, which the base game then checks. A mission that may be carried
+    /// out anywhere (a golden age, a general joining a unit) says false, and its order's <see cref="MissionOrder.Site"/>
+    /// is the city the unit stands in, if any.</summary>
+    bool NeedsCity => true;
     /// <summary>The subjects this unit could try here, in a stable order, before validation. A mission with nothing
-    /// to choose yields one empty subject for a unit of the right kind, and nothing otherwise.</summary>
-    IEnumerable<string> Subjects(Simulation sim, Unit unit, City city);
+    /// to choose yields one empty subject for a unit of the right kind, and nothing otherwise. The city is the one the
+    /// unit stands in; it is never null for a mission that needs a city.</summary>
+    IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city);
     /// <summary>The text of the order's button for a subject.</summary>
     string Label(Simulation sim, string subject);
     /// <summary>Why the mission cannot be carried out, or null. The unit is already known to belong to the player, to
-    /// be alive with moves left, and to stand in the city.</summary>
+    /// be alive with moves left, and to stand in a city when the mission needs one.</summary>
     string? Validate(Simulation sim, MissionOrder order);
     /// <summary>The terms of a valid order. Must not change state or consume random numbers.</summary>
     MissionTerms Terms(Simulation sim, MissionOrder order);
@@ -59,7 +77,7 @@ public interface IMissionService
     void Perform(Simulation sim, int player, int unit, string mission, string subject);
 }
 
-/// <summary>Order a unit to carry out a mission in the city it stands in.</summary>
+/// <summary>Order a unit to carry out a mission where it stands.</summary>
 public sealed class PerformMissionCommand : GameCommand
 {
     public int Unit { get; init; }
@@ -69,5 +87,6 @@ public sealed class PerformMissionCommand : GameCommand
     public override void Apply(Simulation sim) => sim.Rules().Missions.Perform(sim, Player, Unit, Mission, Subject);
 }
 
-/// <summary>A mission was carried out. Features publish their own events for what the mission changed.</summary>
+/// <summary>A mission was carried out; <paramref name="City"/> is -1 for one carried out outside a city. Features
+/// publish their own events for what the mission changed.</summary>
 public sealed record MissionResolved(string Mission, string Subject, int Unit, int City, int Player, bool Success) : DomainEvent;

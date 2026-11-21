@@ -7,7 +7,7 @@ namespace Ariel.Mods.Corporations;
 internal sealed class FoundCorporationMission(CorporationService service) : IMission
 {
     public string Id => CorporationMissions.Found;
-    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city) =>
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) =>
         sim.Content.Get<CorporationDef>().All.Where(def => CorporationService.Founds(sim, unit, def)).Select(def => def.Id);
     public string Label(Simulation sim, string subject) => "Found " + sim.Content.Get<CorporationDef>(subject).Name;
     public string? Validate(Simulation sim, MissionOrder order) => service.ValidateFound(sim, order);
@@ -19,7 +19,7 @@ internal sealed class FoundCorporationMission(CorporationService service) : IMis
 internal sealed class SpreadCorporationMission(CorporationService service) : IMission
 {
     public string Id => CorporationMissions.Spread;
-    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city) =>
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) =>
         sim.Content.Get<CorporationDef>().All.Where(def => CorporationService.Spreads(sim, unit, def)).Select(def => def.Id);
     public string Label(Simulation sim, string subject) => "Spread " + sim.Content.Get<CorporationDef>(subject).Name;
     public string? Validate(Simulation sim, MissionOrder order) =>

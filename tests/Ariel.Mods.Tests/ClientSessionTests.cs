@@ -398,15 +398,15 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         {
             case "lead":
                 var soldier = Add(sim, "military:warrior");
-                Dispatch<LeadGreatPersonCommand>(session, person);
+                Dispatch(session, person, GreatPersonMissions.Lead);
                 Assert.Contains("military:leader", soldier.Promotions);
                 break;
             case "construct":
-                Dispatch<ConstructGreatPersonCommand>(session, person); Assert.Contains("cities:academy", city.Buildings);
+                Dispatch(session, person, GreatPersonMissions.Construct); Assert.Contains("cities:academy", city.Buildings);
                 break;
             case "trade":
                 long before = sim.State.PlayerById(0).Treasury;
-                Dispatch<TradeGreatPersonCommand>(session, person); Assert.True(sim.State.PlayerById(0).Treasury > before);
+                Dispatch(session, person, GreatPersonMissions.Trade); Assert.True(sim.State.PlayerById(0).Treasury > before);
                 break;
             default:
                 sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:intolerant";
@@ -416,7 +416,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
                 break;
         }
         Assert.Null(sim.State.FindUnit(person.Id));
-        Assert.DoesNotContain(session.DescribeUnit(session.Unit)?.Actions ?? [], a => a.Command is GreatPersonCommand c && c.UnitId == person.Id);
+        Assert.DoesNotContain(session.DescribeUnit(session.Unit)?.Actions ?? [], a => a.Command is PerformMissionCommand c && c.Unit == person.Id);
     }
 
     [Theory]

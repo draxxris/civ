@@ -8,7 +8,7 @@ internal sealed class SpreadReligionMission : IMission
 {
     public string Id => ReligionMissions.Spread;
 
-    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city)
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city)
     {
         var def = sim.Content.Get<S.UnitDef>(unit.Type);
         return def.DefaultUnitAi != ReligionData.MissionaryUnitAi ? []

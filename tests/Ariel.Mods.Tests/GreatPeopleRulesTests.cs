@@ -31,9 +31,11 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
     private static Unit Unit(Simulation sim, string type = "gp_probe:sage", int owner = 0)
     {
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Cities[0].Position };
+        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = sim.State.Cities[0].Position, MovesLeft = 120 };
         sim.State.AddUnit(unit); return unit;
     }
+    private static PerformMissionCommand Mission(Unit unit, string mission, string subject = "", int player = 0) =>
+        new() { Player = player, Unit = unit.Id, Mission = mission, Subject = subject };
     private static void Apply(Simulation sim, GameCommand command) => Assert.True(sim.TryApply(command, out var error), error);
     [Fact]
     public void Historical_pools_and_birth_rng_resume_identically_and_threshold_includes_creator_team_increase()
@@ -65,6 +67,25 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         Assert.Equal(50, result.Ledger.Total("cities:great_people_percent"));
     }
     [Fact]
+    public void The_panel_offers_city_actions_in_a_city_and_the_rest_anywhere_while_the_person_can_move()
+    {
+        var sim = Scenario(); var sage = Unit(sim);
+        string[] Offers() => sim.Rules().UnitActions.SelectMany(s => s.Offers(sim, 0, sage))
+            .Where(o => o.Id.StartsWith("great_people:", StringComparison.Ordinal)).Select(o => o.Label).Order(StringComparer.Ordinal).ToArray();
+        Assert.Equal(["Discover technology", "Great work", "Join city", "Start golden age"], Offers());
+        sim.State.MoveUnit(sage.Id, sim.State.Grid.HexOf(new TileId(37)));
+        Assert.Equal(["Discover technology", "Start golden age"], Offers());
+        Assert.Equal("Unit must be in a city", Mission(sage, GreatPersonMissions.Culture).Validate(sim));
+        sage.MovesLeft = 0;
+        Assert.Empty(Offers());
+        Assert.Equal("No moves left", Mission(sage, GreatPersonMissions.GoldenAge).Validate(sim));
+        sage.MovesLeft = 120;
+        Apply(sim, Mission(sage, GreatPersonMissions.GoldenAge));
+        Assert.True(Service<IGreatPeopleService>(sim).GoldenAgeTurnsRemaining(sim, 0) > 0);
+        Assert.Contains(sim.Events.Published.OfType<GreatPersonUsed>(), e => e.Unit == sage.Id && e.Mission == GreatPersonMissions.GoldenAge);
+        Assert.Equal(-1, sim.Events.Published.OfType<MissionResolved>().Single().City);
+    }
+    [Fact]
     public void Disorder_preserves_progress_and_queries_do_not_change_state_or_rng()
     {
         var sim = Scenario(); var city = sim.State.Cities[0]; city.Buildings.Add("gp_probe:academy");
@@ -79,9 +100,9 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     {
         var sim = Scenario(); var city = sim.State.Cities[0]; var unit = Unit(sim);
         var before = Service<ICityYieldService>(sim).Calculate(sim, city.Id);
-        Assert.False(sim.TryApply(new JoinGreatPersonCommand { Player = 1, UnitId = unit.Id }, out _));
-        Assert.False(sim.TryApply(new JoinGreatPersonCommand { Player = 0, UnitId = unit.Id, Target = "foundation:specialist_citizen" }, out _));
-        Apply(sim, new JoinGreatPersonCommand { Player = 0, UnitId = unit.Id });
+        Assert.False(sim.TryApply(Mission(unit, GreatPersonMissions.Join, "gp_probe:settled_sage", player: 1), out _));
+        Assert.False(sim.TryApply(Mission(unit, GreatPersonMissions.Join, "foundation:specialist_citizen"), out _));
+        Apply(sim, Mission(unit, GreatPersonMissions.Join, "gp_probe:settled_sage"));
         Assert.Null(sim.State.FindUnit(unit.Id));
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
@@ -93,9 +114,9 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     public void Bulb_chooses_eligible_flavor_target_and_completes_without_changing_unrelated_research()
     {
         var sim = Scenario(); var unit = Unit(sim);
-        var action = Assert.Single(Service<IGreatPeopleService>(sim).AvailableActions(sim, 0, unit.Id), a => a.Command.EndsWith("discover_tech"));
-        Assert.Equal("gp_probe:insight", action.Target);
-        Apply(sim, new DiscoverGreatPersonCommand { Player = 0, UnitId = unit.Id });
+        var action = Assert.Single(Service<IGreatPeopleService>(sim).AvailableActions(sim, 0, unit.Id), a => a.Mission == GreatPersonMissions.Discover);
+        Assert.Equal("gp_probe:insight", action.Subject);
+        Apply(sim, Mission(unit, GreatPersonMissions.Discover, action.Subject));
         Assert.Contains("gp_probe:insight", sim.TeamOf(0).Techs);
         Assert.Contains(sim.Events.Published, e => e is TechDiscovered d && d.Tech == "gp_probe:insight");
         Assert.Null(sim.State.FindUnit(unit.Id));
@@ -106,12 +127,12 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         var sim = Scenario(); var city = sim.State.Cities[0];
         Apply(sim, new SetCityProductionCommand { Player = 0, CityId = city.Id, Kind = "cities:building", ContentId = "gp_probe:monument" });
         long cost = Service<ICityProductionService>(sim).Calculate(sim, city.Id, "cities:building", "gp_probe:monument").Cost;
-        Apply(sim, new HurryGreatPersonCommand { Player = 0, UnitId = Unit(sim).Id });
+        Apply(sim, Mission(Unit(sim), GreatPersonMissions.Hurry, "gp_probe:monument"));
         Assert.Equal(cost, city.ProductionQueue[0].Progress);
         sim.AdvanceTurn(); Assert.Contains("gp_probe:monument", city.Buildings);
         long culture = city.Culture; var neighbor = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(city.Position)).First();
         long plotCulture = sim.State.Plots[neighbor.Value].Culture.GetValueOrDefault(0);
-        Apply(sim, new CultureGreatPersonCommand { Player = 0, UnitId = Unit(sim).Id });
+        Apply(sim, Mission(Unit(sim), GreatPersonMissions.Culture));
         Assert.True(city.Culture > culture); Assert.True(sim.State.Plots[neighbor.Value].Culture[0] > plotCulture);
         Assert.Equal(city.Culture * 100, city.Extensions.Get<CityRuleState>(sim.Content)!.CultureHundredths[0]);
     }
@@ -122,14 +143,14 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         var tile = sim.State.Grid.TileAt(city.Position);
         sim.State.Plots[tile.Value].Kind = PlotKind.Hills; sim.State.Plots[tile.Value].Height = Levels.Hills;
         var before = Service<IPlotYieldService>(sim).Calculate(sim, 0, tile).Yields;
-        Apply(sim, new GoldenAgeGreatPersonCommand { Player = 0, UnitId = Unit(sim).Id });
+        Apply(sim, Mission(Unit(sim), GreatPersonMissions.GoldenAge));
         int turns = gp.GoldenAgeTurnsRemaining(sim, 0); Assert.True(turns > 0);
         Assert.Equal(160, gp.Calculate(sim, city.Id).Rate);
         Assert.Equal(before.Production + 1, Service<IPlotYieldService>(sim).Calculate(sim, 0, tile).Yields.Production);
         var a = Unit(sim); var b = Unit(sim);
-        Assert.False(sim.TryApply(new GoldenAgeGreatPersonCommand { Player = 0, UnitId = a.Id, Units = [a.Id, b.Id] }, out _));
+        Assert.False(sim.TryApply(Mission(a, GreatPersonMissions.GoldenAge, $"{a.Id},{b.Id}"), out _));
         var c = Unit(sim, "gp_probe:engineer");
-        Apply(sim, new GoldenAgeGreatPersonCommand { Player = 0, UnitId = a.Id, Units = [a.Id, c.Id] });
+        Apply(sim, Mission(a, GreatPersonMissions.GoldenAge, $"{a.Id},{c.Id}"));
         Assert.NotNull(sim.State.FindUnit(b.Id)); Assert.Null(sim.State.FindUnit(c.Id));
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         city.Buildings.Clear(); loaded.State.Cities[0].Buildings.Clear();
@@ -180,7 +201,7 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         first.Experience = 2;
         Assert.NotNull(Service<IUnitService>(sim).Validate(sim, 0, first.Id, UnitAction.Promote, "gp_probe:leader_skill"));
         first.Experience = 0;
-        Apply(sim, new LeadGreatPersonCommand { Player = 0, UnitId = general.Id, Target = first.Id.ToString() });
+        Apply(sim, Mission(general, GreatPersonMissions.Lead, first.Id.ToString()));
         Assert.Null(sim.State.FindUnit(general.Id));
         Assert.Equal(11, first.Experience + second.Experience);
         Assert.Equal(first.Experience, second.Experience + 1);
@@ -193,23 +214,23 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         Assert.Equal("gp_probe:general", loaded.State.UnitById(first.Id).Extensions.Get<MilitaryUnitState>(loaded.Content)!.AttachedLeaderUnitType);
         Assert.DoesNotContain(Service<IGreatPeopleService>(loaded).AvailableActions(loaded, 0, Unit(loaded, "gp_probe:general").Id),
-            a => a.Command == "great_people:lead_unit" && a.Target == first.Id.ToString());
+            a => a.Mission == GreatPersonMissions.Lead && a.Subject == first.Id.ToString());
     }
     [Fact]
     public void Special_construction_and_foreign_trade_consume_the_person_and_apply_the_preview()
     {
         var sim = Scenario(); var city = sim.State.Cities[0];
         var builder = Unit(sim, "gp_probe:builder");
-        Apply(sim, new ConstructGreatPersonCommand { Player = 0, UnitId = builder.Id, Target = "gp_probe:monument" });
+        Apply(sim, Mission(builder, GreatPersonMissions.Construct, "gp_probe:monument"));
         Assert.Contains("gp_probe:monument", city.Buildings);
         Assert.Null(sim.State.FindUnit(builder.Id));
         var foreign = new City { Id = sim.State.NextCityId++, Owner = 1, Position = sim.State.Grid.HexOf(new TileId(40)) };
         sim.State.AddCity(foreign);
         var merchant = Unit(sim, "gp_probe:merchant");
-        Assert.DoesNotContain(Service<IGreatPeopleService>(sim).AvailableActions(sim, 0, merchant.Id), a => a.Command == "great_people:trade_mission");
+        Assert.DoesNotContain(Service<IGreatPeopleService>(sim).AvailableActions(sim, 0, merchant.Id), a => a.Mission == GreatPersonMissions.Trade);
         sim.State.MoveUnit(merchant.Id, foreign.Position);
         long before = sim.State.PlayerById(0).Treasury;
-        Apply(sim, new TradeGreatPersonCommand { Player = 0, UnitId = merchant.Id });
+        Apply(sim, Mission(merchant, GreatPersonMissions.Trade, foreign.Id.ToString()));
         Assert.Equal(before + 100 * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).UnitTradePercent / 100, sim.State.PlayerById(0).Treasury);
         Assert.Null(sim.State.FindUnit(merchant.Id));
     }
@@ -269,7 +290,7 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     {
         var sim = Scenario(); sim.TeamOf(0).Techs.Add("research:military_tradition");
         var person = Unit(sim, type); var city = sim.State.Cities[0];
-        Apply(sim, new ConstructGreatPersonCommand { Player = 0, UnitId = person.Id, Target = building });
+        Apply(sim, Mission(person, GreatPersonMissions.Construct, building));
         Assert.Contains(building, city.Buildings); Assert.Null(sim.State.FindUnit(person.Id));
         Assert.Contains(sim.Events.Published.OfType<BuildingCompleted>(), e => e.City == city.Id && e.Building == building);
     }
@@ -286,11 +307,11 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         var move = new MoveUnitPathCommand { Player = 0, Unit = merchant.Id, Path = [foreign.Position] };
         Assert.False(sim.TryApply(new MoveUnitPathCommand { Player = 0, Unit = soldier.Id, Path = [foreign.Position] }, out _));
         Apply(sim, move);
-        var action = Assert.Single(Service<IGreatPeopleService>(sim).AvailableActions(sim, 0, merchant.Id), a => a.Command == "great_people:trade_mission");
+        var action = Assert.Single(Service<IGreatPeopleService>(sim).AvailableActions(sim, 0, merchant.Id), a => a.Mission == GreatPersonMissions.Trade);
         Assert.True(action.Amount > sim.Content.Get<S.UnitDef>(merchant.Type).BaseTrade);
         long before = sim.State.PlayerById(0).Treasury;
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
-        var trade = new TradeGreatPersonCommand { Player = 0, UnitId = merchant.Id };
+        var trade = Mission(merchant, GreatPersonMissions.Trade, foreign.Id.ToString());
         Apply(sim, trade); Apply(loaded, trade);
         Assert.Equal(before + action.Amount, sim.State.PlayerById(0).Treasury); Assert.Null(sim.State.FindUnit(merchant.Id));
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());

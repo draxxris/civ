@@ -9,7 +9,7 @@ internal sealed class ShrineMission(ReligionService service) : IMission
 {
     public string Id => ReligionMissions.Shrine;
 
-    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city) =>
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) =>
         sim.Content.Get<S.UnitDef>(unit.Type).ConstructibleBuildings.Where(p => p.Value).Select(p => p.Key)
             .Where(id => sim.Content.TryGet<S.BuildingDef>(id, out var building) && building.GlobalReligionCommerce is not null)
             .Order(StringComparer.Ordinal);

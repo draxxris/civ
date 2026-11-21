@@ -10,6 +10,7 @@ namespace Ariel.Mods.Tests;
 public sealed class MissionTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     private const string Survey = "mission_probe:survey";
+    private const string Rally = "mission_probe:rally";
 
     private Simulation Scenario(int? chance, MissionUnitFate fate, out Unit unit, out City city)
     {
@@ -86,16 +87,54 @@ public sealed class MissionTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal("5 gold, 40% chance", action.Tooltip);
     }
 
+    [Fact]
+    public void A_mission_that_needs_no_city_is_checked_offered_and_carried_out_anywhere()
+    {
+        var sim = Scenario(null, MissionUnitFate.Kept, out var unit, out var city);
+        sim.State.MoveUnit(unit.Id, sim.State.Grid.HexOf(new(41)));
+        var rally = new PerformMissionCommand { Player = 0, Unit = unit.Id, Mission = Rally };
+        Assert.Equal("Unit must be in a city", Order(unit).Validate(sim));
+        Assert.Null(rally.Validate(sim));
+        var session = new GameSession(sim);
+        Assert.Equal([Rally], session.DescribeUnit(unit)!.Actions.Where(a => a.Id.StartsWith("mission_probe:", StringComparison.Ordinal)).Select(a => a.Id));
+        Assert.True(sim.TryApply(rally, out var error), error);
+        Assert.Equal(1, unit.Experience);
+        Assert.Contains("Site = none", new MissionOrder(0, unit, null, "").ToString());
+        Assert.Equal(new MissionResolved(Rally, "", unit.Id, -1, 0, true), Assert.Single(sim.Events.Published.OfType<MissionResolved>()));
+        // In a city the order still names it.
+        sim.State.MoveUnit(unit.Id, city.Position);
+        Assert.True(sim.TryApply(rally, out error), error);
+        Assert.Equal(city.Id, sim.Events.Published.OfType<MissionResolved>().Last().City);
+    }
+
     private sealed class Probe(int? chance, MissionUnitFate fate) : IMod
     {
-        public void Register(IModContext context) => context.RegisterService<IMission>("survey", new SurveyMission(chance, fate));
+        public void Register(IModContext context)
+        {
+            context.RegisterService<IMission>("survey", new SurveyMission(chance, fate));
+            context.RegisterService<IMission>("rally", new RallyMission());
+        }
+    }
+
+    /// <summary>Carried out anywhere: the unit gains a point of experience, and the city it stands in, if any, is
+    /// named in the order.</summary>
+    private sealed class RallyMission : IMission
+    {
+        public string Id => Rally;
+        public bool NeedsCity => false;
+        public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) => [""];
+        public string Label(Simulation sim, string subject) => "Rally";
+        public string? Validate(Simulation sim, MissionOrder order) =>
+            order.Site?.Id == sim.State.CityAt(order.Unit.Position)?.Id ? null : "Wrong site";
+        public MissionTerms Terms(Simulation sim, MissionOrder order) => new(Fate: MissionUnitFate.Kept);
+        public void Resolve(Simulation sim, MissionOrder order, bool success) => order.Unit.Experience++;
     }
 
     /// <summary>Grows the city on success. Only "north" is legal; "south" is listed but rejected.</summary>
     private sealed class SurveyMission(int? chance, MissionUnitFate fate) : IMission
     {
         public string Id => Survey;
-        public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city) => ["north", "south"];
+        public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) => ["north", "south"];
         public string Label(Simulation sim, string subject) => "Survey " + subject;
         public string? Validate(Simulation sim, MissionOrder order) => order.Subject == "north" ? null : "The survey has no " + order.Subject;
         public MissionTerms Terms(Simulation sim, MissionOrder order) => new(chance, "5 gold", fate);

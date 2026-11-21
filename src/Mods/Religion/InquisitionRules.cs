@@ -110,7 +110,7 @@ internal sealed partial class ReligionService
 internal sealed class InquisitionMission(ReligionService service) : IMission
 {
     public string Id => ReligionMissions.Inquisition;
-    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City city) =>
+    public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) =>
         sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Inquisitor ? [""] : [];
     public string Label(Simulation sim, string subject) => "Perform inquisition";
     public string? Validate(Simulation sim, MissionOrder order) => service.ValidateInquisition(sim, order);
