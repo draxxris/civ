@@ -433,6 +433,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IVictoryCondition` | `VictoryConditions` (list) | the victory check, for each enabled `VictoryDef` by the condition its `Rule` names | Victory (conquest, domination, cultural, time), ProjectsVictory (the space race), Votes (the diplomatic victory) | a victory naming an unregistered condition fails the load, so the victory is simply absent |
+| `ITimerKind` | (registry, read by `ITimers`) | the Foundation timer store (Timers), for each timer by the kind it names | Events, Espionage, Revolution | starting a timer of an unregistered kind throws |
 | `IUnitActionSource`, `ISupportFire`, `IMission` | `UnitActions`, `SupportFire`, `MissionKinds` | the client, AI assaults, missions | base modules and mods | see above |
 
 Mods also consume each other's APIs directly, always as optional: Espionage asks the
