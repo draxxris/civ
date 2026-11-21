@@ -32,7 +32,9 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         output.WriteLine($"Cities founded per AI: {string.Join(", ", founded)}");
         output.WriteLine($"Buildings completed per AI: {string.Join(", ", completed)}");
         output.WriteLine($"Combats: {combat}");
-        foreach (var player in sim.State.Players.Where(p => p.Ai == "ai:standard"))
+        output.WriteLine($"Nations that broke away: {sim.State.Players.Count(p => p.Id >= 4 && PlayerRules.IsNation(sim, p.Id))}");
+        // The four that started the game; a city that broke away adds a nation this test does not judge.
+        foreach (var player in sim.State.Players.Where(p => p.Id < 4))
         {
             Assert.True(founded[player.Id] >= 1, $"player {player.Id}: founded no city");
             Assert.True(sim.TeamOf(player.Id).Techs.Count >= 15, $"player {player.Id}: {sim.TeamOf(player.Id).Techs.Count} technologies");
