@@ -4834,11 +4834,6 @@
         "default": 0
       },
       {
-        "source": "Adjective",
-        "property": "Adjective",
-        "kind": "text"
-      },
-      {
         "source": "DerivativeCiv",
         "property": "DerivativeCivilization",
         "kind": "ref",
@@ -4853,40 +4848,6 @@
     "mod": "peoples",
     "fields": [
       {
-        "source": "AdoptCivicRefuseAttitudeThreshold",
-        "property": "AdoptCivicRefuseAttitudeThreshold",
-        "kind": "enum"
-      },
-      {
-        "source": "ContactDelays",
-        "property": "ContactDelays",
-        "kind": "mapInt",
-        "key": "ContactType",
-        "value": "iContactDelay"
-      },
-      {
-        "source": "ContactRands",
-        "property": "ContactRands",
-        "kind": "mapInt",
-        "key": "ContactType",
-        "value": "iContactRand"
-      },
-      {
-        "source": "ConvertReligionRefuseAttitudeThreshold",
-        "property": "ConvertReligionRefuseAttitudeThreshold",
-        "kind": "enum"
-      },
-      {
-        "source": "DeclareWarRefuseAttitudeThreshold",
-        "property": "DeclareWarRefuseAttitudeThreshold",
-        "kind": "enum"
-      },
-      {
-        "source": "DeclareWarThemRefuseAttitudeThreshold",
-        "property": "DeclareWarThemRefuseAttitudeThreshold",
-        "kind": "enum"
-      },
-      {
         "source": "DefensivePactRefuseAttitudeThreshold",
         "property": "DefensivePactRefuseAttitudeThreshold",
         "kind": "enum"
@@ -4897,27 +4858,11 @@
         "kind": "enum"
       },
       {
-        "source": "FavoriteReligion",
-        "property": "FavoriteReligion",
-        "kind": "ref",
-        "target": "ReligionInfo"
-      },
-      {
         "source": "Flavors",
         "property": "Flavors",
         "kind": "mapInt",
         "key": "FlavorType",
         "value": "iFlavor"
-      },
-      {
-        "source": "HappinessBonusRefuseAttitudeThreshold",
-        "property": "HappinessBonusRefuseAttitudeThreshold",
-        "kind": "enum"
-      },
-      {
-        "source": "HealthBonusRefuseAttitudeThreshold",
-        "property": "HealthBonusRefuseAttitudeThreshold",
-        "kind": "enum"
       },
       {
         "source": "ImprovementWeightModifiers",
@@ -4926,11 +4871,6 @@
         "target": "ImprovementInfo",
         "key": "ImprovementType",
         "value": "iWeightModifier"
-      },
-      {
-        "source": "MapRefuseAttitudeThreshold",
-        "property": "MapRefuseAttitudeThreshold",
-        "kind": "enum"
       },
       {
         "source": "MemoryAttitudePercents",
@@ -4952,20 +4892,8 @@
         "kind": "enum"
       },
       {
-        "source": "NoWarAttitudeProbs",
-        "property": "NoWarAttitudeProbabilities",
-        "kind": "mapInt",
-        "key": "AttitudeType",
-        "value": "iNoWarProb"
-      },
-      {
         "source": "OpenBordersRefuseAttitudeThreshold",
         "property": "OpenBordersRefuseAttitudeThreshold",
-        "kind": "enum"
-      },
-      {
-        "source": "PermanentAllianceRefuseAttitudeThreshold",
-        "property": "PermanentAllianceRefuseAttitudeThreshold",
         "kind": "enum"
       },
       {
@@ -4976,11 +4904,6 @@
       {
         "source": "StopTradingThemRefuseAttitudeThreshold",
         "property": "StopTradingThemRefuseAttitudeThreshold",
-        "kind": "enum"
-      },
-      {
-        "source": "StrategicBonusRefuseAttitudeThreshold",
-        "property": "StrategicBonusRefuseAttitudeThreshold",
         "kind": "enum"
       },
       {
@@ -5003,11 +4926,6 @@
         "target": "UnitAIInfo",
         "key": "UnitAIType",
         "value": "iWeightModifier"
-      },
-      {
-        "source": "VassalRefuseAttitudeThreshold",
-        "property": "VassalRefuseAttitudeThreshold",
-        "kind": "enum"
       },
       {
         "source": "iAtPeaceAttitudeChangeLimit",
@@ -5034,12 +4952,6 @@
         "default": 0
       },
       {
-        "source": "iAttackOddsChangeRand",
-        "property": "AttackOddsChangeRand",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBaseAttackOddsChange",
         "property": "BaseAttackOddsChange",
         "kind": "int",
@@ -5054,12 +4966,6 @@
       {
         "source": "iBasePeaceWeight",
         "property": "BasePeaceWeight",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iBetterRankDifferenceAttitudeChange",
-        "property": "BetterRankDifferenceAttitudeChange",
         "kind": "int",
         "default": 0
       },
@@ -5088,24 +4994,6 @@
         "default": 0
       },
       {
-        "source": "iConquestVictoryWeight",
-        "property": "ConquestVictoryWeight",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCultureVictoryWeight",
-        "property": "CultureVictoryWeight",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDeclareWarTradeRand",
-        "property": "DeclareWarTradeRand",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDefensivePactAttitudeChangeLimit",
         "property": "DefensivePactAttitudeChangeLimit",
         "kind": "int",
@@ -5114,12 +5002,6 @@
       {
         "source": "iDefensivePactAttitudeDivisor",
         "property": "DefensivePactAttitudeDivisor",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDemandRebukedSneakProb",
-        "property": "DemandRebukedSneakProbability",
         "kind": "int",
         "default": 0
       },
@@ -5148,30 +5030,6 @@
         "default": 0
       },
       {
-        "source": "iDiplomacyVictoryWeight",
-        "property": "DiplomacyVictoryWeight",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDogpileWarRand",
-        "property": "DogpileWarRand",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDominationVictoryWeight",
-        "property": "DominationVictoryWeight",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iEspionageWeight",
-        "property": "EspionageWeight",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iFavoriteCivicAttitudeChange",
         "property": "FavoriteCivicAttitudeChange",
         "kind": "int",
@@ -5190,74 +5048,8 @@
         "default": 0
       },
       {
-        "source": "iFreedomAppreciation",
-        "property": "FreedomAppreciation",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iLimitedWarPowerRatio",
-        "property": "LimitedWarPowerRatio",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iLimitedWarRand",
-        "property": "LimitedWarRand",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iLostWarAttitudeChange",
-        "property": "LostWarAttitudeChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iMakePeaceRand",
-        "property": "MakePeaceRand",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iMaxGoldPerTurnTradePercent",
-        "property": "MaxGoldPerTurnTradePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iMaxGoldTradePercent",
-        "property": "MaxGoldTradePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iMaxWarDistantPowerRatio",
-        "property": "MaxWarDistantPowerRatio",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iMaxWarMinAdjacentLandPercent",
-        "property": "MaxWarMinAdjacentLandPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iMaxWarNearbyPowerRatio",
-        "property": "MaxWarNearbyPowerRatio",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iMaxWarRand",
         "property": "MaxWarRand",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iNoTechTradeThreshold",
-        "property": "NoTechTradeThreshold",
         "kind": "int",
         "default": 0
       },
@@ -5274,20 +5066,8 @@
         "default": 0
       },
       {
-        "source": "iPeaceWeightRand",
-        "property": "PeaceWeightRand",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iRazeCityProb",
         "property": "RazeCityProbability",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iRefuseToTalkWarThreshold",
-        "property": "RefuseToTalkWarThreshold",
         "kind": "int",
         "default": 0
       },
@@ -5310,42 +5090,6 @@
         "default": 0
       },
       {
-        "source": "iShareWarAttitudeChange",
-        "property": "ShareWarAttitudeChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iShareWarAttitudeChangeLimit",
-        "property": "ShareWarAttitudeChangeLimit",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iShareWarAttitudeDivisor",
-        "property": "ShareWarAttitudeDivisor",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iSpaceVictoryWeight",
-        "property": "SpaceVictoryWeight",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTechTradeKnownPercent",
-        "property": "TechTradeKnownPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iVassalPowerModifier",
-        "property": "VassalPowerModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iWarmongerRespect",
         "property": "WarmongerRespect",
         "kind": "int",
@@ -5354,12 +5098,6 @@
       {
         "source": "iWonderConstructRand",
         "property": "WonderConstructRand",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iWorseRankDifferenceAttitudeChange",
-        "property": "WorseRankDifferenceAttitudeChange",
         "kind": "int",
         "default": 0
       },
@@ -5408,11 +5146,6 @@
         "valueTarget": "UnitCombatInfo"
       },
       {
-        "source": "ShortDescription",
-        "property": "ShortDescription",
-        "kind": "text"
-      },
-      {
         "source": "TradeYieldModifiers",
         "property": "TradeYieldModifiers",
         "kind": "yield"
@@ -5431,12 +5164,6 @@
       {
         "source": "bNonStateReligionCommerce",
         "property": "NonStateReligionCommerce",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bUpgradeAnywhere",
-        "property": "UpgradeAnywhere",
         "kind": "bool",
         "default": 0
       },

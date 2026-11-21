@@ -1324,7 +1324,7 @@ anarchy). Other mods read it through
 What stays in the base game:
 
 - **Identities.** Foundation's `ReligionIdentityDef` (`foundation:buddhism`, ...) is what
-  buildings (`ReligionType`, `FoundsReligion`), leaders (`FavoriteReligion`), the
+  buildings (`ReligionType`, `FoundsReligion`), the
   `religion` requirement leaf and the mod's own building and unit rows
   (`GlobalReligionCommerce`, `ReligionChanges`, `ReligionSpreads`) name. A `ReligionDef` is the mod's rules about one
   identity: its id (`religion:buddhism`, kept in saves) and `Identity`. `ReligionIdentities`

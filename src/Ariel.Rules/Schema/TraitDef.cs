@@ -13,12 +13,10 @@ public sealed class TraitDef : GameContentDef
     [ContentReference(typeof(PromotionDef), ReferencePart.Keys)]
     [ContentReference(typeof(UnitCombatDef), ReferencePart.Values)]
     public ImmutableDictionary<string, ImmutableArray<string>> CombatTypePromotions { get; init; } = ImmutableDictionary<string, ImmutableArray<string>>.Empty;
-    public string ShortDescription { get; init; } = "";
     public YieldVector TradeYieldModifiers { get; init; } = default;
     public YieldVector YieldChanges { get; init; } = default;
     public bool ExtraCultureLevel { get; init; } = false;
     public bool NonStateReligionCommerce { get; init; } = false;
-    public bool UpgradeAnywhere { get; init; } = false;
     public int DomesticGreatGeneralRateModifier { get; init; } = 0;
     public int GreatGeneralRateModifier { get; init; } = 0;
     public int GreatPeopleRateModifier { get; init; } = 0;

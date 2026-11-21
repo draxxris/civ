@@ -25,7 +25,6 @@ public sealed class CivilizationDef : GameContentDef
     public ImmutableDictionary<string, string?> UnitOverrides { get; init; } = ImmutableDictionary<string, string?>.Empty;
     public bool AiPlayable { get; init; } = false;
     public bool Playable { get; init; } = false;
-    public string Adjective { get; init; } = "";
     [ContentReference(typeof(CivilizationDef))]
     public string? DerivativeCivilization { get; init; }
 }

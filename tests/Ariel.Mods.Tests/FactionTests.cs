@@ -152,7 +152,7 @@ public sealed class FactionTests
         {
             context.Content<S.CivilizationDef>().Register(new()
             {
-                Id = InvaderCivilization, Name = "Invader State", ShortDescription = "Invaders", Adjective = "Invader",
+                Id = InvaderCivilization, Name = "Invader State", ShortDescription = "Invaders",
             });
             context.Content<S.FactionDef>().Register(new()
             {

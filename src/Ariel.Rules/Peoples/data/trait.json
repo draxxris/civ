@@ -43,7 +43,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Agg",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -51,8 +50,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -98,7 +98,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Agr",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -106,8 +105,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -153,7 +153,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Chm",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -161,8 +160,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -208,7 +208,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Cre",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -216,8 +215,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -270,7 +270,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Dec",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -278,8 +277,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -325,7 +325,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Exp",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -333,8 +332,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -380,7 +380,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Fin",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -388,8 +387,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -439,7 +439,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Hum",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -447,8 +446,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": -20,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -494,7 +494,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Imp",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -502,8 +501,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -549,7 +549,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Ind",
     "strategy": "",
     "teamWonderProductionPercent": 50,
     "tradeYieldModifiers": {
@@ -557,8 +556,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 50,
     "yieldChanges": {
@@ -619,7 +619,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Nom",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -627,8 +626,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -674,7 +674,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Org",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -682,8 +681,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": -50,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -729,7 +729,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Phi",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -738,11 +737,11 @@
       "production": 0
     },
     "unsupported": [
+      "ShortDescription",
       "fRevIdxBadReligionMod",
       "fRevIdxGoodReligionMod",
       "fRevIdxNationalityMod"
     ],
-    "upgradeAnywhere": false,
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -800,7 +799,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Pro",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -808,8 +806,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -855,7 +854,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Sci",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -863,8 +861,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -923,7 +922,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Sea",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -931,8 +929,9 @@
       "food": 0,
       "production": 0
     },
-    "unsupported": [],
-    "upgradeAnywhere": false,
+    "unsupported": [
+      "ShortDescription"
+    ],
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
@@ -978,7 +977,6 @@
     "nonStateReligionCommerce": false,
     "pedia": "",
     "requirements": null,
-    "shortDescription": "Spi",
     "strategy": "",
     "teamWonderProductionPercent": 0,
     "tradeYieldModifiers": {
@@ -987,9 +985,9 @@
       "production": 0
     },
     "unsupported": [
+      "ShortDescription",
       "fRevIdxGoodReligionMod"
     ],
-    "upgradeAnywhere": false,
     "upkeepModifier": 0,
     "worldWonderProductionPercent": 0,
     "yieldChanges": {
