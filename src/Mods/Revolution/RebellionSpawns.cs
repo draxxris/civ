@@ -12,7 +12,7 @@ internal static class RebellionSpawns
             .Where(t => Walkable(sim, city, t)).ToArray();
         var state = RevolutionService.Edit(sim, city);
         // Rebels belong to the hostile faction; without one (no Barbarians mod) a rebellion only releases pressure.
-        if (candidates.Length == 0 || sim.Rules().HostileFaction is null)
+        if (candidates.Length == 0 || PlayerRules.UprisingFaction(sim) is not { } faction)
         {
             int released = Math.Min(state.InstabilityIndex, rules.RebellionRelease);
             state.Suppress(released);
@@ -22,7 +22,7 @@ internal static class RebellionSpawns
         }
         Shuffle(sim, candidates);
         var tiles = candidates.Take(rules.RebelUnits).ToArray();
-        int rebel = sim.Rules().HostileFaction!.Ensure(sim);
+        int rebel = sim.Rules().Peoples.EnsureFaction(sim, faction);
         var units = new List<int>();
         foreach (var tile in tiles) units.Add(sim.Rules().Units.Create(sim, rebel, rules.RebelUnit, sim.State.Grid.HexOf(tile)).Id);
         // Pressure above the threshold is discarded, so a rebellion always leaves the city below it.

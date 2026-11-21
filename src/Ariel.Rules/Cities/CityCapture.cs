@@ -49,7 +49,7 @@ internal sealed class CityCapture : ICityCaptureService
     private static int Next(Simulation sim, int maximum) => maximum > 0 ? sim.Rng.Next(maximum) : 0;
     private static void ResetState(Simulation sim, City city, int player, CityRuleState state)
     {
-        if (CityCulture.IsBarbarian(sim, city.Owner)) state.OriginalCivilization = null;
+        if (!PlayerRules.IsNation(sim, city.Owner)) state.OriginalCivilization = null;
         else state.OriginalCivilization ??= sim.State.PlayerById(city.Owner).Civilization;
         state.CapturedFrom = city.Owner;
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;

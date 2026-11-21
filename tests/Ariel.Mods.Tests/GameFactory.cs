@@ -36,13 +36,21 @@ public static partial class GameFactory
         PlayerAis = Enumerable.Repeat<string?>("ai:standard", players).ToArray(),
     });
 
-    /// <summary>Make an existing player the game's one barbarian player, as if the faction had appeared as them.</summary>
-    public static void MakeBarbarian(Simulation sim, int player)
-    {
-        var state = sim.State.Extensions.Get<MilitaryGameState>(sim.Content);
-        if (state is null) { state = new(); sim.State.Extensions.Set(sim.Content, state); }
-        state.SetBarbarianPlayer(player);
-    }
+    /// <summary>The barbarian faction's row, attached by the Barbarians mod, or null when the mod is not loaded.</summary>
+    public static Ariel.Content.Schema.FactionDef? BarbarianFaction(ContentDb content) =>
+        content.Get<Ariel.Content.Schema.FactionDef>().All.SingleOrDefault(f => f.Id == "barbarians:barbarian");
+
+    /// <summary>The barbarian player, or null before the faction first appears.</summary>
+    public static int? BarbarianPlayer(Simulation sim) =>
+        BarbarianFaction(sim.Content) is { } faction ? PlayerRules.FactionPlayer(sim, faction) : null;
+
+    /// <summary>The barbarian player, created on first use as the rules do.</summary>
+    public static int EnsureBarbarian(Simulation sim) => sim.Rules().Peoples.EnsureFaction(sim, BarbarianFaction(sim.Content)!);
+
+    /// <summary>Make an existing player the barbarian player, as if the faction had appeared as them: a player is a
+    /// faction's by its civilization, which a fixture may rewrite although the rules never do.</summary>
+    public static void MakeBarbarian(Simulation sim, int player) =>
+        typeof(Player).GetProperty(nameof(Player.Civilization))!.SetValue(sim.State.PlayerById(player), BarbarianFaction(sim.Content)!.Target);
     /// <summary>Remove political inputs from fixtures that isolate another rules service.</summary>
     public static void NeutralPolitics(Simulation sim)
     {

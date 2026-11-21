@@ -108,7 +108,7 @@ internal sealed class DiplomacyScreen : IGameScreen
     {
         var sim = context.Sim;
         var local = context.Local;
-        var partners = rivals.Where(p => PlayerRules.IsAlive(sim, p.Id) && !PlayerRules.IsBarbarian(sim, p.Id)).ToList();
+        var partners = rivals.Where(p => PlayerRules.IsAlive(sim, p.Id) && PlayerRules.Negotiates(sim, p.Id)).ToList();
         var partner = partners.FirstOrDefault(p => p.Id == local.Int("partner"));
         var items = new List<ViewElement>
         {
@@ -265,7 +265,7 @@ internal sealed record DealDraft(IReadOnlyList<DiplomaticTradeItem> Giving, IRea
         foreach (var tech in giver.Techs.Where(t => !taker.Techs.Contains(t)).Order(StringComparer.Ordinal))
             yield return new(from, TradeItemKind.Technology, tech);
         if (war) yield break;
-        foreach (var third in sim.State.Players.Where(p => p.TeamId != fromTeam && p.TeamId != toTeam && !PlayerRules.IsBarbarian(sim, p.Id)
+        foreach (var third in sim.State.Players.Where(p => p.TeamId != fromTeam && p.TeamId != toTeam && PlayerRules.Negotiates(sim, p.Id)
             && sim.State.Cities.Any(c => c.Owner == p.Id) && relations.HasMet(sim, fromTeam, p.TeamId)).OrderBy(p => p.Id))
             yield return new(from, TradeItemKind.Embargo, Against: third.Id);
     }

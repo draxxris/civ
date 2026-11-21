@@ -100,7 +100,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         var sim = P7ModFixture.Scenario(mods.Wonders);
         var city = P7ModFixture.City(sim);
         Complete(sim, city, "cities:great_wall");
-        int barbarian = sim.Rules().HostileFaction!.Ensure(sim);
+        int barbarian = GameFactory.EnsureBarbarian(sim);
         var grid = sim.State.Grid;
         var movement = sim.Rules().Movement;
         var home = grid.TileAt(city.Position);

@@ -119,7 +119,7 @@ public sealed class AiPlannerTests
         Assert.NotNull(rules.Victory);
         Assert.Null(rules.CombatLeaders);
         Assert.Empty(rules.FreeBuildingGrants);
-        Assert.Null(rules.HostileFaction);
+        Assert.Null(GameFactory.BarbarianFaction(content));
         Assert.DoesNotContain(content.Services.Get<IAiPlanner>(), p => !p.Id.StartsWith("ai:", StringComparison.Ordinal));
         Assert.Empty(content.Services.Get<IProductionWishes>());
 

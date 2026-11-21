@@ -14,7 +14,6 @@ internal sealed class RelationsService : IRelationsService
         if (state is not null) return state;
         state = new(); sim.State.Extensions.Set(sim.Content, state); return state;
     }
-    private static bool Barbarian(Simulation sim, int team) => sim.State.TeamById(team).Members.Any(p => PlayerRules.IsBarbarian(sim, p));
     private static IEnumerable<int> Members(Simulation sim, int team) =>
         sim.State.Players.Where(p => p.TeamId == team).OrderBy(p => p.Id).Select(p => p.Id);
 
@@ -23,7 +22,7 @@ internal sealed class RelationsService : IRelationsService
 
     public void EstablishContact(Simulation sim, int teamA, int teamB)
     {
-        if (teamA == teamB || Barbarian(sim, teamA) || Barbarian(sim, teamB) || HasMet(sim, teamA, teamB)) return;
+        if (teamA == teamB || !PlayerRules.TeamNegotiates(sim, teamA) || !PlayerRules.TeamNegotiates(sim, teamB) || HasMet(sim, teamA, teamB)) return;
         var pair = TeamPair.Of(teamA, teamB);
         Edit(sim).Relations[pair.Key] = new() { First = pair.First, Second = pair.Second, ContactTurn = sim.State.Turn, PeaceStarted = sim.State.Turn };
         sim.Events.Publish(new TeamsMet(pair.First, pair.Second));
@@ -55,7 +54,7 @@ internal sealed class RelationsService : IRelationsService
         if (!sim.State.Players.Any(p => p.Id == player) || !sim.State.Players.Any(p => p.Id == target)) return "unknown player";
         int a = sim.TeamOf(player).Id, b = sim.TeamOf(target).Id;
         if (a == b) return "same team";
-        return Barbarian(sim, a) || Barbarian(sim, b) ? "barbarians are always at war" : null;
+        return PlayerRules.TeamAlwaysAtWar(sim, a) || PlayerRules.TeamAlwaysAtWar(sim, b) ? "that faction is always at war" : null;
     }
     private bool BindingPeace(Simulation sim, int a, int b) => Relation(sim, a, b)?.HasBindingPeace(sim.State.Turn) == true;
 
@@ -166,7 +165,7 @@ internal sealed class RelationsService : IRelationsService
         if (!sim.Content.TryGet<MemoryKindDef>(kind, out var def))
             throw new InvalidOperationException($"'{kind}' is not a registered memory kind");
         if (sim.TeamOf(fromPlayer).Id == sim.TeamOf(towardPlayer).Id
-            || PlayerRules.IsBarbarian(sim, fromPlayer) || PlayerRules.IsBarbarian(sim, towardPlayer)) return;
+            || !PlayerRules.Negotiates(sim, fromPlayer) || !PlayerRules.Negotiates(sim, towardPlayer)) return;
         var memories = Edit(sim).Memories;
         string key = PlayerDirection.Of(fromPlayer, towardPlayer).Key;
         if (!memories.TryGetValue(key, out var ledger)) memories[key] = ledger = new(StringComparer.Ordinal);

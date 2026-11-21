@@ -34,7 +34,7 @@ internal sealed class CityReligions(ReligionService service) : ICityReligions
     {
         if (ReligionIdentities.Religion(sim.Content, building.FoundsReligion) is { } founds)
         {
-            if (PlayerRules.IsBarbarian(sim, city.Owner)) return "Barbarians cannot found a religion";
+            if (!PlayerRules.IsNation(sim, city.Owner)) return "Barbarians cannot found a religion";
             if (ReligionData.Game(sim).Founded.ContainsKey(founds)) return "Religion is already founded";
         }
         if (building.FreeFromStateReligion) return null;

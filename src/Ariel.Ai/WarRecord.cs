@@ -47,7 +47,7 @@ internal static class WarRecord
     private static void Add(Simulation sim, int winner, int loser, int points)
     {
         if (winner == loser || points == 0 || !sim.State.Players.Any(p => p.Id == winner) || !sim.State.Players.Any(p => p.Id == loser)) return;
-        if (PlayerRules.IsBarbarian(sim, winner) || PlayerRules.IsBarbarian(sim, loser)) return;
+        if (!PlayerRules.IsNation(sim, winner) || !PlayerRules.IsNation(sim, loser)) return;
         int a = sim.TeamOf(winner).Id, b = sim.TeamOf(loser).Id;
         if (a == b || !sim.State.TeamById(a).Wars.Contains(b)) return;
         var mine = Edit(sim, a).WarScore; mine[b] = checked(mine.GetValueOrDefault(b) + points);

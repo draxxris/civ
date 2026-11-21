@@ -107,9 +107,6 @@ public sealed class GameRules : IRuleset
     /// <summary>Interception by the feature that flies aircraft, or null without one: then no aircraft can be trained
     /// and no unit stands on intercept.</summary>
     public IAirOperations? AirOperations { get; private set; }
-    /// <summary>The hostile faction, answered by the feature that runs it, or null without one: no hostile player
-    /// appears and huts release no hostile villagers.</summary>
-    public IHostileFaction? HostileFaction { get; private set; }
     /// <summary>Where espionage commerce goes, answered by the feature that spends it, or null without one; the economy
     /// banks it then.</summary>
     public IEspionageSpending? EspionageSpending { get; private set; }
@@ -203,7 +200,6 @@ public sealed class GameRules : IRuleset
         CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
         CityReligions = services.Get<ICityReligions>().SingleOrDefault();
         AirOperations = services.Get<IAirOperations>().SingleOrDefault();
-        HostileFaction = services.Get<IHostileFaction>().SingleOrDefault();
         EspionageSpending = services.Get<IEspionageSpending>().SingleOrDefault();
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();

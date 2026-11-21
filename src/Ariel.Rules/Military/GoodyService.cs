@@ -9,7 +9,7 @@ internal static class GoodyService
     {
         var plot = sim.State.PlotAt(unit.Position);
         if (plot.Improvement is not { } improvement || !sim.Content.Get<S.ImprovementDef>(improvement).Goody) return;
-        if (PlayerRules.IsBarbarian(sim, unit.Owner)) return;
+        if (!PlayerRules.IsNation(sim, unit.Owner)) return;
         plot.Improvement = null;
         var goodies = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).Goodies.Select(sim.Content.Get<S.GoodyDef>).Where(g => Eligible(sim, unit, g)).ToArray();
         if (goodies.Length == 0) return;
@@ -34,7 +34,7 @@ internal static class GoodyService
         if (goody.Tech && !Technologies(sim, unit).Any()) return false;
         if (!GrantEligible(sim, goody)) return false;
         // Hostile villagers need a hostile faction to belong to.
-        return goody.BarbarianUnit is null || sim.Rules().HostileFaction is not null && HostileEligible(sim, unit);
+        return goody.BarbarianUnit is null || PlayerRules.UprisingFaction(sim) is not null && HostileEligible(sim, unit);
     }
     private static bool ExperienceEligible(Simulation sim, S.UnitDef unit, S.GoodyDef goody) => goody.Experience <= 0 || sim.State.Turn > 10 && unit.Strength > 0;
     private static bool GrantEligible(Simulation sim, S.GoodyDef goody) => goody.GrantedUnit is not { } granted || sim.Content.Get<S.UnitDef>(granted).Strength == 0 || sim.State.Turn > 20;
@@ -79,7 +79,7 @@ internal static class GoodyService
     }
     private static void HostileVillagers(Simulation sim, Unit unit, S.GoodyDef goody, string type)
     {
-        int owner = sim.Rules().HostileFaction!.Ensure(sim);
+        int owner = sim.Rules().Peoples.EnsureFaction(sim, PlayerRules.UprisingFaction(sim)!);
         var candidates = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(unit.Position)).Where(t =>
             !sim.Content.Get<S.TerrainDef>(sim.State.Plots[t.Value].Terrain).IsWater && sim.State.Plots[t.Value].Kind != PlotKind.Peak
             && !sim.State.UnitsAt(sim.State.Grid.HexOf(t)).Any()).ToArray();

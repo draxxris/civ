@@ -131,7 +131,7 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         if (halvingTurns <= 0) return;
         halvingTurns = Math.Max(10, halvingTurns * CityData.Speed(sim).GoldenAgePercent / 100);
         if (sim.State.Turn % halvingTurns != 0) return;
-        var barbarians = sim.State.Players.Where(p => IsBarbarian(sim, p.Id))
+        var barbarians = sim.State.Players.Where(p => !PlayerRules.IsNation(sim, p.Id))
             .Select(p => p.Id).ToHashSet();
         var ranges = new CultureRanges(sim);
         foreach (var tile in sim.State.Grid.Tiles)
@@ -279,8 +279,6 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         return Math.Max(1, 1 + penalty);
     }
     private static bool CrossesRiver(Simulation sim, TileId from, TileId to) => sim.State.HasRiver(from, to);
-    /// <summary>Kept as this mod's entry point; <see cref="PlayerRules.IsBarbarian"/> is the single definition.</summary>
-    internal static bool IsBarbarian(Simulation sim, int player) => PlayerRules.IsBarbarian(sim, player);
     internal static int CultureRadius(Simulation sim, City city) => Math.Max(1, CityData.LevelIndex(sim, city));
 }
 

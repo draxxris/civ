@@ -115,7 +115,7 @@ internal sealed partial class CombatService : ICombatService
         var winner = attackWon ? a : d; var loser = attackWon ? d : a;
         int experience = VictoryExperience(sim, a, d, preview, attackWon);
         Experience(sim, winner, loser, combatPlot, experience);
-        if (PlayerRules.IsBarbarian(sim, loser.Owner)) MilitaryData.EditPlayer(sim, winner.Owner).WinsAgainstBarbarians++;
+        if (PlayerRules.IsHandicapFoe(sim, loser.Owner)) MilitaryData.EditPlayer(sim, winner.Owner).WinsAgainstBarbarians++;
         MilitaryData.RemoveUnit(sim, loser.Id);
         if (MilitaryData.Definition(sim, a).Suicide && sim.State.FindUnit(a.Id) is not null) MilitaryData.RemoveUnit(sim, a.Id);
     }
@@ -156,7 +156,7 @@ internal sealed partial class CombatService : ICombatService
     internal static void Experience(Simulation sim, Unit winner, Unit opponent, Hex combatPlot, int amount)
     {
         int cap = int.MaxValue;
-        if (PlayerRules.IsBarbarian(sim, opponent.Owner)) cap = MilitaryData.Raw(sim, "BARBARIAN_MAX_XP_VALUE", 40);
+        if (PlayerRules.IsHandicapFoe(sim, opponent.Owner)) cap = MilitaryData.Raw(sim, "BARBARIAN_MAX_XP_VALUE", 40);
         if (MilitaryData.Definition(sim, opponent).Animal) cap = MilitaryData.Raw(sim, "ANIMAL_MAX_XP_VALUE", 20);
         var state = MilitaryData.Edit(sim, winner);
         int change = amount * 100;
@@ -168,7 +168,7 @@ internal sealed partial class CombatService : ICombatService
         long previous = winner.Experience * 100L + state.ExperienceRemainder;
         long next = previous < cap * 100L ? Math.Min(cap * 100L, previous + change) : previous;
         winner.Experience = (int)(next / 100); state.ExperienceRemainder = (int)(next % 100);
-        if (!PlayerRules.IsBarbarian(sim, opponent.Owner)) AwardGeneralPoints(sim, winner, opponent, combatPlot, amount);
+        if (!PlayerRules.IsHandicapFoe(sim, opponent.Owner)) AwardGeneralPoints(sim, winner, opponent, combatPlot, amount);
     }
     private static void AwardGeneralPoints(Simulation sim, Unit winner, Unit opponent, Hex combatPlot, int amount)
     {

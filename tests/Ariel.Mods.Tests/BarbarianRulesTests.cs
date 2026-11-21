@@ -36,14 +36,14 @@ public sealed class BarbarianRulesTests
         return sim;
     }
     private static IEnumerable<Unit> Ships(Simulation sim) => sim.State.Units.Where(u =>
-        PlayerRules.IsBarbarian(sim, u.Owner)
+        !PlayerRules.IsNation(sim, u.Owner)
         && sim.Content.Get<S.UnitDef>(u.Type).Domain == "military:domain_sea");
 
     [Fact]
     public void The_mod_answers_the_hostile_faction_and_runs_spawns_and_behaviour()
     {
         var content = new LoadedMods().Content;
-        Assert.NotNull(content.Rules().HostileFaction);
+        Assert.NotNull(GameFactory.BarbarianFaction(content));
         Assert.Equal(TurnPhase.GameBegin, content.TurnSystems.Get("barbarians:behavior").Order);
         // Just after the spawn phase's random events, where barbarian spawns ran as part of the base game.
         Assert.Equal(TurnPhase.Spawns + 1, content.TurnSystems.Get("barbarians:spawns").Order);
@@ -53,7 +53,7 @@ public sealed class BarbarianRulesTests
     public void Without_the_mod_no_hostile_player_appears_and_the_ai_still_plays()
     {
         var content = ModLoader.Build(new LoadedMods().Sources.Where(s => s.Manifest.Id != "barbarians"));
-        Assert.Null(content.Rules().HostileFaction);
+        Assert.Null(GameFactory.BarbarianFaction(content));
         Assert.DoesNotContain(content.TurnSystems.All, s => s.Id.StartsWith("barbarians:", StringComparison.Ordinal));
 
         var sim = GameFactory.CreateAi(content, seed: 5, players: 2);
@@ -63,7 +63,7 @@ public sealed class BarbarianRulesTests
             sim.AdvanceTurn();
             goodies.AddRange(sim.Events.PreviousTurn.OfType<GoodyReceived>());
         }
-        Assert.Null(PlayerRules.BarbarianPlayer(sim));
+        Assert.Null(GameFactory.BarbarianPlayer(sim));
         Assert.Equal(2, sim.State.Players.Count);
         Assert.All(sim.State.Players, p => Assert.True(sim.State.Cities.Any(c => c.Owner == p.Id), $"player {p.Id} has no city"));
         // Huts still pay out, but never with hostile villagers: they would need a hostile faction to belong to.

@@ -1,18 +1,23 @@
+using Ariel.Content.Schema;
 using Ariel.Game;
+using Ariel.Rules;
 using Ariel.Modding;
 
 namespace Ariel.Mods.Barbarians;
 
-/// <summary>The barbarians: the hostile player, created when the first barbarian appears; land units spawned in
-/// unclaimed land and ships off unclaimed coasts; and how every barbarian unit moves and attacks. The base game keeps
-/// the hostile-faction flag (<see cref="MilitaryGameState.BarbarianPlayer"/>) and every rule that asks it, and reaches
-/// this mod through <see cref="IHostileFaction"/> for hostile villagers and rebels; movement asks the base game's
+/// <summary>The barbarians: a faction row on the barbarian civilization (<see cref="BarbarianFaction"/>), which makes
+/// its player a faction the base game restricts (never met, always at war, dearer research, the difficulty level's
+/// combat rules) and the one that fields hostile villagers and rebels; land units spawned in unclaimed land and ships
+/// off unclaimed coasts; and how every barbarian unit moves and attacks. Movement asks the base game's
 /// <see cref="IMovementBarrier"/>s, not this mod, what bars a barbarian.</summary>
-public sealed class BarbariansMod : IMod
+public sealed class BarbariansMod : IPreparableMod
 {
+    private static readonly ModJsonFile<FactionDef[]> Factions = new("data/faction.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Factions];
+
     public void Register(IModContext context)
     {
-        context.RegisterService<IHostileFaction>("faction", new BarbarianFaction());
+        ContentRegistration.Load(context, Factions);
         context.TurnSystems.Register(new BarbarianSpawns());
         context.TurnSystems.Register(new BarbarianBehavior());
     }

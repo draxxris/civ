@@ -60,7 +60,7 @@ internal sealed class CivicEffects : IModifierSource
     }
     private static void CivicAnger(Simulation sim, City city, ModifierSink sink)
     {
-        var others = sim.State.Players.Where(p => p.Id != city.Owner && !PlayerRules.IsBarbarian(sim, p.Id)
+        var others = sim.State.Players.Where(p => p.Id != city.Owner && PlayerRules.IsNation(sim, p.Id)
             && sim.TeamOf(p.Id).Id != sim.TeamOf(city.Owner).Id)
             .Select(p => new { Player = p, Cities = sim.State.Cities.Count(c => c.Owner == p.Id) }).ToArray();
         int possible = others.Sum(p => p.Cities);

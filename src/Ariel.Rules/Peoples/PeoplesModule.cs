@@ -18,6 +18,8 @@ public sealed class PeoplesModule : IPreparableMod
         ContentRegistration.Load(context, Civilizations);
         ContentRegistration.Load(context, Leaders);
         ContentRegistration.Load(context, Traits);
+        // Peoples owns the faction row type, so it exists even when no mod attaches one.
+        _ = context.Content<FactionDef>();
         var peoples = new PeoplesService();
         context.RegisterService<IPeoplesService>("identity", peoples);
         context.RegisterService<IModifierSource>("traits", new TraitEffects(peoples));

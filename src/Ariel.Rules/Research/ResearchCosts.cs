@@ -46,10 +46,20 @@ internal static class ResearchCosts
             lines.Add(new("research:rules", key + ":cost", cost));
         }
     }
+    /// <summary>What research costs a faction's team, from the faction's row: its percentage, or the highest one listed
+    /// for a game option that is on. A team of nations pays the normal cost.</summary>
     private static int BarbarianPercent(Simulation sim, Team team)
     {
-        if (!team.Members.Any(p => PlayerRules.IsBarbarian(sim, p))) return 100;
-        return sim.IsOptionEnabled("foundation:gameoption_raging_barbarians") || sim.IsOptionEnabled("foundation:gameoption_barbarian_world") ? 1200 : 300;
+        int percent = 100;
+        foreach (int member in team.Members)
+        {
+            if (PlayerRules.Faction(sim, member) is not { } faction) continue;
+            int cost = faction.ResearchCostPercent;
+            foreach (var option in faction.ResearchCostPercentWithOption)
+                if (sim.IsOptionEnabled(option.Key)) cost = Math.Max(cost, option.Value);
+            percent = Math.Max(percent, cost);
+        }
+        return percent;
     }
 
     internal static int RateModifier(Simulation sim, Team team, string tech)

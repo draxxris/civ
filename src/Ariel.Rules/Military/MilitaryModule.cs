@@ -64,7 +64,7 @@ public sealed class MilitaryModule : IPreparableMod
         context.Subscribe<TurnStarted>("begin", (sim, _) =>
         {
             foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) units.Initialize(sim, unit.Id);
-            foreach (var player in sim.State.Players.Where(p => PlayerRules.IsBarbarian(sim, p.Id))) player.EndedTurn = true;
+            foreach (var player in sim.State.Players.Where(p => !PlayerRules.IsNation(sim, p.Id))) player.EndedTurn = true;
             CombatService.HistoryState(sim).Combats.Clear();
             CombatService.HistoryState(sim).ReconSights.Clear();
             MilitaryData.Sight(sim);

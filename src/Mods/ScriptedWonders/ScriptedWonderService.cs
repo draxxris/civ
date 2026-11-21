@@ -109,7 +109,7 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
             var city = ActiveCity(sim, winner.Owner, rule);
             if (city is null) continue;
             int grant = rule.VictoryExperience;
-            if (message.LoserOwner >= 0 && Barbarian(sim, message.LoserOwner))
+            if (message.LoserOwner >= 0 && PlayerRules.IsHandicapFoe(sim, message.LoserOwner))
                 grant = Math.Clamp(BarbarianXpCap(sim) - winner.Experience, 0, grant);
             if (grant == 0) continue;
             winner.Experience += grant;
@@ -117,7 +117,7 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         }
     }
 
-    private static bool Barbarian(Simulation sim, int player) => PlayerRules.IsBarbarian(sim, player);
+    private static bool Barbarian(Simulation sim, int player) => !PlayerRules.IsNation(sim, player);
 
     private static int BarbarianXpCap(Simulation sim) =>
         sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue("BARBARIAN_MAX_XP_VALUE", out var v)

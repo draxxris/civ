@@ -47,7 +47,7 @@ internal sealed class EspionageService : IEspionageService
     private static HashSet<int> LivingTeams(Simulation sim)
     {
         var owners = sim.State.Cities.Select(c => c.Owner).Concat(sim.State.Units.Select(u => u.Owner)).ToHashSet();
-        return sim.State.Players.Where(p => owners.Contains(p.Id) && !PlayerRules.IsBarbarian(sim, p.Id)).Select(p => p.TeamId).ToHashSet();
+        return sim.State.Players.Where(p => owners.Contains(p.Id) && PlayerRules.IsNation(sim, p.Id)).Select(p => p.TeamId).ToHashSet();
     }
 
     public string? ValidateWeight(Simulation sim, int player, int targetTeam, int weight)

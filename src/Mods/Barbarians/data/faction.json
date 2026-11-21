@@ -1,0 +1,17 @@
+[
+  {
+    "alwaysAtWar": true,
+    "handicapFoe": true,
+    "id": "barbarians:barbarian",
+    "leader": "peoples:leader_barbarian",
+    "name": "Barbarians",
+    "negotiates": false,
+    "researchCostPercent": 300,
+    "researchCostPercentWithOption": {
+      "foundation:gameoption_barbarian_world": 1200,
+      "foundation:gameoption_raging_barbarians": 1200
+    },
+    "target": "peoples:barbarian",
+    "uprisings": true
+  }
+]

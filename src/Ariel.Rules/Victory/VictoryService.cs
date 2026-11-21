@@ -44,7 +44,7 @@ internal sealed class VictoryStandings : IVictoryStandings
     {
         var weights = PlayerScores.Weights(sim.Content);
         var teamScores = new Dictionary<int, int>();
-        foreach (var team in sim.State.Players.Where(p => !PlayerRules.IsBarbarian(sim, p.Id)).OrderBy(p => p.Id).GroupBy(p => p.TeamId))
+        foreach (var team in sim.State.Players.Where(p => PlayerRules.IsNation(sim, p.Id)).OrderBy(p => p.Id).GroupBy(p => p.TeamId))
         {
             var members = team.Select(p => p.Id).ToArray();
             _members[team.Key] = members;

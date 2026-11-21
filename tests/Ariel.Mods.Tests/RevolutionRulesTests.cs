@@ -109,21 +109,20 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var sim = P7ModFixture.Scenario(mods.Revolution);
         var city = P7ModFixture.City(sim);
         State(sim, city, 1000);
-        var faction = sim.Rules().HostileFaction!;
         int players = sim.State.Players.Count;
 
-        int? barbarian = rebellionFirst ? null : faction.Ensure(sim);
+        int? barbarian = rebellionFirst ? null : GameFactory.EnsureBarbarian(sim);
         Rebellions(sim);
         int rebel = Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>()).RebelPlayer;
-        barbarian ??= faction.Ensure(sim);
+        barbarian ??= GameFactory.EnsureBarbarian(sim);
 
         Assert.Equal(barbarian, rebel);
         Assert.Equal(players + 1, sim.State.Players.Count);
-        Assert.Equal(rebel, PlayerRules.BarbarianPlayer(sim));
+        Assert.Equal(rebel, GameFactory.BarbarianPlayer(sim));
         Assert.Equal([rebel], sim.TeamOf(rebel).Members);
         Assert.All(sim.State.Teams.Where(t => t.Id != sim.TeamOf(rebel).Id), t => Assert.Contains(t.Id, sim.TeamOf(rebel).Wars));
         var loaded = SaveGame.Load(mods.Revolution, SaveGame.Save(sim));
-        Assert.Equal(rebel, loaded.Rules().HostileFaction!.Ensure(loaded));
+        Assert.Equal(rebel, GameFactory.EnsureBarbarian(loaded));
         Assert.Equal(players + 1, loaded.State.Players.Count);
     }
 
@@ -132,7 +131,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
     {
         var content = ModLoader.Build(new LoadedMods().Sources.Where(s => s.Manifest.Id != "barbarians")
             .Append(ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Revolution"))));
-        Assert.Null(content.Rules().HostileFaction);
+        Assert.Null(GameFactory.BarbarianFaction(content));
         var sim = P7ModFixture.Scenario(content);
         var city = P7ModFixture.City(sim);
         var state = State(sim, city, 1000);
@@ -146,7 +145,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.True(state.InstabilityIndex < 1000);
         Assert.Equal(players, sim.State.Players.Count);
         Assert.Equal(units, sim.State.Units.Count);
-        Assert.Null(PlayerRules.BarbarianPlayer(sim));
+        Assert.Null(GameFactory.BarbarianPlayer(sim));
     }
 
     [Fact]
@@ -165,7 +164,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(city.Id, rebellion.City); Assert.Equal(0, rebellion.Player);
         Assert.Equal(600, rebellion.InstabilityReleased); Assert.Equal(400, state.InstabilityIndex);
         Assert.Equal(2, rebellion.Units.Count);
-        Assert.Equal(PlayerRules.BarbarianPlayer(sim), rebellion.RebelPlayer);
+        Assert.Equal(GameFactory.BarbarianPlayer(sim), rebellion.RebelPlayer);
         Assert.Contains(sim.TeamOf(0).Id, sim.TeamOf(rebellion.RebelPlayer).Wars);
         var rebels = rebellion.Units.Select(sim.State.UnitById).ToArray();
         var legal = neighbors.Skip(3).Select(t => sim.State.Grid.HexOf(t)).ToArray();

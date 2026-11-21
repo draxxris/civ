@@ -16,7 +16,7 @@ internal sealed partial class ReligionService : IReligionService
     public string? ValidateConversion(Simulation sim, int player, string? religion)
     {
         var owner = sim.State.Players.FirstOrDefault(p => p.Id == player);
-        if (owner is null || PlayerRules.IsBarbarian(sim, player)) return "Invalid player";
+        if (owner is null || !PlayerRules.IsNation(sim, player)) return "Invalid player";
         if (GovernmentStatus.IsAnarchy(sim, player)) return "Player is in anarchy";
         var current = ReligionData.Player(sim, player);
         if (current.ConversionTimer > 0) return "Religion conversion cooldown is active";

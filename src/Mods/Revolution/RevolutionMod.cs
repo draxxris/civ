@@ -68,7 +68,7 @@ internal sealed class InstabilityTurns(RevolutionService service) : IPlayerTurnS
     public int Order => TurnPhase.PlayerEnd + 1;
     public void Run(Simulation sim, int player)
     {
-        if (PlayerRules.IsBarbarian(sim, player)) return;
+        if (!PlayerRules.IsNation(sim, player)) return;
         foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)) service.Update(sim, city);
     }
 }

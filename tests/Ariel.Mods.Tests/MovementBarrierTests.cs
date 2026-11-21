@@ -24,7 +24,7 @@ public sealed class MovementBarrierTests(LoadedMods mods) : IClassFixture<Loaded
         var start = new TileId(40);
         var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Position = grid.HexOf(start), Type = "military:warrior", MovesLeft = 60 };
         sim.State.AddUnit(unit);
-        Assert.False(PlayerRules.IsBarbarian(sim, unit.Owner));
+        Assert.True(PlayerRules.IsNation(sim, unit.Owner));
 
         var open = grid.Neighbors(start).First(t => movement.CanEnter(sim, unit.Id, start, t) is null);
         barrier.Barred = grid.HexOf(open);

@@ -201,8 +201,8 @@ public sealed class AiContext
     internal bool IsEnemy(int player) => player != PlayerId && Team.Wars.Contains(Sim.State.PlayerById(player).TeamId);
     /// <summary>Another civilization's player this player is at peace with: not itself, a teammate, an enemy or a barbarian.</summary>
     internal bool Foreign(int player) => player != PlayerId && !IsEnemy(player) && Sim.State.PlayerById(player).TeamId != Team.Id
-        && !PlayerRules.IsBarbarian(Sim, player);
-    internal bool AtWarWithPlayers => Team.Wars.Any(t => Sim.State.TeamById(t).Members.Any(m => !PlayerRules.IsBarbarian(Sim, m)));
+        && PlayerRules.IsNation(Sim, player);
+    internal bool AtWarWithPlayers => Team.Wars.Any(t => Sim.State.TeamById(t).Members.Any(m => PlayerRules.IsNation(Sim, m)));
     public TileId Tile(Hex hex) => Grid.TileAt(hex);
 
     /// <summary>Flavor weight: a base of 10 plus the leader's own flavor, so every flavor counts a little.</summary>
@@ -322,8 +322,8 @@ public sealed class AiContext
     public bool WantsPeace(int enemyTeam)
     {
         if (!Team.Wars.Contains(enemyTeam)) return false;
-        long mine = Team.Members.Where(m => !PlayerRules.IsBarbarian(Sim, m)).Sum(m => Power(Sim, m));
-        long theirs = Sim.State.TeamById(enemyTeam).Members.Where(m => !PlayerRules.IsBarbarian(Sim, m)).Sum(m => Power(Sim, m));
+        long mine = Team.Members.Where(m => PlayerRules.IsNation(Sim, m)).Sum(m => Power(Sim, m));
+        long theirs = Sim.State.TeamById(enemyTeam).Members.Where(m => PlayerRules.IsNation(Sim, m)).Sum(m => Power(Sim, m));
         int length = Turn - (Sim.Rules().Relations.Relation(Sim, Team.Id, enemyTeam)?.WarStarted ?? 0);
         return WarPlanner.WantsPeace(mine, theirs, WarScore(enemyTeam), length);
     }

@@ -41,7 +41,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     }
 
     private IEnumerable<Player> Rivals() => ctx.Sim.State.Players
-        .Where(p => p.Id != ctx.PlayerId && p.TeamId != ctx.Self.TeamId && !PlayerRules.IsBarbarian(ctx.Sim, p.Id)
+        .Where(p => p.Id != ctx.PlayerId && p.TeamId != ctx.Self.TeamId && PlayerRules.Negotiates(ctx.Sim, p.Id)
             && ctx.Sim.State.Cities.Any(c => c.Owner == p.Id) && ctx.Sim.Rules().Relations.HasMet(ctx.Sim, ctx.Self.TeamId, p.TeamId))
         .OrderBy(p => p.Id);
 
@@ -392,7 +392,7 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
     /// better toward it) for gold or a technology, unless that rival refused it lately.</summary>
     private void AskForHelp(IDiplomacyService diplomacy)
     {
-        bool war = ctx.Team.Wars.Any(t => ctx.Sim.State.TeamById(t).Members.Any(m => !PlayerRules.IsBarbarian(ctx.Sim, m)));
+        bool war = ctx.Team.Wars.Any(t => ctx.Sim.State.TeamById(t).Members.Any(m => PlayerRules.IsNation(ctx.Sim, m)));
         if (!war && ctx.Self.Treasury >= ctx.GoldReserve / 2) return;
         foreach (var friend in Partners(diplomacy))
         {

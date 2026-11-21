@@ -109,7 +109,7 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
         var relations = ctx.Sim.Rules().Relations;
         int theirTeam = ctx.Sim.State.PlayerById(player).TeamId;
         bool allyAtWar = ctx.Sim.State.Players.Any(p => p.TeamId != ctx.Self.TeamId && p.TeamId != theirTeam
-            && !PlayerRules.IsBarbarian(ctx.Sim, p.Id) && ctx.Sim.State.TeamById(p.TeamId).Wars.Contains(theirTeam)
+            && PlayerRules.IsNation(ctx.Sim, p.Id) && ctx.Sim.State.TeamById(p.TeamId).Wars.Contains(theirTeam)
             && (relations.Allied(ctx.Sim, ctx.Self.TeamId, p.TeamId)
                 || relations.DispositionToward(ctx.Sim, ctx.PlayerId, p.Id) == Disposition.Friendly));
         return allyAtWar ? -30 : 0;
@@ -141,7 +141,7 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
 
     private bool Candidate(int player)
     {
-        if (player == ctx.PlayerId || PlayerRules.IsBarbarian(ctx.Sim, player) || ctx.Sim.State.PlayerById(player).TeamId == ctx.Self.TeamId) return false;
+        if (player == ctx.PlayerId || !PlayerRules.IsNation(ctx.Sim, player) || ctx.Sim.State.PlayerById(player).TeamId == ctx.Self.TeamId) return false;
         if (ctx.Cities.Count == 0) return false;
         var theirs = KnownCities(player).ToList();
         return theirs.Count > 0 && theirs.Min(c => ctx.Cities.Min(own => ctx.Grid.Distance(own.Position, c.Position))) <= 14;
@@ -155,7 +155,7 @@ internal sealed class WarPlanner(AiContext ctx, ArmyPlan army)
         bool signed = false;
         foreach (var teamId in ctx.Team.Wars.ToList())
         {
-            var enemies = ctx.Sim.State.TeamById(teamId).Members.Where(m => !PlayerRules.IsBarbarian(ctx.Sim, m)).ToList();
+            var enemies = ctx.Sim.State.TeamById(teamId).Members.Where(m => PlayerRules.IsNation(ctx.Sim, m)).ToList();
             if (enemies.Count == 0) continue;
             if (ctx.WantsPeace(teamId) && ctx.Issue(new MakePeaceCommand { Player = ctx.PlayerId, Target = enemies[0] })) signed = true;
         }

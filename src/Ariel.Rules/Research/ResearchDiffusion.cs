@@ -29,7 +29,7 @@ internal static class ResearchDiffusion
     }
 
     private static bool Eligible(Simulation sim, Player player) => ResearchTimeline.Alive(sim, player.Id)
-        && !PlayerRules.IsBarbarian(sim, player.Id);
+        && PlayerRules.IsNation(sim, player.Id);
 
     private static bool HasMet(Simulation sim, IRelationsService relations, Team team, int other) =>
         relations.HasMet(sim, team.Id, other);

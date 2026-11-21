@@ -114,7 +114,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
             state.StrikeTurns = 0;
             return;
         }
-        if (PlayerRules.IsBarbarian(sim, player) || !EconomyData.Cities(sim, player).Any()) return;
+        if (!PlayerRules.IsNation(sim, player) || !EconomyData.Cities(sim, player).Any()) return;
         state.StrikeTurns++;
         if (state.StrikeTurns > 1) DisbandForDeficit(sim, player, state.StrikeTurns / 2);
     }

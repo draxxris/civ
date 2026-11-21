@@ -179,16 +179,6 @@ public sealed class MilitaryUnitState
         _fortifyTurns = 0;
     }
 }
-/// <summary>The hostile faction (the barbarians) as the base game asks it, read through <c>GameRules.HostileFaction</c>
-/// and answered by the feature that runs the faction (the Barbarians mod). The faction is one player on its own team,
-/// at war with every other team, recorded as <see cref="MilitaryGameState.BarbarianPlayer"/>; hostile villagers and
-/// rebellions field units for it. Without an answer no hostile player appears and goody huts never release hostile
-/// villagers.</summary>
-public interface IHostileFaction
-{
-    /// <summary>The hostile player, created on first use. Every caller gets the same player for the rest of the game.</summary>
-    int Ensure(Simulation sim);
-}
 /// <summary>Whether something bars a unit from a plot it could otherwise enter. Any feature registers one as a
 /// service (<c>context.RegisterService&lt;IMovementBarrier&gt;(name, barrier)</c>); movement asks every registered
 /// barrier (<c>GameRules.MovementBarriers</c>), in registration order, before any unit moves without attacking, and
@@ -220,16 +210,6 @@ public interface ICombatLeaders
 /// <summary>Combat is atomic. Reports survive saving between commands within the turn.</summary>
 public sealed class MilitaryGameState
 {
-    /// <summary>The one barbarian player, or null before the faction first appears. It never changes once set.</summary>
-    [JsonInclude] public int? BarbarianPlayer { get; private set; }
-
-    /// <summary>Record the barbarian player. Setting it again to the same player is a no-op; any other player throws.</summary>
-    public void SetBarbarianPlayer(int player)
-    {
-        if (BarbarianPlayer is { } existing && existing != player)
-            throw new InvalidOperationException($"Player {existing} is already the barbarian player");
-        BarbarianPlayer = player;
-    }
     public List<CombatReport> Combats { get; set; } = [];
     public List<ReconSight> ReconSights { get; set; } = [];
 

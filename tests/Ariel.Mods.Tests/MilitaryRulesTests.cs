@@ -366,7 +366,7 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var loaded = SaveGame.Load(mods.Content, SaveGame.Save(sim));
         sim.AdvanceTurn(); loaded.AdvanceTurn();
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        Assert.NotNull(PlayerRules.BarbarianPlayer(sim));
+        Assert.NotNull(GameFactory.BarbarianPlayer(sim));
         Assert.NotEmpty(sim.State.Units);
         sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
     }

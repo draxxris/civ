@@ -57,7 +57,7 @@ internal static class CouncilRules
         && !victory.Status(sim).IsGameOver && victory.IsDecidedBy(sim, CouncilVictory.ConditionId);
 
     /// <summary>A civilization still in the game: not the barbarians, and holding a city or a unit.</summary>
-    internal static bool Alive(Simulation sim, int player) => !PlayerRules.IsBarbarian(sim, player) && PlayerRules.IsAlive(sim, player);
+    internal static bool Alive(Simulation sim, int player) => PlayerRules.IsNation(sim, player) && PlayerRules.IsAlive(sim, player);
     internal static IEnumerable<int> Civilizations(Simulation sim) =>
         sim.State.Players.Select(p => p.Id).Where(p => Alive(sim, p)).Order();
 

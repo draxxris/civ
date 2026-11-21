@@ -202,7 +202,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
 
     internal void Rebel(Simulation sim, City city)
     {
-        if (PlayerRules.IsBarbarian(sim, city.Owner)) return;
+        if (!PlayerRules.IsNation(sim, city.Owner)) return;
         var state = Read(sim, city);
         var rules = Rules(sim);
         if (state.InstabilityIndex < rules.RebellionThreshold || state.IsRebellionOnCooldown(sim.State.Turn)) return;

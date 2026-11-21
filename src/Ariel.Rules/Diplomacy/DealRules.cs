@@ -95,7 +95,7 @@ internal sealed partial class DiplomacyService
     {
         if (item.Amount != 1 || item.ContentId.Length != 0) return "an embargo carries no content or amount";
         int against = item.Against;
-        if (!sim.State.Players.Any(p => p.Id == against) || PlayerRules.IsBarbarian(sim, against)) return "unknown embargo target";
+        if (!sim.State.Players.Any(p => p.Id == against) || !PlayerRules.Negotiates(sim, against)) return "unknown embargo target";
         int giver = sim.TeamOf(item.FromPlayer).Id, target = sim.TeamOf(against).Id;
         if (target == giver || target == sim.TeamOf(recipient).Id) return "an embargo targets a third team";
         if (!sim.State.Cities.Any(c => sim.TeamOf(c.Owner).Id == target)) return "embargo target has no cities";

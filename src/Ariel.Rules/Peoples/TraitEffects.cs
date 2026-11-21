@@ -10,6 +10,20 @@ internal sealed class PeoplesService : IPeoplesService
     public S.CivilizationDef? Civilization(Simulation sim, int player) => sim.Content.TryGet<S.CivilizationDef>(sim.State.PlayerById(player).Civilization, out var def) ? def : null;
     public IReadOnlyList<S.TraitDef> Traits(Simulation sim, int player) => Leader(sim, player)?.Traits.Where(t => t.Value)
         .OrderBy(t => t.Key, StringComparer.Ordinal).Select(t => sim.Content.Get<S.TraitDef>(t.Key)).ToArray() ?? [];
+
+    public int EnsureFaction(Simulation sim, S.FactionDef faction)
+    {
+        if (PlayerRules.FactionPlayer(sim, faction) is { } existing) return existing;
+        var civilization = sim.Content.Get<S.CivilizationDef>(faction.Target);
+        int playerId = sim.State.Players.Max(p => p.Id) + 1;
+        int teamId = sim.State.Teams.Max(t => t.Id) + 1;
+        sim.State.AddTeam(new Team { Id = teamId });
+        sim.State.AddPlayer(new Player { Id = playerId, TeamId = teamId, Civilization = civilization.Id,
+            Leader = faction.Leader, Name = civilization.ShortDescription, EndedTurn = true });
+        if (faction.AlwaysAtWar)
+            foreach (var team in sim.State.Teams.Where(t => t.Id != teamId)) sim.State.SetWar(teamId, team.Id, true);
+        return playerId;
+    }
 }
 
 internal sealed class TraitEffects(IPeoplesService peoples) : IModifierSource

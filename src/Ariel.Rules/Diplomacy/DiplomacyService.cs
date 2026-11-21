@@ -18,13 +18,12 @@ internal sealed partial class DiplomacyService : IDiplomacyService
     private static bool HasMet(Simulation sim, int a, int b) => Relations(sim).HasMet(sim, a, b);
     private static TeamAgreement? Agreement(Simulation sim, int a, int b) => Read(sim).GetAgreement(a, b);
     private static bool AtWar(Simulation sim, int a, int b) => sim.State.TeamById(a).Wars.Contains(b);
-    private static bool Barbarian(Simulation sim, int team) => sim.State.TeamById(team).Members.Any(p => PlayerRules.IsBarbarian(sim, p));
     private static string? Participants(Simulation sim, int player, int target)
     {
         if (!sim.State.Players.Any(p => p.Id == player) || !sim.State.Players.Any(p => p.Id == target)) return "unknown player";
         int a = sim.TeamOf(player).Id, b = sim.TeamOf(target).Id;
         if (a == b) return "same team";
-        return Barbarian(sim, a) || Barbarian(sim, b) ? "barbarians cannot negotiate" : null;
+        return !PlayerRules.TeamNegotiates(sim, a) || !PlayerRules.TeamNegotiates(sim, b) ? "that faction does not negotiate" : null;
     }
     public bool HasOpenBorders(Simulation sim, int teamA, int teamB) => OpenBordersBetween(sim, teamA, teamB);
     public bool HasDefensivePact(Simulation sim, int teamA, int teamB) => PactBetween(sim, teamA, teamB);

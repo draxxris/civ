@@ -427,7 +427,6 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ITradeTerms` | `TradeTerms` (list) | Relations (`MayTrade`, `FreeTrade`), so deals and trade routes | Diplomacy (embargoes in deals), Votes (sanctions, free trade) | teams at peace trade as their borders allow |
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
-| `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Revolution (rebels) | Barbarians | no hostile player; huts release no hostile villagers, rebellions field no rebels |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IVictoryCondition` | `VictoryConditions` (list) | the victory check, for each enabled `VictoryDef` by the condition its `Rule` names | Victory (conquest, domination, cultural, time), ProjectsVictory (the space race), Votes (the diplomatic victory) | a victory naming an unregistered condition fails the load, so the victory is simply absent |
@@ -1126,27 +1125,55 @@ visibility reveals and the turn clears. The `IAirOperations` seam
 (`GameRules.AirOperations`) answers interception odds; without the mod aircraft cannot
 be trained and no unit can stand on intercept. The client draws no air range on the map.
 
+### Factions
+
+A faction is a player the game runs that is not a nation. It is data: a `FactionDef`
+(`Ariel.Rules/Schema`) is a content attachment to the `CivilizationDef` the faction plays
+as, so a player is a faction's exactly when its civilization carries a row
+(`content.Attachment<FactionDef>(civilization)`). No saved state says who a faction is, and
+any number of factions can be loaded. Peoples owns the row type; a mod adds a faction by
+registering a row, and its own rules decide when the faction's units appear and how they
+move.
+
+The base rules never ask which faction a player is. They ask `PlayerRules` for the
+restriction they care about, each one dictionary lookup on frozen content (no allocation,
+safe from parallel AI scoring):
+
+| Row field | Query | What the base rules do with it |
+| --- | --- | --- |
+| (the row exists) | `IsNation` is false | no economy settlement, score, victory, diffusion, espionage, religion founding or council seat; the player's turn is ended before it begins; rivals' planners do not count it as a rival |
+| `Negotiates` | `Negotiates`, `TeamNegotiates` | false: never met, no deals, embargoes or leader memory, and absent from the diplomacy screen |
+| `AlwaysAtWar` | `AlwaysAtWar`, `TeamAlwaysAtWar` | war with every other team when its player appears; neither side can make peace |
+| `ResearchCostPercent`, `ResearchCostPercentWithOption` | `Faction(...)` | the research cost scale, and the scale that replaces it while a listed game option is on |
+| `HandicapFoe` | `IsHandicapFoe` | the difficulty level's combat bonus and free early wins, the experience cap, and no general points |
+| `Uprisings` | `UprisingFaction` | hostile villagers from goody huts and Revolution's rebels join this faction |
+| `Leader` | | the leader the faction's player is created with |
+
+`IPeoplesService.EnsureFaction(sim, faction)` creates the faction's player on first use (its
+own team, the row's civilization and leader, named by the civilization's short
+description) and returns the same player for the rest of the game.
+`PlayerRules.FactionPlayer` finds it without creating it. Without a faction that fields
+uprisings, goody huts never release hostile villagers and a Revolution rebellion releases
+pressure without fielding rebels.
+
 ### Barbarians
 
 The barbarians are a main mod, `src/Mods/Barbarians` (`barbarians`), shipped and loaded by
-default. It answers the base game's `IHostileFaction` (`GameRules.HostileFaction`): `Ensure`
-creates the hostile player on first use (its own team, at war with every other team, the
-`peoples:barbarian` civilization and leader) and records it as
-`MilitaryGameState.BarbarianPlayer`. It runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBegin` (every barbarian unit
-attacks a neighbour it likely beats or marches on the nearest enemy city; ships hunt ships
-and raid fishing boats) and `barbarians:spawns` at `TurnPhase.Spawns + 1`, just after the
-phase's random events, where the spawns ran as part of the base game. It publishes no API.
+default. Its `data/faction.json` attaches the faction row `barbarians:barbarian` to the base
+`peoples:barbarian` civilization: never met, always at war, research at 300% (1200% with
+the raging options), the difficulty level's combat rules, and the faction that fields
+uprisings. It runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBegin` (every
+barbarian unit attacks a neighbour it likely beats or marches on the nearest enemy city;
+ships hunt ships and raid fishing boats) and `barbarians:spawns` at `TurnPhase.Spawns + 1`,
+just after the phase's random events. Each spawn turn the barbarians also learn every
+technology more than half the other teams know. It publishes no API.
 
-What stays in the base game is the hostile-faction flag and every rule that asks it:
-`MilitaryGameState.BarbarianPlayer` and `PlayerRules.IsBarbarian`/`BarbarianPlayer`, the
-hostile player ending its turn before it begins, experience caps, culture, research cost,
-contact and memory rules, the computer player's refusal to count barbarians as rivals, the handicap, game-speed and era
-fields that tune spawning, and the `peoples:barbarian` civilization and leader. Without the
-mod no hostile player appears, goody huts never release hostile villagers, and a
-Revolution rebellion releases pressure without fielding rebels. Movement asks every
+What stays in the base game is the `peoples:barbarian` civilization and leader, the
+handicap, game-speed and era fields that tune spawning, and the faction rules above, which
+serve any faction. Without the mod no faction is loaded. Movement asks every
 `IMovementBarrier` in `GameRules.MovementBarriers` before any unit's non-attack move,
-without asking whether the unit is a barbarian; ScriptedWonders' border wonders answer
-it and bar only barbarian land units themselves.
+without asking whose unit it is; ScriptedWonders' border wonders answer it and bar only
+faction land units.
 
 ## Government and Peoples services
 
@@ -2303,8 +2330,7 @@ mutable. Saves and hashes include their canonical JSON data.
 Registered state components across mods include:
 
 - Game: `ReligionGameState` (founded holy cities), `EspionageGameState` (global
-  espionage points), `MilitaryGameState` (temporary recon sights, the one barbarian
-  player), `VictoryGameState` (`victory:game_state`, the recorded win) and
+  espionage points), `MilitaryGameState` (temporary recon sights), `VictoryGameState` (`victory:game_state`, the recorded win) and
   `TimedEffectState` (`cities:timed_effects`, every timed modifier effect).
 - Player: `EconomyPlayerState` (sliders, inflation, settlement), `GovernmentPlayerState`
   (anarchy, cooldowns), `ReligionPlayerState` (state religion, cooldown),
