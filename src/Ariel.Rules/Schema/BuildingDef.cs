@@ -165,7 +165,6 @@ public sealed class BuildingDef : GameContentDef
     public int CitiesRequiredPerDomesticConnectedCity { get; init; } = 0;
     public int CitiesRequiredPerForeignConnectedCity { get; init; } = 0;
     public int CoastalDistanceMaintenanceModifier { get; init; } = 0;
-    public int CoastalTradeRoutes { get; init; } = 0;
     public int ConnectedCityMaintenanceModifier { get; init; } = 0;
     public int CaptureSurvivalPercent { get; init; } = 0;
     public int Cost { get; init; } = 0;
@@ -180,7 +179,6 @@ public sealed class BuildingDef : GameContentDef
     public int FoodKept { get; init; } = 0;
     public int ForeignCapitalExtraCommerce { get; init; } = 0;
     public int ForeignConnectedCommerce { get; init; } = 0;
-    public int ForeignTradeRouteModifier { get; init; } = 0;
     public int FreeSpecialist { get; init; } = 0;
     public int FreeTechs { get; init; } = 0;
     public int GlobalExperience { get; init; } = 0;
@@ -192,7 +190,6 @@ public sealed class BuildingDef : GameContentDef
     public int GlobalMaintenanceModifier { get; init; } = 0;
     public int GlobalPopulationChange { get; init; } = 0;
     public int GlobalSpaceProductionModifier { get; init; } = 0;
-    public int GlobalTradeRoutes { get; init; } = 0;
     public int GlobalWarWearinessModifier { get; init; } = 0;
     public int GoldenAgeModifier { get; init; } = 0;
     public int GreatGeneralRateModifier { get; init; } = 0;
@@ -230,8 +227,6 @@ public sealed class BuildingDef : GameContentDef
     public int SpaceProductionModifier { get; init; } = 0;
     public int StateReligionHappiness { get; init; } = 0;
     public int TeamsPrereq { get; init; } = 0;
-    public int TradeRouteModifier { get; init; } = 0;
-    public int TradeRoutes { get; init; } = 0;
     public int TradeMissionModifier { get; init; } = 0;
     public int UnitUpgradePriceModifier { get; init; } = 0;
     public int WarWearinessModifier { get; init; } = 0;

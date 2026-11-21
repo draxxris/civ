@@ -15,5 +15,4 @@ public sealed class YieldDef : GameContentDef
     public int PeakChange { get; init; } = 0;
     public int PopulationChangeDivisor { get; init; } = 0;
     public int PopulationChangeOffset { get; init; } = 0;
-    public int TradeModifier { get; init; } = 0;
 }

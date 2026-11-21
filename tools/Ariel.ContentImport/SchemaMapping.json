@@ -63,12 +63,6 @@
         "property": "PopulationChangeOffset",
         "kind": "int",
         "default": 0
-      },
-      {
-        "source": "iTradeModifier",
-        "property": "TradeModifier",
-        "kind": "int",
-        "default": 0
       }
     ],
     "requirements": []
@@ -928,12 +922,6 @@
       {
         "source": "iTerrainGrainChange",
         "property": "TerrainGrainChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTradeProfitPercent",
-        "property": "TradeProfitPercent",
         "kind": "int",
         "default": 0
       },
@@ -2299,12 +2287,6 @@
         "default": 0
       },
       {
-        "source": "iTradeRoutes",
-        "property": "TradeRoutes",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iWorkerSpeedModifier",
         "property": "WorkerSpeedModifier",
         "kind": "int",
@@ -3052,12 +3034,6 @@
         "default": 0
       },
       {
-        "source": "iCoastalTradeRoutes",
-        "property": "CoastalTradeRoutes",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iConnectedCityMaintenanceModifier",
         "property": "ConnectedCityMaintenanceModifier",
         "kind": "int",
@@ -3142,12 +3118,6 @@
         "default": 0
       },
       {
-        "source": "iForeignTradeRouteModifier",
-        "property": "ForeignTradeRouteModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iFreeSpecialist",
         "property": "FreeSpecialist",
         "kind": "int",
@@ -3210,12 +3180,6 @@
       {
         "source": "iGlobalSpaceProductionModifier",
         "property": "GlobalSpaceProductionModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGlobalTradeRoutes",
-        "property": "GlobalTradeRoutes",
         "kind": "int",
         "default": 0
       },
@@ -3438,18 +3402,6 @@
       {
         "source": "iTeamsPrereq",
         "property": "TeamsPrereq",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTradeRouteModifier",
-        "property": "TradeRouteModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTradeRoutes",
-        "property": "TradeRoutes",
         "kind": "int",
         "default": 0
       },
@@ -7059,6 +7011,86 @@
     "mod": "votes",
     "fields": [
       { "source": "DiploVoteType", "property": "VoteSource", "kind": "ref", "target": "VoteSourceInfo" }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "iCoastalTradeRoutes",
+        "property": "CoastalTradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignTradeRouteModifier",
+        "property": "ForeignTradeRouteModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalTradeRoutes",
+        "property": "GlobalTradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRouteModifier",
+        "property": "TradeRouteModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRoutes",
+        "property": "TradeRoutes",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "TechInfo",
+    "definition": "TechTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "iTradeRoutes",
+        "property": "TradeRoutes",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "YieldInfo",
+    "definition": "YieldTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "iTradeModifier",
+        "property": "TradeModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "WorldInfo",
+    "definition": "WorldSizeTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "iTradeProfitPercent",
+        "property": "TradeProfitPercent",
+        "kind": "int",
+        "default": 0
+      }
     ],
     "requirements": []
   }

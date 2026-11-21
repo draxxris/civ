@@ -189,6 +189,17 @@ An attachment row has its own id in the attaching mod's namespace and names the 
   "target": "government:mercantilism", "noForeignTrade": true, ... }
 ```
 
+The same holds for every base definition: a field only a mod reads is in that mod's
+attachment file, with a row only for the definitions where it is not at its default, and a
+definition without a row reads as the defaults:
+
+- Trade: `data/building-trade.json` (`BuildingTradeDef`: `tradeRoutes`, `globalTradeRoutes`,
+  `coastalTradeRoutes`, `tradeRouteModifier`, `foreignTradeRouteModifier`),
+  `data/tech-trade.json` (`TechTradeDef`: `tradeRoutes`), `data/yield-trade.json`
+  (`YieldTradeDef`: `tradeModifier`), `data/world-size-trade.json` (`WorldSizeTradeDef`:
+  `tradeProfitPercent`) and `data/rule-constants-trade.json` (`RuleConstantsTradeDef`:
+  `tradeProfitPercent`, about `foundation:rule_constants`).
+
 To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
 one of the mod's own. New players start a new option on its `defaultCivic`, or else on
 its first civic without requirements. To give it a new kind of
@@ -224,11 +235,13 @@ values use that default too. Explicit zeroes and negative integers remain intact
 entries. A missing map entry uses the source getter's default slot value. Most effect
 maps use zero, not a percentage multiplier.
 
-`RuleConstantsDef.Values` contains 68 integer constants for growth, food, culture,
+`RuleConstantsDef.Values` contains 67 integer constants for growth, food, culture,
 combat, healing, research (including research diffusion), anarchy, upkeep, golden ages,
-hurried production, conscription, anger, city defense damage, and trade profit. The
+hurried production, conscription, anger and city defense damage. The
 food-wastage growth factor uses permille: the source value 0.05 becomes 50 in
-`FoodWastageGrowthPermille`. Conversion is exact without rounding. `Raw` retains all
+`FoodWastageGrowthPermille`. Conversion is exact without rounding. A constant only a mod
+reads is that mod's row about `foundation:rule_constants` instead (Trade's
+`tradeProfitPercent`). `Raw` retains all
 other XML define entries as exact string key-value pairs. Raw floating-point strings are
 preserved for reference but are not authoritative JSON numbers.
 

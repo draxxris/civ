@@ -133,6 +133,44 @@ public sealed class TypedMappingTests
         Assert.Equal(policy == "MISSING_POLICY", mapper.Issues.Count > 0);
     }
 
+    [Fact]
+    public void A_mod_constant_goes_to_the_mods_row_about_the_rule_constants_and_not_to_the_raw_defines()
+    {
+        var definitions = ContentEmission.Constants(new Dictionary<string, DefineValue>
+        {
+            ["TRADE_PROFIT_PERCENT"] = new("20", "iDefineIntVal", "fixture"),
+            ["MAX_HIT_POINTS"] = new("100", "iDefineIntVal", "fixture"),
+            ["SOMETHING_ELSE"] = new("1.5", "fDefineFloatVal", "fixture"),
+        });
+        var constants = Assert.Single(definitions.Select(d => d.Definition).OfType<Schema.RuleConstantsDef>());
+        Assert.Equal(100, constants.Values.MaxHitPoints);
+        Assert.Equal(["SOMETHING_ELSE"], constants.Raw.Keys);
+        var trade = Assert.Single(definitions, d => d.Definition is Ariel.Mods.Trade.RuleConstantsTradeDef);
+        Assert.Equal("trade", trade.Mapping.Mod);
+        var row = (Ariel.Mods.Trade.RuleConstantsTradeDef)trade.Definition;
+        Assert.Equal(("trade:rule_constants", "foundation:rule_constants", 20), (row.Id, row.Target, row.TradeProfitPercent));
+    }
+
+    [Fact]
+    public void A_mod_constant_at_its_default_emits_no_row()
+    {
+        var definitions = ContentEmission.Constants(new Dictionary<string, DefineValue> { ["TRADE_PROFIT_PERCENT"] = new("0", "iDefineIntVal", "fixture") });
+        Assert.IsType<Schema.RuleConstantsDef>(Assert.Single(definitions).Definition);
+    }
+
+    [Fact]
+    public void A_building_field_a_mod_maps_becomes_that_mods_row_and_leaves_the_building()
+    {
+        var mapper = Mapper(Record("BuildingClassInfo", "BUILDINGCLASS_EXAMPLE", DataNode.Leaf("DefaultBuilding", "BUILDING_EXAMPLE")),
+            Record("BuildingClassInfo", "BUILDINGCLASS_PLAIN", DataNode.Leaf("DefaultBuilding", "BUILDING_PLAIN")),
+            Record("BuildingInfo", "BUILDING_EXAMPLE", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_EXAMPLE"), DataNode.Leaf("iGlobalTradeRoutes", "2")),
+            Record("BuildingInfo", "BUILDING_PLAIN", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_PLAIN"), DataNode.Leaf("iGlobalTradeRoutes", "0")));
+        var mapped = mapper.Map().Select(d => d.Definition).ToArray();
+        var row = Assert.Single(mapped.OfType<Ariel.Mods.Trade.BuildingTradeDef>());
+        Assert.Equal(("trade:example", "cities:example", 2), (row.Id, row.Target, row.GlobalTradeRoutes));
+        Assert.All(mapped.OfType<Schema.BuildingDef>(), b => Assert.Empty(b.Unsupported));
+    }
+
     private static ContentMapper Mapper(params EffectiveRecord[] records) => new(records, key => key == "TXT_KEY_EXAMPLE" ? "Example" : null);
     private static EffectiveRecord Record(string family, string type, params DataNode[] fields) =>
         new(family, type, DataNode.Branch(family, new[] { DataNode.Leaf("Type", type) }.Concat(fields)), []);

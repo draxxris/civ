@@ -450,6 +450,16 @@ attaches `CivicTradeDef` to civics (`trade:mercantilism` about
 and the state-religion bonuses), Revolution `CivicRevolutionDef` and ProjectsVictory
 `CivicProjectsDef`.
 
+The base schema keeps only the fields the base game reads. A field that only a mod reads is
+that mod's attachment, one type per (mod, target type) named `<Target><Mod>Def`: Trade keeps
+route slots and profit in `BuildingTradeDef`, `TechTradeDef`, `YieldTradeDef` and
+`WorldSizeTradeDef`. A rule constant only a mod reads is a row about the base game's single
+`RuleConstantsDef` (`trade:rule_constants` about `foundation:rule_constants`, type
+`RuleConstantsTradeDef`), and a setting that varies by game speed, handicap, era or world size
+is a row about that speed, handicap, era or world size, so a mod's numbers sit beside the row
+they vary with. A mod reads a definition with no row as its type's `None`, whose values are
+the type defaults the base field had, so a missing row changes nothing.
+
 - Loading validates an attachment like any definition: `ModLoader.Json` rejects an
   unknown property, `Target` is a content reference to `TTarget` (a missing id or one
   of another kind fails), and the target's mod must be in the attaching mod's

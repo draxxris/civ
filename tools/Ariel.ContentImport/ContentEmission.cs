@@ -19,7 +19,7 @@ public static class ContentEmission
     {
         var mapper = new ContentMapper(registry.Records, registry.Text.Lookup, registry.Defines);
         var definitions = mapper.Map().ToList();
-        definitions.Add(new(new("", "RuleConstantsDef", "foundation", [], []), Constants(registry)));
+        definitions.AddRange(Constants(registry.Defines));
         definitions.AddRange(mapper.Conditions.Select(name => new MappedDefinition(new("", "ConditionDef", "foundation", [], []),
             new ConditionDef { Id = "foundation:" + name, Name = name.Replace('_', ' ') })));
         Validate(definitions);
@@ -32,7 +32,8 @@ public static class ContentEmission
     public static void Write(EmissionResult result, ContentRoots destination, string reports)
     {
         // Prepare every payload and scan decoded strings before touching any mod sidecar.
-        var families = SchemaCatalog.Definitions.Select(m => (m.Mod, m.Definition)).Concat(new[] { (Mod: "foundation", Definition: "ConditionDef"), (Mod: "foundation", Definition: "RuleConstantsDef") });
+        var families = SchemaCatalog.Definitions.Select(m => (m.Mod, m.Definition)).Concat(new[] { (Mod: "foundation", Definition: "ConditionDef"), (Mod: "foundation", Definition: "RuleConstantsDef") })
+            .Concat(SchemaCatalog.Constants.Attachments.Select(a => (a.Mod, a.Definition)));
         var files = families.OrderBy(f => f.Mod, StringComparer.Ordinal).ThenBy(f => f.Definition, StringComparer.Ordinal)
             .Select(f => (f.Mod, File: FileName(f.Definition), Json: Serialize(result.Definitions
                 .Where(d => d.Mapping.Mod == f.Mod && d.Mapping.Definition == f.Definition)
@@ -49,20 +50,45 @@ public static class ContentEmission
         WriteReports(result, reports);
     }
 
-    private static RuleConstantsDef Constants(ImportRegistry registry)
+    /// <summary>The base game's rule constants, and the row each mod in <see cref="ConstantMapping.Attachments"/> keeps
+    /// about them, emitted only when one of its constants is not at its default, like any attachment.</summary>
+    public static IReadOnlyList<MappedDefinition> Constants(IReadOnlyDictionary<string, DefineValue> defines)
     {
+        const string id = "foundation:rule_constants";
+        var mapping = SchemaCatalog.Constants;
         var values = new SortedDictionary<string, object>(StringComparer.Ordinal);
+        var attached = mapping.Attachments.ToDictionary(a => a, _ => new SortedDictionary<string, object>(StringComparer.Ordinal));
         var raw = new SortedDictionary<string, string>(StringComparer.Ordinal);
-        foreach (var (key, define) in registry.Defines)
+        foreach (var (key, define) in defines.OrderBy(d => d.Key, StringComparer.Ordinal))
         {
-            if (!SchemaCatalog.Constants.TryGetValue(key, out var property)) { raw[Branding.Identifier(key)] = Branding.Output(define.Value); continue; }
-            var number = decimal.Parse(define.Value, NumberStyles.Float, CultureInfo.InvariantCulture);
-            if (property.EndsWith("Permille", StringComparison.Ordinal)) number *= 1000;
-            if (number != decimal.Truncate(number)) throw new InvalidDataException("Constant cannot be represented exactly as an integer: " + key);
-            values[JsonNamingPolicy.CamelCase.ConvertName(property)] = checked((int)number);
+            if (mapping.Values.TryGetValue(key, out var property)) values[JsonNamingPolicy.CamelCase.ConvertName(property)] = Integer(key, property, define);
+            else if (mapping.Attachments.FirstOrDefault(a => a.Constants.ContainsKey(key)) is { } owner)
+                attached[owner][JsonNamingPolicy.CamelCase.ConvertName(owner.Constants[key])] = Integer(key, owner.Constants[key], define);
+            else raw[Branding.Identifier(key)] = Branding.Output(define.Value);
         }
         var typed = JsonSerializer.Deserialize<RuleConstants>(JsonSerializer.Serialize(values, ContentMapper.Json), ContentMapper.Json)!;
-        return new() { Id = "foundation:rule_constants", Name = "Rule constants", Values = typed, Raw = raw.ToImmutable() };
+        var result = new List<MappedDefinition>
+        {
+            new(new("", "RuleConstantsDef", "foundation", [], []),
+                new RuleConstantsDef { Id = id, Name = "Rule constants", Values = typed, Raw = raw.ToImmutable() }),
+        };
+        foreach (var (attachment, constants) in attached)
+        {
+            var identity = new SortedDictionary<string, object>(StringComparer.Ordinal) { ["id"] = attachment.Mod + id[id.IndexOf(':')..], ["target"] = id };
+            var row = JsonSerializer.Deserialize(JsonSerializer.Serialize(identity.Concat(constants).ToDictionary(), ContentMapper.Json), attachment.DefinitionType, ContentMapper.Json)!;
+            var empty = JsonSerializer.Deserialize(JsonSerializer.Serialize(identity, ContentMapper.Json), attachment.DefinitionType, ContentMapper.Json)!;
+            if (JsonSerializer.Serialize(row, attachment.DefinitionType, ContentMapper.Json) != JsonSerializer.Serialize(empty, attachment.DefinitionType, ContentMapper.Json))
+                result.Add(new(new("", attachment.Definition, attachment.Mod, [], []), (ContentDef)row));
+        }
+        return result;
+    }
+
+    private static int Integer(string key, string property, DefineValue define)
+    {
+        var number = decimal.Parse(define.Value, NumberStyles.Float, CultureInfo.InvariantCulture);
+        if (property.EndsWith("Permille", StringComparison.Ordinal)) number *= 1000;
+        if (number != decimal.Truncate(number)) throw new InvalidDataException("Constant cannot be represented exactly as an integer: " + key);
+        return checked((int)number);
     }
 
     private static (List<MappedDefinition> Kept, List<DroppedContent> Dropped) Filter(List<MappedDefinition> definitions, string? maximumEra, string[] eraOrder)

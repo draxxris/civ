@@ -1,0 +1,9 @@
+[
+  {
+    "id": "trade:yield_commerce",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:yield_commerce",
+    "tradeModifier": 100
+  }
+]

@@ -79,5 +79,4 @@ public sealed record RuleConstants
     public int PercentAngerDivisor { get; init; }
     public int NoMilitaryPercentAnger { get; init; }
     public int MaximumCityDefenseDamage { get; init; }
-    public int TradeProfitPercent { get; init; }
 }

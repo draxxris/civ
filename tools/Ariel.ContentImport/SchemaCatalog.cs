@@ -18,6 +18,23 @@ public sealed record RequirementMapping(string Source, string Kind, string Targe
 public sealed record DefinitionMapping(string SourceClass, string Definition, string Mod,
     FieldMapping[] Fields, RequirementMapping[] Requirements)
 {
+    public Type DefinitionType => SchemaCatalog.DefinitionType(Definition);
+    public bool IsAttachment => typeof(ContentAttachment).IsAssignableFrom(DefinitionType);
+}
+
+/// <summary>Which defines become typed rule constants: <see cref="Values"/> maps a define to a property of the base
+/// game's <see cref="RuleConstants"/>, and each of <see cref="Attachments"/> maps defines to a property of a mod's
+/// attachment to <see cref="RuleConstantsDef"/>. Every other define is kept as a raw string.</summary>
+public sealed record ConstantMapping(Dictionary<string, string> Values, ConstantAttachmentMapping[] Attachments);
+/// <summary>The rule constants a mod keeps in its own row about the base game's rule constants.</summary>
+public sealed record ConstantAttachmentMapping(string Mod, string Definition, Dictionary<string, string> Constants)
+{
+    public Type DefinitionType => SchemaCatalog.DefinitionType(Definition);
+}
+
+/// <summary>Explicit source-to-contract mapping. The catalog belongs to tooling, not the game.</summary>
+public static class SchemaCatalog
+{
     // The base schema, and the published APIs whose definitions the importer emits for their mods.
     private static readonly System.Reflection.Assembly[] Schemas =
     [
@@ -26,17 +43,12 @@ public sealed record DefinitionMapping(string SourceClass, string Definition, st
         typeof(Ariel.Mods.Revolution.CivicRevolutionDef).Assembly, typeof(Ariel.Mods.ProjectsVictory.CivicProjectsDef).Assembly,
         typeof(Ariel.Mods.Religion.ReligionDef).Assembly, typeof(Ariel.Mods.Votes.VoteDef).Assembly,
     ];
-    public Type DefinitionType => Schemas.SelectMany(a => a.GetExportedTypes())
-        .SingleOrDefault(t => t.Name == Definition && typeof(ContentDef).IsAssignableFrom(t) && !t.IsAbstract)
-        ?? throw new InvalidDataException("Unknown schema definition: " + Definition);
-    public bool IsAttachment => typeof(ContentAttachment).IsAssignableFrom(DefinitionType);
-}
-
-/// <summary>Explicit source-to-contract mapping. The catalog belongs to tooling, not the game.</summary>
-public static class SchemaCatalog
-{
     public static IReadOnlyList<DefinitionMapping> Definitions { get; } = Read<DefinitionMapping[]>("SchemaMapping.json");
-    public static IReadOnlyDictionary<string, string> Constants { get; } = Read<Dictionary<string, string>>("RuleConstantMapping.json");
+    public static ConstantMapping Constants { get; } = Read<ConstantMapping>("RuleConstantMapping.json");
+    /// <summary>The schema or published API definition type with this name.</summary>
+    public static Type DefinitionType(string name) => Schemas.SelectMany(a => a.GetExportedTypes())
+        .SingleOrDefault(t => t.Name == name && typeof(ContentDef).IsAssignableFrom(t) && !t.IsAbstract)
+        ?? throw new InvalidDataException("Unknown schema definition: " + name);
     private static T Read<T>(string name)
     {
         using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Ariel.ContentImport." + name)

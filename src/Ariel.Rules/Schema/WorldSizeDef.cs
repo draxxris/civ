@@ -23,7 +23,6 @@ public sealed class WorldSizeDef : GameContentDef
     public int ResearchPercent { get; init; } = 0;
     public int TargetNumCities { get; init; } = 0;
     public int TerrainGrainChange { get; init; } = 0;
-    public int TradeProfitPercent { get; init; } = 0;
     public int UnitNameModifier { get; init; } = 0;
     public int WarWearinessModifier { get; init; } = 0;
 }

@@ -18,7 +18,6 @@
     "populationChangeOffset": 0,
     "requirements": null,
     "strategy": "",
-    "tradeModifier": 100,
     "unsupported": [
       "ColorType",
       "SymbolPaths",
@@ -44,7 +43,6 @@
     "populationChangeOffset": 0,
     "requirements": null,
     "strategy": "",
-    "tradeModifier": 0,
     "unsupported": [
       "ColorType",
       "SymbolPaths",
@@ -70,7 +68,6 @@
     "populationChangeOffset": 0,
     "requirements": null,
     "strategy": "",
-    "tradeModifier": 0,
     "unsupported": [
       "ColorType",
       "SymbolPaths",

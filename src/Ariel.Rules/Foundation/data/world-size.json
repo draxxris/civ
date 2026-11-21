@@ -28,7 +28,6 @@
     "strategy": "",
     "targetNumCities": 3,
     "terrainGrainChange": -1,
-    "tradeProfitPercent": 80,
     "unitNameModifier": 50,
     "unsupported": [],
     "warWearinessModifier": 50
@@ -62,7 +61,6 @@
     "strategy": "",
     "targetNumCities": 8,
     "terrainGrainChange": 1,
-    "tradeProfitPercent": 20,
     "unitNameModifier": 0,
     "unsupported": [],
     "warWearinessModifier": -20
@@ -96,7 +94,6 @@
     "strategy": "",
     "targetNumCities": 10,
     "terrainGrainChange": 1,
-    "tradeProfitPercent": 15,
     "unitNameModifier": 0,
     "unsupported": [],
     "warWearinessModifier": -30
@@ -130,7 +127,6 @@
     "strategy": "",
     "targetNumCities": 6,
     "terrainGrainChange": 1,
-    "tradeProfitPercent": 30,
     "unitNameModifier": 0,
     "unsupported": [],
     "warWearinessModifier": -10
@@ -164,7 +160,6 @@
     "strategy": "",
     "targetNumCities": 6,
     "terrainGrainChange": 1,
-    "tradeProfitPercent": 40,
     "unitNameModifier": 10,
     "unsupported": [],
     "warWearinessModifier": 0
@@ -198,7 +193,6 @@
     "strategy": "",
     "targetNumCities": 5,
     "terrainGrainChange": 0,
-    "tradeProfitPercent": 60,
     "unitNameModifier": 30,
     "unsupported": [],
     "warWearinessModifier": 10
@@ -232,7 +226,6 @@
     "strategy": "",
     "targetNumCities": 5,
     "terrainGrainChange": 0,
-    "tradeProfitPercent": 50,
     "unitNameModifier": 20,
     "unsupported": [],
     "warWearinessModifier": 0
@@ -266,7 +259,6 @@
     "strategy": "",
     "targetNumCities": 4,
     "terrainGrainChange": -1,
-    "tradeProfitPercent": 70,
     "unitNameModifier": 40,
     "unsupported": [],
     "warWearinessModifier": 30
