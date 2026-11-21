@@ -9,8 +9,9 @@ mise exec -- dotnet build src/Ariel.Godot
 mise exec -- godot-mono --path src/Ariel.Godot
 ```
 
-The build copies the installed mods into the client output directory under
-`mods/<Name>`. Each folder contains a DLL, `mod.json`, data, and available art. The
+The build copies the shipped mods (`build/Mods.props`) into the client output
+directory: the main mods under `mods/<Name>` and the optional mods under
+`optional-mods/<Name>`. Each folder contains a DLL, `mod.json`, data, and available art. The
 client reads these manifests before it loads mod assemblies. After selection, the client
 loads the selected mods and freezes their content once. The client does not reference
 the legacy ruleset assembly.
@@ -26,6 +27,7 @@ For each stable manifest ID, the first copy in this priority order wins:
    - `mods` beside the client assembly.
    - `mods` inside `AppContext.BaseDirectory`.
    - The project directory `res://mods`.
+4. Bundled optional candidates, in the same three locations under `optional-mods`.
 
 Equivalent paths, including directory links, count as one root at their highest
 priority. Within one root, ordinal folder order resolves duplicate IDs. Bundled
@@ -62,10 +64,12 @@ installed ID.
 
 The profile is `user://mod-profile.json` in the Godot user-data directory, separate from
 saved games. It stores explicit choices as manifest IDs, not folder names. With no
-profile, all installed mods start selected, as before. With a profile, new mods stay
+profile, every installed mod starts selected except the bundled optional mods, which
+stay off until you enable them; a user or `ARIEL_MODS` copy of a bundled optional mod
+stays off too. With a profile, new mods stay
 disabled unless another selected mod requires them. Missing saved IDs remain visible
-until you disable them or reset the selection. A broken profile blocks Continue. Either
-reset button replaces its choices without silently enabling mod code. The client saves
+until you disable them or reset the selection. A broken profile blocks Continue. Each
+reset button (default mods, enable all, disable all) replaces its choices without silently enabling mod code. The client saves
 the profile before it loads assemblies. A save error leaves the manager open.
 
 Mod selection controls which code loads. Game options control features within the loaded
@@ -80,34 +84,16 @@ dependency-valid selection can still lack the content for game setup. The client
 this error without starting a game.
 
 Headless runs, screenshot runs, FPS probes, and `--skip-mod-manager` bypass the startup
-screen but honor the profile. They use all installed mods when no profile exists.
+screen but honor the profile. With no profile they use the default selection (every
+installed mod but the bundled optional ones), plus the mod whose screen `--stage` or
+`--open-screen` names.
 Invalid profiles or selections make these runs exit with code 1. For an isolated smoke
 run, use a separate Godot user-data directory through `XDG_DATA_HOME` on Linux.
 
-### User data migration and legacy mods
+### Environment variables
 
-The Godot user-data directory is named after the application name `Ariel` (previously
-`Civ`). On first startup, the client performs a one-time, restart-safe migration copying
-`saves`, `mods`, and `mod-profile.json` from the legacy `Civ` directory to `Ariel`:
-
-- Each copied file is verified against its source before finalizing.
-- If identical files exist at both paths, copying is skipped.
-- If differing files exist at both paths, neither is overwritten: both copies are kept,
-  the new `Ariel` directory wins for the run, and a non-fatal conflict notice is logged.
-- On completion, `user-data-migration.json` is written to the user-data root so future
-  runs do not re-run migration or repeat conflict notices.
-
-Mod assemblies built against pre-rename assemblies (`Civ.*`, including `Civ.Core`)
-cannot bind to the current engine. Mod discovery detects these binaries via assembly
-reference inspection and excludes them from loading so that incompatible legacy mods do
-not crash startup. The mod manager displays an actionable error telling the user to
-update, disable, or remove the mod.
-
-Environment variables:
-
-- `ARIEL_MODS`: optional additional mod discovery root (replaces `CIV_MODS`).
-- `ARIEL_TRACE_STARTUP`: set to `1` to output startup phase timings on stderr (replaces
-  `CIV_TRACE_STARTUP`).
+- `ARIEL_MODS`: optional additional mod discovery root.
+- `ARIEL_TRACE_STARTUP`: set to `1` to output startup phase timings on stderr.
 
 ## Controls
 

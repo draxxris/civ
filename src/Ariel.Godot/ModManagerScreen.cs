@@ -17,7 +17,7 @@ internal sealed partial class ModManagerScreen : Control
 
     public event Action<IReadOnlyList<string>>? ApplyRequested;
 
-    public ModManagerScreen(ModDiscoveryResult discovery, IEnumerable<string> enabled, bool restartRequired, string? profileError, string? notice, Action? cancel)
+    public ModManagerScreen(ModDiscoveryResult discovery, IEnumerable<string> enabled, bool restartRequired, string? profileError, Action? cancel)
     {
         _installed = discovery.Mods;
         _enabled = new(enabled, StringComparer.Ordinal);
@@ -34,8 +34,9 @@ internal sealed partial class ModManagerScreen : Control
             : "Choose mods before the game loads their assemblies. Required mods are included automatically."));
         root.AddChild(Ui.Text("Mod code runs with your account permissions. Enable only mods that you trust. Game options are separate.", 14, Ui.Dim));
         root.AddChild(Ui.Text("Saved profiles keep new mods disabled. Disable missing saved IDs to remove them from the profile.", 14, Ui.Dim));
-        root.AddChild(Ui.Text("Source priority: ARIEL_MODS > user-installed > bundled. Each winning copy replaces the entire mod.", 14, Ui.Dim));
+        root.AddChild(Ui.Text("Source priority: ARIEL_MODS > user-installed > bundled > bundled optional. Each winning copy replaces the entire mod. Bundled optional mods start disabled.", 14, Ui.Dim));
         var actions = Ui.HBox(8);
+        actions.AddChild(Ui.Button("Default mods / reset profile", () => Reset(_installed.Where(m => m.EnabledByDefault).Select(m => m.Manifest.Id))));
         actions.AddChild(Ui.Button("Enable all / reset profile", () => Reset(_installed.Select(m => m.Manifest.Id))));
         actions.AddChild(Ui.Button("Disable all / reset profile", () => Reset([])));
         root.AddChild(actions);
@@ -51,7 +52,6 @@ internal sealed partial class ModManagerScreen : Control
         root.AddChild(_errorScroll);
         root.AddChild(_failure);
         _failure.Text = profileError ?? "";
-        root.AddChild(Ui.Text(notice ?? "", 14, Ui.Warn));
         _apply = Ui.Button(restartRequired ? "Save profile and quit" : "Continue", () => ApplyRequested?.Invoke(_enabled.Order(StringComparer.Ordinal).ToArray()), size: 20);
         root.AddChild(_apply);
         if (cancel != null) root.AddChild(Ui.Button("Back to game setup", cancel));

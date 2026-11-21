@@ -82,7 +82,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Resource discovery & default-off depletion**: Per-turn resource discovery rolls on
   worked improved bonus-free tiles. Option-gated mine exhaustion creates depleted mines,
   and deposit depletion uses the reference zero-consumption path.
-- **Global warming environmental changes**: Global warming defense from map features and
+- **Global warming environmental changes** (the GlobalWarming mod): Global warming defense from map features and
   health civics balances city pollution. Unchecked pollution drives stepped feature and
   terrain degradation.
 - **Line-of-sight occlusion & hidden-state fog snapshots**: Elevation and feature

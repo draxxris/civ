@@ -27,6 +27,8 @@ public sealed class GameRules : IRuleset
     public IPlotYieldService PlotYields { get; private set; } = null!;
     /// <summary>Fresh water and irrigation queries.</summary>
     public IWaterService Water { get; private set; } = null!;
+    /// <summary>Plot changes after the map exists, with the map kept consistent.</summary>
+    public ITerrainChanges TerrainChanges { get; private set; } = null!;
     /// <summary>Worker builds and their validation.</summary>
     public IWorkerBuildService WorkerBuilds { get; private set; } = null!;
     /// <summary>Resources connected to a city.</summary>
@@ -155,6 +157,7 @@ public sealed class GameRules : IRuleset
         Visibility = services.Get<IVisibilityService>().Single();
         PlotYields = services.Get<IPlotYieldService>().Single();
         Water = services.Get<IWaterService>().Single();
+        TerrainChanges = services.Get<ITerrainChanges>().Single();
         WorkerBuilds = services.Get<IWorkerBuildService>().Single();
         Resources = services.Get<IResourceNetwork>().Single();
         CityConnections = services.Get<ICityConnectionService>().Single();

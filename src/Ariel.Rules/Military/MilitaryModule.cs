@@ -60,7 +60,7 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterCommand<DisbandUnitCommand>("disband_unit");
         context.RegisterCommand<RazeCityCommand>("raze_city");
         context.TurnSystems.Register(new UnitTurnSystem(units));
-        context.Subscribe<GlobalWarmingOccurred>("flood_evacuation", (sim, flood) => FloodedUnits.Evacuate(sim, movement, flood));
+        context.Subscribe<TerrainChanged>("flood_evacuation", (sim, change) => FloodedUnits.Evacuate(sim, movement, change));
         context.Subscribe<TurnStarted>("begin", (sim, _) =>
         {
             foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) units.Initialize(sim, unit.Id);

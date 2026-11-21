@@ -11,7 +11,7 @@ extend both through one registration API.
    Relations and Diplomacy. `Ariel.Ai` holds the computer player, the base module `ai`. Their
    content references each other, so none of them can be removed, and no mod can replace
    one. Everything a game can run without is a mod: the main mods (Great People, Trade,
-   RangedCombat, AirCombat, Barbarians and Religion) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
+   RangedCombat, AirCombat, Barbarians, Religion and GlobalWarming) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
 2. **One registration API.** A base module registers terrain, techs, buildings, units,
    civics, map generators, commands, turn systems and state through the same
    `IModContext` a mod uses, and keeps its own content namespace (`cities:`,
@@ -69,9 +69,22 @@ extend both through one registration API.
 
 The client uses the query contracts in `Ariel.Rules`, and shows what a mod adds through the
 screen contract (see Mod screens below). It references no mod, neither a mod's API nor its
-implementation, nor a test-ruleset assembly. `Ariel.Godot` lists the shipped mods as
-project references with `ReferenceOutputAssembly="false"`, only so they build first and
-can be copied next to the game.
+implementation, nor a test-ruleset assembly.
+
+The shipped mods are listed once, in `build/Mods.props`: `ArielMainMods`, and
+`ArielOptionalMods` (the optional feature mods, `ArielOptionalFeatureMods`, plus the
+alternative rules mods, `ArielAlternativeMods`, which replace part of a base module).
+Every host that stages mods, the game included, imports `build/ModPayloads.targets`,
+which makes each listed mod a build-order project reference
+(`ReferenceOutputAssembly="false"`), copies the main mods to `mods/` and, for a host
+that sets `StageOptionalMods`, the optional mods to `optional-mods/`, removes any other
+folder from those two, and links the base modules' `art/` under `rules/`. The client
+discovers both folders: main mods load by default, and optional mods are installed
+but off until the player enables them in the mod manager
+(`InstalledMod.EnabledByDefault`, which stays off when a user or `ARIEL_MODS` copy of
+a shipped optional mod wins). A saved profile always decides on its own. The sync
+check plays every optional feature mod by default; the build writes that list into its
+assembly.
 
 ## Determinism
 
@@ -188,8 +201,9 @@ acceptance checks.
   coastal building/yield eligibility do not change. Pathfinding uses the same rules, and
   naval AI selects ports and landing edges with beach access. `VisibilityService` reads
   `Height` for sight: water and flat add 0, hills and raised flats add +1, peaks add +2.
-  `GlobalWarmingSystem` clears the cliffs on a tile it floods and settles the tile and
-  its neighbours back to the height their ground implies.
+  A terrain change after map creation (`ITerrainChanges`, used by the GlobalWarming mod)
+  clears the cliffs on a tile that becomes water and settles the tile and its
+  neighbours back to the height their ground implies.
 - Look. `TerrainSnapshot` carries `Heights`, `Cliffs` and `CliffLifts`. `TerrainField`
   raises the lifted side by up to `CliffRise` (0.22) over its whole tile and eases bare
   neighbouring ground up to it over `CliffRamp` (1.6), but a ramp never crosses a cliff:
@@ -537,7 +551,7 @@ outside the player interval.
 | `Units`              |  8000 | Units and worker progress       |
 | `Map`                |  9000 | Improvements and map updates    |
 | `Spawns`             |  9100 | Spawns (Barbarians at 9101)     |
-| `Environment`        |  9200 | Environment and global founding |
+| `Environment`        |  9200 | Global warming (GlobalWarming mod), global founding |
 | `Visibility`         |  9500 | Team sight                      |
 | `GameEnd`            |  9900 | Pre-end hooks                   |
 
@@ -599,8 +613,8 @@ Clients and mods reach these contracts through `sim.Rules()`:
 
 - `IPlotYieldService.Calculate(Simulation, int player, TileId)` returns
   `PlotYieldResult(YieldVector, Ledger)`.
-- `IPlotYieldService.CalculateNature(Simulation, int player, TileId, bool ignoreFeature = false)`
-  returns natural potential.
+- `IPlotYieldService.CalculateNature(Simulation, int? player, TileId, bool ignoreFeature = false)`
+  returns natural potential; a null player uses no team's knowledge.
 - `IWaterService.IsFreshWater(Simulation, TileId)` and
   `IsIrrigated(Simulation, int player, TileId)` return availability.
 - `IResourceNetwork.ConnectedCount(Simulation, int player, int city, string bonus)`
@@ -620,6 +634,17 @@ Clients and mods reach these contracts through `sim.Rules()`:
   last-observed plot state.
 - `INavalBlockadeService.IsTileBlockaded(Simulation, TileId tile, int team)` and
   `IsCityBlockaded(Simulation, int city)` query naval blockades.
+- `ITerrainChanges` (`GameRules.TerrainChanges`) is the entry point for a rule that
+  reshapes plots after the map exists. `FeatureFits(Simulation, TileId, string feature)`
+  says whether a feature may stand on a plot as it is. `Begin(Simulation)` opens an
+  `ITerrainChangePass`; its `Change(TileId, string terrain, string? feature)` sets both,
+  settles heights and cliffs (`CliffRules.AfterTerrainChange`), drops a feature that no
+  longer fits and then publishes `TerrainChanged`, and disposing the pass rebuilds
+  areas and lake flags once if any change turned land to water or back. World refreshes
+  sight on `TerrainChanged`, and Military moves the units a flood strands to an adjacent
+  plot the whole stack can stand on, or loses them. The caller clears whatever else the
+  change means, such as the plot's improvement. Worker terrain changes do not go
+  through it yet.
 - `IStartingPositionService.Select(Simulation, int count)` selects locations without
   mutation.
 - `IStartingPositionService.Normalize(Simulation, IReadOnlyList<TileId>)` applies
@@ -689,7 +714,11 @@ active. When resource depletion is active, worked mines can exhaust to
 is revealed. Resource deposit exhaustion removes exhausted bonuses. Deposit depletion
 uses the reference zero-consumption path until a resource-consumption service exists.
 
-`GlobalWarmingSystem` runs at `TurnPhase.Environment`. Global warming defense sums map
+Global warming is the GlobalWarming mod (`src/Mods/GlobalWarming`, id `global_warming`,
+a main mod); without it the world never warms. Its turn system
+(`global_warming:warming`) runs at `TurnPhase.Environment`. The base game keeps what
+it reads: `FeatureDef.WarmingDefense`, the `GLOBAL_WARMING_*` rule constants and
+`ICityWellbeingService.EnvironmentalUnhealth`. Global warming defense sums map
 features (`FeatureDef.WarmingDefense`), doubled for players with active health civics
 (`TREEHUGGER_DEFENSE_BONUS`), scaled by `GLOBAL_WARMING_FOREST` per land plot. City
 pollution sums building unhealthiness (`GLOBAL_WARMING_UNHEALTH_WEIGHT`), bonus
@@ -698,7 +727,8 @@ unhealthiness (`GLOBAL_WARMING_BONUS_WEIGHT`), and dirty power
 building and resource rules because city power outage state is absent. Warming rolls
 consume probabilities and degrade random non-city plots. Degradation steps follow snow
 to tundra or marsh, grass, plains, desert, and coast. Tile degradation clears
-improvements and emits `GlobalWarmingOccurred`. Deterministic port RNG selection uses an
+improvements (and a flooded plot's route) and changes the plot through `ITerrainChanges`,
+one pass per turn, which publishes `TerrainChanged`. Deterministic port RNG selection uses an
 ordinal non-city candidate array instead of native random map coordinate retries.
 
 Visibility runs at `TurnPhase.Visibility`, after founding, and after unit movement.
@@ -2231,25 +2261,11 @@ migrate their own data contracts. To support pre-rename saves across namespace r
 (`Civ.*` to `Ariel.*`), `ContentDb` computes both canonical and legacy content hashes so
 pre-rename saves with identical definitions load successfully without `force: true`.
 
-### User-data migration and compatibility
-
-When the application name changed to `Ariel`, the Godot user-data folder changed from
-`Civ` to `Ariel`. `UserDataMigration` (`src/Ariel.Client.Core/UserDataMigration.cs`)
-performs an engine-free, restart-safe one-time copy of `saves/`, `mods/`, and
-`mod-profile.json` on first launch. If a file exists in both folders with differing
-contents, neither is overwritten (both are kept, the new `Ariel` folder wins, and a
-conflict is reported once). Upon successful verification of all copied files,
-`user-data-migration.json` is written to mark completion.
-
-Third-party mod binaries compiled against the old `Civ.*` assemblies cannot bind to the
-renamed runtime; `LegacyModuleCheck` (`src/Ariel.Client.Core/LegacyModuleCheck.cs`)
-detects these assemblies and excludes them from loading with an actionable message.
-
 Runtime environment variables use the `ARIEL_` prefix:
 
-- `ARIEL_MODS` (formerly `CIV_MODS`): optional additional mod search root.
-- `ARIEL_TRACE_STARTUP` (formerly `CIV_TRACE_STARTUP`): enables startup phase timings.
-- `ARIEL_CONTENT_SOURCE` (formerly `CIV_CONTENT_SOURCE`): specifies the root of the
+- `ARIEL_MODS`: optional additional mod search root.
+- `ARIEL_TRACE_STARTUP`: enables startup phase timings.
+- `ARIEL_CONTENT_SOURCE`: specifies the root of the
   source extraction for extractor test suites.
 
 `StateHasher` hashes canonical state JSON and RNG words with FNV-1a. Canonical JSON
@@ -2369,9 +2385,9 @@ time, even when the desktop throttles the window.
 
 `src/Ariel.Rules/` contains the rules modules Foundation, World, Research, Economy,
 Cities, Military, Government, Peoples, Relations and Diplomacy, and `src/Ariel.Ai/` the base module
-`ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat, AirCombat, Barbarians and Religion,
-and the optional mods ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
-Revolution and CardResearch. Each manifest declares content providers in
+`ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat, AirCombat, Barbarians, Religion and GlobalWarming,
+and the optional mods Votes, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
+Revolution and CardResearch (see `build/Mods.props`). Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no
 assembly. Base module ids always satisfy a mod's requirement and never appear in the
 mod manager. ModLoader checks

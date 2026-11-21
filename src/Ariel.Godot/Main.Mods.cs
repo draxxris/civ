@@ -9,18 +9,16 @@ public partial class Main
     private ModManagerScreen? _modManager;
     private bool _loadAttempted;
     private string? _profileError;
-    private string? _migrationNotice;
     private string ProfilePath => System.IO.Path.Combine(OS.GetUserDataDir(), "mod-profile.json");
     private bool AutomaticStartup => DisplayServer.GetName() == "headless" || _debug.Unattended
         || OS.GetCmdlineUserArgs().Contains("--skip-mod-manager");
 
     private void BeginModStartup()
     {
-        MigrateOldUserData();
         try
         {
             _discovery = ModDiscovery.DiscoverMerged(BundledModsRoots(), System.IO.Path.Combine(OS.GetUserDataDir(), "mods"),
-                System.Environment.GetEnvironmentVariable(ModDiscovery.ModsEnvironmentVariable));
+                System.Environment.GetEnvironmentVariable(ModDiscovery.ModsEnvironmentVariable), BundledOptionalModsRoots());
             foreach (var error in _discovery.Errors) GD.PrintErr(error);
             ReadModProfile();
             if (!AutomaticStartup) { ShowModManager(); return; }
@@ -35,29 +33,9 @@ public partial class Main
         }
     }
 
-    /// <summary>Copy the previous application name's saves and mods once, before discovery reads the mod folder.</summary>
-    private void MigrateOldUserData()
-    {
-        var userData = OS.GetUserDataDir();
-        try
-        {
-            var report = UserDataMigration.Migrate(UserDataMigration.LegacyRootFor(userData), userData);
-            if (report.Conflicts.Count == 0) return;
-            _migrationNotice = "The old data folder holds a different copy of these files. Both copies were kept; "
-                + "this run uses the new folder:\n" + string.Join("\n", report.Conflicts);
-            GD.PrintErr(_migrationNotice);
-        }
-        catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException)
-        {
-            // Starting with the new folder is always better than refusing to start.
-            _migrationNotice = "Could not copy saves and mods from the old data folder: " + error.Message;
-            GD.PrintErr(_migrationNotice);
-        }
-    }
-
     private void ReadModProfile()
     {
-        try { _enabledMods = ModProfile.InitialSelection(_discovery.Mods, ModProfile.Load(ProfilePath)); }
+        try { _enabledMods = [.. ModProfile.InitialSelection(_discovery.Mods, ModProfile.Load(ProfilePath)).Union(RequestedScreenMods(), StringComparer.Ordinal)]; }
         catch (Exception error) when (error is System.IO.IOException or System.IO.InvalidDataException or UnauthorizedAccessException or System.Text.Json.JsonException)
         {
             // A damaged profile never grants permission to load all installed code.
@@ -66,12 +44,22 @@ public partial class Main
         }
     }
 
+    /// <summary>An unattended run that shows a mod's screen (<c>--stage espionage</c>, <c>--open-screen events:screen</c>)
+    /// needs that mod even when it is optional and off by default.</summary>
+    private IEnumerable<string> RequestedScreenMods()
+    {
+        if (!_debug.Unattended) return [];
+        var installed = _discovery.Mods.Where(m => m.Error == null).Select(m => m.Manifest.Id).ToHashSet(StringComparer.Ordinal);
+        string? screenMod = _debug.OpenScreen?.Split(':')[0];
+        return new[] { _debug.Stage, screenMod }.OfType<string>().Where(installed.Contains);
+    }
+
     private void ShowModManager(string? failure = null)
     {
         _setup?.Hide();
         _status.Visible = false;
         _modManager?.QueueFree();
-        _modManager = new ModManagerScreen(_discovery, _enabledMods, _loadAttempted, _profileError, _migrationNotice,
+        _modManager = new ModManagerScreen(_discovery, _enabledMods, _loadAttempted, _profileError,
             _setup == null ? null : CloseModManager);
         _modManager.ApplyRequested += ApplyModSelection;
         AddChild(_modManager);

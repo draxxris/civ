@@ -9,8 +9,8 @@ Mods in `src/Mods`:
 
 - Main mods, shipped and loaded by default: GreatPeople, Trade, RangedCombat (bombard and
   ranged support fire), AirCombat (air missions and interception), Barbarians (the hostile
-  faction's spawns and raids) and Religion (faiths, state religion, missionaries and
-  inquisitions).
+  faction's spawns and raids), Religion (faiths, state religion, missionaries and
+  inquisitions) and GlobalWarming (pollution that melts, dries and floods plots).
 - Optional mods, enabled in the mod manager: Votes (world councils), ProjectsVictory,
   Corporations, Espionage, Events, ScriptedWonders, Revolution, and the alternative
   research mod CardResearch. The browsable tech tree is part of the base Research module.
@@ -45,7 +45,9 @@ Headless on Linux: `xvfb-run` plus software GL
 (`LIBGL_ALWAYS_SOFTWARE=1 godot-mono --rendering-driver opengl3 --path src/Ariel.Godot`).
 
 Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in the user
-data folder. Mod DLLs reference only `Ariel.Core`, `Ariel.Rules`, `Ariel.Ai` and other
+data folder. The game ships its main mods in `mods/`, loaded by default, and its optional
+mods in `optional-mods/`, off until enabled; both lists live in `build/Mods.props`, the
+one place every host (the game, the tests and the tools) reads them from. Mod DLLs reference only `Ariel.Core`, `Ariel.Rules`, `Ariel.Ai` and other
 mods' published API assemblies, never Godot types; visuals ship as data (`.pck` packs, plain
 assets). A mod teaches the standard computer player its feature by registering an
 `IAiPlanner` (see "Computer players" in [docs/DESIGN.md](docs/DESIGN.md)); a whole new
@@ -62,27 +64,11 @@ interface the same way, without touching the client: it registers screens (with 
 button), city screen rows, top-bar summary items, encyclopedia categories and notifications
 that describe what to show, and the client draws them in its own skin (see "Mod screens").
 
-### User data migration and compatibility
+### Environment variables
 
-The Godot application name is `Ariel`, which moved the user-data folder from `Civ` to
-`Ariel`. On first launch, the game performs a one-time, restart-safe migration copying
-`saves/`, installed `mods/`, and `mod-profile.json` from the old folder into the new
-one. If a file exists in both locations with different contents, neither file is
-overwritten: both copies are kept, the new `Ariel` folder wins for the session, and the
-conflict is reported once. When migration completes, a marker file
-`user-data-migration.json` is written so subsequent launches do not re-report conflicts.
-
-Third-party mods compiled against pre-rename assemblies (`Civ.*`, including `Civ.Core`)
-cannot bind to the new runtime and are excluded at startup with a message instructing
-the player to update, disable, or remove them.
-
-Environment variables use the `ARIEL_` prefix:
-
-- `ARIEL_MODS` (formerly `CIV_MODS`): path to an additional mods directory.
-- `ARIEL_TRACE_STARTUP` (formerly `CIV_TRACE_STARTUP`): set to `1` for startup phase
-  timings.
-- `ARIEL_CONTENT_SOURCE` (formerly `CIV_CONTENT_SOURCE`): path to source extraction data
-  for extractor tests.
+- `ARIEL_MODS`: path to an additional mods directory.
+- `ARIEL_TRACE_STARTUP`: set to `1` for startup phase timings.
+- `ARIEL_CONTENT_SOURCE`: path to source extraction data for extractor tests.
 
 ## Documentation
 

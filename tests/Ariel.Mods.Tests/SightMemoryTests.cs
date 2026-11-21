@@ -290,7 +290,7 @@ public sealed class SightMemoryTests(LoadedMods mods) : IClassFixture<LoadedMods
         Sight(sim).Recompute(sim);
         Assert.DoesNotContain(0, sim.State.Plots[target.Value].Visible);
         sim.State.Plots[blocker.Value].Feature = null;
-        var change = new GlobalWarmingOccurred(blocker, "world:grass", "world:grass", "world:forest", null);
+        var change = new TerrainChanged(blocker, "world:grass", "world:grass", "world:forest", null);
         var events = sim.Events.Published.Append(change).ToArray();
         sim.Events.Publish(change);
         Assert.Equal(events, sim.Events.Published);

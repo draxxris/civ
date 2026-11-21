@@ -160,7 +160,8 @@ over a cliff as waterfalls.
   aircraft ignore cliffs. Ranged attacks and aircraft are unaffected.
 - `VisibilityService.ElevationLevel` reads `Height`, not `PlotKind`: water and flat add
   0, hills and raised flats add +1, peaks add +2 to sight.
-- `GlobalWarmingSystem` calls `CliffRules.AfterTerrainChange` after it changes a tile:
+- `ITerrainChanges` (World's `TerrainChanges`, used by the GlobalWarming mod) calls
+  `CliffRules.AfterTerrainChange` after it changes a tile:
   water clears its cliffs, and the tile and its neighbours settle back to the height
   their ground implies.
 
@@ -717,7 +718,7 @@ A cliff change is ready when all of these hold on a fresh capture:
   the generator.
 - `src/Ariel.Rules/World/VisibilityService.cs`: fog capture of height, cliff bits and derived
   lifts.
-- `src/Ariel.Rules/World/GlobalWarmingSystem.cs`: the terrain-change path that clears cliffs.
+- `src/Ariel.Rules/World/TerrainChanges.cs`: the terrain-change path that clears cliffs.
 - `src/Ariel.Rules/Military/MilitaryData.cs` and `MovementService.cs`: cliff movement rules.
 - `src/Ariel.Client.Core/DebugScenario.cs` and `SceneFrame.cs`: hand-made scene format
   and the even-row framing rule.

@@ -20,8 +20,9 @@ public interface IPlotYieldService
 {
     /// <summary>Final plot yields, including registered modifier sources and final integer rounding.</summary>
     PlotYieldResult Calculate(Simulation sim, int player, TileId tile);
-    /// <summary>Natural potential for worker validation; excludes improvements and modifier sources.</summary>
-    PlotYieldResult CalculateNature(Simulation sim, int player, TileId tile, bool ignoreFeature = false);
+    /// <summary>Natural potential for worker validation; excludes improvements and modifier sources. With no
+    /// <paramref name="player"/> it uses no team's knowledge: no resource counts, and peaks are not unworkable.</summary>
+    PlotYieldResult CalculateNature(Simulation sim, int? player, TileId tile, bool ignoreFeature = false);
 }
 /// <summary>Final yield adjustments, after ordinary modifiers. The supplied sink contains the plot ledger.</summary>
 public interface IPlotYieldFinalizer
@@ -66,6 +67,28 @@ public interface IVisibilityService
     /// <summary>Military calls this after movement; founding and turn boundaries also refresh sight.</summary>
     void Recompute(Simulation sim);
 }
+/// <summary>World's entry point for a rule that reshapes plots once the map exists, such as a mod's environmental
+/// change. World keeps the map consistent: heights and cliffs, features that no longer fit, areas and lake flags.</summary>
+public interface ITerrainChanges
+{
+    /// <summary>Whether <paramref name="feature"/> may stand on the plot as it is now: its terrain, relief, rivers and
+    /// neighbours. Read-only and RNG-free.</summary>
+    bool FeatureFits(Simulation sim, TileId tile, string feature);
+    /// <summary>Start a pass of changes. Areas and lake flags are rebuilt once, when the pass is disposed, if a change in
+    /// it turned land to water or back; until then they describe the map before the pass.</summary>
+    ITerrainChangePass Begin(Simulation sim);
+}
+
+/// <summary>A pass of plot changes, from <see cref="ITerrainChanges.Begin"/>.</summary>
+public interface ITerrainChangePass : IDisposable
+{
+    /// <summary>Give a plot this terrain and feature. Returns false, and does nothing, when it already has both.
+    /// Otherwise it settles the plot's and its neighbours' heights and cliffs, drops a feature that no longer fits, and
+    /// then publishes <see cref="TerrainChanged"/>. The caller settles anything else the change means for the plot (its
+    /// improvement or route, say) before calling.</summary>
+    bool Change(TileId tile, string terrain, string? feature);
+}
+
 /// <summary>Start evaluation and setup-only normalization.</summary>
 public interface IStartingPositionService
 {
@@ -77,7 +100,9 @@ public interface IStartingPositionService
 /// <summary>Feature production is a pending city grant; Cities owns the overflow mutation.</summary>
 public sealed record FeatureProduction(int Player, TileId Plot, int? City, int Production) : DomainEvent;
 
-public sealed record GlobalWarmingOccurred(TileId Plot, string PreviousTerrain, string NewTerrain, string? PreviousFeature, string? NewFeature) : DomainEvent;
+/// <summary>A rule changed a plot's terrain or feature through <see cref="ITerrainChangePass.Change"/>. The plot is
+/// settled when this is published; areas and lake flags are rebuilt when the pass ends.</summary>
+public sealed record TerrainChanged(TileId Plot, string PreviousTerrain, string NewTerrain, string? PreviousFeature, string? NewFeature) : DomainEvent;
 public sealed record FeatureChanged(TileId Plot, string? PreviousFeature, string? NewFeature) : DomainEvent;
 public sealed record BonusDiscovered(TileId Plot, string Bonus, int Player) : DomainEvent;
 public sealed record BonusDepleted(TileId Plot, string Bonus, int Player) : DomainEvent;

@@ -3,11 +3,11 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Rules.Military;
 
-/// <summary>Units left standing on land that warming turned to water. The stranded stack moves as one to a random
+/// <summary>Units left standing on land that a terrain change (<see cref="TerrainChanged"/>) turned to water. The stranded stack moves as one to a random
 /// adjacent plot every one of its units could enter by a normal step; with no such plot, the stack is lost.</summary>
 internal static class FloodedUnits
 {
-    internal static void Evacuate(Simulation sim, MovementService movement, GlobalWarmingOccurred flood)
+    internal static void Evacuate(Simulation sim, MovementService movement, TerrainChanged flood)
     {
         if (Water(sim, flood.PreviousTerrain) || !Water(sim, flood.NewTerrain)) return;
         var from = flood.Plot;

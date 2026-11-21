@@ -7,8 +7,11 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.Tests;
 
-public sealed partial class WorldRulesTests
+/// <summary>The GlobalWarming mod: pollution rolls, one-step degradation and floods, played through the base game's
+/// <see cref="ITerrainChanges"/>; and the base game without the mod, which never warms.</summary>
+public sealed class GlobalWarmingTests
 {
+    private const string ModId = "global_warming";
     private const string Warming = "warming_probe:";
     private static readonly Lazy<ContentDb> WarmingContentDb = new(() => WarmingContent());
     private static readonly Lazy<ContentDb> SlowWarmingContentDb = new(() => WarmingContent(slow: true));
@@ -42,7 +45,7 @@ public sealed partial class WorldRulesTests
         Assert.Equal(nextTerrain, plot.Terrain); Assert.Equal(nextFeature, plot.Feature);
         Assert.Null(plot.Improvement); Assert.Equal(0, plot.ImprovementTurns); Assert.Empty(plot.BuildProgress);
         Assert.Equal("world:route_route_road", plot.Route);
-        Assert.Equal(new GlobalWarmingOccurred(tile, terrain, nextTerrain, feature, nextFeature), Assert.Single(sim.Events.Published.OfType<GlobalWarmingOccurred>()));
+        Assert.Equal(new TerrainChanged(tile, terrain, nextTerrain, feature, nextFeature), Assert.Single(sim.Events.Published.OfType<TerrainChanged>()));
         Assert.Equal(cities, sim.State.Cities.Select(c => sim.State.PlotAt(c.Position).Terrain));
     }
 
@@ -59,7 +62,7 @@ public sealed partial class WorldRulesTests
         WarmingTurn(sim);
         Assert.Equal(terrain, plot.Terrain); Assert.Equal(feature, plot.Feature);
         Assert.Equal(Warming + "marker", plot.Improvement); Assert.Equal(7, plot.ImprovementTurns);
-        Assert.Empty(sim.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Empty(sim.Events.Published.OfType<TerrainChanged>());
     }
 
     [Theory]
@@ -84,7 +87,7 @@ public sealed partial class WorldRulesTests
             Assert.Equal(0, sim.State.Plots[sea.Value].CliffEdges);
         }
         else Assert.NotEqual(0, plot.CliffEdges);
-        Assert.Equal(floods ? 1 : 0, sim.Events.Published.OfType<GlobalWarmingOccurred>().Count());
+        Assert.Equal(floods ? 1 : 0, sim.Events.Published.OfType<TerrainChanged>().Count());
     }
 
     [Fact]
@@ -155,19 +158,77 @@ public sealed partial class WorldRulesTests
         Assert.Contains(Assert.Single(positions), land);
     }
 
+    [Fact]
+    public void The_base_game_alone_plays_polluting_turns_without_warming()
+    {
+        // The base modules and the probe's polluters, no mod: nothing runs in the environment slot and real turns pass
+        // without a plot changing, though the same map floods on the first warming turn with the mod (below).
+        var content = WarmingContent(withMod: false);
+        Assert.All(content.LoadedMods, id => Assert.True(Ariel.Composition.BaseGame.IsBase(id) || id == "warming_probe", id));
+        Assert.DoesNotContain(content.TurnSystems.All, s => s.Order == TurnPhase.Environment);
+        // Whole turns run the city rules, which need a speed every culture level knows.
+        var (sim, target) = FloodScenario(5, 2, 2, FloodTerrain, content, speed: "foundation:gamespeed_normal");
+        int start = sim.State.Turn;
+        for (int turn = 0; turn < 3; turn++)
+            foreach (var player in sim.State.Players.Where(p => !p.EndedTurn).ToArray())
+                Assert.True(sim.TrySubmit(new EndTurnCommand { Player = player.Id }, out var error), error);
+        Assert.Equal(start + 3, sim.State.Turn);
+        Assert.Equal("world:desert", sim.State.Plots[target.Value].Terrain);
+        Assert.Empty(sim.Events.Published.OfType<TerrainChanged>());
+    }
+
+    [Fact]
+    public void With_the_mod_the_same_map_floods_and_the_stranded_unit_is_evacuated()
+    {
+        var content = WarmingContent();
+        Assert.Single(content.TurnSystems.All, s => s.Order == TurnPhase.Environment && s.Id == "global_warming:warming");
+        var (sim, target) = FloodScenario(5, 2, 2, FloodTerrain, content);
+        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = sim.State.Grid.HexOf(target) };
+        sim.State.AddUnit(unit); Service<IUnitService>(sim).Initialize(sim, unit.Id);
+        WarmingTurn(sim);
+        Assert.Equal("world:coast", sim.State.Plots[target.Value].Terrain);
+        Assert.Equal(1, sim.State.Grid.TileAt(sim.State.UnitById(unit.Id).Position).Value);
+        Assert.Single(sim.Events.Published.OfType<TerrainChanged>());
+    }
+
+    /// <summary>5x2, row-major. Tile 2 is coastal desert with grass at tile 1, the only land beside it.</summary>
+    private static string FloodTerrain(int tile) => tile == 2 ? "world:desert" : tile == 1 ? "world:grass" : "world:coast";
+
+    [Fact]
+    public void A_terrain_change_pass_settles_the_plot_announces_it_and_rebuilds_areas_once_it_ends()
+    {
+        // The base contract on its own: no mod changes the plot, so this is what any reshaping rule gets from World.
+        var (sim, target) = FloodScenario(5, 2, 2, FloodTerrain, WarmingContent(withMod: false));
+        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = "military:warrior", Position = sim.State.Grid.HexOf(target) };
+        sim.State.AddUnit(unit); Service<IUnitService>(sim).Initialize(sim, unit.Id);
+        var changes = sim.Rules().TerrainChanges;
+        Assert.False(changes.FeatureFits(sim, target, Warming + "shield")); // The shield grows on grass only.
+        int area = sim.State.Plots[target.Value].AreaId;
+        using (var pass = changes.Begin(sim))
+        {
+            Assert.False(pass.Change(target, "world:desert", null));
+            Assert.True(pass.Change(target, "world:coast", "world:forest"));
+            Assert.Null(sim.State.Plots[target.Value].Feature); // Forest cannot stand on coast.
+            Assert.Equal(1, sim.State.Grid.TileAt(sim.State.UnitById(unit.Id).Position).Value);
+            Assert.Equal(area, sim.State.Plots[target.Value].AreaId); // Areas wait for the pass to end.
+        }
+        Assert.Equal(sim.State.Plots[3].AreaId, sim.State.Plots[target.Value].AreaId);
+        Assert.Equal(new TerrainChanged(target, "world:desert", "world:coast", null, null), Assert.Single(sim.Events.Published.OfType<TerrainChanged>()));
+    }
+
     /// <summary>A polluting map whose only plot without a city is <paramref name="target"/>, with areas assigned as a
     /// generator would leave them.</summary>
-    private static (Simulation Sim, TileId Target) FloodScenario(int width, int height, int target, Func<int, string> terrain)
+    private static (Simulation Sim, TileId Target) FloodScenario(int width, int height, int target, Func<int, string> terrain, ContentDb? content = null,
+        string speed = Warming + "speed")
     {
-        var (sim, _, _) = WarmingScenario(width: width, height: height);
+        var (sim, _, _) = WarmingScenario(content, width: width, height: height, speed: speed);
         foreach (var tile in sim.State.Grid.Tiles) sim.State.Plots[tile.Value].Terrain = terrain(tile.Value);
         var tileId = new TileId(target);
         sim.State.RemoveCity(sim.State.CityAt(sim.State.Grid.HexOf(tileId))!.Id);
         AddCity(sim, sim.State.Grid.Tiles.Last());
         // Pollution is spread over the whole map, so every city pollutes to guarantee an attempt on a larger map.
         foreach (var city in sim.State.Cities) city.Buildings.Add(Warming + "factory");
-        var geography = sim.Content.TurnSystems.All.Single(s => s.Id == "world:global_warming").GetType().Assembly
-            .GetType("Ariel.Rules.World.Geography", throwOnError: true)!;
+        var geography = typeof(Ariel.Rules.World.WorldModule).Assembly.GetType("Ariel.Rules.World.Geography", throwOnError: true)!;
         geography.GetMethod("AssignAreas", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!
             .Invoke(null, [sim.State.Grid, sim.State.Plots, sim.Content]);
         return (sim, tileId);
@@ -208,7 +269,7 @@ public sealed partial class WorldRulesTests
         for (int i = 0; i < attempts; i++) { expected.Next(100); expected.Next(1); }
         WarmingTurn(sim);
         Assert.Equal(expected.State, sim.Rng.State); // Fallout is immune but still receives the attempts.
-        Assert.Empty(sim.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Empty(sim.Events.Published.OfType<TerrainChanged>());
     }
 
     [Theory]
@@ -235,7 +296,7 @@ public sealed partial class WorldRulesTests
             WarmingTurn(sim);
             Assert.Equal(expected.State, sim.Rng.State);
             Assert.Equal(changesNow ? null : Warming + "shield", plot.Feature);
-            Assert.Equal(changesNow ? 1 : 0, sim.Events.Published.Skip(before).OfType<GlobalWarmingOccurred>().Count());
+            Assert.Equal(changesNow ? 1 : 0, sim.Events.Published.Skip(before).OfType<TerrainChanged>().Count());
             if (changesNow) changes++;
         }
         Assert.InRange(changes, 1, 63);
@@ -250,7 +311,7 @@ public sealed partial class WorldRulesTests
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         WarmingTurn(sim); WarmingTurn(loaded);
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        Assert.Equal(sim.Events.Published.OfType<GlobalWarmingOccurred>(), loaded.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Equal(sim.Events.Published.OfType<TerrainChanged>(), loaded.Events.Published.OfType<TerrainChanged>());
     }
 
     [Fact]
@@ -264,7 +325,7 @@ public sealed partial class WorldRulesTests
         WarmingTurn(sim);
         Assert.Equal(expected.State, sim.Rng.State);
         Assert.Equal(Warming + "shield", sim.State.Plots[tile.Value].Feature);
-        Assert.Empty(sim.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Empty(sim.Events.Published.OfType<TerrainChanged>());
     }
 
     [Fact]
@@ -276,12 +337,12 @@ public sealed partial class WorldRulesTests
         sim.State.Plots[sim.State.Grid.Neighbors(tile).First().Value].Terrain = "world:coast";
         WarmingTurn(sim);
         Assert.Equal("world:desert", sim.State.Plots[tile.Value].Terrain);
-        Assert.Empty(sim.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Empty(sim.Events.Published.OfType<TerrainChanged>());
         AddCity(sim, tile);
         var expected = CopyRng(sim); expected.Next(100);
         WarmingTurn(sim);
         Assert.Equal(expected.State, sim.Rng.State);
-        Assert.Empty(sim.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Empty(sim.Events.Published.OfType<TerrainChanged>());
     }
 
     [Fact]
@@ -294,7 +355,7 @@ public sealed partial class WorldRulesTests
         Assert.Null(plot.Feature);
         Assert.Equal("world:plains", plot.Terrain);
         Assert.Equal("world:corn", plot.Bonus);
-        Assert.Single(sim.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Single(sim.Events.Published.OfType<TerrainChanged>());
     }
 
     [Fact]
@@ -304,7 +365,7 @@ public sealed partial class WorldRulesTests
         sim.State.PlayerById(0).Civics["government:civicoption_healthcare"] = Warming + "class_unhealth";
         Assert.Equal(new CityEnvironmentalUnhealth(1, 0, 0), Service<ICityWellbeingService>(sim).EnvironmentalUnhealth(sim, city.Id));
         WarmingTurn(sim);
-        Assert.Single(sim.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Single(sim.Events.Published.OfType<TerrainChanged>());
     }
 
     [Fact]
@@ -333,7 +394,7 @@ public sealed partial class WorldRulesTests
         var rng = sim.Rng.State;
         WarmingTurn(sim);
         Assert.Equal(rng, sim.Rng.State);
-        Assert.Empty(sim.Events.Published.OfType<GlobalWarmingOccurred>());
+        Assert.Empty(sim.Events.Published.OfType<TerrainChanged>());
     }
 
     [Fact]
@@ -347,16 +408,32 @@ public sealed partial class WorldRulesTests
         Assert.Equal(expected, Service<ICityWellbeingService>(sim).EnvironmentalUnhealth(sim, city.Id).Buildings);
     }
 
+    private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
+
+    private static City AddCity(Simulation sim, TileId tile)
+    {
+        var city = new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(tile), Name = "Test city" };
+        sim.State.AddCity(city);
+        return city;
+    }
+
+    private static DeterministicRng CopyRng(Simulation sim)
+    {
+        var (a, b, c, d) = sim.Rng.State;
+        return DeterministicRng.Restore(a, b, c, d);
+    }
+
     private static void WarmingTurn(Simulation sim)
     {
         foreach (var system in sim.Content.TurnSystems.All.Where(s => s.Order == TurnPhase.Environment)) system.Run(sim);
     }
 
-    private static (Simulation Sim, TileId Target, City Polluter) WarmingScenario(ContentDb? content = null, int width = 3, int height = 2)
+    private static (Simulation Sim, TileId Target, City Polluter) WarmingScenario(ContentDb? content = null, int width = 3, int height = 2,
+        string speed = Warming + "speed")
     {
 var sim = new Simulation(content ?? WarmingContentDb.Value, new SimulationSettings
         {
-            WorldSize = "foundation:worldsize_duel", GameSpeed = Warming + "speed",
+            WorldSize = "foundation:worldsize_duel", GameSpeed = speed,
             Leaders = ["peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar"],
         });
         GameFactory.NeutralPolitics(sim);
@@ -369,10 +446,12 @@ sim.State.Map = new(width, height, false);
         return (sim, sim.State.Grid.Tiles.Last(), sim.State.Cities[0]);
     }
 
-    private static ContentDb WarmingContent(bool slow = false, bool extremeDefense = false, bool flood = true)
+    private static ContentDb WarmingContent(bool slow = false, bool extremeDefense = false, bool flood = true, bool withMod = true)
     {
         var mods = new LoadedMods();
-        return ModLoader.Build(mods.Sources.Append(new ModSource
+        Assert.Contains(mods.Sources, s => s.Manifest.Id == ModId);
+        // Without the mod, the base game alone: no other mod may stand in for what it does.
+        return ModLoader.Build(mods.Sources.Where(s => withMod || Ariel.Composition.BaseGame.IsBase(s.Manifest.Id)).Append(new ModSource
         {
             Manifest = new() { Id = "warming_probe", Version = "1", Dependencies = ["cities", "government", "world", "foundation", "research"] },
             Root = mods.Root, Instance = new WarmingProbe(slow, extremeDefense, flood),

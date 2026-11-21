@@ -39,12 +39,8 @@ internal sealed class PlotYieldService(IWaterService water) : IPlotYieldService
         var flat = sink.FlatYield;
         sink.AddYield("peoples:yield_threshold", new(Extra("food", flat.Food), Extra("production", flat.Production), Extra("commerce", flat.Commerce)));
     }
-    public PlotYieldResult CalculateNature(Simulation sim, int player, TileId tile, bool ignoreFeature = false)
+    public PlotYieldResult CalculateNature(Simulation sim, int? player, TileId tile, bool ignoreFeature = false)
         => Nature(sim, player, tile, ignoreFeature);
-
-    // Warming uses the best natural food with no team knowledge, not player zero's revealed resources.
-    internal long BestNatureFood(Simulation sim, TileId tile) => Math.Max(
-        Nature(sim, null, tile, false).Yields.Food, Nature(sim, null, tile, true).Yields.Food);
 
     private static PlotYieldResult Nature(Simulation sim, int? player, TileId tile, bool ignoreFeature)
     {
