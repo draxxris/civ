@@ -77,9 +77,7 @@ names a faith by its identity (`foundation:buddhism`); the Religion mod's `Relig
 has its own id (`religion:buddhism`, kept in saves) and names the identity it plays in
 `identity`. The importer emits both from one source record: a family a mod emits for
 another mod's records gets the id `mod:name` and an `identity`. `ReligionDef` retains `StateReligionCommerce`,
-`HolyCityCommerce`, and `GlobalCityCommerce` vectors in whole points. The importer
-derives temple, monastery, cathedral, and shrine relations (`Temples`, `Monasteries`,
-`Cathedrals`, `Shrines`) from building categories and religion fields. Building
+`HolyCityCommerce`, and `GlobalCityCommerce` vectors in whole points. Building
 happiness, civic religion effects, missionary chances, trait commerce policy, and leader
 favorites retain their existing typed properties.
 
