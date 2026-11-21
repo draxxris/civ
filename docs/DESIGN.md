@@ -1421,21 +1421,26 @@ Passive thresholds unlock demographics, city visibility, research inspection, an
 investigation. The service answers the base seam `IEspionageSpending`, so the economy
 leaves banking to it. Spy missions spend points and use a calculated success chance; running a
 mission lowers the attacker's own investment, so later missions cost more. Counter-
-espionage raises both cost and risk for a fixed number of turns. All numbers come from
+espionage raises both cost and risk for a fixed number of turns. Fomented unhappiness is
+a timed effect on the city (Timed effects). All numbers come from
 `data/espionage-rules.json`. Saved team, player, and city state tracks points, weights,
 remainders, and timers.
 
 Events roll eligible triggers per turn with the simulation RNG. Trigger definitions set
 eligibility, chance, repeat policy, and cooldown. Pending events hold a player choice.
 Options can change treasury, research, city stores, happiness, health, and plot yields.
-Unresolved events use a default option. AI players resolve events automatically.
+The lasting changes are timed effects (Timed effects) whose source is the option and whose
+holder is the event's player, city and plot. A timed option counts its duration from the
+turn it is answered and still applies on its expiry turn. Unresolved events use a default
+option. AI players resolve events automatically.
 
 ScriptedWonders adds completion, periodic, combat, and modifier effects to selected
 buildings, and answers the base game's empire free buildings (`IFreeBuildingGrants`) and
 the base game's movement barriers with its wonders that keep barbarians out (`IMovementBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
-recovery. Thresholds can trigger mutiny or rebellion. Mutiny adds unhappiness; Warning
+recovery. Thresholds can trigger mutiny or rebellion; a rebellion and an incited revolt leave
+unrest, a timed effect on the city. Mutiny adds unhappiness; Warning
 is a display-only alert. Players can suppress instability with gold, priced by the
 reduction, or with a military garrison. A city with no legal rebel tile does not rebel.
 A spy-incited revolt adds instability through the Revolution service. The service answers
@@ -2183,6 +2188,44 @@ key whose provider the content's mod does not reference. Effects are part of the
 definition, so they are in the content hash. A key nobody reads is legal and inert; the
 computer player values only the keys it knows (Computer players).
 
+### Timed effects
+
+A feature that grants modifiers for a while keeps them in the base game's one store,
+`ITimedEffects` (`GameRules.TimedEffects`, in Cities, contracts in
+`Contracts/TimedEffectContracts.cs`), instead of its own "until turn N" field, modifier
+source and pruning. A `TimedEffect` is a bundle of `ModifierEffect`s with a `Source` (the
+feature's id and the ledger source of every line), a holder (`Player`, `City`, `Plot`,
+-1 when unused) and an `ExpiresTurn`, the first turn it no longer applies (0: never).
+
+- Where it applies: one `IModifierSource` (`cities:timed_effect_modifiers`) adds each
+  active effect to the calculations of its own scope that its holder takes part in. A
+  plot effect applies to `Plot`. A city effect applies to `City`, or, with no city, to
+  every city `Player` owns. A player effect applies to `Player`.
+- When it ends: an effect applies while `Turn < ExpiresTurn`. The turn system
+  `cities:timed_effects` (`TurnPhase.GameBegin`) drops the expired ones. An effect held by a
+  city ends when the city is captured or razed, because a conquest must not hand the loser's
+  spy unrest or event bonus to the winner.
+- API: `Add` (gives the next id), `Set` (replaces the effect with the same source and
+  holder), `Remove(id)`, `Find` (by id, or the active one by source and holder) and
+  `Active`. `TimedEffect.TurnsRemaining(turn)` is what a screen shows as "N turns
+  remaining". The store is saved as `TimedEffectState` (`cities:timed_effects`).
+
+On the store: an event option's lasting happiness, health and plot yields (Events), a
+spy's fomented unhappiness (Espionage, `espionage:foment_unhappiness`) and the unrest a
+rebellion or an incited revolt leaves (Revolution, `revolution:unrest`). Not on it, because
+they are not a fixed modifier with an expiry:
+- Hurry and conscription anger (`HurryAngerTurns`, `ConscriptAngerTurns`) are pooled
+  counters. Each use adds turns, the anger grows in steps with the turns left, and hurry
+  anger rescales when an anger-modifying building completes.
+- Occupation (`OccupationTurns`) and a spy's incited revolt (`RevoltUntilTurn`) are
+  disorder, a city state rather than a modifier.
+- Counter-espionage is a cost multiplier per rival team that the espionage formulas
+  read directly; no modifier calculation collects it.
+- A golden age stacks its length and can start a turn late. It sets the base golden-age
+  flag and adds threshold-dependent plot yields through a yield finalizer.
+- Cooldowns ("may not rebel again until", civic and religion changes, event repeats)
+  limit actions; they modify nothing.
+
 ## Events and extension state
 
 `ctx.Subscribe<TEvent>(name, handler)` registers deterministic event handlers.
@@ -2209,7 +2252,8 @@ Registered state components across mods include:
 
 - Game: `ReligionGameState` (founded holy cities), `EspionageGameState` (global
   espionage points), `MilitaryGameState` (temporary recon sights, the one barbarian
-  player) and `VictoryGameState` (`victory:game_state`, the recorded win).
+  player), `VictoryGameState` (`victory:game_state`, the recorded win) and
+  `TimedEffectState` (`cities:timed_effects`, every timed modifier effect).
 - Player: `EconomyPlayerState` (sliders, inflation, settlement), `GovernmentPlayerState`
   (anarchy, cooldowns), `ReligionPlayerState` (state religion, cooldown),
   `GreatPeoplePlayerState` (Golden Age timers), `MilitaryPlayerState` (combat general

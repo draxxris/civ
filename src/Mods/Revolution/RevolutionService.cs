@@ -40,7 +40,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         return new(cityId, state.InstabilityIndex, status,
             checked((int)ledger.Total("revolution:change")),
             state.CooldownTurnsRemaining(sim.State.Turn),
-            state.UnrestTurnsRemaining(sim.State.Turn), SuppressionGold(sim, state.InstabilityIndex), ledger);
+            UnrestEffect(sim, city)?.TurnsRemaining(sim.State.Turn) ?? 0, SuppressionGold(sim, state.InstabilityIndex), ledger);
     }
 
     private static CityStabilityStatus Status(int index, RevolutionRulesDef rules)
@@ -168,8 +168,28 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (city is null || GovernmentStatus.IsDisorder(sim, city)) return false;
         var rules = Rules(sim);
         var state = Edit(sim, city);
-        state.Incite(sim.State.Turn, rules.InciteInstability, GamePace.Scale(sim, rules.UnrestTurns));
+        state.Incite(rules.InciteInstability);
+        StartUnrest(sim, city, rules, extend: true);
         return true;
+    }
+
+    /// <summary>The ledger source of the unrest a rebellion or an incited revolt leaves, a timed effect on the city.</summary>
+    internal const string UnrestSource = "revolution:unrest";
+
+    private static TimedEffect? UnrestEffect(Simulation sim, City city) =>
+        sim.Rules().TimedEffects.Find(sim, UnrestSource, city: city.Id);
+
+    /// <summary>Unrest for the configured turns after this one. An incited revolt only lengthens unrest already under
+    /// way (<paramref name="extend"/>); a rebellion restarts it. It ends if the city changes hands.</summary>
+    internal static void StartUnrest(Simulation sim, City city, RevolutionRulesDef rules, bool extend)
+    {
+        int expires = sim.State.Turn + 1 + GamePace.Scale(sim, rules.UnrestTurns);
+        if (extend && UnrestEffect(sim, city) is { } current) expires = Math.Max(expires, current.ExpiresTurn);
+        sim.Rules().TimedEffects.Set(sim, new TimedEffect
+        {
+            Source = UnrestSource, City = city.Id, ExpiresTurn = expires,
+            Effects = [new() { Scope = ModifierScope.City, Key = "cities:happiness", Amount = rules.UnrestUnhappiness }],
+        });
     }
 
     public IReadOnlyList<int> CitiesAtRisk(Simulation sim, int player)
@@ -194,8 +214,6 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
         var rules = Rules(context.Sim);
         var state = Read(context.Sim, city);
-        if (state.IsInUnrest(context.Sim.State.Turn))
-            sink.Add("revolution:unrest", "cities:happiness", rules.UnrestUnhappiness);
         // Mutiny is the first tier with a gameplay effect: the city's people stop cooperating.
         if (Status(state.InstabilityIndex, rules) >= CityStabilityStatus.Mutiny)
             sink.Add("revolution:mutiny", "cities:happiness", rules.MutinyUnhappiness);

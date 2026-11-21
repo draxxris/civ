@@ -5,13 +5,14 @@ namespace Ariel.Mods.Revolution;
 
 public enum CityStabilityStatus { Stable, Warning, Mutiny, Rebellion }
 
-/// <summary>Saved city instability and absolute turn deadlines. Queries must not attach this component.</summary>
+/// <summary>Saved city instability and the rebellion cooldown. Queries must not attach this component. The unrest a
+/// rebellion or an incited revolt leaves is a timed effect in the base game's store (<see cref="GameRules.TimedEffects"/>,
+/// source <c>revolution:unrest</c>).</summary>
 public sealed class RevolutionCityState
 {
     private int _instabilityIndex;
     private int _lastUpdatedTurn;
     private int _rebellionCooldownUntilTurn;
-    private int _unrestUntilTurn;
 
     public int InstabilityIndex
     {
@@ -31,19 +32,9 @@ public sealed class RevolutionCityState
         set => _rebellionCooldownUntilTurn = Math.Max(0, value);
     }
 
-    public int UnrestUntilTurn
-    {
-        get => _unrestUntilTurn;
-        set => _unrestUntilTurn = Math.Max(0, value);
-    }
-
     public bool IsRebellionOnCooldown(int currentTurn) => currentTurn < _rebellionCooldownUntilTurn;
 
-    public bool IsInUnrest(int currentTurn) => currentTurn < _unrestUntilTurn;
-
     public int CooldownTurnsRemaining(int currentTurn) => Math.Max(0, _rebellionCooldownUntilTurn - currentTurn);
-
-    public int UnrestTurnsRemaining(int currentTurn) => Math.Max(0, _unrestUntilTurn - currentTurn);
 
     public void RecordInstabilityChange(long delta, int turn)
     {
@@ -51,11 +42,10 @@ public sealed class RevolutionCityState
         _lastUpdatedTurn = Math.Max(0, turn);
     }
 
-    public void TriggerRebellion(int currentTurn, int threshold, int release, int cooldownTurns, int unrestTurns)
+    public void TriggerRebellion(int currentTurn, int threshold, int release, int cooldownTurns)
     {
         _instabilityIndex = Math.Max(0, Math.Min(_instabilityIndex, threshold) - release);
         _rebellionCooldownUntilTurn = currentTurn + 1 + cooldownTurns;
-        _unrestUntilTurn = currentTurn + 1 + unrestTurns;
     }
 
     public void Suppress(int reduction)
@@ -63,10 +53,9 @@ public sealed class RevolutionCityState
         _instabilityIndex = Math.Max(0, _instabilityIndex - reduction);
     }
 
-    public void Incite(int currentTurn, int additionalInstability, int unrestTurns)
+    public void Incite(int additionalInstability)
     {
         _instabilityIndex = (int)Math.Clamp(_instabilityIndex + additionalInstability, 0, int.MaxValue);
-        _unrestUntilTurn = Math.Max(_unrestUntilTurn, currentTurn + 1 + unrestTurns);
     }
 }
 

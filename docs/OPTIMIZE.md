@@ -986,6 +986,29 @@ What the profile shows next, per turn: `System.String` 201 MiB (likely the
 recompute), and about 80 MiB of LINQ closures over `TechDef` and `TerrainDef` lookups.
 None was changed here; each needs its call sites found and its own measurement.
 
+### Measurement: Base Victory Module and Timed Effects Store (No Regression)
+
+- **Date**: 2026-11-21
+
+Score and victory moved into the base game (`victory`), and Events, Espionage and
+Revolution now keep their timed modifiers in one Cities store
+(`cities:timed_effect_modifiers`, which returns at once for any scope other than plot,
+city and player). `mise run benchmark`, single samples, run back to back on the same
+machine before (`513df09`) and after. The games are not identical: main-mod games now
+score, check victory each turn and apply research diffusion welfare, so the turn-100
+position differs.
+
+| Workload                                            |    Before |     After |
+| :-------------------------------------------------- | --------: | --------: |
+| Fifty-city turn (turn 2)                            |  1,204 ms |  1,244 ms |
+| Eight-player preparation (99 turns, save/load)      | 69,150 ms | 70,247 ms |
+| Eight-player AI decisions at turn 100               |    254 ms | 330-488 ms |
+| World generation, seeds 1 / 42 / 987654             | 393 / 235 / 436 ms | 398 / 297 / 266 ms |
+
+The turn and preparation figures are within 3% and inside the run-to-run spread. The AI
+decision sample moved between 330 and 488 ms over two runs of the same build, so that row
+reflects the different turn-100 position and noise more than either change.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary

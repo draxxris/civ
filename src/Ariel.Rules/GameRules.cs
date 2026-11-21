@@ -71,6 +71,8 @@ public sealed class GameRules : IRuleset
     public ICityWorkService CityWork { get; private set; } = null!;
     /// <summary>City yields and commerce.</summary>
     public ICityYieldService CityYields { get; private set; } = null!;
+    /// <summary>Modifiers features grant for a while, with the turn they expire.</summary>
+    public ITimedEffects TimedEffects { get; private set; } = null!;
     /// <summary>Unit lifecycle, cargo, promotion and upkeep.</summary>
     public IUnitService Units { get; private set; } = null!;
     /// <summary>Unit movement rules.</summary>
@@ -183,6 +185,7 @@ public sealed class GameRules : IRuleset
         CityWellbeing = services.Get<ICityWellbeingService>().Single();
         CityWork = services.Get<ICityWorkService>().Single();
         CityYields = services.Get<ICityYieldService>().Single();
+        TimedEffects = services.Get<ITimedEffects>().Single();
         Units = services.Get<IUnitService>().Single();
         Movement = services.Get<IMovementService>().Single();
         Paths = services.Get<IPathfindingService>().Single();

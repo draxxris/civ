@@ -28,6 +28,13 @@ public sealed class CitiesModule : IPreparableMod
         context.RegisterService<ICityBuildingService>("building_state", new CityBuildingService());
         context.RegisterService<IModifierSource>("buildings", new BuildingEffects());
         context.RegisterService<IModifierSource>("military_building_grants", new BuildingMilitaryEffects());
+        var timed = new TimedEffects();
+        context.RegisterService<ITimedEffects>("timed_effects", timed);
+        context.RegisterService<IModifierSource>("timed_effect_modifiers", timed);
+        context.RegisterStateComponent<TimedEffectState>("timed_effects");
+        context.TurnSystems.Register(new TimedEffectExpiry());
+        context.Subscribe<CityCaptured>("timed_effects_capture", (sim, captured) => TimedEffects.EndCity(sim, captured.City));
+        context.Subscribe<CityRazed>("timed_effects_raze", (sim, razed) => TimedEffects.EndCity(sim, razed.City));
         context.RegisterService<ICityCaptureService>("capture", new CityCapture());
         var yields = new CityYields();
         var wellbeing = new CityWellbeingService();

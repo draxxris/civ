@@ -129,8 +129,10 @@ happiness, health, and plot-yield changes use integer units (`GoldDelta`,
 `ResearchBonus`, `CityFoodDelta`, `CityProductionDelta`, `HappinessDelta`,
 `HealthDelta`, `PlotFoodDelta`, `PlotProductionDelta`, `PlotCommerceDelta`). City
 culture uses hundredths of a point (`CityCultureHundredthsDelta`). Negative gold
-indicates a cost. `DurationTurns` makes happiness, health, and plot effects temporary;
-zero means permanent. `Outcome` provides post-choice feedback text.
+indicates a cost. `DurationTurns` makes happiness, health, and plot effects temporary,
+counted from the turn the event is answered and still applying on the turn that count
+reaches; zero means permanent. The lasting effects are kept as timed effects in the base
+game's store (see "Timed effects" in DESIGN.md). `Outcome` provides post-choice feedback text.
 
 ### Civic fields, effects and attachments
 

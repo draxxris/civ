@@ -140,9 +140,13 @@ public sealed class EventRulesTests
         Choose(sim, e, "events:forest_fire_burn");
         YieldVector Yield() => ModifierSink.Collect(new(sim, ModifierScope.Plot, 0, Plot: new TileId(15))).FlatYield;
         Assert.Equal(-1, Yield().Food);
-        sim.State.Turn += 15;
-        Turn(sim);
+        sim.State.Turn += 15; // the expiry turn itself still burns
+        Assert.Equal(-1, Yield().Food);
+        sim.State.Turn += 1;
         Assert.Equal(0, Yield().Food);
+        Turn(sim);
+        sim.Content.TurnSystems.Get("cities:timed_effects").Run(sim);
+        Assert.Empty(sim.Rules().TimedEffects.Active(sim));
     }
 
     [Fact]
@@ -218,29 +222,29 @@ public sealed class EventRulesTests
         Assert.Equal(-1, Health(sim, city));
         sim.State.Turn = e.Turn + 3 + 9; Turn(sim);
         Assert.Equal(-1, Health(sim, city)); // still active on its 9th turn
-        sim.State.Turn = e.Turn + 3 + 10; // Expiration turn reached at resolution turn + duration.
-        Turn(sim);
+        sim.State.Turn = e.Turn + 3 + 10; // The expiration turn, resolution turn + duration, still counts.
+        Assert.Equal(-1, Health(sim, city));
+        Assert.Equal(1, Assert.Single(Events(sim).ActiveEffects(sim, 0)).TurnsRemaining(sim.State.Turn));
+        sim.State.Turn = e.Turn + 3 + 11;
         Assert.Equal(0, Health(sim, city));
     }
 
     [Fact]
-    public void Applied_event_effects_record_event_id_and_trigger_provenance()
+    public void Applied_event_effects_are_timed_effects_held_by_the_option_and_city()
     {
         var sim = Scenario();
         var city = AddCity(sim, 14);
         sim.TeamOf(0).Techs.Add("research:agriculture");
         var e = Wait(sim, "events:herbalists");
         Choose(sim, e, "events:herbalists_fund");
-        var state = sim.State.Extensions.Get<EventState>(sim.Content)!;
-        var effect = Assert.Single(state.Effects);
-        Assert.Equal(e.Id, effect.EventId);
-        Assert.Equal("events:herbalists", effect.Trigger);
+        var effect = Assert.Single(Events(sim).ActiveEffects(sim, 0));
+        Assert.Same(effect, Assert.Single(sim.Rules().TimedEffects.Active(sim)));
+        Assert.Equal("events:herbalists_fund", effect.Source);
+        Assert.Equal("events:herbalists", sim.Content.Get<EventOptionDef>(effect.Source).Trigger);
         Assert.Equal(0, effect.Player);
         Assert.Equal(city.Id, effect.City);
-        Assert.Equal("events:herbalists_fund", effect.Option);
-        Assert.True(effect.IsCityScope);
-        Assert.False(effect.IsEmpireScope);
         Assert.True(effect.IsPermanent);
+        Assert.Empty(Events(sim).ActiveEffects(sim, 1));
     }
 
     [Fact]
@@ -251,14 +255,13 @@ public sealed class EventRulesTests
         sim.TeamOf(0).Techs.Add("research:agriculture");
         var e = Wait(sim, "events:herbalists");
         Choose(sim, e, "events:herbalists_fund");
-        var state = sim.State.Extensions.Get<EventState>(sim.Content)!;
-        Assert.Contains(state.Effects, eff => eff.City == city.Id);
+        Assert.Contains(sim.Rules().TimedEffects.Active(sim), eff => eff.City == city.Id);
         Assert.Equal(2, Health(sim, city));
 
         sim.State.SetWar(0, 1, true);
         sim.Rules().CityCapture.Capture(sim, city.Id, 1);
 
-        Assert.DoesNotContain(state.Effects, eff => eff.City == city.Id);
+        Assert.DoesNotContain(sim.Rules().TimedEffects.Active(sim), eff => eff.City == city.Id);
         var capturedCity = sim.State.CityById(city.Id);
         Assert.Equal(0, Health(sim, capturedCity));
     }
@@ -291,7 +294,6 @@ public sealed class EventRulesTests
         var state = new EventState();
         Assert.False(state.HasPending);
         Assert.Equal(0, state.PendingCount);
-        Assert.Equal(0, state.ActiveEffectsCount);
 
         // AddPending and FindPending
         var p1 = new PendingEvent(1, 0, "test:trig1", 10, -1, 5);
@@ -311,44 +313,6 @@ public sealed class EventRulesTests
         Assert.True(state.RemovePending(1));
         Assert.False(state.RemovePending(1));
         Assert.Null(state.FindPending(1));
-
-        // AddEffect and ActiveEffectsCount
-        var eff1 = new ActiveEventEffect { EventId = 1, Trigger = "t1", Player = 0, City = 10, ExpiresTurn = 15, Happiness = 2 };
-        var eff2 = new ActiveEventEffect { EventId = 2, Trigger = "t2", Player = 0, City = 20, ExpiresTurn = 0, Health = 1 }; // permanent
-        var eff3 = new ActiveEventEffect { EventId = 3, Trigger = "t3", Player = 0, City = -1, ExpiresTurn = 25, PlotFood = 1 }; // empire-wide
-        state.AddEffect(eff1);
-        state.AddEffect(eff2);
-        state.AddEffect(eff3);
-        Assert.Equal(3, state.ActiveEffectsCount);
-
-        // PruneExpiredEffects
-        Assert.Equal(0, state.PruneExpiredEffects(10)); // turn 10 < 15
-        Assert.Equal(3, state.ActiveEffectsCount);
-        Assert.Equal(1, state.PruneExpiredEffects(15)); // turn 15 >= 15 prunes eff1
-        Assert.Equal(2, state.ActiveEffectsCount);
-        Assert.DoesNotContain(eff1, state.Effects);
-        Assert.Contains(eff2, state.Effects); // permanent remains
-        Assert.Contains(eff3, state.Effects); // ExpiresTurn 25 remains
-
-        // PruneCityEffects
-        Assert.Equal(1, state.PruneCityEffects(20)); // prunes eff2 (City == 20)
-        Assert.Equal(1, state.ActiveEffectsCount);
-        Assert.Contains(eff3, state.Effects); // City == -1 untouched
-
-        // PruneInvalidEffects
-        var city = AddCity(sim, 14);
-        var cityEff = new ActiveEventEffect { EventId = 4, Trigger = "t4", Player = 0, City = city.Id, Happiness = 1 };
-        var deadCityEff = new ActiveEventEffect { EventId = 5, Trigger = "t5", Player = 0, City = 9999, Happiness = 1 };
-        var wrongOwnerEff = new ActiveEventEffect { EventId = 6, Trigger = "t6", Player = 1, City = city.Id, Happiness = 1 }; // city owner is 0
-        state.AddEffect(cityEff);
-        state.AddEffect(deadCityEff);
-        state.AddEffect(wrongOwnerEff);
-        Assert.Equal(4, state.ActiveEffectsCount);
-
-        int pruned = state.PruneInvalidEffects(sim);
-        Assert.Equal(2, pruned); // deadCityEff and wrongOwnerEff pruned
-        Assert.Contains(cityEff, state.Effects);
-        Assert.Contains(eff3, state.Effects);
 
         // RecordFired and GetLastFired
         Assert.Null(state.GetLastFired(0, "events:herbalists"));
@@ -394,37 +358,15 @@ public sealed class EventRulesTests
     }
 
     [Fact]
-    public void Active_event_effects_have_canonical_ids_and_can_be_queried_and_cancelled_by_id()
+    public void Active_event_effects_list_only_the_players_event_options()
     {
         var sim = Scenario();
-        var service = Events(sim);
-        var state = new EventState();
-        sim.State.Extensions.Set(sim.Content, state);
-
-        var eff1 = new ActiveEventEffect { Trigger = "t1", Player = 0, Happiness = 1 };
-        var eff2 = new ActiveEventEffect { Trigger = "t2", Player = 1, Happiness = 2 };
-        state.AddEffect(eff1);
-        state.AddEffect(eff2);
-
-        Assert.Equal(1, eff1.Id);
-        Assert.Equal(2, eff2.Id);
-        Assert.Equal(3, state.NextEffectId);
-
-        var all = service.ActiveEffects(sim);
-        Assert.Equal(2, all.Count);
-        Assert.Equal([1, 2], all.Select(e => e.Id));
-
-        var player0Effects = service.ActiveEffects(sim, 0);
-        Assert.Single(player0Effects);
-        Assert.Equal(1, player0Effects[0].Id);
-
-        Assert.Same(eff1, service.FindEffect(sim, 1));
-        Assert.Same(eff2, service.FindEffect(sim, 2));
-        Assert.Null(service.FindEffect(sim, 999));
-
-        Assert.True(service.CancelEffect(sim, 1));
-        Assert.False(service.CancelEffect(sim, 1));
-        Assert.Null(service.FindEffect(sim, 1));
-        Assert.Single(service.ActiveEffects(sim));
+        var store = sim.Rules().TimedEffects;
+        var mine = store.Add(sim, new TimedEffect { Source = "events:herbalists_fund", Player = 0 });
+        store.Add(sim, new TimedEffect { Source = "events:herbalists_fund", Player = 1 });
+        store.Add(sim, new TimedEffect { Source = "espionage:foment_unhappiness", Player = 0 });
+        Assert.Equal([mine], Events(sim).ActiveEffects(sim, 0));
+        Assert.True(store.Remove(sim, mine.Id));
+        Assert.Empty(Events(sim).ActiveEffects(sim, 0));
     }
 }

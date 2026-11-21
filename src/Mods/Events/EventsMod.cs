@@ -7,7 +7,8 @@ using Ariel.Mods;
 
 namespace Ariel.Mods.Events;
 
-/// <summary>Deterministic random events with player choices.</summary>
+/// <summary>Deterministic random events with player choices. An option's lasting happiness, health and plot yield
+/// changes are timed effects in the base game's store.</summary>
 public sealed class EventsMod : IPreparableMod
 {
     private static readonly ModJsonFile<EventTriggerDef[]> Triggers = new("data/event-trigger.json");
@@ -23,15 +24,9 @@ public sealed class EventsMod : IPreparableMod
         context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new EventsScreen());
         context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new EventNotices());
         context.RegisterService<Ariel.Presentation.IPediaSource>("pedia", new EventPedia());
-        context.RegisterService<IModifierSource>("effects", new EventModifiers());
         context.RegisterStateComponent<EventState>("state");
         context.RegisterCommand<ChooseEventOptionCommand>("choose_option");
         context.TurnSystems.Register(new EventTurn(service));
-        context.Subscribe<CityCaptured>("events_city_captured", (sim, captured) =>
-        {
-            var state = sim.State.Extensions.Get<EventState>(sim.Content);
-            state?.PruneCityEffects(captured.City);
-        });
     }
 }
 
