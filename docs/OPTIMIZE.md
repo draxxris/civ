@@ -1009,6 +1009,28 @@ The turn and preparation figures are within 3% and inside the run-to-run spread.
 decision sample moved between 330 and 488 ms over two runs of the same build, so that row
 reflects the different turn-100 position and noise more than either change.
 
+### Measurement: Mod-Only Content Fields as Attachments (No Regression)
+
+- **Date**: 2026-11-21
+
+Base-schema fields that only a mod reads moved into that mod's attachment rows, read with
+`ContentDb.Attachment<T>(id)` (two dictionary lookups) where the rules used to read a
+property. The games are identical: a 200-turn, six-player AI game (seed 11) differs from
+the one before only in its content hash and module versions. `mise run benchmark`,
+single samples, run back to back on the same idle machine, twice for each build: before
+(`993c22a`, in a separate worktree) and after. A first "before" run, taken while the
+machine was busy, read 1,935 ms and 128,923 ms for the first two rows and is not used.
+
+| Workload                                            |               Before |                After |
+| :-------------------------------------------------- | -------------------: | -------------------: |
+| Fifty-city turn (turn 2)                            |         940 / 921 ms |       1,105 / 935 ms |
+| Eight-player preparation (99 turns, save/load)      | 49,679 / 64,012 ms   | 50,677 / 49,977 ms   |
+| Eight-player AI decisions at turn 100               |         204 / 177 ms |         172 / 182 ms |
+| World generation, seed 1 (42, 987654 alike)         |         309 / 285 ms |         419 / 286 ms |
+
+Every row falls inside the spread between two runs of one build; the attachment lookups
+cost nothing measurable.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
