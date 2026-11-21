@@ -31,8 +31,11 @@ public sealed class RevolutionRulesDef : ContentDef
     public int InciteInstability { get; init; } = 300;
     public int RebelUnits { get; init; } = 2;
     /// <summary>Turns in revolt, scaled by game speed, after which a city breaks away as a new nation with
-    /// <see cref="RebelUnits"/> rebels as its garrison. Zero means cities never break away.</summary>
+    /// <see cref="SecessionGarrison"/> free defenders as its garrison. Zero means cities never break away.</summary>
     public int SecessionTurns { get; init; } = 12;
+    /// <summary>Free defenders a nation that broke away in revolt starts with: the best city defenders it can train, not
+    /// <see cref="RebelUnit"/>, which only fills the rebellions that spawn.</summary>
+    public int SecessionGarrison { get; init; } = 3;
     /// <summary>Whether a nation that broke away in revolt starts at war with the nation it left.</summary>
     public bool SecessionWar { get; init; } = true;
     public int SuppressionReduction { get; init; } = 400;

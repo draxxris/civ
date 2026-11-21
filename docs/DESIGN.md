@@ -1148,6 +1148,7 @@ safe from parallel AI scoring):
 | `HandicapFoe` | `IsHandicapFoe` | the difficulty level's combat bonus and free early wins, the experience cap, and no general points |
 | `Uprisings` | `UprisingFaction` | hostile villagers from goody huts and Revolution's rebels join this faction |
 | `BreakawayTurns` | `Faction(...)` | a city the faction has held this many turns (scaled by game speed) breaks away as a new nation; zero means never |
+| `BreakawayGarrison` | `Faction(...)` | how many free defenders a nation born from one of the faction's cities starts with |
 | `Leader` | | the leader the faction's player is created with |
 
 `IPeoplesService.EnsureFaction(sim, faction)` creates the faction's player on first use (its
@@ -1189,8 +1190,12 @@ nation and returns the new player. Nothing is fought over, so it is not a captur
   nearer to it than to any city the former owner keeps, with the former owner's culture.
 - A faction's units in the city go over to the nation (`IUnitService.Transfer`); a nation's
   are put out to an adjacent plot as one stack and lost if there is none
-  (`IUnitService.Expel`, the rule flooding uses). `SecessionTerms` may give the nation a
-  garrison and may start it at war with the former owner; otherwise they start at peace.
+  (`IUnitService.Expel`, the rule flooding uses). `SecessionTerms` may give the nation free
+  defenders (`Garrison`) and may start it at war with the former owner; otherwise they
+  start at peace. The defenders are the best city defender the new civilization can train
+  with the technologies it starts with (its former owner's team's), chosen by the same rule
+  that picks new-game setup's starting defenders (`RoleUnits.Best`); no defender qualifies,
+  no units are created.
 - `ValidateSecession` refuses a nation's capital and last city, a game with no free
   civilization, and a game with no computer player to lead the nation.
 - `CitySeceded(City, PreviousOwner, Player)` is published, never `CityCaptured`: no capture
@@ -1199,7 +1204,7 @@ nation and returns the new player. Nothing is fought over, so it is not a captur
 
 The base rule that uses it is `cities:faction_breakaway`, a global step at
 `TurnPhase.GameEnd`: a city a faction has held for the faction's `BreakawayTurns` breaks
-away with no garrison and no war of its own (an always-at-war faction is at war with it
+away with `BreakawayGarrison` free defenders (barbarians: 2) and no war of its own (an always-at-war faction is at war with it
 regardless). The barbarians' row sets 20 turns. The barbarian player has no computer
 player, so a city it holds does nothing until it breaks away.
 

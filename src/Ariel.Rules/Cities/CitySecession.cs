@@ -1,5 +1,6 @@
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Rules.Foundation;
 using S = Ariel.Content.Schema;
 namespace Ariel.Rules.Cities;
 
@@ -42,8 +43,9 @@ internal static class CitySecession
         CityCapital.RelocateIfNeeded(sim, player);
         foreach (var other in CityData.Owned(sim, former).ToArray()) sim.Rules().CityWork.Assign(sim, other.Id);
         sim.Rules().CityWork.Assign(sim, seceded.Id);
-        if (terms.GarrisonUnit is { } garrison)
-            for (int i = 0; i < terms.Garrison; i++) units.Create(sim, player, garrison, seceded.Position);
+        // The newcomer knows what its former owner's team knew, so its defenders are the best it could train now.
+        if (terms.Garrison > 0 && RoleUnits.Best(sim, player, RoleUnits.CityDefense) is { } defender)
+            for (int i = 0; i < terms.Garrison; i++) units.Create(sim, player, defender.Id, seceded.Position);
 
         var relations = sim.Rules().Relations;
         int formerTeam = sim.TeamOf(former).Id, team = sim.TeamOf(player).Id;
@@ -126,7 +128,7 @@ internal sealed class FactionBreakaway : ITurnSystem
         {
             if (PlayerRules.Faction(sim, city.Owner) is not { BreakawayTurns: > 0 } faction) continue;
             if (sim.State.Turn - CityData.Read(sim, city).TurnAcquired < GamePace.Scale(sim, faction.BreakawayTurns)) continue;
-            if (CitySecession.Validate(sim, city.Id) is null) CitySecession.Secede(sim, city, new SecessionTerms());
+            if (CitySecession.Validate(sim, city.Id) is null) CitySecession.Secede(sim, city, new SecessionTerms(Garrison: faction.BreakawayGarrison));
         }
     }
 }

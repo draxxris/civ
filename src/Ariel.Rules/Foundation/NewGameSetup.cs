@@ -83,7 +83,7 @@ internal sealed class NewGameSetup
             string? type = civ.UnitOverrides.GetValueOrDefault(grant.Key, grant.Key);
             if (type is not null) AddUnits(sim, player.Id, tile, type, grant.Value * multiplier);
         }
-        GrantRole(sim, player, tile, "military:unitai_city_defense", era.StartingDefenseUnits + handicap.StartingDefenseUnits + (player.Ai is null ? 0 : handicap.AiStartingDefenseUnits));
+        GrantRole(sim, player, tile, RoleUnits.CityDefense, era.StartingDefenseUnits + handicap.StartingDefenseUnits + (player.Ai is null ? 0 : handicap.AiStartingDefenseUnits));
         GrantRole(sim, player, tile, "military:unitai_worker", era.StartingWorkerUnits + handicap.StartingWorkerUnits + (player.Ai is null ? 0 : handicap.AiStartingWorkerUnits));
         GrantRole(sim, player, tile, "military:unitai_explore", era.StartingExploreUnits + handicap.StartingExploreUnits + (player.Ai is null ? 0 : handicap.AiStartingExploreUnits));
     }
@@ -91,29 +91,8 @@ internal sealed class NewGameSetup
     private static void GrantRole(Simulation sim, Player player, TileId tile, string role, int count)
     {
         if (count <= 0) return;
-        var civ = sim.Content.Get<CivilizationDef>(player.Civilization);
-        // Only the civilization's resolved classes can supply a role. Tech prerequisites apply to role grants.
-        var candidate = sim.Content.Get<Ariel.Content.Schema.UnitDef>().All
-            .Where(u => civ.UnitOverrides.GetValueOrDefault(u.DefaultUnit, u.DefaultUnit) == u.Id)
-            .Where(u => u.Cost >= 0 && u.Domain == "military:domain_land" && RoleEligible(u, role))
-            .Where(u => sim.Content.Requirements.Evaluate(u.Requirements, new(sim, player.Id)).Success)
-.OrderByDescending(u => RoleValue(u, role)).ThenBy(u => u.Id, StringComparer.Ordinal).FirstOrDefault();
-        if (candidate is not null) AddUnits(sim, player.Id, tile, candidate.Id, count);
+        if (RoleUnits.Best(sim, player.Id, role) is { } candidate) AddUnits(sim, player.Id, tile, candidate.Id, count);
     }
-
-    private static bool RoleEligible(UnitDef unit, string role) => role switch
-    {
-        "military:unitai_worker" => unit.WorkRate > 0,
-        "military:unitai_explore" => unit.Strength > 0 && !unit.NoRevealMap && !unit.CanFoundCity,
-        "military:unitai_city_defense" => unit.Strength > 0 && !unit.NoDefensiveBonus,
-        _ => unit.UnitAiTypes.GetValueOrDefault(role),
-    };
-    private static int RoleValue(UnitDef unit, string role) => role switch
-    {
-        "military:unitai_worker" => unit.WorkRate,
-        "military:unitai_explore" => unit.Moves * 100 + (unit.NoBadGoodies ? 100 : 0) + unit.Strength,
-        _ => unit.Strength * (100 + unit.CityDefense),
-    };
 
     private static void AddUnits(Simulation sim, int owner, TileId tile, string type, int count)
     {

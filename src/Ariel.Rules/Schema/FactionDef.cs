@@ -33,4 +33,7 @@ public sealed class FactionDef : ContentAttachment<CivilizationDef>
     /// <summary>How many turns (at normal speed) the faction holds a city before the city breaks away as a new nation
     /// (<c>ICityCaptureService.Secede</c>). Zero: its cities never break away.</summary>
     public int BreakawayTurns { get; init; }
+    /// <summary>How many free defenders a nation born from one of the faction's cities starts with, on top of any units of
+    /// the faction's own in the city that go over to it. They are the best city defenders it can train.</summary>
+    public int BreakawayGarrison { get; init; }
 }

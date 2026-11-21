@@ -425,8 +425,10 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.True(PlayerRules.IsNation(sim, seceded.Player));
         Assert.Contains(sim.TeamOf(0).Id, sim.TeamOf(seceded.Player).Wars);
         var garrison = sim.State.UnitsAt(city.Position).ToArray();
-        Assert.Equal(2, garrison.Length);
-        Assert.All(garrison, u => Assert.Equal((seceded.Player, "military:warrior"), (u.Owner, u.Type)));
+        // The count is the rules' data; the unit is whatever the newcomer's technologies train best, not the rebel unit.
+        Assert.Equal(3, garrison.Length);
+        Assert.All(garrison, u => Assert.Equal(seceded.Player, u.Owner));
+        Assert.Single(garrison.Select(u => u.Type).Distinct());
         Assert.NotEqual(city.Position, sim.State.UnitById(loyal.Id).Position);
         // The new capital starts calm and does not count towards breaking away again.
         var description = Service(sim).DescribeCityStability(sim, city.Id);

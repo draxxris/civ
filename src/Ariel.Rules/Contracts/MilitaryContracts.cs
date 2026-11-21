@@ -264,16 +264,17 @@ public interface ICityCaptureService
     /// buildings (but the old capital building) and culture, and takes the land around it that only it held for its
     /// former owner. The newcomer knows what its former owner's team knew and is led by a computer player. A faction's
     /// units in the city go over to the newcomer; a nation's are put out of the city
-    /// (<see cref="IUnitService.Expel"/>). Publishes <see cref="CitySeceded"/>, not <see cref="CityCaptured"/>. Throws when
+    /// (<see cref="IUnitService.Expel"/>); then <see cref="SecessionTerms.Garrison"/> free defenders are created. Publishes <see cref="CitySeceded"/>, not <see cref="CityCaptured"/>. Throws when
     /// <see cref="ValidateSecession"/> refuses. Call it from a global turn step, like any rule that adds a player.</summary>
     int Secede(Simulation sim, int city, SecessionTerms terms);
 }
 /// <summary>How a city breaks away (<see cref="ICityCaptureService.Secede"/>).</summary>
 /// <param name="WarWithFormerOwner">Whether the new nation starts at war with the player it left. Otherwise they start
 /// at peace; a former owner that is always at war is at war with it either way.</param>
-/// <param name="GarrisonUnit">A unit type the new nation is given in the city, or null for none.</param>
-/// <param name="Garrison">How many of <paramref name="GarrisonUnit"/> it is given.</param>
-public sealed record SecessionTerms(bool WarWithFormerOwner = false, string? GarrisonUnit = null, int Garrison = 0);
+/// <param name="Garrison">How many defenders the new nation is given in the city, free: the best city defender its
+/// civilization can train with the technologies it starts with (the ones its former owner's team knew), the unit
+/// new-game setup grants. Zero for none.</param>
+public sealed record SecessionTerms(bool WarWithFormerOwner = false, int Garrison = 0);
 /// <summary>A city broke away from <paramref name="PreviousOwner"/> and founded the nation <paramref name="Player"/>.</summary>
 public sealed record CitySeceded(int City, int PreviousOwner, int Player) : DomainEvent;
 public sealed record CityBombarded(int Unit, int City, int DefenseReduction, int TotalDefenseDamage) : DomainEvent;

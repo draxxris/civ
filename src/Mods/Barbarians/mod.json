@@ -1,7 +1,7 @@
 {
   "id": "barbarians",
   "name": "Barbarians",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "assembly": "Ariel.Mods.Barbarians.dll",
   "dependencies": ["military"],
   "references": ["cities", "foundation", "military", "peoples", "research", "world"]

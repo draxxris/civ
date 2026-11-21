@@ -1,6 +1,7 @@
 [
   {
     "alwaysAtWar": true,
+    "breakawayGarrison": 2,
     "breakawayTurns": 20,
     "handicapFoe": true,
     "id": "barbarians:barbarian",

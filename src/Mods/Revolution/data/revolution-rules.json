@@ -2,6 +2,7 @@
   "id": "revolution:rules",
   "name": "City instability rules",
   "rebelUnit": "military:warrior",
+  "secessionGarrison": 3,
   "civicFactors": {
     "government:slavery": 10,
     "government:despotism": 8,

@@ -80,6 +80,11 @@ public sealed class CitySecessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(city.Population, seceded.Population);
         Assert.Contains(seceded.Buildings, id => sim.Content.Get<S.BuildingDef>(id).Capital);
         Assert.Equal(nation, sim.State.PlotAt(seceded.Position).Owner);
+        // The faction row says how many free defenders it starts with, besides the barbarians that went over.
+        int free = GameFactory.BarbarianFaction(sim.Content)!.BreakawayGarrison;
+        Assert.Equal(2, free);
+        var owned = sim.State.UnitsAt(seceded.Position).Where(u => u.Owner == nation).ToArray();
+        Assert.Equal(1 + free, owned.Length);
         // The barbarians in the city went over to it; the barbarians stay at war with it and nobody else is.
         Assert.Equal(nation, sim.State.UnitById(garrison).Owner);
         Assert.Equal([sim.TeamOf(barbarian).Id], sim.TeamOf(nation).Wars);
@@ -91,6 +96,34 @@ public sealed class CitySecessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.Turn += 100;
         RunBreakaway(sim);
         Assert.Equal(nation, sim.State.CityById(city.Id).Owner);
+    }
+
+    [Fact]
+    public void A_new_nations_free_defenders_are_the_best_its_technologies_allow()
+    {
+        var plain = Game();
+        var city = Found(plain, 1, "Early");
+        int early = plain.Rules().CityCapture.Secede(plain, city.Id, new(Garrison: 2));
+        var first = plain.State.UnitsAt(city.Position).Where(u => u.Owner == early).Select(u => u.Type).Distinct().Single();
+        Assert.NotEqual("military:musketman", first);
+
+        // The same breakaway once its former owner knows gunpowder: the newcomer inherits the knowledge.
+        var late = Game();
+        late.TeamOf(1).Techs.Add("research:flintlock");
+        var other = Found(late, 1, "Late");
+        int nation = late.Rules().CityCapture.Secede(late, other.Id, new(Garrison: 2));
+        var units = late.State.UnitsAt(other.Position).Where(u => u.Owner == nation).ToArray();
+        Assert.Equal(2, units.Length);
+        Assert.All(units, u => Assert.Equal("military:musketman", u.Type));
+    }
+
+    [Fact]
+    public void A_secession_with_no_garrison_creates_no_units()
+    {
+        var sim = Game();
+        var city = Found(sim, 1, "Bare");
+        int nation = sim.Rules().CityCapture.Secede(sim, city.Id, new());
+        Assert.DoesNotContain(sim.State.UnitsAt(city.Position), u => u.Owner == nation);
     }
 
     [Fact]
@@ -121,13 +154,15 @@ public sealed class CitySecessionTests(LoadedMods mods) : IClassFixture<LoadedMo
         int players = sim.State.Players.Count;
 
         Assert.Null(sim.Rules().CityCapture.ValidateSecession(sim, city.Id));
-        int nation = sim.Rules().CityCapture.Secede(sim, city.Id, new(WarWithFormerOwner: true, GarrisonUnit: Warrior, Garrison: 2));
+        int nation = sim.Rules().CityCapture.Secede(sim, city.Id, new(WarWithFormerOwner: true, Garrison: 2));
 
         Assert.Equal(players, nation);
         Assert.Equal(nation, sim.State.CityById(city.Id).Owner);
         Assert.Contains(sim.TeamOf(1).Id, sim.TeamOf(nation).Wars);
         Assert.Equal(sim.State.PlayerById(1).Ai, sim.State.PlayerById(nation).Ai);
-        Assert.Equal(2, sim.State.UnitsAt(city.Position).Count(u => u.Owner == nation));
+        var defenders = sim.State.UnitsAt(city.Position).Where(u => u.Owner == nation).ToArray();
+        Assert.Equal(2, defenders.Length);
+        Assert.All(defenders, u => Assert.Equal(defenders[0].Type, u.Type));
         // The loyal unit was put out to a neighbouring plot, not destroyed and not left inside.
         var unit = sim.State.FindUnit(loyalist);
         Assert.NotNull(unit);

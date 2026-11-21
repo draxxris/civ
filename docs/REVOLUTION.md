@@ -110,8 +110,10 @@ A nation's city that stays in revolt breaks away as a new nation. The same
   is therefore the way to keep it.
 - At `SecessionTurns` (12, scaled by `GamePace.Scale`; zero turns the rule off) the city
   secedes through the base game's `ICityCaptureService.Secede` (see "Cities that break
-  away" in `docs/DESIGN.md`). The new nation gets `RebelUnits` of `RebelUnit` as its
-  garrison, the former owner's units are put out of the city, and with `SecessionWar`
+  away" in `docs/DESIGN.md`). The new nation gets `SecessionGarrison` (3) free defenders: the base
+  secession rule gives it the best city defender it can train with the technologies it
+  starts with (the unit new-game setup grants, not the fixed `RebelUnit`, which only fills
+  rebellions that spawn), the former owner's units are put out of the city, and with `SecessionWar`
   (the default) the two start at war.
 - A capital, a nation's last city, and a city in a game with no free civilization never
   break away, and their count stays at zero, so a city never secedes without the

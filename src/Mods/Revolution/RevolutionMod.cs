@@ -52,7 +52,7 @@ public sealed class RevolutionMod : IPreparableMod
     private static void ValidateResponses(RevolutionRulesDef rules)
     {
         if (rules.RebellionRelease <= 0 || rules.SuppressionGold <= 0 || rules.SuppressionReduction <= 0
-            || rules.CooldownTurns < 1 || rules.UnrestTurns < 1 || rules.RebelUnits < 1 || rules.SecessionTurns < 0)
+            || rules.CooldownTurns < 1 || rules.UnrestTurns < 1 || rules.RebelUnits < 1 || rules.SecessionTurns < 0 || rules.SecessionGarrison < 0)
             throw new InvalidDataException("Invalid revolution responses");
     }
 

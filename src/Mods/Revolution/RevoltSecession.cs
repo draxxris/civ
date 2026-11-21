@@ -23,7 +23,7 @@ internal static class RevoltSecession
         else if (read.InstabilityIndex < rules.WarningThreshold && read.RevoltTurns > 0) RevolutionService.Edit(sim, city).RevoltTurns = 0;
         if (TurnsLeft(sim, city, RevolutionService.Read(sim, city), rules) != 0) return;
         // The Revolution state is reset by the secession itself: the new nation's capital starts calm.
-        sim.Rules().CityCapture.Secede(sim, city.Id, new SecessionTerms(rules.SecessionWar, rules.RebelUnit, rules.RebelUnits));
+        sim.Rules().CityCapture.Secede(sim, city.Id, new SecessionTerms(rules.SecessionWar, rules.SecessionGarrison));
     }
 
     /// <summary>Turn ends in revolt left before the city breaks away; null while it is not counting or may not secede
