@@ -131,16 +131,21 @@ public sealed class ModManagerTests
         }
     }
     [Fact]
-    public void Missing_profile_keeps_all_mod_default_and_subset_catalog_uses_real_loader_order_without_enabling_game_options()
+    public void Missing_profile_enables_the_main_mods_only_and_subset_catalog_uses_real_loader_order_without_enabling_game_options()
     {
         using var directory = new ModDirectory();
         var main = ModDiscovery.Discover(Path.Combine(AppContext.BaseDirectory, "mods"));
         var optional = ModDiscovery.Discover(Path.Combine(AppContext.BaseDirectory, "optional-mods"));
         Assert.Empty(main.Errors);
         Assert.Empty(optional.Errors);
-        var installed = main.Mods.Concat(optional.Mods).ToArray();
+        Assert.NotEmpty(optional.Mods);
+        var merged = ModDiscovery.DiscoverMerged([Path.Combine(AppContext.BaseDirectory, "mods")], null, null,
+            [Path.Combine(AppContext.BaseDirectory, "optional-mods")]);
+        Assert.Empty(merged.Errors);
+        var installed = merged.Mods;
+        Assert.Equal(main.Mods.Concat(optional.Mods).Select(m => m.Manifest.Id).Order(), installed.Select(m => m.Manifest.Id).Order());
         var defaults = ModProfile.InitialSelection(installed, ModProfile.Load(Path.Combine(directory.Root, "missing.json")));
-        Assert.Equal(installed.Select(m => m.Manifest.Id).Order(), defaults.Order());
+        Assert.Equal(main.Mods.Select(m => m.Manifest.Id).Order(), defaults.Order());
         Assert.Equal(main.Mods.Count, ModDiscovery.LoadMods(Path.Combine(AppContext.BaseDirectory, "mods")).Count);
 
         var catalog = GameCatalog.Load(Path.Combine(AppContext.BaseDirectory, "rules"), installed, ["card_research"]);

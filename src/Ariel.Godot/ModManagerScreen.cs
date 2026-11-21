@@ -34,8 +34,9 @@ internal sealed partial class ModManagerScreen : Control
             : "Choose mods before the game loads their assemblies. Required mods are included automatically."));
         root.AddChild(Ui.Text("Mod code runs with your account permissions. Enable only mods that you trust. Game options are separate.", 14, Ui.Dim));
         root.AddChild(Ui.Text("Saved profiles keep new mods disabled. Disable missing saved IDs to remove them from the profile.", 14, Ui.Dim));
-        root.AddChild(Ui.Text("Source priority: ARIEL_MODS > user-installed > bundled. Each winning copy replaces the entire mod.", 14, Ui.Dim));
+        root.AddChild(Ui.Text("Source priority: ARIEL_MODS > user-installed > bundled > bundled optional. Each winning copy replaces the entire mod. Bundled optional mods start disabled.", 14, Ui.Dim));
         var actions = Ui.HBox(8);
+        actions.AddChild(Ui.Button("Default mods / reset profile", () => Reset(_installed.Where(m => m.EnabledByDefault).Select(m => m.Manifest.Id))));
         actions.AddChild(Ui.Button("Enable all / reset profile", () => Reset(_installed.Select(m => m.Manifest.Id))));
         actions.AddChild(Ui.Button("Disable all / reset profile", () => Reset([])));
         root.AddChild(actions);

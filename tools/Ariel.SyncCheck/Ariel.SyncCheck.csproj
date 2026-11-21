@@ -8,26 +8,15 @@
     <ProjectReference Include="../../src/Ariel.Composition/Ariel.Composition.csproj" />
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
     <ProjectReference Include="../../src/Ariel.Net/Ariel.Net.csproj" />
-    <ProjectReference Include="../../src/Mods/GreatPeople/Ariel.Mods.GreatPeople.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Trade/Ariel.Mods.Trade.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/RangedCombat/Ariel.Mods.RangedCombat.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/AirCombat/Ariel.Mods.AirCombat.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Barbarians/Ariel.Mods.Barbarians.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Religion/Ariel.Mods.Religion.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Votes/Ariel.Mods.Votes.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/ProjectsVictory/Ariel.Mods.ProjectsVictory.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Corporations/Ariel.Mods.Corporations.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Espionage/Ariel.Mods.Espionage.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Events/Ariel.Mods.Events.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/ScriptedWonders/Ariel.Mods.ScriptedWonders.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/Revolution/Ariel.Mods.Revolution.csproj" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="../../src/Mods/CardResearch/Ariel.Mods.CardResearch.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <!-- Every shipped mod, main and optional, staged as the game ships them. Sync checks never render. -->
   <PropertyGroup>
-    <ModPayloads>GreatPeople;Trade;RangedCombat;AirCombat;Barbarians;Religion</ModPayloads>
-    <ModPayloadsOptional>Votes;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution;CardResearch</ModPayloadsOptional>
+    <StageOptionalMods>true</StageOptionalMods>
     <LinkModArt>false</LinkModArt>
   </PropertyGroup>
+  <!-- A game plays every optional feature mod unless the optional argument names others (Mods.cs); the list is build/Mods.props. -->
+  <ItemGroup>
+    <AssemblyMetadata Include="ArielOptionalFeatureMods" Value="$(ArielOptionalFeatureMods)" />
+  </ItemGroup>
   <Import Project="../../build/ModPayloads.targets" />
 </Project>

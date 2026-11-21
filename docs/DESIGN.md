@@ -69,9 +69,22 @@ extend both through one registration API.
 
 The client uses the query contracts in `Ariel.Rules`, and shows what a mod adds through the
 screen contract (see Mod screens below). It references no mod, neither a mod's API nor its
-implementation, nor a test-ruleset assembly. `Ariel.Godot` lists the shipped mods as
-project references with `ReferenceOutputAssembly="false"`, only so they build first and
-can be copied next to the game.
+implementation, nor a test-ruleset assembly.
+
+The shipped mods are listed once, in `build/Mods.props`: `ArielMainMods`, and
+`ArielOptionalMods` (the optional feature mods, `ArielOptionalFeatureMods`, plus the
+alternative rules mods, `ArielAlternativeMods`, which replace part of a base module).
+Every host that stages mods, the game included, imports `build/ModPayloads.targets`,
+which makes each listed mod a build-order project reference
+(`ReferenceOutputAssembly="false"`), copies the main mods to `mods/` and, for a host
+that sets `StageOptionalMods`, the optional mods to `optional-mods/`, removes any other
+folder from those two, and links the base modules' `art/` under `rules/`. The client
+discovers both folders: main mods load by default, and optional mods are installed
+but off until the player enables them in the mod manager
+(`InstalledMod.EnabledByDefault`, which stays off when a user or `ARIEL_MODS` copy of
+a shipped optional mod wins). A saved profile always decides on its own. The sync
+check plays every optional feature mod by default; the build writes that list into its
+assembly.
 
 ## Determinism
 
@@ -2348,8 +2361,8 @@ time, even when the desktop throttles the window.
 `src/Ariel.Rules/` contains the rules modules Foundation, World, Research, Economy,
 Cities, Military, Government, Peoples, Relations and Diplomacy, and `src/Ariel.Ai/` the base module
 `ai`. `src/Mods/` contains the main mods GreatPeople, Trade, RangedCombat, AirCombat, Barbarians and Religion,
-and the optional mods ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
-Revolution and CardResearch. Each manifest declares content providers in
+and the optional mods Votes, ProjectsVictory, Corporations, Espionage, Events, ScriptedWonders,
+Revolution and CardResearch (see `build/Mods.props`). Each manifest declares content providers in
 `references` and load-order needs in `dependencies`; a base module's manifest names no
 assembly. Base module ids always satisfy a mod's requirement and never appear in the
 mod manager. ModLoader checks

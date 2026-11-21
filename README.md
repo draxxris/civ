@@ -45,7 +45,9 @@ Headless on Linux: `xvfb-run` plus software GL
 (`LIBGL_ALWAYS_SOFTWARE=1 godot-mono --rendering-driver opengl3 --path src/Ariel.Godot`).
 
 Mods are DLLs (plus `data/*.json`) in a `mods/` folder next to the client or in the user
-data folder. Mod DLLs reference only `Ariel.Core`, `Ariel.Rules`, `Ariel.Ai` and other
+data folder. The game ships its main mods in `mods/`, loaded by default, and its optional
+mods in `optional-mods/`, off until enabled; both lists live in `build/Mods.props`, the
+one place every host (the game, the tests and the tools) reads them from. Mod DLLs reference only `Ariel.Core`, `Ariel.Rules`, `Ariel.Ai` and other
 mods' published API assemblies, never Godot types; visuals ship as data (`.pck` packs, plain
 assets). A mod teaches the standard computer player its feature by registering an
 `IAiPlanner` (see "Computer players" in [docs/DESIGN.md](docs/DESIGN.md)); a whole new

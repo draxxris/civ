@@ -7,6 +7,9 @@ public sealed record InstalledMod(ModManifest Manifest, string Root)
 {
     public string Source { get; init; } = "Directory";
     public IReadOnlyList<ModOrigin> Overridden { get; init; } = [];
+    /// <summary>Whether a player without a saved profile starts with this mod enabled. Optional mods the game ships
+    /// are off by default; every other installed mod is on.</summary>
+    public bool EnabledByDefault { get; init; } = true;
     /// <summary>An invalid winning manifest reserves its ID but cannot enter a load selection.</summary>
     public string? Error { get; init; }
 }

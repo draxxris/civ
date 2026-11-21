@@ -10,7 +10,8 @@ public sealed record ModProfile
     [System.Text.Json.Serialization.JsonRequired]
     public string[] EnabledModIds { get; init; } = [];
 
-    /// <summary>A missing file means the original all-mod default. A broken file must not silently enable code.</summary>
+    /// <summary>A missing file means the default selection (<see cref="InitialSelection"/>). A broken file must not
+    /// silently enable code.</summary>
     public static ModProfile? Load(string path)
     {
         string json;
@@ -24,8 +25,10 @@ public sealed record ModProfile
         return profile;
     }
 
+    /// <summary>The saved choices, or without a profile every installed mod that is on by default: the main mods and
+    /// whatever the player installed, but not the optional mods the game ships.</summary>
     public static IReadOnlyList<string> InitialSelection(IReadOnlyList<InstalledMod> installed, ModProfile? profile) =>
-        profile?.EnabledModIds ?? installed.Select(m => m.Manifest.Id).Distinct(StringComparer.Ordinal).ToArray();
+        profile?.EnabledModIds ?? installed.Where(m => m.EnabledByDefault).Select(m => m.Manifest.Id).Distinct(StringComparer.Ordinal).ToArray();
 
     public static void Save(string path, IEnumerable<string> enabledIds)
     {

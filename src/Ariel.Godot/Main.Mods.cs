@@ -20,7 +20,7 @@ public partial class Main
         try
         {
             _discovery = ModDiscovery.DiscoverMerged(BundledModsRoots(), System.IO.Path.Combine(OS.GetUserDataDir(), "mods"),
-                System.Environment.GetEnvironmentVariable(ModDiscovery.ModsEnvironmentVariable));
+                System.Environment.GetEnvironmentVariable(ModDiscovery.ModsEnvironmentVariable), BundledOptionalModsRoots());
             foreach (var error in _discovery.Errors) GD.PrintErr(error);
             ReadModProfile();
             if (!AutomaticStartup) { ShowModManager(); return; }
@@ -57,13 +57,23 @@ public partial class Main
 
     private void ReadModProfile()
     {
-        try { _enabledMods = ModProfile.InitialSelection(_discovery.Mods, ModProfile.Load(ProfilePath)); }
+        try { _enabledMods = [.. ModProfile.InitialSelection(_discovery.Mods, ModProfile.Load(ProfilePath)).Union(RequestedScreenMods(), StringComparer.Ordinal)]; }
         catch (Exception error) when (error is System.IO.IOException or System.IO.InvalidDataException or UnauthorizedAccessException or System.Text.Json.JsonException)
         {
             // A damaged profile never grants permission to load all installed code.
             _enabledMods = [];
             _profileError = "Could not read the mod profile: " + error.Message;
         }
+    }
+
+    /// <summary>An unattended run that shows a mod's screen (<c>--stage espionage</c>, <c>--open-screen events:screen</c>)
+    /// needs that mod even when it is optional and off by default.</summary>
+    private IEnumerable<string> RequestedScreenMods()
+    {
+        if (!_debug.Unattended) return [];
+        var installed = _discovery.Mods.Where(m => m.Error == null).Select(m => m.Manifest.Id).ToHashSet(StringComparer.Ordinal);
+        string? screenMod = _debug.OpenScreen?.Split(':')[0];
+        return new[] { _debug.Stage, screenMod }.OfType<string>().Where(installed.Contains);
     }
 
     private void ShowModManager(string? failure = null)

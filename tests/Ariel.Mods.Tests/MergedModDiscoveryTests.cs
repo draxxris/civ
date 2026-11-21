@@ -169,6 +169,28 @@ public sealed class MergedModDiscoveryTests
         Assert.Contains("shared", ModProfile.InitialSelection(discovery.Mods, null));
     }
 
+    [Fact]
+    public void Bundled_optional_mods_are_installed_but_off_without_a_profile_even_when_another_copy_wins()
+    {
+        using var tree = new ModTree();
+        tree.Add("bundle", "main");
+        tree.Add("optional", "extra");
+        tree.Add("optional", "patched");
+        string patched = tree.Add("user", "patched");
+        tree.Add("user", "own");
+        var discovery = ModDiscovery.DiscoverMerged([tree.Root("bundle")], tree.Root("user"), null, [tree.Root("optional")]);
+        Assert.Empty(discovery.Errors);
+        Assert.Equal(new[] { "extra", "main", "own", "patched" }, discovery.Mods.Select(m => m.Manifest.Id));
+        // A user copy of a shipped optional mod wins, as any higher-priority copy does, but does not turn the feature on.
+        var winner = discovery.Mods.Single(m => m.Manifest.Id == "patched");
+        Assert.Equal(patched, winner.Root);
+        Assert.False(winner.EnabledByDefault);
+        Assert.Equal(new[] { "main", "own" }, ModProfile.InitialSelection(discovery.Mods, null));
+        // The player can still enable an optional mod, and a saved profile is honoured as it is.
+        Assert.True(ModSelection.Resolve(discovery.Mods, ["extra", "patched"]).IsValid);
+        Assert.Equal(new[] { "extra" }, ModProfile.InitialSelection(discovery.Mods, new ModProfile { EnabledModIds = ["extra"] }));
+    }
+
     [Theory]
     [InlineData("user")]
     [InlineData("bundle")]

@@ -9,8 +9,9 @@ mise exec -- dotnet build src/Ariel.Godot
 mise exec -- godot-mono --path src/Ariel.Godot
 ```
 
-The build copies the installed mods into the client output directory under
-`mods/<Name>`. Each folder contains a DLL, `mod.json`, data, and available art. The
+The build copies the shipped mods (`build/Mods.props`) into the client output
+directory: the main mods under `mods/<Name>` and the optional mods under
+`optional-mods/<Name>`. Each folder contains a DLL, `mod.json`, data, and available art. The
 client reads these manifests before it loads mod assemblies. After selection, the client
 loads the selected mods and freezes their content once. The client does not reference
 the legacy ruleset assembly.
@@ -26,6 +27,7 @@ For each stable manifest ID, the first copy in this priority order wins:
    - `mods` beside the client assembly.
    - `mods` inside `AppContext.BaseDirectory`.
    - The project directory `res://mods`.
+4. Bundled optional candidates, in the same three locations under `optional-mods`.
 
 Equivalent paths, including directory links, count as one root at their highest
 priority. Within one root, ordinal folder order resolves duplicate IDs. Bundled
@@ -62,10 +64,12 @@ installed ID.
 
 The profile is `user://mod-profile.json` in the Godot user-data directory, separate from
 saved games. It stores explicit choices as manifest IDs, not folder names. With no
-profile, all installed mods start selected, as before. With a profile, new mods stay
+profile, every installed mod starts selected except the bundled optional mods, which
+stay off until you enable them; a user or `ARIEL_MODS` copy of a bundled optional mod
+stays off too. With a profile, new mods stay
 disabled unless another selected mod requires them. Missing saved IDs remain visible
-until you disable them or reset the selection. A broken profile blocks Continue. Either
-reset button replaces its choices without silently enabling mod code. The client saves
+until you disable them or reset the selection. A broken profile blocks Continue. Each
+reset button (default mods, enable all, disable all) replaces its choices without silently enabling mod code. The client saves
 the profile before it loads assemblies. A save error leaves the manager open.
 
 Mod selection controls which code loads. Game options control features within the loaded

@@ -27,26 +27,34 @@ public static class ModDiscovery
     }
 
     /// <summary>
-    /// Merges IDs in priority order: environment, user, then bundled roots in caller order.
-    /// Within each root, ordinal folder order breaks ties. A winner replaces the entire losing installation.
-    /// Invalid manifests reserve every readable ID so a lower-priority copy cannot execute instead.
+    /// Merges IDs in priority order: environment, user, bundled roots in caller order, then bundled optional roots in
+    /// caller order. Within each root, ordinal folder order breaks ties. A winner replaces the entire losing installation.
+    /// Invalid manifests reserve every readable ID so a lower-priority copy cannot execute instead. A mod the game ships
+    /// in an optional root is off by default (<see cref="InstalledMod.EnabledByDefault"/>), whichever copy wins.
     /// </summary>
-    public static ModDiscoveryResult DiscoverMerged(IEnumerable<string> bundledRoots, string? userModsRoot, string? environmentModsRoot)
+    public static ModDiscoveryResult DiscoverMerged(IEnumerable<string> bundledRoots, string? userModsRoot, string? environmentModsRoot,
+        IEnumerable<string>? optionalBundledRoots = null)
     {
-        var locations = new[] { new ModOrigin(environmentModsRoot ?? "", ModsEnvironmentVariable), new ModOrigin(userModsRoot ?? "", "User-installed") }
-            .Concat(bundledRoots.Select((root, index) => new ModOrigin(root, $"Bundled {index + 1}")));
+        var locations = new[] { (new ModOrigin(environmentModsRoot ?? "", ModsEnvironmentVariable), true), (new ModOrigin(userModsRoot ?? "", "User-installed"), true) }
+            .Concat(bundledRoots.Select((root, index) => (new ModOrigin(root, $"Bundled {index + 1}"), true)))
+            .Concat((optionalBundledRoots ?? []).Select((root, index) => (new ModOrigin(root, $"Bundled optional {index + 1}"), false)));
         var seen = new HashSet<string>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
         var candidates = new List<InstalledMod>();
         var errors = new List<string>();
-        foreach (var location in locations)
+        foreach (var (location, enabledByDefault) in locations)
         {
             if (string.IsNullOrWhiteSpace(location.Root) || !Directory.Exists(location.Root)) continue;
             if (!seen.Add(CanonicalRoot(location.Root))) continue;
-            candidates.AddRange(ReadRoot(location.Root, location.Source, errors));
+            candidates.AddRange(ReadRoot(location.Root, location.Source, errors)
+                .Select(m => enabledByDefault ? m : m with { EnabledByDefault = false }));
         }
         var winners = candidates.GroupBy(m => m.Manifest.Id, StringComparer.Ordinal)
             .OrderBy(g => g.Key, StringComparer.Ordinal)
-            .Select(g => g.First() with { Overridden = g.Skip(1).Select(m => new ModOrigin(m.Root, m.Source)).ToArray() }).ToArray();
+            .Select(g => g.First() with
+            {
+                Overridden = g.Skip(1).Select(m => new ModOrigin(m.Root, m.Source)).ToArray(),
+                EnabledByDefault = g.All(m => m.EnabledByDefault),
+            }).ToArray();
         return new(winners, errors);
     }
 
