@@ -13,7 +13,6 @@
     "COLLATERAL_COMBAT_DAMAGE": "CollateralCombatDamage",
     "COMBAT_DAMAGE": "CombatDamage",
     "COMBAT_DIE_SIDES": "CombatDieSides",
-    "COMBAT_EXPERIENCE_IN_BORDERS_PERCENT": "CombatExperienceInBordersPercent",
     "CULTURE_DECAY_TURNS": "CultureDecayTurns",
     "CULTURE_PERCENT_ANGER": "CulturePercentAnger",
     "DIRTY_POWER_HEALTH_CHANGE": "DirtyPowerHealthChange",
@@ -24,7 +23,6 @@
     "FRESH_WATER_HEALTH_CHANGE": "FreshWaterHealthChange",
     "FRIENDLY_HEAL_RATE": "FriendlyHealRate",
     "HILLS_EXTRA_DEFENSE": "HillsExtraDefense",
-    "INITIAL_CITY_MAINTENANCE": "InitialCityMaintenance",
     "MAX_DISTANCE_CITY_MAINTENANCE": "MaxDistanceCityMaintenance",
     "MAX_EXPERIENCE_AFTER_UPGRADE": "MaxExperienceAfterUpgrade",
     "MAX_EXPERIENCE_PER_COMBAT": "MaxExperiencePerCombat",
@@ -38,8 +36,6 @@
     "UNIT_UPGRADE_COST_PER_PRODUCTION": "UnitUpgradeCostPerProduction",
     "WASTAGE_GROWTH_FACTOR": "FoodWastageGrowthPermille",
     "TECH_COST_EXTRA_TEAM_MEMBER_MODIFIER": "ResearchExtraTeamMemberPercent",
-    "TECH_COST_FIRST_KNOWN_PREREQ_MODIFIER": "ResearchFirstPrerequisitePercent",
-    "TECH_COST_KNOWN_PREREQ_MODIFIER": "ResearchKnownPrerequisitePercent",
     "TECH_COST_MODIFIER": "ResearchCostPercent",
     "TECH_COST_TOTAL_KNOWN_TEAM_MODIFIER": "ResearchKnownTeamsPercent",
     "START_YEAR": "StartYear",
@@ -61,7 +57,6 @@
     "CONSCRIPT_ANGER_DIVISOR": "ConscriptAngerDivisor",
     "CONSCRIPT_POP_ANGER": "ConscriptPopulationAnger",
     "PERCENT_ANGER_DIVISOR": "PercentAngerDivisor",
-    "NO_MILITARY_PERCENT_ANGER": "NoMilitaryPercentAnger",
     "MAX_CITY_DEFENSE_DAMAGE": "MaximumCityDefenseDamage"
   },
   "attachments": [

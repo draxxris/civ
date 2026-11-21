@@ -55,24 +55,6 @@
     "mod": "foundation",
     "fields": [
       {
-        "source": "bFlexiblePercent",
-        "property": "FlexiblePercent",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "iAIWeightPercent",
-        "property": "AiWeightPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iInitialHappiness",
-        "property": "InitialHappiness",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iInitialPercent",
         "property": "InitialPercent",
         "kind": "int",
@@ -86,18 +68,6 @@
     "definition": "EraDef",
     "mod": "foundation",
     "fields": [
-      {
-        "source": "bNoAnimals",
-        "property": "NoAnimals",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bNoBarbCities",
-        "property": "NoBarbCities",
-        "kind": "bool",
-        "default": 0
-      },
       {
         "source": "bNoGoodies",
         "property": "NoGoodies",
@@ -123,38 +93,8 @@
         "default": 0
       },
       {
-        "source": "iConstructCostModifier",
-        "property": "ConstructCostModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iConstructPercent",
         "property": "ConstructPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCreateCostModifier",
-        "property": "CreateCostModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCreatePercent",
-        "property": "CreatePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCulturePercent",
-        "property": "CulturePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iEventChancePerTurn",
-        "property": "EventChancePerTurn",
         "kind": "int",
         "default": 0
       },
@@ -173,12 +113,6 @@
       {
         "source": "iImprovementPercent",
         "property": "ImprovementPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iInitialCityMaintenancePercent",
-        "property": "InitialCityMaintenancePercent",
         "kind": "int",
         "default": 0
       },
@@ -231,12 +165,6 @@
         "default": 0
       },
       {
-        "source": "iTrainCostModifier",
-        "property": "TrainCostModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iTrainPercent",
         "property": "TrainPercent",
         "kind": "int",
@@ -283,12 +211,6 @@
       {
         "source": "iCreatePercent",
         "property": "CreatePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCulturePercent",
-        "property": "CulturePercent",
         "kind": "int",
         "default": 0
       },
@@ -425,18 +347,6 @@
         "default": 0
       },
       {
-        "source": "iAICreatePercent",
-        "property": "AiCreatePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAIDeclareWarProb",
-        "property": "AiDeclareWarProbability",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iAIGrowthPercent",
         "property": "AiGrowthPercent",
         "kind": "int",
@@ -509,32 +419,8 @@
         "default": 0
       },
       {
-        "source": "iAIWarWearinessPercent",
-        "property": "AiWarWearinessPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iAIWorkRateModifier",
         "property": "AiWorkRateModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAIWorldConstructPercent",
-        "property": "AiWorldConstructPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAIWorldCreatePercent",
-        "property": "AiWorldCreatePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAIWorldTrainPercent",
-        "property": "AiWorldTrainPercent",
         "kind": "int",
         "default": 0
       },
@@ -545,20 +431,8 @@
         "default": 0
       },
       {
-        "source": "iAnimalAttackProb",
-        "property": "AnimalAttackProbability",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iAnimalBonus",
         "property": "AnimalBonus",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAttitudeChange",
-        "property": "AttitudeChange",
         "kind": "int",
         "default": 0
       },
@@ -569,32 +443,8 @@
         "default": 0
       },
       {
-        "source": "iBarbarianCityCreationProb",
-        "property": "BarbarianCityCreationProbability",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iBarbarianCityCreationTurnsElapsed",
-        "property": "BarbarianCityCreationTurnsElapsed",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iBarbarianDefenders",
-        "property": "BarbarianDefenders",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iCivicUpkeepPercent",
         "property": "CivicUpkeepPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iColonyMaintenancePercent",
-        "property": "ColonyMaintenancePercent",
         "kind": "int",
         "default": 0
       },
@@ -641,20 +491,8 @@
         "default": 0
       },
       {
-        "source": "iMaxColonyMaintenance",
-        "property": "MaxColonyMaintenance",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iMaxNumCitiesMaintenance",
         "property": "MaxNumCitiesMaintenance",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iNoTechTradeModifier",
-        "property": "NoTechTradeModifier",
         "kind": "int",
         "default": 0
       },
@@ -683,38 +521,14 @@
         "default": 0
       },
       {
-        "source": "iStartingLocPercent",
-        "property": "StartingLocPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iStartingWorkerUnits",
         "property": "StartingWorkerUnits",
         "kind": "int",
         "default": 0
       },
       {
-        "source": "iTechTradeKnownModifier",
-        "property": "TechTradeKnownModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iUnitCostPercent",
         "property": "UnitCostPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnownedTilesPerBarbarianCity",
-        "property": "UnownedTilesPerBarbarianCity",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnownedTilesPerGameAnimal",
-        "property": "UnownedTilesPerGameAnimal",
         "kind": "int",
         "default": 0
       }
@@ -726,13 +540,6 @@
     "definition": "WorldSizeDef",
     "mod": "foundation",
     "fields": [
-      {
-        "source": "Percents",
-        "property": "ScalingPercents",
-        "kind": "mapInt",
-        "key": "ID",
-        "value": "iValue"
-      },
       {
         "source": "iAdvancedStartPointsMod",
         "property": "AdvancedStartPointsMod",
@@ -746,26 +553,8 @@
         "default": 0
       },
       {
-        "source": "iColonyMaintenancePercent",
-        "property": "ColonyMaintenancePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDefaultPlayers",
-        "property": "DefaultPlayers",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDistanceMaintenancePercent",
         "property": "DistanceMaintenancePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iFeatureGrainChange",
-        "property": "FeatureGrainChange",
         "kind": "int",
         "default": 0
       },
@@ -820,24 +609,6 @@
       {
         "source": "iTargetNumCities",
         "property": "TargetNumCities",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTerrainGrainChange",
-        "property": "TerrainGrainChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitNameModifier",
-        "property": "UnitNameModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iWarWearinessModifier",
-        "property": "WarWearinessModifier",
         "kind": "int",
         "default": 0
       }
@@ -908,28 +679,9 @@
         "kind": "commerce"
       },
       {
-        "source": "Flavors",
-        "property": "Flavors",
-        "kind": "mapInt",
-        "key": "FlavorType",
-        "value": "iFlavor"
-      },
-      {
         "source": "Yields",
         "property": "Yields",
         "kind": "yield"
-      },
-      {
-        "source": "bVisible",
-        "property": "Visible",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "iExperience",
-        "property": "Experience",
-        "kind": "int",
-        "default": 0
       },
       {
         "source": "iGreatPeopleRateChange",

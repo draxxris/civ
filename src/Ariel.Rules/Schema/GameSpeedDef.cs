@@ -11,7 +11,6 @@ public sealed class GameSpeedDef : GameContentDef
     public int BuildPercent { get; init; } = 0;
     public int ConstructPercent { get; init; } = 0;
     public int CreatePercent { get; init; } = 0;
-    public int CulturePercent { get; init; } = 0;
     public int FeatureProductionPercent { get; init; } = 0;
     public int GoldModifier { get; init; } = 0;
     public int GoldenAgePercent { get; init; } = 0;

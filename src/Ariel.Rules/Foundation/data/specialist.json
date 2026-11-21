@@ -7,8 +7,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -22,7 +20,6 @@
     "unsupported": [
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -37,8 +34,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -50,9 +45,9 @@
     "requirements": null,
     "strategy": "Specialist Artist Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -67,8 +62,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 150,
     "healthPercent": 0,
@@ -82,7 +75,6 @@
     "unsupported": [
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -97,8 +89,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -110,9 +100,9 @@
     "requirements": null,
     "strategy": "Specialist Citizen Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -127,8 +117,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -140,9 +128,9 @@
     "requirements": null,
     "strategy": "Specialist Engineer Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -157,8 +145,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -172,7 +158,6 @@
     "unsupported": [
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -187,11 +172,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {
-      "espionage": 1,
-      "gold": 1
-    },
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -203,9 +183,12 @@
     "requirements": null,
     "strategy": "Specialist Great Diplomat Strategy",
     "unsupported": [
+      "Flavors",
+      "Flavors/Flavor",
+      "Flavors/Flavor/FlavorType",
+      "Flavors/Flavor/iFlavor",
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 4,
       "food": 0,
@@ -220,8 +203,6 @@
       "research": 3
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -235,7 +216,6 @@
     "unsupported": [
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -250,8 +230,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 2,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -263,9 +241,9 @@
     "requirements": null,
     "strategy": "Specialist Great General Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "iExperience"
     ],
-    "visible": false,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -280,8 +258,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -295,7 +271,6 @@
     "unsupported": [
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 0,
       "food": 1,
@@ -310,8 +285,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -325,7 +298,6 @@
     "unsupported": [
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 2,
       "food": 0,
@@ -340,8 +312,6 @@
       "research": 6
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -355,7 +325,6 @@
     "unsupported": [
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -370,8 +339,6 @@
       "research": 3
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -385,7 +352,6 @@
     "unsupported": [
       "Texture"
     ],
-    "visible": false,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -400,8 +366,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -413,9 +377,9 @@
     "requirements": null,
     "strategy": "Specialist Lawyer Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 1,
       "food": 0,
@@ -430,8 +394,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -443,9 +405,9 @@
     "requirements": null,
     "strategy": "Specialist Merchant Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -460,8 +422,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -473,9 +433,9 @@
     "requirements": null,
     "strategy": ".",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -490,8 +450,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -503,9 +461,9 @@
     "requirements": null,
     "strategy": "Specialist Priest Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -520,8 +478,6 @@
       "research": 3
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -533,9 +489,9 @@
     "requirements": null,
     "strategy": "Specialist Scientist Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": 0,
@@ -550,8 +506,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 0,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -563,9 +517,9 @@
     "requirements": null,
     "strategy": ".",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": -1,
@@ -580,8 +534,6 @@
       "research": 0
     },
     "era": null,
-    "experience": 0,
-    "flavors": {},
     "greatPeopleRateChange": 3,
     "happinessPercent": 0,
     "healthPercent": 0,
@@ -593,9 +545,9 @@
     "requirements": null,
     "strategy": "Specialist Spy Strategy",
     "unsupported": [
-      "Texture"
+      "Texture",
+      "bVisible"
     ],
-    "visible": true,
     "yields": {
       "commerce": 0,
       "food": 0,

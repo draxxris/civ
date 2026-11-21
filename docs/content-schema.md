@@ -275,7 +275,7 @@ values use that default too. Explicit zeroes and negative integers remain intact
 entries. A missing map entry uses the source getter's default slot value. Most effect
 maps use zero, not a percentage multiplier.
 
-`RuleConstantsDef.Values` contains 63 integer constants for growth, food, culture,
+`RuleConstantsDef.Values` contains 58 integer constants for growth, food, culture,
 combat, healing, research (including research diffusion), anarchy, upkeep,
 hurried production, conscription, anger and city defense damage. The
 food-wastage growth factor uses permille: the source value 0.05 becomes 50 in

@@ -24,7 +24,6 @@ public sealed record RuleConstants
     public int CollateralCombatDamage { get; init; }
     public int CombatDamage { get; init; }
     public int CombatDieSides { get; init; }
-    public int CombatExperienceInBordersPercent { get; init; }
     public int CultureDecayTurns { get; init; }
     public int CulturePercentAnger { get; init; }
     public int DirtyPowerHealthChange { get; init; }
@@ -35,7 +34,6 @@ public sealed record RuleConstants
     public int FreshWaterHealthChange { get; init; }
     public int FriendlyHealRate { get; init; }
     public int HillsExtraDefense { get; init; }
-    public int InitialCityMaintenance { get; init; }
     public int MaxDistanceCityMaintenance { get; init; }
     public int MaxExperienceAfterUpgrade { get; init; }
     public int MaxExperiencePerCombat { get; init; }
@@ -50,8 +48,6 @@ public sealed record RuleConstants
     /// <summary>Source growth factor multiplied by 1000, with no rounding.</summary>
     public int FoodWastageGrowthPermille { get; init; }
     public int ResearchExtraTeamMemberPercent { get; init; }
-    public int ResearchFirstPrerequisitePercent { get; init; }
-    public int ResearchKnownPrerequisitePercent { get; init; }
     public int ResearchCostPercent { get; init; }
     public int ResearchKnownTeamsPercent { get; init; }
     public int StartYear { get; init; }
@@ -73,6 +69,5 @@ public sealed record RuleConstants
     public int ConscriptAngerDivisor { get; init; }
     public int ConscriptPopulationAnger { get; init; }
     public int PercentAngerDivisor { get; init; }
-    public int NoMilitaryPercentAnger { get; init; }
     public int MaximumCityDefenseDamage { get; init; }
 }

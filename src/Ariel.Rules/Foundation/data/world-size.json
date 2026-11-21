@@ -2,11 +2,8 @@
   {
     "advancedStartPointsMod": 80,
     "buildingClassPrereqModifier": 0,
-    "colonyMaintenancePercent": 67,
-    "defaultPlayers": 2,
     "distanceMaintenancePercent": 50,
     "era": null,
-    "featureGrainChange": -1,
     "gridHeight": 6,
     "gridWidth": 10,
     "help": "World Duel Help",
@@ -21,24 +18,24 @@
     "pedia": "",
     "requirements": null,
     "researchPercent": 75,
-    "scalingPercents": {
-      "scale_city_limits": 77
-    },
     "strategy": "",
     "targetNumCities": 3,
-    "terrainGrainChange": -1,
-    "unitNameModifier": 50,
-    "unsupported": [],
-    "warWearinessModifier": 50
+    "unsupported": [
+      "Percents",
+      "Percents/Percent",
+      "Percents/Percent/ID",
+      "Percents/Percent/iValue",
+      "iColonyMaintenancePercent",
+      "iDefaultPlayers",
+      "iUnitNameModifier",
+      "iWarWearinessModifier"
+    ]
   },
   {
     "advancedStartPointsMod": 130,
     "buildingClassPrereqModifier": 125,
-    "colonyMaintenancePercent": 25,
-    "defaultPlayers": 21,
     "distanceMaintenancePercent": 110,
     "era": null,
-    "featureGrainChange": 1,
     "gridHeight": 25,
     "gridWidth": 40,
     "help": "World Giant Help",
@@ -53,24 +50,25 @@
     "pedia": "",
     "requirements": null,
     "researchPercent": 200,
-    "scalingPercents": {
-      "scale_city_limits": 197
-    },
     "strategy": "",
     "targetNumCities": 8,
-    "terrainGrainChange": 1,
-    "unitNameModifier": 0,
-    "unsupported": [],
-    "warWearinessModifier": -20
+    "unsupported": [
+      "Percents",
+      "Percents/Percent",
+      "Percents/Percent/ID",
+      "Percents/Percent/iValue",
+      "iColonyMaintenancePercent",
+      "iDefaultPlayers",
+      "iFeatureGrainChange",
+      "iTerrainGrainChange",
+      "iWarWearinessModifier"
+    ]
   },
   {
     "advancedStartPointsMod": 140,
     "buildingClassPrereqModifier": 150,
-    "colonyMaintenancePercent": 20,
-    "defaultPlayers": 25,
     "distanceMaintenancePercent": 125,
     "era": null,
-    "featureGrainChange": 1,
     "gridHeight": 30,
     "gridWidth": 50,
     "help": "World Gigantic Help",
@@ -85,24 +83,25 @@
     "pedia": "",
     "requirements": null,
     "researchPercent": 250,
-    "scalingPercents": {
-      "scale_city_limits": 256
-    },
     "strategy": "",
     "targetNumCities": 10,
-    "terrainGrainChange": 1,
-    "unitNameModifier": 0,
-    "unsupported": [],
-    "warWearinessModifier": -30
+    "unsupported": [
+      "Percents",
+      "Percents/Percent",
+      "Percents/Percent/ID",
+      "Percents/Percent/iValue",
+      "iColonyMaintenancePercent",
+      "iDefaultPlayers",
+      "iFeatureGrainChange",
+      "iTerrainGrainChange",
+      "iWarWearinessModifier"
+    ]
   },
   {
     "advancedStartPointsMod": 120,
     "buildingClassPrereqModifier": 100,
-    "colonyMaintenancePercent": 30,
-    "defaultPlayers": 17,
     "distanceMaintenancePercent": 100,
     "era": null,
-    "featureGrainChange": 1,
     "gridHeight": 20,
     "gridWidth": 32,
     "help": "World Huge Help",
@@ -117,24 +116,25 @@
     "pedia": "",
     "requirements": null,
     "researchPercent": 130,
-    "scalingPercents": {
-      "scale_city_limits": 149
-    },
     "strategy": "",
     "targetNumCities": 6,
-    "terrainGrainChange": 1,
-    "unitNameModifier": 0,
-    "unsupported": [],
-    "warWearinessModifier": -10
+    "unsupported": [
+      "Percents",
+      "Percents/Percent",
+      "Percents/Percent/ID",
+      "Percents/Percent/iValue",
+      "iColonyMaintenancePercent",
+      "iDefaultPlayers",
+      "iFeatureGrainChange",
+      "iTerrainGrainChange",
+      "iWarWearinessModifier"
+    ]
   },
   {
     "advancedStartPointsMod": 110,
     "buildingClassPrereqModifier": 75,
-    "colonyMaintenancePercent": 37,
-    "defaultPlayers": 13,
     "distanceMaintenancePercent": 90,
     "era": null,
-    "featureGrainChange": 1,
     "gridHeight": 16,
     "gridWidth": 26,
     "help": "World Large Help",
@@ -149,24 +149,25 @@
     "pedia": "",
     "requirements": null,
     "researchPercent": 140,
-    "scalingPercents": {
-      "scale_city_limits": 119
-    },
     "strategy": "",
     "targetNumCities": 6,
-    "terrainGrainChange": 1,
-    "unitNameModifier": 10,
-    "unsupported": [],
-    "warWearinessModifier": 0
+    "unsupported": [
+      "Percents",
+      "Percents/Percent",
+      "Percents/Percent/ID",
+      "Percents/Percent/iValue",
+      "iColonyMaintenancePercent",
+      "iDefaultPlayers",
+      "iFeatureGrainChange",
+      "iTerrainGrainChange",
+      "iUnitNameModifier"
+    ]
   },
   {
     "advancedStartPointsMod": 90,
     "buildingClassPrereqModifier": 25,
-    "colonyMaintenancePercent": 52,
-    "defaultPlayers": 6,
     "distanceMaintenancePercent": 70,
     "era": null,
-    "featureGrainChange": 0,
     "gridHeight": 10,
     "gridWidth": 16,
     "help": "World Small Help",
@@ -181,24 +182,24 @@
     "pedia": "",
     "requirements": null,
     "researchPercent": 97,
-    "scalingPercents": {
-      "scale_city_limits": 81
-    },
     "strategy": "",
     "targetNumCities": 5,
-    "terrainGrainChange": 0,
-    "unitNameModifier": 30,
-    "unsupported": [],
-    "warWearinessModifier": 10
+    "unsupported": [
+      "Percents",
+      "Percents/Percent",
+      "Percents/Percent/ID",
+      "Percents/Percent/iValue",
+      "iColonyMaintenancePercent",
+      "iDefaultPlayers",
+      "iUnitNameModifier",
+      "iWarWearinessModifier"
+    ]
   },
   {
     "advancedStartPointsMod": 100,
     "buildingClassPrereqModifier": 50,
-    "colonyMaintenancePercent": 45,
-    "defaultPlayers": 9,
     "distanceMaintenancePercent": 80,
     "era": null,
-    "featureGrainChange": 0,
     "gridHeight": 13,
     "gridWidth": 21,
     "help": "World Standard Help",
@@ -213,24 +214,23 @@
     "pedia": "",
     "requirements": null,
     "researchPercent": 133,
-    "scalingPercents": {
-      "scale_city_limits": 100
-    },
     "strategy": "",
     "targetNumCities": 5,
-    "terrainGrainChange": 0,
-    "unitNameModifier": 20,
-    "unsupported": [],
-    "warWearinessModifier": 0
+    "unsupported": [
+      "Percents",
+      "Percents/Percent",
+      "Percents/Percent/ID",
+      "Percents/Percent/iValue",
+      "iColonyMaintenancePercent",
+      "iDefaultPlayers",
+      "iUnitNameModifier"
+    ]
   },
   {
     "advancedStartPointsMod": 85,
     "buildingClassPrereqModifier": 0,
-    "colonyMaintenancePercent": 60,
-    "defaultPlayers": 3,
     "distanceMaintenancePercent": 60,
     "era": null,
-    "featureGrainChange": -1,
     "gridHeight": 8,
     "gridWidth": 13,
     "help": "World Tiny Help",
@@ -245,14 +245,17 @@
     "pedia": "",
     "requirements": null,
     "researchPercent": 89,
-    "scalingPercents": {
-      "scale_city_limits": 89
-    },
     "strategy": "",
     "targetNumCities": 4,
-    "terrainGrainChange": -1,
-    "unitNameModifier": 40,
-    "unsupported": [],
-    "warWearinessModifier": 30
+    "unsupported": [
+      "Percents",
+      "Percents/Percent",
+      "Percents/Percent/ID",
+      "Percents/Percent/iValue",
+      "iColonyMaintenancePercent",
+      "iDefaultPlayers",
+      "iUnitNameModifier",
+      "iWarWearinessModifier"
+    ]
   }
 ]
