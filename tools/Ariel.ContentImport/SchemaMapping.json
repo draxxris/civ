@@ -1796,11 +1796,6 @@
     "mod": "research",
     "fields": [
       {
-        "source": "CommerceFlexible",
-        "property": "CommerceFlexible",
-        "kind": "commerce"
-      },
-      {
         "source": "DomainExtraMoves",
         "property": "DomainExtraMoves",
         "kind": "mapInt",
@@ -1822,17 +1817,6 @@
         "value": "iFlavor"
       },
       {
-        "source": "Quote",
-        "property": "Quote",
-        "kind": "text"
-      },
-      {
-        "source": "TechArrowOverrides",
-        "property": "ArrowTargets",
-        "kind": "refs",
-        "target": "TechInfo"
-      },
-      {
         "source": "TerrainTrades",
         "property": "TradeTerrains",
         "kind": "mapBool",
@@ -1849,38 +1833,14 @@
         "value": "iStrengthChange"
       },
       {
-        "source": "bAllowsDesertFarming",
-        "property": "AllowsDesertFarming",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bBridgeBuilding",
         "property": "BridgeBuilding",
         "kind": "bool",
         "default": 0
       },
       {
-        "source": "bCanFoundOnPeaks",
-        "property": "CanFoundOnPeaks",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bCanPassPeaks",
         "property": "CanPassPeaks",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDCMAirBombTech1",
-        "property": "UnlocksAirBombing",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDCMAirBombTech2",
-        "property": "UnlocksPrecisionBombing",
         "kind": "bool",
         "default": 0
       },
@@ -1893,18 +1853,6 @@
       {
         "source": "bDisable",
         "property": "Disable",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bEmbassyTrading",
-        "property": "EmbassyTrading",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bExtendMovementLimits",
-        "property": "ExtendMovementLimits",
         "kind": "bool",
         "default": 0
       },
@@ -1939,44 +1887,8 @@
         "default": 0
       },
       {
-        "source": "bMapCentering",
-        "property": "MapCentering",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bMapTrading",
-        "property": "MapTrading",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bMapVisible",
-        "property": "MapVisible",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bOpenBordersTrading",
         "property": "OpenBordersTrading",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bPermanentAllianceTrading",
-        "property": "PermanentAllianceTrading",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bRebaseAnywhere",
-        "property": "RebaseAnywhere",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bRemoveMovementLimits",
-        "property": "RemoveMovementLimits",
         "kind": "bool",
         "default": 0
       },
@@ -2005,21 +1917,9 @@
         "default": 0
       },
       {
-        "source": "bVassalTrading",
-        "property": "VassalTrading",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bWaterWork",
         "property": "WaterWork",
         "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "iAITradeModifier",
-        "property": "AiTradeModifier",
-        "kind": "int",
         "default": 0
       },
       {
@@ -2037,12 +1937,6 @@
       {
         "source": "iAdvancedStartCostIncrease",
         "property": "AdvancedStartCostIncrease",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAsset",
-        "property": "Asset",
         "kind": "int",
         "default": 0
       },
@@ -2085,12 +1979,6 @@
       {
         "source": "iHealth",
         "property": "Health",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iPower",
-        "property": "Power",
         "kind": "int",
         "default": 0
       },
