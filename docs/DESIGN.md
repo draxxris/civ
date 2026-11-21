@@ -1147,6 +1147,7 @@ safe from parallel AI scoring):
 | `ResearchCostPercent`, `ResearchCostPercentWithOption` | `Faction(...)` | the research cost scale, and the scale that replaces it while a listed game option is on |
 | `HandicapFoe` | `IsHandicapFoe` | the difficulty level's combat bonus and free early wins, the experience cap, and no general points |
 | `Uprisings` | `UprisingFaction` | hostile villagers from goody huts and Revolution's rebels join this faction |
+| `BreakawayTurns` | `Faction(...)` | a city the faction has held this many turns (scaled by game speed) breaks away as a new nation; zero means never |
 | `Leader` | | the leader the faction's player is created with |
 
 `IPeoplesService.EnsureFaction(sim, faction)` creates the faction's player on first use (its
@@ -1170,6 +1171,37 @@ decide, would get a partial turn. A joined player has an id at or above
 `SimulationSettings.PlayerCount`, so it is never a multiplayer seat. Without a faction that fields
 uprisings, goody huts never release hostile villagers and a Revolution rebellion releases
 pressure without fielding rebels.
+
+### Cities that break away
+
+`ICityCaptureService.Secede(sim, city, SecessionTerms)` turns a city into the capital of a new
+nation and returns the new player. Nothing is fought over, so it is not a capture:
+
+- The nation is `IPeoplesService.DrawNation`'s choice: the civilization the city remembers
+  (`CityRuleState.OriginalCivilization`) if it is free, else the former owner's
+  `DerivativeCivilization`, else a free playable civilization drawn at random, with one of
+  its unused leaders. It joins through `AddPlayer` knowing what the former owner's team
+  knew, led by the former owner's computer player (or, for a human, the lowest-numbered
+  player's).
+- The city keeps its people, food, buildings, work assignments and culture; it loses the
+  former capital building and its production queue, and is settled, not occupied. It takes
+  its own plot and every plot in its cultural reach that the former owner held and that is
+  nearer to it than to any city the former owner keeps, with the former owner's culture.
+- A faction's units in the city go over to the nation (`IUnitService.Transfer`); a nation's
+  are put out to an adjacent plot as one stack and lost if there is none
+  (`IUnitService.Expel`, the rule flooding uses). `SecessionTerms` may give the nation a
+  garrison and may start it at war with the former owner; otherwise they start at peace.
+- `ValidateSecession` refuses a nation's capital and last city, a game with no free
+  civilization, and a game with no computer player to lead the nation.
+- `CitySeceded(City, PreviousOwner, Player)` is published, never `CityCaptured`: no capture
+  gold, razing or war score follows. Timed effects, the victory check, and the Espionage
+  and Revolution city state react to it as they do to a capture.
+
+The base rule that uses it is `cities:faction_breakaway`, a global step at
+`TurnPhase.GameEnd`: a city a faction has held for the faction's `BreakawayTurns` breaks
+away with no garrison and no war of its own (an always-at-war faction is at war with it
+regardless). The barbarians' row sets 20 turns. The barbarian player has no computer
+player, so a city it holds does nothing until it breaks away.
 
 ### Barbarians
 

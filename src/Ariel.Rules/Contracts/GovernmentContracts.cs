@@ -84,6 +84,11 @@ public interface IPeoplesService
     /// Publishes <see cref="PlayerJoined"/>. Call it from a global turn step or an event handler, never from inside a
     /// player's own turn steps or while computer players are deciding, and never from a query.</summary>
     int AddPlayer(Simulation sim, NewPlayer player);
+    /// <summary>A civilization and leader for a nation that forms during play, or null when every playable civilization
+    /// is already in the game. The first of <paramref name="preferred"/> that is free wins; otherwise one free
+    /// civilization is drawn at random, then one of its leaders no player uses. Draws random numbers, so call it from
+    /// rules, never from a query.</summary>
+    (string Civilization, string Leader)? DrawNation(Simulation sim, IEnumerable<string?> preferred);
 }
 
 /// <summary>A player to add to a running game (<see cref="IPeoplesService.AddPlayer"/>).</summary>

@@ -31,6 +31,7 @@ public sealed class VictoryModule : IPreparableMod
         context.RegisterStateComponent<VictoryGameState>("game_state");
         context.Subscribe<CityCaptured>("check_capture", (sim, _) => service.Evaluate(sim, false));
         context.Subscribe<CityRazed>("check_raze", (sim, _) => service.Evaluate(sim, false));
+        context.Subscribe<CitySeceded>("check_secession", (sim, _) => service.Evaluate(sim, false));
         context.TurnSystems.Register(new VictoryCheck(service));
     }
 }

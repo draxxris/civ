@@ -4,7 +4,7 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Rules.Military;
 
-internal sealed partial class UnitService : IUnitService, IUnitSupportService
+internal sealed partial class UnitService(MovementService movement) : IUnitService, IUnitSupportService
 {
     public int Effect(Simulation sim, int unit, string effect) =>
         MilitaryData.Effect(MilitaryData.Effects(sim, sim.State.UnitById(unit)), effect);

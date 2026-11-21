@@ -31,6 +31,11 @@ public sealed class RevolutionMod : IPreparableMod
         {
             if (sim.State.FindCity(captured.City) is { } city) city.Extensions.Set(sim.Content, new RevolutionCityState());
         });
+        // A city that broke away starts calm under its own flag.
+        context.Subscribe<CitySeceded>("reset_secession", (sim, seceded) =>
+        {
+            if (sim.State.FindCity(seceded.City) is { } city) city.Extensions.Set(sim.Content, new RevolutionCityState());
+        });
         context.TurnSystems.Register(new InstabilityTurns(service));
         context.TurnSystems.Register(new RebellionTurns(service));
         context.RegisterService<ICityUnrest>("unrest_level", service);

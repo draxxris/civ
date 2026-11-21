@@ -32,6 +32,8 @@ internal sealed class CityCapture : ICityCaptureService
             ResolveAiConquestChoice(sim, transferred, wasCapital, hadWorldWonder);
         sim.Rules().Visibility.Recompute(sim);
     }
+    public string? ValidateSecession(Simulation sim, int city) => CitySecession.Validate(sim, city);
+    public int Secede(Simulation sim, int city, SecessionTerms terms) => CitySecession.Secede(sim, sim.State.CityById(city), terms);
     private static int ConquestCultureLevel(Simulation sim, City city)
     {
         var levels = CityData.Levels(sim, city.Owner, city);

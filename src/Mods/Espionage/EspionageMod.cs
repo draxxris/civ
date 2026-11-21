@@ -33,6 +33,10 @@ public sealed class EspionageMod : IPreparableMod
         {
             if (sim.State.FindCity(captured.City) is { } city) city.Extensions.Set(sim.Content, new EspionageCityState());
         });
+        context.Subscribe<CitySeceded>("reset_secession", (sim, seceded) =>
+        {
+            if (sim.State.FindCity(seceded.City) is { } city) city.Extensions.Set(sim.Content, new EspionageCityState());
+        });
         context.Subscribe<EspionageMissionResult>("memory_spy", RememberCaughtSpy);
         context.TurnSystems.Register(new SpyAllocation(service));
         context.TurnSystems.Register(new SpyTimers());

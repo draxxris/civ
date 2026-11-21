@@ -14,6 +14,22 @@ internal sealed class PeoplesService : IPeoplesService
     public int EnsureFaction(Simulation sim, S.FactionDef faction) =>
         PlayerRules.FactionPlayer(sim, faction) ?? AddPlayer(sim, new(faction.Target, faction.Leader));
 
+    public (string Civilization, string Leader)? DrawNation(Simulation sim, IEnumerable<string?> preferred)
+    {
+        var taken = sim.State.Players.Select(p => p.Civilization).ToHashSet(StringComparer.Ordinal);
+        var leaders = sim.State.Players.Select(p => p.Leader).ToHashSet(StringComparer.Ordinal);
+        string[] Free(S.CivilizationDef c) => c.Leaders.Where(l => l.Value && !leaders.Contains(l.Key)
+            && sim.Content.TryGet<S.LeaderDef>(l.Key, out _)).Select(l => l.Key).Order(StringComparer.Ordinal).ToArray();
+        var free = sim.Content.Get<S.CivilizationDef>().All
+            .Where(c => c.Playable && c.AiPlayable && !taken.Contains(c.Id) && Free(c).Length > 0)
+            .OrderBy(c => c.Id, StringComparer.Ordinal).ToArray();
+        if (free.Length == 0) return null;
+        var civilization = preferred.Select(id => free.FirstOrDefault(c => c.Id == id)).FirstOrDefault(c => c is not null)
+            ?? free[sim.Rng.Next(free.Length)];
+        var choices = Free(civilization);
+        return (civilization.Id, choices[sim.Rng.Next(choices.Length)]);
+    }
+
     public int AddPlayer(Simulation sim, NewPlayer spec)
     {
         var civilization = sim.Content.Get<S.CivilizationDef>(spec.Civilization);

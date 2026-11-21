@@ -34,7 +34,7 @@ public sealed class MilitaryModule : IPreparableMod
         ContentRegistration.Load(context, Units);
         ContentRegistration.Load(context, ModifierKeys);
         var movement = new MovementService();
-        var units = new UnitService();
+        var units = new UnitService(movement);
         context.RegisterService<IMovementService>("movement", movement);
         context.RegisterService<IPathfindingService>("paths", new PathfindingService(movement));
         context.RegisterService<ICombatService>("combat", new CombatService());

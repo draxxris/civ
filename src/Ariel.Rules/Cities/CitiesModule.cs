@@ -35,7 +35,9 @@ public sealed class CitiesModule : IPreparableMod
         context.TurnSystems.Register(new TimedEffectExpiry());
         context.Subscribe<CityCaptured>("timed_effects_capture", (sim, captured) => TimedEffects.EndCity(sim, captured.City));
         context.Subscribe<CityRazed>("timed_effects_raze", (sim, razed) => TimedEffects.EndCity(sim, razed.City));
+        context.Subscribe<CitySeceded>("timed_effects_secession", (sim, seceded) => TimedEffects.EndCity(sim, seceded.City));
         context.RegisterService<ICityCaptureService>("capture", new CityCapture());
+        context.TurnSystems.Register(new FactionBreakaway());
         var yields = new CityYields();
         var wellbeing = new CityWellbeingService();
         var work = new CityWork(wellbeing);

@@ -17,23 +17,30 @@ internal static class FloodedUnits
             .Where(u => MilitaryData.Read(sim, u).TransportId is null && !CanStand(sim, u, plot))
             .OrderBy(u => u.Id).ToArray();
         if (stranded.Length == 0) return;
-        var queries = stranded.Select(u => movement.Query(sim, u.Id)).ToArray();
-        var refuges = sim.State.Grid.Neighbors(from).Where(to => Refuge(sim, stranded, queries, from, to))
+        MoveOff(sim, movement, from, stranded);
+        MilitaryData.Sight(sim);
+    }
+
+    /// <summary>Move a stack off its plot as one, to a random adjacent plot every unit could enter by a normal step;
+    /// with no such plot the stack is lost. Shared by flooding and by units put out of a city that changed hands.</summary>
+    internal static void MoveOff(Simulation sim, MovementService movement, TileId from, Unit[] stack)
+    {
+        var queries = stack.Select(u => movement.Query(sim, u.Id)).ToArray();
+        var refuges = sim.State.Grid.Neighbors(from).Where(to => Refuge(sim, stack, queries, from, to))
             .OrderBy(t => t.Value).ToArray();
         if (refuges.Length == 0)
-            foreach (var unit in stranded) MilitaryData.RemoveUnit(sim, unit.Id);
+            foreach (var unit in stack) MilitaryData.RemoveUnit(sim, unit.Id);
         else
         {
             var target = sim.State.Grid.HexOf(refuges[sim.Rng.Next(refuges.Length)]);
             var builds = sim.Rules().WorkerBuilds;
-            foreach (var unit in stranded)
+            foreach (var unit in stack)
             {
                 MilitaryData.Edit(sim, unit).BreakActivity();
                 builds?.Cancel(sim, unit.Owner, unit.Id);
                 MilitaryData.MoveUnit(sim, unit.Id, target);
             }
         }
-        MilitaryData.Sight(sim);
     }
 
     private static bool Water(Simulation sim, string terrain) => sim.Content.Get<S.TerrainDef>(terrain).IsWater;

@@ -96,6 +96,10 @@ public sealed partial class GameSession
             case CombatResolved c: return Combat(c, turn);
             case CityCaptured c when c.Player == LocalPlayer || c.PreviousOwner == LocalPlayer:
                 return Note(turn, "city", c.Player == LocalPlayer ? $"Captured {CityName(c.City)}" : $"{CityName(c.City)} was captured", c.City);
+            case CitySeceded s when s.PreviousOwner == LocalPlayer:
+                return Note(turn, "city", $"{CityName(s.City)} broke away and founded {Sim.State.PlayerById(s.Player).Name}", s.City, null, Tone.Bad);
+            case CitySeceded s:
+                return Note(turn, "city", $"{CityName(s.City)} broke away and founded {Sim.State.PlayerById(s.Player).Name}", s.City);
             case CityRazed c when c.Player == LocalPlayer:
                 return Note(turn, "city", "A city was razed", null, c.Position);
             case GoodyReceived g when _myUnits.Contains(g.Unit):

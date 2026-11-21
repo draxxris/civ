@@ -1,6 +1,7 @@
 [
   {
     "alwaysAtWar": true,
+    "breakawayTurns": 20,
     "handicapFoe": true,
     "id": "barbarians:barbarian",
     "leader": "peoples:leader_barbarian",

@@ -116,6 +116,14 @@ public interface IUnitService
     IReadOnlyList<int> Disband(Simulation sim, int unit);
     /// <summary>Remove a unit killed outright, with any cargo aboard. Sight is left for the caller to refresh.</summary>
     void Destroy(Simulation sim, int unit);
+    /// <summary>Hand a unit to another player where it stands, with the cargo it carries: same id, type, health,
+    /// experience and promotions; its activity and any worker build end. Sight is left for the caller to refresh.</summary>
+    void Transfer(Simulation sim, int unit, int player);
+    /// <summary>Move every unit of <paramref name="player"/> off a plot as one stack, to a random adjacent plot all of
+    /// them could step onto without fighting, boarding or taking a city; with no such plot the stack is lost. Cargo
+    /// rides with its carrier. Draws one random number when there is somewhere to go. Returns whether any unit stood
+    /// there. Sight is left for the caller to refresh.</summary>
+    bool Expel(Simulation sim, Hex plot, int player);
     /// <summary>Why an aircraft cannot be based at <paramref name="target"/>, or null when a friendly land base with room,
     /// or a carrier there that can take it, would hold it.</summary>
     string? ValidateRebase(Simulation sim, int unit, Hex target);
@@ -247,7 +255,27 @@ public interface ICityCaptureService
     void Capture(Simulation sim, int city, int player);
     string? ValidateRaze(Simulation sim, int city, int player);
     void Raze(Simulation sim, int city);
+    /// <summary>Why this city cannot break away as a new nation, or null when it can: a nation keeps its capital and
+    /// its last city, a free civilization must be left, and a computer player must exist to lead the newcomer.
+    /// Changes nothing and draws no random numbers.</summary>
+    string? ValidateSecession(Simulation sim, int city);
+    /// <summary>The city breaks away from its owner and becomes the capital of a new nation, whose player id is
+    /// returned (<see cref="IPeoplesService.AddPlayer"/>). Nothing is fought over: the city keeps its people, food,
+    /// buildings (but the old capital building) and culture, and takes the land around it that only it held for its
+    /// former owner. The newcomer knows what its former owner's team knew and is led by a computer player. A faction's
+    /// units in the city go over to the newcomer; a nation's are put out of the city
+    /// (<see cref="IUnitService.Expel"/>). Publishes <see cref="CitySeceded"/>, not <see cref="CityCaptured"/>. Throws when
+    /// <see cref="ValidateSecession"/> refuses. Call it from a global turn step, like any rule that adds a player.</summary>
+    int Secede(Simulation sim, int city, SecessionTerms terms);
 }
+/// <summary>How a city breaks away (<see cref="ICityCaptureService.Secede"/>).</summary>
+/// <param name="WarWithFormerOwner">Whether the new nation starts at war with the player it left. Otherwise they start
+/// at peace; a former owner that is always at war is at war with it either way.</param>
+/// <param name="GarrisonUnit">A unit type the new nation is given in the city, or null for none.</param>
+/// <param name="Garrison">How many of <paramref name="GarrisonUnit"/> it is given.</param>
+public sealed record SecessionTerms(bool WarWithFormerOwner = false, string? GarrisonUnit = null, int Garrison = 0);
+/// <summary>A city broke away from <paramref name="PreviousOwner"/> and founded the nation <paramref name="Player"/>.</summary>
+public sealed record CitySeceded(int City, int PreviousOwner, int Player) : DomainEvent;
 public sealed record CityBombarded(int Unit, int City, int DefenseReduction, int TotalDefenseDamage) : DomainEvent;
 public sealed record CityCaptured(int City, int PreviousOwner, int Player, int CaptureGold = 0, bool AutoRazed = false) : DomainEvent;
 /// <summary>A city was destroyed by its owner <paramref name="Player"/>. <paramref name="CapturedFrom"/> is the player it was

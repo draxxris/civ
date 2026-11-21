@@ -39,6 +39,7 @@ public sealed class DogfoodTests
         while (root != null && !File.Exists(Path.Combine(root.FullName, "Ariel.slnx"))) root = root.Parent;
         Assert.NotNull(root);
         string[] allowed = [Path.Combine("src", "Ariel.Rules", "Military", "UnitService.cs"), Path.Combine("src", "Ariel.Rules", "Military", "UnitUpgrades.cs"),
+            Path.Combine("src", "Ariel.Rules", "Military", "UnitHandover.cs"),
             Path.Combine("src", "Ariel.Rules", "Foundation", "NewGameSetup.cs")];
         var violations = new List<string>();
         foreach (var project in new[] { "Ariel.Rules", "Ariel.Ai", "Mods" })

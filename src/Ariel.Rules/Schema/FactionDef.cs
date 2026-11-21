@@ -30,4 +30,7 @@ public sealed class FactionDef : ContentAttachment<CivilizationDef>
     /// <summary>Whether uprisings join this faction: hostile villagers from huts and rebels from restless cities. When
     /// several loaded factions say so, the first by id fields them.</summary>
     public bool Uprisings { get; init; }
+    /// <summary>How many turns (at normal speed) the faction holds a city before the city breaks away as a new nation
+    /// (<c>ICityCaptureService.Secede</c>). Zero: its cities never break away.</summary>
+    public int BreakawayTurns { get; init; }
 }
