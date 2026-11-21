@@ -117,12 +117,6 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(1, unique.FirstStrikes);
         Assert.Equal(30, unique.WithdrawalPercent);
         Assert.Equal(0, db.Get<Schema.UnitDef>("military:knight").FirstStrikes);
-        var bear = db.Get<Schema.UnitDef>("military:bear");
-        var subdue = bear.KillOutcomes.Single(o => o.Outcome == "military:outcome_subdue");
-        Assert.Equal(10, subdue.Chance);
-        Assert.Equal("military:captured_bear", subdue.Unit);
-        Assert.False(subdue.DeliverUnitToCity);
-        Assert.Equal(new YieldVector(2, 4, 0), bear.KillOutcomes.Single(o => o.Outcome == "military:outcome_hunting_kill").Yields);
         var civilization = db.Get<Schema.CivilizationDef>("peoples:albania");
         Assert.Equal(unique.Id, civilization.UnitOverrides["military:knight"]);
         Assert.Equal("cities:albania_illogor", civilization.BuildingOverrides["cities:garrison"]);

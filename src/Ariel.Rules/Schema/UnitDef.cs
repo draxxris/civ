@@ -183,7 +183,4 @@ public sealed class UnitDef : GameContentDef
     public ClassLimits Limits { get; init; } = new();
     [ContentReference(typeof(UnitAiDef))]
     public string? DefaultUnitAi { get; init; }
-    public ImmutableArray<OutcomeEffect> KillOutcomes { get; init; } = [];
-    [ContentReference(typeof(MissionDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, ImmutableArray<OutcomeEffect>> Actions { get; init; } = ImmutableDictionary<string, ImmutableArray<OutcomeEffect>>.Empty;
 }

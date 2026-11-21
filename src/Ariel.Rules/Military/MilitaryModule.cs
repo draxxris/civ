@@ -11,7 +11,6 @@ public sealed class MilitaryModule : IPreparableMod
     private static readonly ModJsonFile<DomainDef[]> Domains = new("data/domain.json");
     private static readonly ModJsonFile<InvisibilityDef[]> Invisibility = new("data/invisibility.json");
     private static readonly ModJsonFile<MissionDef[]> Missions = new("data/mission.json");
-    private static readonly ModJsonFile<OutcomeDef[]> Outcomes = new("data/outcome.json");
     private static readonly ModJsonFile<PromotionDef[]> Promotions = new("data/promotion.json");
     private static readonly ModJsonFile<UnitAiDef[]> UnitAi = new("data/unit-ai.json");
     private static readonly ModJsonFile<UnitCategoryDef[]> Categories = new("data/unit-category.json");
@@ -19,14 +18,13 @@ public sealed class MilitaryModule : IPreparableMod
     private static readonly ModJsonFile<UnitDef[]> Units = new("data/unit.json");
     private static readonly ModJsonFile<Ariel.Content.ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
-        [Domains, Invisibility, Missions, Outcomes, Promotions, UnitAi, Categories, Combat, Units, ModifierKeys];
+        [Domains, Invisibility, Missions, Promotions, UnitAi, Categories, Combat, Units, ModifierKeys];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Domains);
         ContentRegistration.Load(context, Invisibility);
         ContentRegistration.Load(context, Missions);
-        ContentRegistration.Load(context, Outcomes);
         ContentRegistration.Load(context, Promotions);
         ContentRegistration.Load(context, UnitAi);
         ContentRegistration.Load(context, Categories);

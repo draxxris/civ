@@ -20,7 +20,7 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
 - Economy: `ProcessDef`.
 - Cities: `BuildingDef`, `BuildingCategoryDef`, and `HurryDef`.
 - Military: `UnitDef`, `UnitCombatDef`, `UnitAiDef`, `UnitCategoryDef`, `DomainDef`,
-  `InvisibilityDef`, `PromotionDef`, `MissionDef`, and `OutcomeDef`.
+  `InvisibilityDef`, `PromotionDef`, and `MissionDef`.
 - Government: `CivicDef`, `CivicOptionDef`, and `UpkeepDef`.
 - Peoples: `CivilizationDef`, `LeaderDef`, and `TraitDef`.
 - Victory: `VictoryDef`, the executable victory conditions (`data/victory.json`, hand-written;
@@ -393,13 +393,9 @@ deliberately conservative: an earlier-era building is pruned if its replacement 
 prerequisite belongs to a later era. The importer writes empty arrays for fully removed
 families, preventing stale sidecars from previous imports.
 
-Native hunting, subdue, butchering, and resource-spawn outcomes retain chances, unit
-grants, resource grants, and yields in `OutcomeEffect`. Action maps use mission ids.
-Outcome lists retain source order and promotion chance modifiers. One absent
-delivery-policy boolean define (`DONT_ESCORT_SUBDUED_LAND_ANIMAL`) affects 34 units. The
-native getter returns false when the define is absent. The schema sets
-`DeliverUnitToCity = false` and preserves
-`DeliveryPolicyKey = "DONT_ESCORT_SUBDUED_LAND_ANIMAL"` for review.
+Native hunting, subdue, butchering, and resource-spawn outcomes (`OutcomeInfo`, a unit's
+`KillOutcomes` and `Actions`) are not imported: no rule runs them. Their source paths are
+listed in each unit's `unsupported`.
 
 Artwork, audio, and Python-scripted effects remain unmodeled in schema definitions.
 Revolution gameplay uses the typed rules in `RevolutionRulesDef`. The census labels

@@ -194,8 +194,6 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "yield" => Yield(node), "commerce" => Commerce(node),
         "turns" => node.Children.Select(n => new TurnIncrement(Integer(n.Value("iMonthIncrement")), Integer(n.Value("iTurnsPerIncrement")))).ToArray(),
         "civilization" => CivilizationField(record, node),
-        "outcomes" => OutcomeList(record, node),
-        "actions" => PairMap(record, node, "MissionInfo", n => OutcomeList(record, n.Children[1])),
         "improvementBonuses" => Indexed(record, node, field, n => new ImprovementBonus
         {
             MakesValid = Boolean(n.Value("bBonusMakesValid")), Connects = Boolean(n.Value("bBonusTrade")),
@@ -247,23 +245,6 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         }).ToArray();
     private static ModifierScope Scope(FieldMapping field) =>
         Enum.Parse<ModifierScope>(field.Scope ?? throw new InvalidDataException(field.Source + ": an effect needs a scope"), ignoreCase: true);
-
-    private OutcomeEffect[] OutcomeList(EffectiveRecord record, DataNode node) => node.Children.Select(entry => Outcome(record, entry)).ToArray();
-
-    private OutcomeEffect Outcome(EffectiveRecord record, DataNode node)
-    {
-        var delivery = node.Value("bUnitToCity").Trim();
-        var policy = delivery.Length > 0 && delivery is not ("0" or "1" or "false" or "true") ? delivery : null;
-        if (policy is not null && !defines.ContainsKey(policy))
-            Issues.Add(new(ids[(record.Class, record.Type)], "bUnitToCity", policy, "Absent boolean define defaults to false; policy key is retained."));
-        return new OutcomeEffect
-        {
-            Outcome = RequiredReference("OutcomeInfo", node.Value("OutcomeType"), record, "OutcomeType"),
-            Chance = Integer(node.Value("iChance")), Unit = Reference("UnitInfo", node.Value("UnitType"), record, "UnitType"),
-            Bonus = Reference("BonusInfo", node.Value("BonusType"), record, "BonusType"), Yields = Yield(node.Child("Yields")),
-            DeliverUnitToCity = GetterBoolean(delivery), DeliveryPolicyKey = policy
-        };
-    }
 
     private bool GetterBoolean(string? value, bool fallback = false)
     {

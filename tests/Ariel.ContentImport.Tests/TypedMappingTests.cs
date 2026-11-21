@@ -103,36 +103,6 @@ public sealed class TypedMappingTests
         Assert.Contains("AndPreReqs", error.Message);
     }
 
-    [Theory]
-    [InlineData("1", true, null)]
-    [InlineData("KNOWN_POLICY", true, "KNOWN_POLICY")]
-    [InlineData("MISSING_POLICY", false, "MISSING_POLICY")]
-    public void Unit_outcomes_keep_chances_yields_and_native_boolean_define_resolution(string policy, bool delivered, string? key)
-    {
-        var records = new[]
-        {
-            Record("UnitClassInfo", "UNITCLASS_HUNTER", DataNode.Leaf("DefaultUnit", "UNIT_HUNTER")),
-            Record("OutcomeInfo", "OUTCOME_SUBDUE"),
-            Record("UnitInfo", "UNIT_HUNTER", DataNode.Leaf("Class", "UNITCLASS_HUNTER"),
-                DataNode.Branch("KillOutcomes", [DataNode.Branch("Outcome", [
-                    DataNode.Leaf("OutcomeType", "OUTCOME_SUBDUE"), DataNode.Leaf("iChance", "10"),
-                    DataNode.Leaf("UnitType", "UNIT_HUNTER"), DataNode.Leaf("bUnitToCity", policy),
-                    DataNode.Branch("Yields", [DataNode.Leaf("iYield", "2"), DataNode.Leaf("iYield", "4")])
-                ])]))
-        };
-        var mapper = new ContentMapper(records, _ => null,
-            new Dictionary<string, DefineValue> { ["KNOWN_POLICY"] = new("1", "iDefineIntVal", "fixture") });
-        var definitions = mapper.Map().Select(d => d.Definition).ToArray();
-        var outcome = Assert.Single(Assert.Single(definitions.OfType<Schema.UnitDef>()).KillOutcomes);
-        Assert.Equal(10, outcome.Chance);
-        Assert.Equal(new YieldVector(2, 4, 0), outcome.Yields);
-        Assert.Equal("military:hunter", outcome.Unit);
-        Assert.Equal(delivered, outcome.DeliverUnitToCity);
-        Assert.Equal(key, outcome.DeliveryPolicyKey);
-        Assert.True(Assert.Single(definitions.OfType<Schema.OutcomeDef>()).FriendlyTerritory);
-        Assert.Equal(policy == "MISSING_POLICY", mapper.Issues.Count > 0);
-    }
-
     [Fact]
     public void A_mod_constant_goes_to_the_mods_row_about_the_rule_constants_and_not_to_the_raw_defines()
     {

@@ -249,9 +249,7 @@ closed. Prerequisites retain these identities instead of silently disappearing. 
 native unit-AI roles absent from the XML inventory receive explicit military identities.
 The native enum and `registerUnitAIs` in the reference DLL define these roles. Four
 stale optional source references become null. Required unresolved references fail
-import. Native unit outcomes retain chances, yields, grants, and mission actions. One
-missing delivery-policy define affects 34 units. The native boolean getter returns false
-for each missing define. The emitted effects retain the policy keys too.
+import. Native unit outcomes are not imported, since no rule runs them.
 `data-issues.json` identifies these source errors.
 
 No authoritative JSON number uses floating point. The food-wastage growth factor

@@ -4301,9 +4301,7 @@
         "property": "DefaultUnitAi",
         "kind": "ref",
         "target": "UnitAIInfo"
-      },
-      { "source": "KillOutcomes", "property": "KillOutcomes", "kind": "outcomes" },
-      { "source": "Actions", "property": "Actions", "kind": "actions" }
+      }
     ],
     "requirements": [
       {
@@ -6650,28 +6648,6 @@
     "mod": "foundation",
     "fields": [],
     "requirements": []
-  },
-  {
-    "sourceClass": "OutcomeInfo",
-    "definition": "OutcomeDef",
-    "mod": "military",
-    "fields": [
-      { "source": "Message", "property": "Message", "kind": "text" },
-      { "source": "ObsoleteTech", "property": "ObsoleteTech", "kind": "ref", "target": "TechInfo" },
-      { "source": "bFriendlyTerritory", "property": "FriendlyTerritory", "kind": "bool", "default": true },
-      { "source": "bNeutralTerritory", "property": "NeutralTerritory", "kind": "bool", "default": true },
-      { "source": "bHostileTerritory", "property": "HostileTerritory", "kind": "bool", "default": true },
-      { "source": "bBarbarianTerritory", "property": "BarbarianTerritory", "kind": "bool", "default": false },
-      { "source": "bCity", "property": "City", "kind": "bool", "default": false },
-      { "source": "bNotCity", "property": "NotCity", "kind": "bool", "default": false },
-      { "source": "bToCoastalCity", "property": "ToCoastalCity", "kind": "bool", "default": false },
-      { "source": "ExtraChancePromotions", "property": "PromotionChanceChanges", "kind": "mapInt", "target": "PromotionInfo" }
-    ],
-    "requirements": [
-      { "source": "PrereqTech", "kind": "tech", "target": "TechInfo", "mode": "all" },
-      { "source": "PrereqCivic", "kind": "civic", "target": "CivicInfo", "mode": "all" },
-      { "source": "PrereqBuildings", "kind": "building", "target": "BuildingInfo", "mode": "all" }
-    ]
   },
   {
     "sourceClass": "MissionInfo",
