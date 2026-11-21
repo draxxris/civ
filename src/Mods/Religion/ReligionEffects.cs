@@ -58,15 +58,16 @@ internal sealed class ReligionEffects : IModifierSource
         string? stateIdentity = state is null ? null : ReligionIdentities.Identity(sim.Content, state);
         if (stateIdentity is not null && buildings.Any(b => b.ReligionType == stateIdentity))
             global = sim.State.Cities.Where(c => c.Owner == city.Owner).SelectMany(c => ReligionData.Active(sim, c))
-                .Aggregate(default(CommerceVector), (total, b) => total + b.StateReligionCommerces);
+                .Aggregate(default(CommerceVector), (total, b) => total + ReligionData.Building(sim.Content, b.Id).StateReligionCommerces);
         foreach (var building in buildings)
         {
+            var rules = ReligionData.Building(sim.Content, building.Id);
             if (building.ReligionType is { } religion && religion == stateIdentity)
             {
-                sink.Add(building.Id, "cities:happiness", building.StateReligionHappiness);
+                sink.Add(building.Id, "cities:happiness", rules.StateReligionHappiness);
                 sink.AddCommerce(building.Id + ":state_religion", global);
             }
-            if (ReligionIdentities.ByIdentity(sim.Content, building.GlobalReligionCommerce) is not { } shrine) continue;
+            if (ReligionIdentities.ByIdentity(sim.Content, rules.GlobalReligionCommerce) is not { } shrine) continue;
             int cities = sim.State.Cities.Count(c => ReligionData.Has(sim, c, shrine.Id));
             sink.AddCommerce(building.Id + ":shrine", shrine.GlobalCityCommerce * cities);
         }

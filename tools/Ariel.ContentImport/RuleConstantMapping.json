@@ -50,7 +50,6 @@
     "TECH_DIFFUSION_WELFARE_THRESHOLD": "ResearchDiffusionWelfareThreshold",
     "REVOLUTION_TECH_COST_RATIO": "RevolutionResearchCostPercent",
     "BASE_CIVIC_ANARCHY_LENGTH": "BaseCivicAnarchyTurns",
-    "BASE_RELIGION_ANARCHY_LENGTH": "BaseReligionAnarchyTurns",
     "MAX_ANARCHY_TURNS": "MaximumAnarchyTurns",
     "INITIAL_BASE_FREE_UNITS": "InitialFreeUnits",
     "INITIAL_FREE_UNITS_POPULATION_PERCENT": "InitialFreeUnitsPopulationPercent",
@@ -73,6 +72,13 @@
       "constants": {
         "GOLDEN_AGE_LENGTH": "GoldenAgeTurns",
         "GOLDEN_AGE_GREAT_PEOPLE_MODIFIER": "GoldenAgeGreatPeoplePercent"
+      }
+    },
+    {
+      "mod": "religion",
+      "definition": "RuleConstantsReligionDef",
+      "constants": {
+        "BASE_RELIGION_ANARCHY_LENGTH": "BaseReligionAnarchyTurns"
       }
     },
     {

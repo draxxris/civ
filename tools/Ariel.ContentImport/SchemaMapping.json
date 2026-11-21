@@ -2437,12 +2437,6 @@
         "target": "CorporationInfo"
       },
       {
-        "source": "GlobalReligionCommerce",
-        "property": "GlobalReligionCommerce",
-        "kind": "ref",
-        "target": "ReligionInfo"
-      },
-      {
         "source": "GlobalSeaPlotYieldChanges",
         "property": "GlobalSeaPlotYieldChanges",
         "kind": "yield"
@@ -2511,14 +2505,6 @@
         "value": "iProductionTrait"
       },
       {
-        "source": "ReligionChanges",
-        "property": "ReligionChanges",
-        "kind": "mapInt",
-        "target": "ReligionInfo",
-        "key": "ReligionType",
-        "value": "iReligionChange"
-      },
-      {
         "source": "ReligionType",
         "property": "ReligionType",
         "kind": "ref",
@@ -2576,11 +2562,6 @@
         "target": "SpecialistInfo",
         "key": "SpecialistType",
         "value": "YieldChanges"
-      },
-      {
-        "source": "StateReligionCommerces",
-        "property": "StateReligionCommerces",
-        "kind": "commerce"
       },
       {
         "source": "TechCommerceChanges",
@@ -2718,12 +2699,6 @@
       {
         "source": "bForceTeamVoteEligible",
         "property": "ForceTeamVoteEligible",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bFreeFromStateReligion",
-        "property": "FreeFromStateReligion",
         "kind": "bool",
         "default": 0
       },
@@ -3322,12 +3297,6 @@
         "default": 0
       },
       {
-        "source": "iStateReligionHappiness",
-        "property": "StateReligionHappiness",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iTeamsPrereq",
         "property": "TeamsPrereq",
         "kind": "int",
@@ -3695,14 +3664,6 @@
         "target": "TraitInfo",
         "key": "ProductionTraitType",
         "value": "iProductionTrait"
-      },
-      {
-        "source": "ReligionSpreads",
-        "property": "ReligionSpreads",
-        "kind": "mapInt",
-        "target": "ReligionInfo",
-        "key": "ReligionType",
-        "value": "iReligionSpread"
       },
       {
         "source": "SeeInvisible",
@@ -7138,6 +7099,61 @@
         "property": "GreatPeoplePercent",
         "kind": "int",
         "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingReligionDef",
+    "mod": "religion",
+    "fields": [
+      {
+        "source": "GlobalReligionCommerce",
+        "property": "GlobalReligionCommerce",
+        "kind": "ref",
+        "target": "ReligionInfo"
+      },
+      {
+        "source": "ReligionChanges",
+        "property": "ReligionChanges",
+        "kind": "mapInt",
+        "target": "ReligionInfo",
+        "key": "ReligionType",
+        "value": "iReligionChange"
+      },
+      {
+        "source": "StateReligionCommerces",
+        "property": "StateReligionCommerces",
+        "kind": "commerce"
+      },
+      {
+        "source": "bFreeFromStateReligion",
+        "property": "FreeFromStateReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionHappiness",
+        "property": "StateReligionHappiness",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitReligionDef",
+    "mod": "religion",
+    "fields": [
+      {
+        "source": "ReligionSpreads",
+        "property": "ReligionSpreads",
+        "kind": "mapInt",
+        "target": "ReligionInfo",
+        "key": "ReligionType",
+        "value": "iReligionSpread"
       }
     ],
     "requirements": []

@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
 
@@ -52,7 +54,7 @@ internal static class ReligionData
     /// a building whose requirement is "this religion or that one".</summary>
     private static bool ReligionSupported(BuildingDef building, IReadOnlyList<string> remaining)
     {
-        // FreeFromStateReligion only relaxes state matching; the faith itself must still be present.
+        // Being free from the state religion only relaxes state matching; the faith itself must still be present.
         if (building.ReligionType is { } type && !remaining.Contains(type, StringComparer.Ordinal)) return false;
         return ReligionSupported(building.Requirements ?? new Ariel.Content.Requirement.All([]), remaining);
     }
@@ -81,6 +83,15 @@ internal static class ReligionData
     internal static string? StateReligion(Simulation sim, int player) => Civics(sim, player).Any(c => c.Rules.RequiresStateReligion) ? Player(sim, player).LastStateReligion : null;
     /// <summary>Buildings the city actually runs, empire grants, replacement and power included.</summary>
     internal static IReadOnlyList<BuildingDef> Active(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
+    /// <summary>What a building means to religion.</summary>
+    internal static BuildingReligionDef Building(ContentDb content, string building) =>
+        content.Attachment<BuildingReligionDef>(building) ?? BuildingReligionDef.None;
+    /// <summary>The faiths a unit spreads, by identity, with each mission's chance.</summary>
+    internal static ImmutableDictionary<string, int> Spreads(ContentDb content, string unit) =>
+        (content.Attachment<UnitReligionDef>(unit) ?? UnitReligionDef.None).ReligionSpreads;
+    /// <summary>The religion rule constants.</summary>
+    internal static RuleConstantsReligionDef Rules(Simulation sim) =>
+        sim.Content.Attachment<RuleConstantsReligionDef>(sim.Content.Get<RuleConstantsDef>().All.Single().Id) ?? RuleConstantsReligionDef.None;
     internal static int Raw(Simulation sim, string key, int fallback) => sim.Content.Get<RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var text) && int.TryParse(text, out var value) ? value : fallback;
     internal static bool BlocksSpread(Simulation sim, City city, string religion) => religion != StateReligion(sim, city.Owner) && Civics(sim, city.Owner).Any(c => c.Rules.NoNonStateReligionSpread);
 }

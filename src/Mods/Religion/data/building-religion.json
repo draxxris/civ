@@ -1,0 +1,1270 @@
+[
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:alhambra",
+    "name": "",
+    "religionChanges": {
+      "foundation:islam": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 1,
+      "espionage": 1,
+      "gold": 1,
+      "research": 1
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:alhambra"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:asatru_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:asatru": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:asatru_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:asatru_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:asatru": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:asatru_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:asatru",
+    "id": "religion:asatru_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:asatru": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:asatru_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:asatru_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:asatru": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:asatru_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:buddhist_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:buddhism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:buddhist_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:buddhist_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:buddhism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:buddhist_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:buddhism",
+    "id": "religion:buddhist_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:buddhism": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:buddhist_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:buddhist_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:buddhism": 2
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:buddhist_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:christian_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:christianity": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:christian_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:christian_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:christianity": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:christian_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:christianity",
+    "id": "religion:christian_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:christianity": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:christian_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:christian_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:christianity": 2
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 3,
+    "target": "cities:christian_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:confucian_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:confucianism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:confucian_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:confucian_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:confucianism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:confucian_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:confucianism",
+    "id": "religion:confucian_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:confucianism": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:confucian_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:confucian_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:confucianism": 0
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 1,
+    "target": "cities:confucian_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:crusade",
+    "name": "",
+    "religionChanges": {
+      "foundation:christianity": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:crusade"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:egypt_myth_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:egypt_mythology": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:egypt_myth_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:egypt_myth_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:egypt_mythology": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:egypt_myth_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:egypt_mythology",
+    "id": "religion:egypt_myth_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:egypt_mythology": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:egypt_myth_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:egypt_myth_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:egypt_mythology": 2
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:egypt_myth_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:hellenic_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:hellenism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:hellenic_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:hellenic_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:hellenism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:hellenic_monastery"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:hellenic_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:hellenism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:hellenic_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:hindu_brihadeeswarar",
+    "name": "",
+    "religionChanges": {
+      "foundation:hinduism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 1,
+    "target": "cities:hindu_brihadeeswarar"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:hindu_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:hinduism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:hindu_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:hindu_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:hinduism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:hindu_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:hinduism",
+    "id": "religion:hindu_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:hinduism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:hindu_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:hindu_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:hinduism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:hindu_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:islamic_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:islam": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:islamic_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:islamic_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:islam": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:islamic_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:islam",
+    "id": "religion:islamic_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:islam": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:islamic_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:islamic_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:islam": 2
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 3,
+    "target": "cities:islamic_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:itsukushima",
+    "name": "",
+    "religionChanges": {
+      "foundation:shinto": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:itsukushima"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:jewish_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:judaism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:jewish_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:jewish_masada",
+    "name": "",
+    "religionChanges": {
+      "foundation:judaism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:jewish_masada"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:jewish_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:judaism": 2
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:jewish_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:judaism",
+    "id": "religion:jewish_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:judaism": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:jewish_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:jewish_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:judaism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:jewish_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:jsbach_cathedral",
+    "name": "",
+    "religionChanges": {},
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:jsbach_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:kotoku",
+    "name": "",
+    "religionChanges": {
+      "foundation:buddhism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:kotoku"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:mesoamerican_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:mesoamericanism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:mesoamerican_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:mesoamerican_magician_pyramid",
+    "name": "",
+    "religionChanges": {
+      "foundation:mesoamericanism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:mesoamerican_magician_pyramid"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:mesoamerican_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:mesoamericanism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:mesoamerican_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:mesoamericanism",
+    "id": "religion:mesoamerican_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:mesoamericanism": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:mesoamerican_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:mesoamerican_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:mesoamericanism": 2
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:mesoamerican_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:parthenon",
+    "name": "",
+    "religionChanges": {
+      "foundation:hellenism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:parthenon"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:petra",
+    "name": "",
+    "religionChanges": {},
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:petra"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:potala_palace",
+    "name": "",
+    "religionChanges": {
+      "foundation:buddhism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 1,
+    "target": "cities:potala_palace"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:sagas",
+    "name": "",
+    "religionChanges": {
+      "foundation:asatru": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:sagas"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:sankore",
+    "name": "",
+    "religionChanges": {},
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 2
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:sankore"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:shinto_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:shinto": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:shinto_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:shinto_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:shinto": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:shinto_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:shinto",
+    "id": "religion:shinto_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:shinto": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:shinto_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:shinto_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:shinto": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:shinto_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:sistine_chapel",
+    "name": "",
+    "religionChanges": {},
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 5,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:sistine_chapel"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:spiral_minaret",
+    "name": "",
+    "religionChanges": {},
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 2,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:spiral_minaret"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:hellenism",
+    "id": "religion:statue_of_zeus",
+    "name": "",
+    "religionChanges": {
+      "foundation:hellenism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:statue_of_zeus"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:taoist_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:taoism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:taoist_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:taoist_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:taoism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:taoist_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:taoism",
+    "id": "religion:taoist_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:taoism": 4
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:taoist_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:taoist_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:taoism": 2
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:taoist_temple"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:taoist_temple_of_heaven",
+    "name": "",
+    "religionChanges": {
+      "foundation:taoism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:taoist_temple_of_heaven"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:temple_of_isis",
+    "name": "",
+    "religionChanges": {
+      "foundation:egypt_mythology": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 3,
+    "target": "cities:temple_of_isis"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:temple_of_osiris",
+    "name": "",
+    "religionChanges": {
+      "foundation:egypt_mythology": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 3,
+    "target": "cities:temple_of_osiris"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:temple_of_set",
+    "name": "",
+    "religionChanges": {
+      "foundation:egypt_mythology": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 3,
+    "target": "cities:temple_of_set"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:zoroastrian_cathedral",
+    "name": "",
+    "religionChanges": {
+      "foundation:zoroastrianism": 3
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 2,
+    "target": "cities:zoroastrian_cathedral"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:zoroastrian_monastery",
+    "name": "",
+    "religionChanges": {
+      "foundation:zoroastrianism": 1
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:zoroastrian_monastery"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": "foundation:zoroastrianism",
+    "id": "religion:zoroastrian_shrine",
+    "name": "",
+    "religionChanges": {
+      "foundation:zoroastrianism": 6
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "cities:zoroastrian_shrine"
+  },
+  {
+    "freeFromStateReligion": true,
+    "globalReligionCommerce": null,
+    "id": "religion:zoroastrian_temple",
+    "name": "",
+    "religionChanges": {
+      "foundation:zoroastrianism": 2
+    },
+    "requirements": null,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 3,
+    "target": "cities:zoroastrian_temple"
+  }
+]

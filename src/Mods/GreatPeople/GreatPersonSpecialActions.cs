@@ -1,6 +1,7 @@
 using System.Globalization;
 using Ariel.Content;
 using Ariel.Game;
+using Ariel.Mods.Religion;
 using Ariel.Mods.Trade;
 using S = Ariel.Content.Schema;
 
@@ -51,7 +52,7 @@ internal static partial class GreatPersonActions
         foreach (var pair in resolved)
         {
             var building = sim.Content.Get<S.BuildingDef>(pair.Key);
-            if (building.GlobalReligionCommerce is not null || city.Buildings.Contains(building.Id)) continue;
+            if (sim.Content.Attachment<BuildingReligionDef>(building.Id)?.GlobalReligionCommerce is not null || city.Buildings.Contains(building.Id)) continue;
             if (!pair.Value && !CanConstruct(sim, city, building.Id)) continue;
             actions.Add(new(GreatPersonMissions.Construct, building.Id, 1));
         }

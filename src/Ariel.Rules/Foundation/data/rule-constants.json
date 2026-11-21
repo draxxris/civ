@@ -729,7 +729,6 @@
       "atWarCultureAngerModifier": 50,
       "baseCityGrowthThreshold": 30,
       "baseCivicAnarchyTurns": 1,
-      "baseReligionAnarchyTurns": 1,
       "baseResearchRate": 1,
       "baseUnitUpgradeCost": 20,
       "cityDefenseDamageHealRate": 5,

@@ -62,7 +62,6 @@ public sealed record RuleConstants
     public int ResearchDiffusionWelfareThreshold { get; init; }
     public int RevolutionResearchCostPercent { get; init; } = 100;
     public int BaseCivicAnarchyTurns { get; init; }
-    public int BaseReligionAnarchyTurns { get; init; }
     public int MaximumAnarchyTurns { get; init; }
     public int InitialFreeUnits { get; init; }
     public int InitialFreeUnitsPopulationPercent { get; init; }

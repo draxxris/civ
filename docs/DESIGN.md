@@ -457,7 +457,9 @@ route slots and profit in `BuildingTradeDef`, `TechTradeDef`, `YieldTradeDef` an
 what a great person can do, golden age yields and the per-speed and per-era great people
 percents in `BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeopleDef`,
 `YieldGreatPeopleDef`, `TechGreatPeopleDef`, `GameSpeedGreatPeopleDef` and
-`EraGreatPeopleDef`. A rule constant only a mod reads is a row about the base game's single
+`EraGreatPeopleDef`. Religion keeps faith spread, state religion yields and shrines in
+`BuildingReligionDef` and `UnitReligionDef`; GreatPeople, which skips shrines when a great
+person builds, reads `BuildingReligionDef` through the Religion API it already references. A rule constant only a mod reads is a row about the base game's single
 `RuleConstantsDef` (`trade:rule_constants` about `foundation:rule_constants`, type
 `RuleConstantsTradeDef`), and a setting that varies by game speed, handicap, era or world size
 is a row about that speed, handicap, era or world size, so a mod's numbers sit beside the row
@@ -1197,15 +1199,18 @@ religion definitions, founding, city presence, state choice, spread, decay, inqu
 and shrine construction. Its API (`Ariel.Mods.Religion.Api`) publishes `IReligionService`
 (presence, holy cities, adoption choices, odds and conversion costs), `ReligionDef`, the
 state components, events, `SetStateReligionCommand`, `ReligionMissions`,
-`ReligionMemories` and `CivicReligionDef`. Other mods read it through
+`ReligionMemories`, `CivicReligionDef` and its rows about buildings (`BuildingReligionDef`:
+spread influence, state religion yields and the shrine's faith), units (`UnitReligionDef`:
+missionary spread chances) and the rule constants (`RuleConstantsReligionDef`: conversion
+anarchy). Other mods read it through
 `sim.Service<IReligionService>()`, null when the mod is not loaded.
 
 What stays in the base game:
 
 - **Identities.** Foundation's `ReligionIdentityDef` (`foundation:buddhism`, ...) is what
-  buildings (`ReligionType`, `GlobalReligionCommerce`, `ReligionChanges`,
-  `FoundsReligion`), units (`ReligionSpreads`), leaders (`FavoriteReligion`) and the
-  `religion` requirement leaf name. A `ReligionDef` is the mod's rules about one
+  buildings (`ReligionType`, `FoundsReligion`), leaders (`FavoriteReligion`), the
+  `religion` requirement leaf and the mod's own building and unit rows
+  (`GlobalReligionCommerce`, `ReligionChanges`, `ReligionSpreads`) name. A `ReligionDef` is the mod's rules about one
   identity: its id (`religion:buddhism`, kept in saves) and `Identity`. `ReligionIdentities`
   translates both ways.
 - **The question seam** `ICityReligions` (`GameRules.CityReligions`): which faiths a city

@@ -55,8 +55,6 @@ public sealed class BuildingDef : GameContentDef
     public CommerceVector GlobalCommerceModifiers { get; init; } = default;
     [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
     public string? GlobalCorporationCommerce { get; init; } = null;
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
-    public string? GlobalReligionCommerce { get; init; } = null;
     public YieldVector GlobalSeaPlotYieldChanges { get; init; } = default;
     public YieldVector GlobalYieldModifiers { get; init; } = default;
     [ContentReference(typeof(TraitDef), ReferencePart.Keys)]
@@ -75,8 +73,6 @@ public sealed class BuildingDef : GameContentDef
     public YieldVector PowerYieldModifiers { get; init; } = default;
     [ContentReference(typeof(TraitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> TraitProductionModifiers { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, int> ReligionChanges { get; init; } = ImmutableDictionary<string, int>.Empty;
     [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
     public string? ReligionType { get; init; } = null;
     [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
@@ -92,7 +88,6 @@ public sealed class BuildingDef : GameContentDef
     public CommerceVector SpecialistExtraCommerces { get; init; } = default;
     [ContentReference(typeof(SpecialistDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, YieldVector> SpecialistYieldChanges { get; init; } = ImmutableDictionary<string, YieldVector>.Empty;
-    public CommerceVector StateReligionCommerces { get; init; } = default;
     [ContentReference(typeof(TechDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, CommerceVector> TechCommerceChanges { get; init; } = ImmutableDictionary<string, CommerceVector>.Empty;
     [ContentReference(typeof(TechDef), ReferencePart.Keys)]
@@ -122,7 +117,6 @@ public sealed class BuildingDef : GameContentDef
     public bool ForceAllTradeRoutes { get; init; } = false;
     public bool ForceNoPrereqScaling { get; init; } = false;
     public bool ForceTeamVoteEligible { get; init; } = false;
-    public bool FreeFromStateReligion { get; init; } = false;
     public bool FreshWater { get; init; } = false;
     public bool GoldenAge { get; init; } = false;
     public bool GovernmentCenter { get; init; } = false;
@@ -222,7 +216,6 @@ public sealed class BuildingDef : GameContentDef
     public int Power { get; init; } = 0;
     public int MinimumPopulation { get; init; } = 0;
     public int SpaceProductionModifier { get; init; } = 0;
-    public int StateReligionHappiness { get; init; } = 0;
     public int TeamsPrereq { get; init; } = 0;
     public int UnitUpgradePriceModifier { get; init; } = 0;
     public int WarWearinessModifier { get; init; } = 0;
