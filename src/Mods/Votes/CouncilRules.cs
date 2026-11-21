@@ -1,7 +1,6 @@
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
-using Ariel.Mods.ProjectsVictory;
 using Ariel.Mods.Religion;
 
 namespace Ariel.Mods.Votes;
@@ -53,7 +52,9 @@ internal static class CouncilRules
         .Where(c => Sits(sim, c.Key)).Select(c => (c.Key, c.Value));
 
     internal static IReligionService? Religions(Simulation sim) => sim.Service<IReligionService>();
-    internal static IProjectVictoryService? Victory(Simulation sim) => sim.Service<IProjectVictoryService>();
+    /// <summary>Whether a council may still decide the game: the diplomatic victory is on and no one has won yet.</summary>
+    internal static bool VictoryOpen(Simulation sim) => sim.Rules().Victory is var victory
+        && !victory.Status(sim).IsGameOver && victory.IsDecidedBy(sim, CouncilVictory.ConditionId);
 
     /// <summary>A civilization still in the game: not the barbarians, and holding a city or a unit.</summary>
     internal static bool Alive(Simulation sim, int player) => !PlayerRules.IsBarbarian(sim, player) && PlayerRules.IsAlive(sim, player);
@@ -148,7 +149,7 @@ internal static class CouncilRules
     {
         if (Candidates(sim, source).Count == 0) return "no one may stand";
         if (!def.Victory) return null;
-        if (Victory(sim) is not { } victory || victory.GetVictoryStatus(sim).IsGameOver) return "the game cannot be won by vote";
+        if (!VictoryOpen(sim)) return "the game cannot be won by vote";
         if (Civilizations(sim).Any(p => !IsVotingMember(sim, p, source))) return "every civilization must vote";
         int required = Required(sim, source, def.Id);
         if (Teams(sim).Any(t => TeamVoteCount(sim, t, source, def.Id) >= required)) return "one team already holds the votes";

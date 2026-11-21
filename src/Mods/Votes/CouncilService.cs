@@ -183,7 +183,7 @@ internal sealed class CouncilService : IVotesService, ITradeTerms, ICivicRestric
             if (passed) winner = tally.Team;
             if (def.SecretaryGeneral && passed) council.Secretary = winner;
             else if (def.SecretaryGeneral) (council.Secretary, council.SecretaryTimer) = (null, 0);
-            if (def.Victory && passed) Victory(sim)?.AwardVote(sim, BestMember(sim, winner, source, def.Id));
+            if (def.Victory && passed) sim.Rules().Victory.Award(sim, CouncilVictory.ConditionId, BestMember(sim, winner, source, def.Id));
         }
         else
         {

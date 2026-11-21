@@ -44,7 +44,6 @@ internal static class ResearchDiffusion
     private static long Welfare(Simulation sim, Team team, Player[] living, Team[] contacted, RuleConstants rules)
     {
         var scores = sim.Rules().Scores;
-        if (scores is null) return 0; // Custom rulesets without a score owner have no welfare score factor.
         var eras = ResearchTimeline.Eras(sim);
         var weights = sim.Content.Get<TechDef>().All.ToDictionary(t => t.Id,
             t => Array.FindIndex(eras, e => e.Id == t.Era) + 1, StringComparer.Ordinal);

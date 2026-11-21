@@ -47,10 +47,10 @@ public sealed class EspionagePlayerState
     public long RemainderHundredths { get; set; }
 }
 
-/// <summary>Per-city spy deadlines as absolute turns. Zero means "no active effect".</summary>
+/// <summary>Per-city spy deadlines as absolute turns. Zero means "no active effect". Fomented unhappiness is a timed
+/// effect in the base game's store (<see cref="GameRules.TimedEffects"/>), not a deadline here.</summary>
 public sealed class EspionageCityState
 {
-    public int UnhappyUntilTurn { get; set; }
     /// <summary>Disorder imposed by a spy lasts until this turn. No other system writes it.</summary>
     public int RevoltUntilTurn { get; set; }
 }

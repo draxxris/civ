@@ -4,29 +4,6 @@ using Ariel.Game;
 
 namespace Ariel.Mods.Events;
 
-internal sealed class EventModifiers : IModifierSource
-{
-    public void Contribute(ModifierContext context, ModifierSink sink)
-    {
-        var state = context.Sim.State.Extensions.Get<EventState>(context.Sim.Content);
-        if (state is null) return;
-        foreach (var effect in state.Effects)
-        {
-            if (context.Scope == ModifierScope.City && context.City is { } city && AppliesToCity(effect, city))
-            {
-                sink.Add(effect.Option, "cities:happiness", effect.Happiness);
-                sink.Add(effect.Option, "cities:health", effect.Health);
-            }
-            else if (context.Scope == ModifierScope.Plot && context.Plot is { } tile && effect.Plot == tile.Value)
-                sink.AddYield(effect.Option, new(effect.PlotFood, effect.PlotProduction, effect.PlotCommerce));
-        }
-    }
-
-    /// <summary>A city event stays with its city. An empire-wide event (no city) covers every city its player owns.</summary>
-    private static bool AppliesToCity(ActiveEventEffect effect, City city) =>
-        effect.City == city.Id || (effect.City == -1 && effect.Player == city.Owner);
-}
-
 internal sealed class EventService : IEventService
 {
     private static EventState Read(Simulation sim) => sim.State.Extensions.Get<EventState>(sim.Content) ?? new();
@@ -40,17 +17,8 @@ internal sealed class EventService : IEventService
     public IReadOnlyList<PendingEvent> Pending(Simulation sim, int player) =>
         Read(sim).Pending.Where(p => p.Player == player).OrderBy(p => p.Id).ToArray();
 
-    public IReadOnlyList<ActiveEventEffect> ActiveEffects(Simulation sim) =>
-        Read(sim).Effects.OrderBy(e => e.Id).ToArray();
-
-    public IReadOnlyList<ActiveEventEffect> ActiveEffects(Simulation sim, int player) =>
-        Read(sim).Effects.Where(e => e.Player == player).OrderBy(e => e.Id).ToArray();
-
-    public ActiveEventEffect? FindEffect(Simulation sim, int effectId) =>
-        Read(sim).FindEffect(effectId);
-
-    public bool CancelEffect(Simulation sim, int effectId) =>
-        Write(sim).RemoveEffect(effectId);
+    public IReadOnlyList<TimedEffect> ActiveEffects(Simulation sim, int player) => sim.Rules().TimedEffects.Active(sim)
+        .Where(e => e.Player == player && sim.Content.TryGet<EventOptionDef>(e.Source, out _)).ToArray();
 
     public IReadOnlyList<string> Options(Simulation sim, int eventId) =>
         Read(sim).FindPending(eventId) is { } pending ? LegalOptions(sim, pending).Select(o => o.Id).ToArray() : [];
@@ -74,11 +42,11 @@ internal sealed class EventService : IEventService
         var pending = state.FindPending(eventId) ?? throw new InvalidOperationException($"Pending event {eventId} not found");
         state.RemovePending(eventId);
         var def = sim.Content.Get<EventOptionDef>(option);
-        Apply(sim, state, pending, def);
+        Apply(sim, pending, def);
         sim.Events.Publish(new EventResolved(player, eventId, pending.Trigger, option, automatic));
     }
 
-    private static void Apply(Simulation sim, EventState state, PendingEvent pending, EventOptionDef option)
+    private static void Apply(Simulation sim, PendingEvent pending, EventOptionDef option)
     {
         var player = sim.State.PlayerById(pending.Player);
         player.Treasury = Math.Max(0, player.Treasury + option.GoldDelta);
@@ -91,32 +59,40 @@ internal sealed class EventService : IEventService
             if (option.CityProductionDelta != 0 && city.ProductionQueue.Count > 0)
                 city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = Math.Max(0, city.ProductionQueue[0].Progress + option.CityProductionDelta) };
         }
-        bool kept = option.HappinessDelta != 0 || option.HealthDelta != 0 || option.PlotFoodDelta != 0 || option.PlotProductionDelta != 0 || option.PlotCommerceDelta != 0;
-        if (!kept) return;
-        state.AddEffect(new ActiveEventEffect
+        var kept = KeptEffects(option);
+        if (kept.Length == 0) return;
+        sim.Rules().TimedEffects.Add(sim, new TimedEffect
         {
-            EventId = pending.Id,
-            Trigger = pending.Trigger,
-            Player = player.Id,
-            City = pending.City,
-            Plot = pending.Plot,
-            Option = option.Id,
-            // Timed effects count from the resolution turn so late answers receive their full duration.
-            ExpiresTurn = option.DurationTurns > 0 ? sim.State.Turn + option.DurationTurns : 0,
-            Happiness = option.HappinessDelta,
-            Health = option.HealthDelta,
-            PlotFood = option.PlotFoodDelta,
-            PlotProduction = option.PlotProductionDelta,
-            PlotCommerce = option.PlotCommerceDelta,
+            Source = option.Id,
+            // A city event ends with the city's capture; an empire-wide one (no city) covers every city the player owns.
+            Player = player.Id, City = pending.City, Plot = pending.Plot,
+            // Timed effects count from the resolution turn, so a late answer still gets its full duration, and last
+            // through the expiry turn itself, as they always have.
+            ExpiresTurn = option.DurationTurns > 0 ? sim.State.Turn + option.DurationTurns + 1 : 0,
+            Effects = kept,
         });
     }
 
-    /// <summary>Expire effects, settle open events, then roll new events for every player.</summary>
+    /// <summary>The option's lasting happiness, health and plot yield changes as modifiers.</summary>
+    private static System.Collections.Immutable.ImmutableArray<ModifierEffect> KeptEffects(EventOptionDef option)
+    {
+        var effects = System.Collections.Immutable.ImmutableArray.CreateBuilder<ModifierEffect>();
+        void Keep(ModifierScope scope, string key, long amount)
+        {
+            if (amount != 0) effects.Add(new() { Scope = scope, Key = key, Amount = amount });
+        }
+        Keep(ModifierScope.City, "cities:happiness", option.HappinessDelta);
+        Keep(ModifierScope.City, "cities:health", option.HealthDelta);
+        Keep(ModifierScope.Plot, "yield.flat.food", option.PlotFoodDelta);
+        Keep(ModifierScope.Plot, "yield.flat.production", option.PlotProductionDelta);
+        Keep(ModifierScope.Plot, "yield.flat.commerce", option.PlotCommerceDelta);
+        return effects.ToImmutable();
+    }
+
+    /// <summary>Settle open events, then roll new events for every player.</summary>
     internal void RunTurn(Simulation sim)
     {
         var state = Write(sim);
-        state.PruneExpiredEffects(sim.State.Turn);
-        state.PruneInvalidEffects(sim);
         foreach (var pending in state.Pending.OrderBy(p => p.Id).ToArray()) AutoResolve(sim, pending);
         foreach (var player in sim.State.Players.OrderBy(p => p.Id)) Roll(sim, state, player);
     }

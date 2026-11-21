@@ -110,11 +110,13 @@ public sealed class AiPlannerTests
         Assert.Null(content.Services.Find<ITradeRouteService>());
         Assert.Null(content.Services.Find<IRevolutionService>());
         Assert.Null(content.Services.Find<IScriptedWonderService>());
-        Assert.Null(content.Services.Find<IProjectVictoryService>());
+        Assert.Null(content.Services.Find<IProjectService>());
         Assert.Null(rules.EspionageSpending);
         Assert.Null(rules.TradeLinks);
         Assert.Null(rules.CityUnrest);
-        Assert.Null(rules.Scores);
+        // Score and the four base victories need no mod.
+        Assert.NotNull(rules.Scores);
+        Assert.NotNull(rules.Victory);
         Assert.Null(rules.CombatLeaders);
         Assert.Empty(rules.FreeBuildingGrants);
         Assert.Null(rules.HostileFaction);

@@ -61,14 +61,10 @@ public interface IEventService
     string? ValidateChoice(Simulation sim, int player, int eventId, string option);
     /// <summary>Apply a validated option and publish EventResolved.</summary>
     void Choose(Simulation sim, int player, int eventId, string option, bool automatic = false);
-    /// <summary>Active ongoing event modifier effects, by id order.</summary>
-    IReadOnlyList<ActiveEventEffect> ActiveEffects(Simulation sim);
-    /// <summary>Active ongoing event modifier effects of a player, by id order.</summary>
-    IReadOnlyList<ActiveEventEffect> ActiveEffects(Simulation sim, int player);
-    /// <summary>Finds an active effect by its canonical identifier, or null if not found.</summary>
-    ActiveEventEffect? FindEffect(Simulation sim, int effectId);
-    /// <summary>Removes an active effect by its canonical identifier, returning true if found and removed.</summary>
-    bool CancelEffect(Simulation sim, int effectId);
+    /// <summary>The kept effects of a player's resolved events, in id order: timed effects in the base game's store
+    /// (<see cref="GameRules.TimedEffects"/>) whose source is the chosen <see cref="EventOptionDef"/>. Remove one with
+    /// <see cref="ITimedEffects.Remove"/>.</summary>
+    IReadOnlyList<TimedEffect> ActiveEffects(Simulation sim, int player);
 }
 
 /// <summary>Resolve one pending event.</summary>
@@ -84,20 +80,15 @@ public sealed class ChooseEventOptionCommand : GameCommand
 public sealed class EventState
 {
     public int NextEventId { get; set; } = 1;
-    public int NextEffectId { get; set; } = 1;
     public List<PendingEvent> Pending { get; set; } = [];
     /// <summary>Last turn an event happened, keyed "player:trigger".</summary>
     public SortedDictionary<string, int> LastFired { get; set; } = new(StringComparer.Ordinal);
-    public List<ActiveEventEffect> Effects { get; set; } = [];
 
     [JsonIgnore]
     public bool HasPending => Pending.Count > 0;
 
     [JsonIgnore]
     public int PendingCount => Pending.Count;
-
-    [JsonIgnore]
-    public int ActiveEffectsCount => Effects.Count;
 
     /// <summary>Adds a pending event waiting for player resolution, replacing any existing entry with the same id.</summary>
     public void AddPending(PendingEvent pending)
@@ -123,60 +114,6 @@ public sealed class EventState
     public PendingEvent? FindPending(int eventId) =>
         Pending.FirstOrDefault(p => p.Id == eventId);
 
-    /// <summary>Adds an active modifier effect from an event option choice.</summary>
-    public void AddEffect(ActiveEventEffect effect)
-    {
-        ArgumentNullException.ThrowIfNull(effect);
-        if (effect.Id <= 0) effect.Id = NextEffectId++;
-        Effects.Add(effect);
-    }
-
-    /// <summary>Finds an active effect by its canonical identifier, or null if not present.</summary>
-    public ActiveEventEffect? FindEffect(int effectId) =>
-        Effects.FirstOrDefault(e => e.Id == effectId);
-
-    /// <summary>Removes an active effect by its canonical identifier, returning true if removed.</summary>
-    public bool RemoveEffect(int effectId)
-    {
-        int index = Effects.FindIndex(e => e.Id == effectId);
-        if (index >= 0)
-        {
-            Effects.RemoveAt(index);
-            return true;
-        }
-        return false;
-    }
-
-    /// <summary>Removes timed effects where ExpiresTurn is greater than zero and currentTurn has reached or exceeded ExpiresTurn.</summary>
-    public int PruneExpiredEffects(int currentTurn) =>
-        Effects.RemoveAll(e => e.ExpiresTurn > 0 && currentTurn >= e.ExpiresTurn);
-
-    /// <summary>Removes active effects associated with a captured or razed city.</summary>
-    public int PruneCityEffects(int cityId)
-    {
-        if (cityId < 0) return 0;
-        return Effects.RemoveAll(e => e.City == cityId);
-    }
-
-    /// <summary>Removes effects associated with cities that no longer exist or whose owner no longer matches the effect recipient.</summary>
-    public int PruneInvalidEffects(Simulation sim)
-    {
-        ArgumentNullException.ThrowIfNull(sim);
-        return Effects.RemoveAll(e =>
-        {
-            if (e.City >= 0)
-            {
-                var city = sim.State.FindCity(e.City);
-                if (city is null || city.Owner != e.Player) return true;
-            }
-            if (e.Plot >= 0 && e.Plot >= sim.State.Plots.Length)
-            {
-                return true;
-            }
-            return false;
-        });
-    }
-
     /// <summary>Records the turn an event trigger fired for a player using a typed cooldown key.</summary>
     public void RecordFired(EventCooldownKey key, int turn) =>
         LastFired[key.Key] = turn;
@@ -192,34 +129,4 @@ public sealed class EventState
     /// <summary>Returns the last turn an event trigger fired for a player, or null if it has never fired.</summary>
     public int? GetLastFired(int player, string trigger) =>
         GetLastFired(EventCooldownKey.Of(player, trigger));
-}
-
-/// <summary>A kept happiness, health or plot yield change. ExpiresTurn zero means permanent.</summary>
-public sealed class ActiveEventEffect
-{
-    public int Id { get; set; }
-    public int EventId { get; set; } = -1;
-    public string Trigger { get; set; } = "";
-    public int Player { get; set; }
-    public int City { get; set; } = -1;
-    public int Plot { get; set; } = -1;
-    public string Option { get; set; } = "";
-    public int ExpiresTurn { get; set; }
-    public int Happiness { get; set; }
-    public int Health { get; set; }
-    public int PlotFood { get; set; }
-    public int PlotProduction { get; set; }
-    public int PlotCommerce { get; set; }
-
-    [JsonIgnore]
-    public bool IsPermanent => ExpiresTurn == 0;
-
-    [JsonIgnore]
-    public bool IsCityScope => City >= 0;
-
-    [JsonIgnore]
-    public bool IsEmpireScope => City == -1;
-
-    [JsonIgnore]
-    public bool IsPlotScope => Plot >= 0;
 }

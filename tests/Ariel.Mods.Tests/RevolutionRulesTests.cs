@@ -177,7 +177,10 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(9, Service(sim).DescribeCityStability(sim, city.Id).CooldownTurns);
         state.InstabilityIndex = 1000; Rebellions(sim);
         Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
-        sim.State.Turn = state.UnrestUntilTurn;
+        var unrestEffect = sim.Rules().TimedEffects.Find(sim, "revolution:unrest", city: city.Id)!;
+        Assert.Equal(sim.State.Turn + 1 + 3 * 85 / 100, unrestEffect.ExpiresTurn);
+        Assert.Equal(unrestEffect.ExpiresTurn - sim.State.Turn, Service(sim).DescribeCityStability(sim, city.Id).UnrestTurns);
+        sim.State.Turn = unrestEffect.ExpiresTurn;
         Assert.DoesNotContain(ModifierSink.Collect(new(sim, ModifierScope.City, 0, city)).Ledger.Lines, l => l.Source == "revolution:unrest");
         sim.State.Turn = state.RebellionCooldownUntilTurn; Rebellions(sim);
         Assert.Equal(2, sim.Events.Published.OfType<CityRebellionTriggered>().Count());
@@ -291,11 +294,18 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var state = State(sim, city, 100);
         Assert.True(Service(sim).Incite(sim, city.Id));
         Assert.Equal(400, state.InstabilityIndex);
-        Assert.Equal(sim.State.Turn + 1 + 3 * 85 / 100, state.UnrestUntilTurn);
+        var store = sim.Rules().TimedEffects;
+        var unrest = store.Find(sim, "revolution:unrest", city: city.Id)!;
+        Assert.Equal(sim.State.Turn + 1 + 3 * 85 / 100, unrest.ExpiresTurn);
+        // Inciting again only lengthens the unrest already under way, never shortens it.
+        store.Set(sim, unrest with { ExpiresTurn = sim.State.Turn + 50 });
+        Assert.True(Service(sim).Incite(sim, city.Id));
+        Assert.Equal(sim.State.Turn + 50, Assert.Single(store.Active(sim), e => e.Source == "revolution:unrest").ExpiresTurn);
+        Assert.Equal(700, state.InstabilityIndex);
         // A city already in disorder cannot be incited again, so the pressure cannot stack.
         city.Extensions.Set(sim.Content, new CityRuleState { Disorder = true });
         Assert.False(Service(sim).Incite(sim, city.Id));
-        Assert.Equal(400, state.InstabilityIndex);
+        Assert.Equal(700, state.InstabilityIndex);
     }
 
     [Fact]
@@ -369,16 +379,19 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
     {
         var sim = P7ModFixture.Scenario(SpiesAndRevolution.Value);
         var city = P7ModFixture.City(sim);
-        city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 900, RebellionCooldownUntilTurn = 5, UnrestUntilTurn = 5 });
-        city.Extensions.Set(sim.Content, new EspionageCityState { RevoltUntilTurn = 9, UnhappyUntilTurn = 9 });
+        city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 900, RebellionCooldownUntilTurn = 5 });
+        city.Extensions.Set(sim.Content, new EspionageCityState { RevoltUntilTurn = 9 });
+        var store = sim.Rules().TimedEffects;
+        store.Add(sim, new TimedEffect { Source = "revolution:unrest", City = city.Id, ExpiresTurn = 5 });
+        store.Add(sim, new TimedEffect { Source = "espionage:foment_unhappiness", City = city.Id, ExpiresTurn = 9 });
         sim.Events.Publish(new CityCaptured(city.Id, 0, 1));
         var revolution = city.Extensions.Get<RevolutionCityState>(sim.Content);
         var espionage = city.Extensions.Get<EspionageCityState>(sim.Content);
         Assert.Equal(0, revolution?.InstabilityIndex ?? 0);
         Assert.Equal(0, revolution?.RebellionCooldownUntilTurn ?? 0);
-        Assert.Equal(0, revolution?.UnrestUntilTurn ?? 0);
         Assert.Equal(0, espionage?.RevoltUntilTurn ?? 0);
-        Assert.Equal(0, espionage?.UnhappyUntilTurn ?? 0);
+        // The unrest and the fomented unhappiness were the city's timed effects, which end with its capture.
+        Assert.Empty(store.Active(sim));
     }
 
     [Fact]
@@ -407,21 +420,16 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(0, state.InstabilityIndex);
         Assert.Equal(0, state.LastUpdatedTurn);
         Assert.Equal(0, state.RebellionCooldownUntilTurn);
-        Assert.Equal(0, state.UnrestUntilTurn);
         Assert.False(state.IsRebellionOnCooldown(0));
-        Assert.False(state.IsInUnrest(0));
         Assert.Equal(0, state.CooldownTurnsRemaining(0));
-        Assert.Equal(0, state.UnrestTurnsRemaining(0));
 
         // Clamping non-negative values
         state.InstabilityIndex = -10;
         state.LastUpdatedTurn = -1;
         state.RebellionCooldownUntilTurn = -5;
-        state.UnrestUntilTurn = -2;
         Assert.Equal(0, state.InstabilityIndex);
         Assert.Equal(0, state.LastUpdatedTurn);
         Assert.Equal(0, state.RebellionCooldownUntilTurn);
-        Assert.Equal(0, state.UnrestUntilTurn);
 
         // RecordInstabilityChange
         state.RecordInstabilityChange(500, turn: 5);
@@ -442,21 +450,14 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(0, state.InstabilityIndex);
 
         // Incite
-        state.Incite(currentTurn: 10, additionalInstability: 300, unrestTurns: 3);
+        state.Incite(additionalInstability: 300);
         Assert.Equal(300, state.InstabilityIndex);
-        Assert.Equal(14, state.UnrestUntilTurn); // 10 + 1 + 3
-        Assert.True(state.IsInUnrest(10));
-        Assert.True(state.IsInUnrest(13));
-        Assert.False(state.IsInUnrest(14));
-        Assert.Equal(4, state.UnrestTurnsRemaining(10));
-        Assert.Equal(0, state.UnrestTurnsRemaining(14));
 
         // TriggerRebellion
         state.InstabilityIndex = 1200;
-        state.TriggerRebellion(currentTurn: 20, threshold: 1000, release: 600, cooldownTurns: 8, unrestTurns: 3);
+        state.TriggerRebellion(currentTurn: 20, threshold: 1000, release: 600, cooldownTurns: 8);
         Assert.Equal(400, state.InstabilityIndex); // 1000 - 600
         Assert.Equal(29, state.RebellionCooldownUntilTurn); // 20 + 1 + 8
-        Assert.Equal(24, state.UnrestUntilTurn); // 20 + 1 + 3
         Assert.True(state.IsRebellionOnCooldown(20));
         Assert.True(state.IsRebellionOnCooldown(28));
         Assert.False(state.IsRebellionOnCooldown(29));

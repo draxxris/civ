@@ -21,7 +21,6 @@ public sealed class EspionageMod : IPreparableMod
         MemoryKinds.Load(context, Memories);
         var service = new EspionageService();
         context.RegisterService<IEspionageService>("espionage", service);
-        context.RegisterService<IModifierSource>("unhappiness", new SpyUnhappiness());
         context.RegisterStateComponent<EspionageTeamState>("team_state");
         context.RegisterStateComponent<EspionagePlayerState>("player_state");
         context.RegisterStateComponent<EspionageCityState>("city_state");
@@ -130,12 +129,3 @@ internal sealed class SpyExpiry : ITurnSystem
     }
 }
 
-internal sealed class SpyUnhappiness : IModifierSource
-{
-    public void Contribute(ModifierContext context, ModifierSink sink)
-    {
-        if (context.Scope != ModifierScope.City || context.City is not { } city) return;
-        if (city.Extensions.Get<EspionageCityState>(context.Sim.Content)?.UnhappyUntilTurn > context.Sim.State.Turn)
-            sink.Add("espionage:foment_unhappiness", "cities:unhappiness", EspionageService.Rules(context.Sim).FomentUnhappiness);
-    }
-}

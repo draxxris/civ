@@ -73,6 +73,8 @@ public sealed class GameRules : IRuleset
     public ICityWorkService CityWork { get; private set; } = null!;
     /// <summary>City yields and commerce.</summary>
     public ICityYieldService CityYields { get; private set; } = null!;
+    /// <summary>Modifiers features grant for a while, with the turn they expire.</summary>
+    public ITimedEffects TimedEffects { get; private set; } = null!;
     /// <summary>Unit lifecycle, cargo, promotion and upkeep.</summary>
     public IUnitService Units { get; private set; } = null!;
     /// <summary>Unit movement rules.</summary>
@@ -90,6 +92,10 @@ public sealed class GameRules : IRuleset
 
     /// <summary>Attitudes, agreements and deals between players, and the resources and gold the deals exchange.</summary>
     public IDiplomacyService Diplomacy { get; private set; } = null!;
+    /// <summary>Players' scores.</summary>
+    public IPlayerScores Scores { get; private set; } = null!;
+    /// <summary>The victories that are on, the saved outcome and the check that decides it.</summary>
+    public IVictoryService Victory { get; private set; } = null!;
 
     // Seams one feature answers. Null when no loaded mod answers them; rules then apply the base game's default.
     /// <summary>How a computer leader would answer a deal, answered by the computer player, or null without one.</summary>
@@ -111,10 +117,6 @@ public sealed class GameRules : IRuleset
     public ICityTradeLinks? TradeLinks { get; private set; }
     /// <summary>How restless a city is, answered by the feature that tracks unrest, or null without one.</summary>
     public ICityUnrest? CityUnrest { get; private set; }
-    /// <summary>Players' scores, answered by the feature that keeps score, or null without one.</summary>
-    public IPlayerScores? Scores { get; private set; }
-    /// <summary>Which victories are on, answered by the feature that runs victory conditions, or null without one.</summary>
-    public IVictoryConditions? VictoryConditions { get; private set; }
     /// <summary>Leaders that emerge from general points, answered by the feature that has them, or null without one.</summary>
     public ICombatLeaders? CombatLeaders { get; private set; }
 
@@ -122,6 +124,8 @@ public sealed class GameRules : IRuleset
     public IMissionService Missions { get; private set; } = null!;
     /// <summary>Every registered kind of mission, base and mod, in registration order.</summary>
     public IReadOnlyList<IMission> MissionKinds { get; private set; } = [];
+    /// <summary>Every way to win, base and mod, in registration order; each <see cref="VictoryDef"/> names one.</summary>
+    public IReadOnlyList<IVictoryCondition> VictoryConditions { get; private set; } = [];
     /// <summary>Every feature's unit orders, base and mod, in registration order.</summary>
     public IReadOnlyList<IUnitActionSource> UnitActions { get; private set; } = [];
     /// <summary>Every kind of fire that can support an assault, base and mod, in registration order.</summary>
@@ -144,6 +148,10 @@ public sealed class GameRules : IRuleset
         var services = content.Services;
         Missions = services.Get<IMissionService>().Single();
         MissionKinds = services.Get<IMission>();
+        VictoryConditions = services.Get<IVictoryCondition>();
+        foreach (var victory in content.Get<VictoryDef>().All)
+            if (!VictoryConditions.Any(c => c.Id == victory.Rule))
+                throw new InvalidDataException($"Victory '{victory.Id}' names the unregistered victory condition '{victory.Rule}'.");
         UnitActions = services.Get<IUnitActionSource>();
         SupportFire = services.Get<ISupportFire>();
         CapitalWeights = services.Get<ICapitalWeight>();
@@ -180,6 +188,7 @@ public sealed class GameRules : IRuleset
         CityWellbeing = services.Get<ICityWellbeingService>().Single();
         CityWork = services.Get<ICityWorkService>().Single();
         CityYields = services.Get<ICityYieldService>().Single();
+        TimedEffects = services.Get<ITimedEffects>().Single();
         Units = services.Get<IUnitService>().Single();
         Movement = services.Get<IMovementService>().Single();
         Paths = services.Get<IPathfindingService>().Single();
@@ -188,6 +197,8 @@ public sealed class GameRules : IRuleset
         Peoples = services.Get<IPeoplesService>().Single();
         Relations = services.Get<IRelationsService>().Single();
         Diplomacy = services.Get<IDiplomacyService>().Single();
+        Scores = services.Get<IPlayerScores>().Single();
+        Victory = services.Get<IVictoryService>().Single();
         DealAppraiser = services.Get<IDealAppraiser>().SingleOrDefault();
         CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
         CityReligions = services.Get<ICityReligions>().SingleOrDefault();
@@ -196,8 +207,6 @@ public sealed class GameRules : IRuleset
         EspionageSpending = services.Get<IEspionageSpending>().SingleOrDefault();
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();
-        Scores = services.Get<IPlayerScores>().SingleOrDefault();
-        VictoryConditions = services.Get<IVictoryConditions>().SingleOrDefault();
         CombatLeaders = services.Get<ICombatLeaders>().SingleOrDefault();
     }
 

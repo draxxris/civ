@@ -8,7 +8,7 @@ extend both through one registration API.
 
 1. **The base game is linked in; features are mods.** `Ariel.Rules` holds the rules
    modules: Foundation, World, Research, Economy, Cities, Military, Government, Peoples,
-   Relations and Diplomacy. `Ariel.Ai` holds the computer player, the base module `ai`. Their
+   Relations, Diplomacy and Victory. `Ariel.Ai` holds the computer player, the base module `ai`. Their
    content references each other, so none of them can be removed, and no mod can replace
    one. Everything a game can run without is a mod: the main mods (Great People, Trade,
    RangedCombat, AirCombat, Barbarians, Religion and GlobalWarming) that ship loaded, and the optional feature mods. A test builds and plays the base modules with no mod installed.
@@ -397,8 +397,8 @@ Manifest fields and API use:
   mod, the base game owns a small seam, named after the question it asks, and the mod
   implements it (below). Without the mod the base game applies its default. Base content
   names corporations only by `CorporationIdentityDef`, which therefore stays in
-  Foundation, like `VictoryIdentityDef`; `ProjectDef` and `VictoryDef` belong to the
-  ProjectsVictory API. The computer player follows the same rule: it knows no feature
+  Foundation, like `VictoryIdentityDef`; `ProjectDef` belongs to the ProjectsVictory API,
+  while `VictoryDef` is the Victory module's, so a mod adds a victory as base content. The computer player follows the same rule: it knows no feature
   mod, and a feature mod contributes the planner that plays it (`IAiPlanner`), the
   production it wants (`IProductionWishes`) and what its content is worth to the AI
   (`IAiValuer<TSubject>`, all below).
@@ -424,14 +424,13 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICityUnrest` | `CityUnrest` | Religion (inquisition compensation calms the city) and its planner, the great people planner | Revolution (the instability index) | no unrest; compensation is paid in gold |
 | `ICityTradeLinks` | `TradeLinks` | Religion, for natural spread | Trade | spread follows city connections only |
 | `IEspionageSpending` | `EspionageSpending` | Economy, for the ledger forecast and the espionage phase | Espionage | the economy banks espionage output |
-| `IPlayerScores` | `Scores` | Research, for diffusion welfare | ProjectsVictory | no welfare factor |
-| `IVictoryConditions` | `VictoryConditions` | the Foundation `victory` requirement leaf (the council buildings, the space elevator) | ProjectsVictory (a victory is on when an enabled `VictoryDef` has its identity) | the leaf fails |
 | `ITradeTerms` | `TradeTerms` (list) | Relations (`MayTrade`, `FreeTrade`), so deals and trade routes | Diplomacy (embargoes in deals), Votes (sanctions, free trade) | teams at peace trade as their borders allow |
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IHostileFaction` | `HostileFaction` | goody huts (hostile villagers), Revolution (rebels) | Barbarians | no hostile player; huts release no hostile villagers, rebellions field no rebels |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
+| `IVictoryCondition` | `VictoryConditions` (list) | the victory check, for each enabled `VictoryDef` by the condition its `Rule` names | Victory (conquest, domination, cultural, time), ProjectsVictory (the space race), Votes (the diplomatic victory) | a victory naming an unregistered condition fails the load, so the victory is simply absent |
 | `IUnitActionSource`, `ISupportFire`, `IMission` | `UnitActions`, `SupportFire`, `MissionKinds` | the client, AI assaults, missions | base modules and mods | see above |
 
 Mods also consume each other's APIs directly, always as optional: Espionage asks the
@@ -1361,6 +1360,33 @@ existing `cities:great_people_percent` and `cities:great_people_rate_percent` in
 and player scopes. Mod versions change the content identity. Older city GP state needs a
 migration before it can continue under the new owner.
 
+## Score and victory
+
+The Victory module (`victory`, `src/Ariel.Rules/Victory`) keeps score and ends games, so a
+game with no mod at all can be won. Its contracts are in `Contracts/VictoryContracts.cs`.
+
+- Score (`IPlayerScores`, `GameRules.Scores`): a player's population, owned plots,
+  technologies and world wonders, weighed by the first `victory:time`-ruled `VictoryDef`
+  by id (2, 1, 4 and 5 points in the shipped data). Research diffusion's welfare factor
+  and the victory screen read it.
+- Outcome (`IVictoryService`, `GameRules.Victory`, saved as `VictoryGameState`): the first
+  win stands, and play continues after it. `IsEnabled(identity)` answers the Foundation
+  `victory` requirement leaf, so content gated on a victory (the council buildings, the
+  space elevator) exists only while an enabled `VictoryDef` has that identity.
+- The check: at `TurnPhase.GameEnd` (`victory:check`), and after a city is captured or
+  razed, every enabled `VictoryDef` in priority order asks the `IVictoryCondition` its
+  `Rule` names for a winner. The conditions share one `IVictoryStandings` per check: the
+  civilization teams ranked by combined score (technologies counted once per team, ties
+  to the lower team id), and each team's winner, its best-scoring living member. The
+  first winner is recorded and published as `VictoryAchieved`.
+- The base conditions: conquest (one team left alive of at least two), domination
+  (shares of population and land), cultural (cities at a culture level, counting the
+  level a city is eligible for) and time (the speed-scaled turn limit, decided only by
+  the end-of-turn check). A mod adds another by registering an `IVictoryCondition` and
+  shipping the `VictoryDef` that names it; a feature that decides a win itself (a council
+  vote) records it with `IVictoryService.Award(condition, player)`. A `VictoryDef` whose
+  `Rule` names no registered condition fails the load.
+
 ## Modular feature services
 
 Modular feature services include ProjectsVictory, Corporations, Espionage, Events,
@@ -1402,16 +1428,15 @@ refused), demands (made, accepted or rejected) and refused help. The computer pl
 diplomacy (the `ai:diplomacy` planner, the civic valuer and the deal appraiser the screen
 asks) lives in `Ariel.Ai`, since the rules may not reference it.
 
-ProjectsVictory owns project eligibility and completion, team project counts, scores,
-and saved victory status, and the project and victory definitions (`ProjectDef`,
-`VictoryDef`) in its API. It answers the base seam `IPlayerScores` with a player's total. Project definitions carry costs, technology and project
-prerequisites, instance limits, victory links, spaceship flags, and thresholds. Victory
-definitions select conquest, domination, cultural, project, or time rules, or `vote`, which
-another feature decides through `IProjectVictoryService.AwardVote` (the diplomatic
-victory, won in a council). Enabled conditions run by priority. The mod answers the base
-seam `IVictoryConditions`, so content gated on a victory exists only while that victory is
-on. Projects enter the city production queue through a
-registered production kind and completion handler.
+ProjectsVictory owns team and world projects: eligibility and completion, team project
+counts (`TeamProjectState`) and `ProjectDef` in its API (`IProjectService`). Project
+definitions carry costs, technology and project prerequisites, instance limits, victory
+links, spaceship flags, and thresholds. Projects enter the city production queue through
+a registered production kind and completion handler. The mod adds the space race to the
+base game's victories (Score and victory, below): its `projects_victory:space_race`
+`VictoryDef` names the condition `projects_victory:spaceship`, won by the first team,
+highest score first, to complete every spaceship project the victory links, and a
+completed project asks the victory check again.
 
 Votes runs the world councils (`Ariel.Mods.Votes.Api`: `VoteSourceDef`, `VoteDef`, the
 `BuildingVotesDef` attachment and `IVotesService`). A building that names a council (the
@@ -1424,7 +1449,10 @@ member also keeps the council's religion and civic and has not defied it. Every 
 election opens or the secretary puts one resolution: forced civics and free trade, which
 stand while the council sits (`ICivicRestrictions`, `ITradeTerms`); open borders or
 defensive pacts among all members (through the Diplomacy module); peace with, sanctions on
-or war against one player; or the game's winner (through the ProjectsVictory API).
+or war against one player; or the game's winner. The diplomatic victory is the mod's own: its
+`votes:diplomatic` `VictoryDef` names the condition `votes:council`, which the victory check
+never finds won; a passed victory vote records it through `IVictoryService.Award`. With the
+victory off (or the game already won) the vote is never put.
 Sanctions forbid trade between the members and the named team until it is a full member
 again. A member may defy a resolution that binds it: the resolution fails and the defier
 stops being a full member until it backs one that passes. A session opens at the end of a
@@ -1445,21 +1473,26 @@ Passive thresholds unlock demographics, city visibility, research inspection, an
 investigation. The service answers the base seam `IEspionageSpending`, so the economy
 leaves banking to it. Spy missions spend points and use a calculated success chance; running a
 mission lowers the attacker's own investment, so later missions cost more. Counter-
-espionage raises both cost and risk for a fixed number of turns. All numbers come from
+espionage raises both cost and risk for a fixed number of turns. Fomented unhappiness is
+a timed effect on the city (Timed effects). All numbers come from
 `data/espionage-rules.json`. Saved team, player, and city state tracks points, weights,
 remainders, and timers.
 
 Events roll eligible triggers per turn with the simulation RNG. Trigger definitions set
 eligibility, chance, repeat policy, and cooldown. Pending events hold a player choice.
 Options can change treasury, research, city stores, happiness, health, and plot yields.
-Unresolved events use a default option. AI players resolve events automatically.
+The lasting changes are timed effects (Timed effects) whose source is the option and whose
+holder is the event's player, city and plot. A timed option counts its duration from the
+turn it is answered and still applies on its expiry turn. Unresolved events use a default
+option. AI players resolve events automatically.
 
 ScriptedWonders adds completion, periodic, combat, and modifier effects to selected
 buildings, and answers the base game's empire free buildings (`IFreeBuildingGrants`) and
 the base game's movement barriers with its wonders that keep barbarians out (`IMovementBarrier`). City-local timers survive saves and capture. Inactive wonders pause their
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
-recovery. Thresholds can trigger mutiny or rebellion. Mutiny adds unhappiness; Warning
+recovery. Thresholds can trigger mutiny or rebellion; a rebellion and an incited revolt leave
+unrest, a timed effect on the city. Mutiny adds unhappiness; Warning
 is a display-only alert. Players can suppress instability with gold, priced by the
 reduction, or with a military garrison. A city with no legal rebel tile does not rebel.
 A spy-incited revolt adds instability through the Revolution service. The service answers
@@ -1549,9 +1582,10 @@ the player summary use the same renderer.
 id, or a mod id with one screen) and meets every rival first; `--press <id>[,<id>...]`
 then presses controls by id. An unknown screen prints the registered ids.
 
-The shipped feature mods describe all of their interface this way, and so does the
-Diplomacy base module (screen with the deal composer, attitude labels): Corporations
-(screen, city panel, pedia, notices), Espionage (screen, notices), ProjectsVictory (victory screen, pedia, notices),
+The shipped feature mods describe all of their interface this way, and so do the
+Diplomacy base module (screen with the deal composer, attitude labels) and the Victory base
+module (the victory screen with the score table, the victory pedia and the victory notice): Corporations
+(screen, city panel, pedia, notices), Espionage (screen, notices), ProjectsVictory (project pedia, notices),
 Events (screen while an event waits, pedia, notices), Revolution (stability panel with
 suppression, unrest summary, notices), GreatPeople (city figures, settled great people,
 golden age summary), Trade (routes panel) and ScriptedWonders (wonder panel, notices).
@@ -2206,6 +2240,44 @@ key whose provider the content's mod does not reference. Effects are part of the
 definition, so they are in the content hash. A key nobody reads is legal and inert; the
 computer player values only the keys it knows (Computer players).
 
+### Timed effects
+
+A feature that grants modifiers for a while keeps them in the base game's one store,
+`ITimedEffects` (`GameRules.TimedEffects`, in Cities, contracts in
+`Contracts/TimedEffectContracts.cs`), instead of its own "until turn N" field, modifier
+source and pruning. A `TimedEffect` is a bundle of `ModifierEffect`s with a `Source` (the
+feature's id and the ledger source of every line), a holder (`Player`, `City`, `Plot`,
+-1 when unused) and an `ExpiresTurn`, the first turn it no longer applies (0: never).
+
+- Where it applies: one `IModifierSource` (`cities:timed_effect_modifiers`) adds each
+  active effect to the calculations of its own scope that its holder takes part in. A
+  plot effect applies to `Plot`. A city effect applies to `City`, or, with no city, to
+  every city `Player` owns. A player effect applies to `Player`.
+- When it ends: an effect applies while `Turn < ExpiresTurn`. The turn system
+  `cities:timed_effects` (`TurnPhase.GameBegin`) drops the expired ones. An effect held by a
+  city ends when the city is captured or razed, because a conquest must not hand the loser's
+  spy unrest or event bonus to the winner.
+- API: `Add` (gives the next id), `Set` (replaces the effect with the same source and
+  holder), `Remove(id)`, `Find` (by id, or the active one by source and holder) and
+  `Active`. `TimedEffect.TurnsRemaining(turn)` is what a screen shows as "N turns
+  remaining". The store is saved as `TimedEffectState` (`cities:timed_effects`).
+
+On the store: an event option's lasting happiness, health and plot yields (Events), a
+spy's fomented unhappiness (Espionage, `espionage:foment_unhappiness`) and the unrest a
+rebellion or an incited revolt leaves (Revolution, `revolution:unrest`). Not on it, because
+they are not a fixed modifier with an expiry:
+- Hurry and conscription anger (`HurryAngerTurns`, `ConscriptAngerTurns`) are pooled
+  counters. Each use adds turns, the anger grows in steps with the turns left, and hurry
+  anger rescales when an anger-modifying building completes.
+- Occupation (`OccupationTurns`) and a spy's incited revolt (`RevoltUntilTurn`) are
+  disorder, a city state rather than a modifier.
+- Counter-espionage is a cost multiplier per rival team that the espionage formulas
+  read directly; no modifier calculation collects it.
+- A golden age stacks its length and can start a turn late. It sets the base golden-age
+  flag and adds threshold-dependent plot yields through a yield finalizer.
+- Cooldowns ("may not rebel again until", civic and religion changes, event repeats)
+  limit actions; they modify nothing.
+
 ## Events and extension state
 
 `ctx.Subscribe<TEvent>(name, handler)` registers deterministic event handlers.
@@ -2231,8 +2303,9 @@ mutable. Saves and hashes include their canonical JSON data.
 Registered state components across mods include:
 
 - Game: `ReligionGameState` (founded holy cities), `EspionageGameState` (global
-  espionage points), and `MilitaryGameState` (temporary recon sights, the one barbarian
-  player).
+  espionage points), `MilitaryGameState` (temporary recon sights, the one barbarian
+  player), `VictoryGameState` (`victory:game_state`, the recorded win) and
+  `TimedEffectState` (`cities:timed_effects`, every timed modifier effect).
 - Player: `EconomyPlayerState` (sliders, inflation, settlement), `GovernmentPlayerState`
   (anarchy, cooldowns), `ReligionPlayerState` (state religion, cooldown),
   `GreatPeoplePlayerState` (Golden Age timers), `MilitaryPlayerState` (combat general

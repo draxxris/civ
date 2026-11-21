@@ -23,16 +23,19 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
   `InvisibilityDef`, `PromotionDef`, `MissionDef`, and `OutcomeDef`.
 - Government: `CivicDef`, `CivicOptionDef`, and `UpkeepDef`.
 - Peoples: `CivilizationDef`, `LeaderDef`, and `TraitDef`.
+- Victory: `VictoryDef`, the executable victory conditions (`data/victory.json`, hand-written;
+  the importer does not own it). A mod that adds a way to win ships its own `VictoryDef`
+  rows beside the condition it registers: ProjectsVictory the space race, Votes the
+  diplomatic victory.
 - Religion (a mod, `src/Mods/Religion`; definitions in its API `Ariel.Mods.Religion.Api`):
   `ReligionDef` with its `identity`, founding technology, missionary, spread factor,
   commerce vectors, and related building ids, and `CivicReligionDef` attached to civics
   (`data/civic-religion.json`). The mod also registers one founding wonder per
   religion: a `BuildingDef` with `foundsReligion` set, from the hand-written
   `data/founding-wonders.json`. The importer does not own that file.
-- ProjectsVictory: `ProjectDef` and `VictoryDef` for production projects and executable
-  victory conditions. They live in the mod's published API (`Ariel.Mods.ProjectsVictory`,
-  assembly `Ariel.Mods.ProjectsVictory.Api`); base content names victories only by
-  `VictoryIdentityDef`.
+- ProjectsVictory: `ProjectDef` for production projects. It lives in the mod's published
+  API (`Ariel.Mods.ProjectsVictory`, assembly `Ariel.Mods.ProjectsVictory.Api`); the mod's
+  space race is a base `VictoryDef` row in its own `data/victory.json`.
 - Votes: `VoteSourceDef` (a council and its interval and civic), `VoteDef` (a
   resolution: the councils that hold it, its threshold, and what it forces), and
   `BuildingVotesDef` attached to the buildings that seat a council. They live in the
@@ -64,9 +67,9 @@ by `BarbarianUnownedTilesMultiplier`. The importer never writes `hex-overrides.j
 
 Foundation reserves `GameOptionDef` and `ConditionDef`, plus identity records
 `CorporationIdentityDef`, `ReligionIdentityDef` (`data/religion-identity.json`) and
-`VictoryIdentityDef`. Corporation, religion and victory gameplay executes through
-`CorporationDef`, `ReligionDef`, `ProjectDef`, and `VictoryDef` in their respective
-feature mods. Base content (buildings, units, leaders, the `religion` requirement leaf)
+`VictoryIdentityDef`. Corporation and religion gameplay executes through
+`CorporationDef` and `ReligionDef` in their feature mods, victory gameplay through the
+Victory module's `VictoryDef`. Base content (buildings, units, leaders, the `religion` requirement leaf)
 names a faith by its identity (`foundation:buddhism`); the Religion mod's `ReligionDef`
 has its own id (`religion:buddhism`, kept in saves) and names the identity it plays in
 `identity`. The importer emits both from one source record: a family a mod emits for
@@ -92,14 +95,18 @@ prerequisites, and the optional `Victory` link use typed content references.
 `PrereqProjects` maps project ids to required team counts. `AnyonePrereqProject`
 requires at least one world completion across all teams. `VictoryThresholds` and
 `VictoryMinThresholds` map victory ids to team project counts. `Spaceship` marks a
-project for project victory. `AllowsNukes` retains the project rule flag.
+project for the space race (`projects_victory:spaceship`). `AllowsNukes` retains the project rule flag.
 
-`VictoryDef.Rule` selects conquest, domination, cultural, time, or project logic. Lower
+`VictoryDef.Rule` names the registered victory condition that decides it: the Victory
+module's `victory:conquest`, `victory:domination`, `victory:cultural` or `victory:time`,
+ProjectsVictory's `projects_victory:spaceship` or Votes' `votes:council` (won only by a
+council's vote). A rule no loaded module registers fails the load. Lower
 `Priority` values run first. `Enabled` disables a condition without removing its
 definition. Population and land thresholds (`PopulationPercent`, `LandPercent`) use
 percentages. Cultural victory requires `CultureCities` count of cities at
 `CultureLevel`. Time rules define a speed-scaled turn limit (`MaxTurns`) and score
-weights (`ScorePerPopulation`, `ScorePerLand`, `ScorePerTech`, `ScorePerWonder`).
+weights (`ScorePerPopulation`, `ScorePerLand`, `ScorePerTech`, `ScorePerWonder`); the
+first time victory by id weighs every player's score, enabled or not.
 
 ### Corporation fields
 
@@ -122,8 +129,10 @@ happiness, health, and plot-yield changes use integer units (`GoldDelta`,
 `ResearchBonus`, `CityFoodDelta`, `CityProductionDelta`, `HappinessDelta`,
 `HealthDelta`, `PlotFoodDelta`, `PlotProductionDelta`, `PlotCommerceDelta`). City
 culture uses hundredths of a point (`CityCultureHundredthsDelta`). Negative gold
-indicates a cost. `DurationTurns` makes happiness, health, and plot effects temporary;
-zero means permanent. `Outcome` provides post-choice feedback text.
+indicates a cost. `DurationTurns` makes happiness, health, and plot effects temporary,
+counted from the turn the event is answered and still applying on the turn that count
+reaches; zero means permanent. The lasting effects are kept as timed effects in the base
+game's store (see "Timed effects" in DESIGN.md). `Outcome` provides post-choice feedback text.
 
 ### Civic fields, effects and attachments
 

@@ -20,6 +20,7 @@ public static class BaseRules
         new("peoples", "Peoples", () => new Peoples.PeoplesModule()),
         new("relations", "Relations", () => new Relations.RelationsModule()),
         new("research", "Research", () => new Research.ResearchModule()),
+        new("victory", "Victory", () => new Victory.VictoryModule()),
         new("world", "World", () => new World.WorldModule()),
     ];
 

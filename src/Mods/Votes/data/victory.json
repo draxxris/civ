@@ -1,0 +1,9 @@
+[
+  {
+    "id": "votes:diplomatic",
+    "name": "Diplomatic",
+    "identity": "foundation:victory_diplomatic",
+    "rule": "votes:council",
+    "priority": 25
+  }
+]

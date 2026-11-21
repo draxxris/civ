@@ -113,8 +113,8 @@ public sealed class ModApiTests
         Assert.Same(content.Services.Find<IEspionageService>(), rules.EspionageSpending);
         Assert.Same(content.Services.Find<IRevolutionService>(), rules.CityUnrest);
         Assert.Same(content.Services.Find<ITradeRouteService>(), rules.TradeLinks);
-        Assert.Same(content.Services.Find<IProjectVictoryService>(), rules.Scores);
-        Assert.Same(content.Services.Find<IProjectVictoryService>(), rules.VictoryConditions);
+        Assert.Contains(rules.VictoryConditions, c => c.Id == ProjectVictories.Spaceship);
+        Assert.Contains(rules.VictoryConditions, c => c.Id == "votes:council");
         Assert.Contains(content.Services.Find<Ariel.Mods.Votes.IVotesService>(), rules.CivicRestrictions.Cast<object>());
         Assert.Contains(content.Services.Find<Ariel.Mods.Votes.IVotesService>(), rules.TradeTerms.Cast<object>());
         Assert.NotNull(rules.CombatLeaders);

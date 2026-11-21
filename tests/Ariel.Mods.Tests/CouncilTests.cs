@@ -3,7 +3,6 @@ using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
 using Ariel.Modding;
-using Ariel.Mods.ProjectsVictory;
 using Ariel.Mods.Votes;
 using Xunit;
 using TechDef = Ariel.Content.Schema.TechDef;
@@ -15,18 +14,37 @@ namespace Ariel.Mods.Tests;
 public sealed class CouncilTests
 {
     private const string Un = "votes:diplovote_un";
-    private static readonly Lazy<ContentDb> Content = new(() => Build("Votes", "ProjectsVictory"));
-    /// <summary>Votes without ProjectsVictory: no victory to award.</summary>
-    private static readonly Lazy<ContentDb> Alone = new(() => Build("Votes"));
+    /// <summary>Votes alone: the diplomatic victory is the council's, so no other feature mod is needed to win by vote.</summary>
+    private static readonly Lazy<ContentDb> Content = new(() => Build());
+    /// <summary>Votes with the diplomatic victory switched off.</summary>
+    private static readonly Lazy<ContentDb> Alone = new(() => Build(new ModSource
+    {
+        Manifest = new() { Id = "no_diplomatic_victory", Version = "1", Dependencies = ["votes"] },
+        Root = new LoadedMods().Root, Instance = new DisableDiplomaticVictory(),
+    }));
 
-    private static ContentDb Build(params string[] optional) => ModLoader.Build(new LoadedMods().Sources
-        .Concat(optional.Select(n => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", n)))));
+    private static ContentDb Build(params ModSource[] probes) => ModLoader.Build(new LoadedMods().Sources
+        .Append(ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Votes"))).Concat(probes));
+
+    private sealed class DisableDiplomaticVictory : IMod
+    {
+        public void Register(IModContext context)
+        {
+            var victories = context.Content<VictoryDef>();
+            var diplomatic = victories.Get("votes:diplomatic");
+            victories.Override(new()
+            {
+                Id = diplomatic.Id, Name = diplomatic.Name, Identity = diplomatic.Identity, Rule = diplomatic.Rule,
+                Priority = diplomatic.Priority, Enabled = false,
+            });
+        }
+    }
 
     [Fact]
     public void The_council_buildings_belong_to_the_diplomatic_victory()
     {
         var sim = Scenario(seat: false);
-        Assert.True(sim.Rules().VictoryConditions!.IsEnabled(sim, "foundation:victory_diplomatic"));
+        Assert.True(sim.Rules().Victory.IsEnabled(sim, "foundation:victory_diplomatic"));
         var city = sim.State.Cities.First(c => c.Owner == 0);
         var requirements = sim.Content.Get<BuildingDef>("cities:united_nations").Requirements;
         var failures = sim.Content.Requirements.Evaluate(requirements, new(sim, 0, city, sim.State.Grid.TileAt(city.Position))).Failures;
@@ -135,10 +153,10 @@ public sealed class CouncilTests
         Open(sim, "votes:vote_victory");
         Cast(sim, 0, VoteChoice.Yes, sim.TeamOf(0).Id); Cast(sim, 1, VoteChoice.Yes, sim.TeamOf(0).Id);
         Close(sim);
-        var status = sim.Service<IProjectVictoryService>()!.GetVictoryStatus(sim);
+        var status = sim.Rules().Victory.Status(sim);
         Assert.True(status.IsGameOver);
         Assert.Equal(sim.TeamOf(0).Id, status.WinningTeamId);
-        Assert.Equal("projects_victory:diplomatic", status.VictoryId);
+        Assert.Equal("votes:diplomatic", status.VictoryId);
     }
 
     [Fact]
@@ -161,7 +179,7 @@ public sealed class CouncilTests
     public void Without_victories_a_council_still_elects_and_sanctions()
     {
         var sim = Seated(Alone.Value);
-        Assert.Null(sim.Rules().VictoryConditions);
+        Assert.False(sim.Rules().Victory.IsEnabled(sim, "foundation:victory_diplomatic"));
         Assert.DoesNotContain(Votes(sim).Proposals(sim, Un), r => r.Vote == "votes:vote_victory");
         Assert.Contains("cannot be won by vote", Reject(sim, Propose(0, "votes:vote_victory")));
         Pass(sim, "votes:vote_free_trade");
