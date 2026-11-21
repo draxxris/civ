@@ -7,7 +7,6 @@
     "icon": "",
     "id": "foundation:culturelevel_developing",
     "maxNationalWonders": 2,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 2,
     "maxWorldWonders": 2,
     "name": "Developing",
@@ -23,7 +22,9 @@
       "foundation:gamespeed_snail": 1200
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 35,
@@ -33,7 +34,6 @@
     "icon": "",
     "id": "foundation:culturelevel_elegant",
     "maxNationalWonders": 4,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 3,
     "maxWorldWonders": 3,
     "name": "Elegant",
@@ -60,7 +60,9 @@
       "foundation:gamespeed_snail": 30000
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 10,
@@ -70,7 +72,6 @@
     "icon": "",
     "id": "foundation:culturelevel_fledgling",
     "maxNationalWonders": 1,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 1,
     "maxWorldWonders": 1,
     "name": "Fledgling",
@@ -86,7 +87,9 @@
       "foundation:gamespeed_snail": 100
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 45,
@@ -96,7 +99,6 @@
     "icon": "",
     "id": "foundation:culturelevel_impressive",
     "maxNationalWonders": 5,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 4,
     "maxWorldWonders": 4,
     "name": "Impressive",
@@ -123,7 +125,9 @@
       "foundation:gamespeed_snail": 300000
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 40,
@@ -133,7 +137,6 @@
     "icon": "",
     "id": "foundation:culturelevel_influential",
     "maxNationalWonders": 4,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 3,
     "maxWorldWonders": 3,
     "name": "Influential",
@@ -149,7 +152,9 @@
       "foundation:gamespeed_snail": 60000
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 50,
@@ -159,7 +164,6 @@
     "icon": "",
     "id": "foundation:culturelevel_legendary",
     "maxNationalWonders": 5,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 4,
     "maxWorldWonders": 4,
     "name": "Legendary",
@@ -175,7 +179,9 @@
       "foundation:gamespeed_snail": 600000
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 0,
@@ -185,7 +191,6 @@
     "icon": "",
     "id": "foundation:culturelevel_none",
     "maxNationalWonders": 0,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 0,
     "maxWorldWonders": 0,
     "name": "None",
@@ -201,7 +206,9 @@
       "foundation:gamespeed_snail": 0
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 0,
@@ -211,7 +218,6 @@
     "icon": "",
     "id": "foundation:culturelevel_poor",
     "maxNationalWonders": 1,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 1,
     "maxWorldWonders": 1,
     "name": "Poor",
@@ -227,7 +233,9 @@
       "foundation:gamespeed_snail": 0
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 25,
@@ -237,7 +245,6 @@
     "icon": "",
     "id": "foundation:culturelevel_prominent",
     "maxNationalWonders": 2,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 2,
     "maxWorldWonders": 2,
     "name": "Prominent",
@@ -264,7 +271,9 @@
       "foundation:gamespeed_snail": 3000
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   },
   {
     "cityDefenseModifier": 30,
@@ -274,7 +283,6 @@
     "icon": "",
     "id": "foundation:culturelevel_refined",
     "maxNationalWonders": 3,
-    "maxNationalWondersOCC": 8,
     "maxTeamWonders": 3,
     "maxWorldWonders": 2,
     "name": "Refined",
@@ -290,6 +298,8 @@
       "foundation:gamespeed_snail": 6000
     },
     "strategy": "",
-    "unsupported": []
+    "unsupported": [
+      "iMaxNationalWondersOCC"
+    ]
   }
 ]

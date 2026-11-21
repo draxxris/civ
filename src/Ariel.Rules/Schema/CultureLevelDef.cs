@@ -10,7 +10,6 @@ public sealed class CultureLevelDef : GameContentDef
     public int CityDefenseModifier { get; init; } = 0;
     public int CityRadius { get; init; } = 0;
     public int MaxNationalWonders { get; init; } = 0;
-    public int MaxNationalWondersOCC { get; init; } = 0;
     public int MaxTeamWonders { get; init; } = 0;
     public int MaxWorldWonders { get; init; } = 0;
 }

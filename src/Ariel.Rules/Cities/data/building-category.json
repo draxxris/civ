@@ -5,14 +5,13 @@
     "icon": "Art/Interface/Buttons/Buildings/BombShelters.dds",
     "id": "cities:specialbuilding_bomb_shelter",
     "name": "Bomb Shelter",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": "research:fission",
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "TechPrereqAnyone",
+      "bValid"
+    ]
   },
   {
     "era": "foundation:era_medieval",
@@ -20,7 +19,6 @@
     "icon": "Art/Interface/Buttons/Buildings/Cathedral.dds",
     "id": "cities:specialbuilding_cathedral",
     "name": "Cathedral",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": {
       "all": [
@@ -32,12 +30,13 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {
-      "peoples:trait_spiritual": 100
-    },
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "ProductionTraits",
+      "ProductionTraits/ProductionTrait",
+      "ProductionTraits/ProductionTrait/ProductionTraitType",
+      "ProductionTraits/ProductionTrait/iProductionTrait",
+      "bValid"
+    ]
   },
   {
     "era": null,
@@ -45,14 +44,10 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas.dds,7,3",
     "id": "cities:specialbuilding_cloning_factory",
     "name": "Cloning Tanks",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": false
+    "unsupported": []
   },
   {
     "era": "foundation:era_industrial",
@@ -60,7 +55,6 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,16",
     "id": "cities:specialbuilding_corporate_store",
     "name": "Corporation Store",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": {
       "all": [
@@ -72,10 +66,9 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "bValid"
+    ]
   },
   {
     "era": "foundation:era_industrial",
@@ -83,7 +76,6 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,15",
     "id": "cities:specialbuilding_corporation_hq",
     "name": "Corporation Headquarters",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": {
       "all": [
@@ -95,10 +87,9 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "bValid"
+    ]
   },
   {
     "era": null,
@@ -106,14 +97,10 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas_2.dds,3,7",
     "id": "cities:specialbuilding_deep_space_research",
     "name": "Deep Space Research Institute",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": false
+    "unsupported": []
   },
   {
     "era": null,
@@ -121,14 +108,10 @@
     "icon": "Art/Interface/Buttons/Buildings/BombShelters.dds",
     "id": "cities:specialbuilding_first_nuclear_test",
     "name": "First Nuclear Test",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": false
+    "unsupported": []
   },
   {
     "era": null,
@@ -136,14 +119,10 @@
     "icon": ",Art/Interface/Buttons/Buildings/btn_fusionsreactor.dds,Art/Interface/Buttons/Atlases/Source_building_atlas.dds,4,10",
     "id": "cities:specialbuilding_fusion_plant",
     "name": "Fusion Power Plant",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": false
+    "unsupported": []
   },
   {
     "era": "foundation:era_medieval",
@@ -151,7 +130,6 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,6,6",
     "id": "cities:specialbuilding_guild_hq",
     "name": "Guild Headquarters",
-    "obsoleteTech": "research:corporation",
     "pedia": "",
     "requirements": {
       "all": [
@@ -163,10 +141,10 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "ObsoleteTech",
+      "bValid"
+    ]
   },
   {
     "era": "foundation:era_medieval",
@@ -174,7 +152,6 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/rom_building_atlas.dds,1,9",
     "id": "cities:specialbuilding_masters_hall",
     "name": "Masters Hall",
-    "obsoleteTech": "research:corporation",
     "pedia": "",
     "requirements": {
       "all": [
@@ -186,10 +163,10 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "ObsoleteTech",
+      "bValid"
+    ]
   },
   {
     "era": "foundation:era_classical",
@@ -197,7 +174,6 @@
     "icon": "Art/Interface/Buttons/Buildings/Monastery_Hindu.dds",
     "id": "cities:specialbuilding_monastery",
     "name": "Monastery",
-    "obsoleteTech": "research:computers",
     "pedia": "",
     "requirements": {
       "all": [
@@ -209,12 +185,14 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {
-      "peoples:trait_spiritual": 100
-    },
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "ObsoleteTech",
+      "ProductionTraits",
+      "ProductionTraits/ProductionTrait",
+      "ProductionTraits/ProductionTrait/ProductionTraitType",
+      "ProductionTraits/ProductionTrait/iProductionTrait",
+      "bValid"
+    ]
   },
   {
     "era": "foundation:era_ancient",
@@ -222,7 +200,6 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas2.dds,8,5",
     "id": "cities:specialbuilding_myth",
     "name": "Myth",
-    "obsoleteTech": "research:theology",
     "pedia": "",
     "requirements": {
       "all": [
@@ -234,10 +211,10 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "ObsoleteTech",
+      "bValid"
+    ]
   },
   {
     "era": null,
@@ -245,14 +222,10 @@
     "icon": "Art/Interface/Buttons/Buildings/GreatFirewall.dds",
     "id": "cities:specialbuilding_network",
     "name": "Networked Buildings",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": false
+    "unsupported": []
   },
   {
     "era": null,
@@ -260,14 +233,10 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_Atlas.dds,5,10",
     "id": "cities:specialbuilding_orbital_observatory",
     "name": "Orbital Observatory",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": false
+    "unsupported": []
   },
   {
     "era": "foundation:era_classical",
@@ -275,7 +244,6 @@
     "icon": "Art/Interface/Buttons/Buildings/parthenon.dds",
     "id": "cities:specialbuilding_pantheon",
     "name": "Pantheon",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": {
       "all": [
@@ -287,12 +255,13 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {
-      "peoples:trait_spiritual": 100
-    },
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "ProductionTraits",
+      "ProductionTraits/ProductionTrait",
+      "ProductionTraits/ProductionTrait/ProductionTraitType",
+      "ProductionTraits/ProductionTrait/iProductionTrait",
+      "bValid"
+    ]
   },
   {
     "era": "foundation:era_ancient",
@@ -300,7 +269,6 @@
     "icon": "Art/Interface/Buttons/Buildings/Temple.dds",
     "id": "cities:specialbuilding_temple",
     "name": "Temple",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": {
       "all": [
@@ -312,12 +280,13 @@
       ]
     },
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {
-      "peoples:trait_spiritual": 100
-    },
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "ProductionTraits",
+      "ProductionTraits/ProductionTrait",
+      "ProductionTraits/ProductionTrait/ProductionTraitType",
+      "ProductionTraits/ProductionTrait/iProductionTrait",
+      "bValid"
+    ]
   },
   {
     "era": null,
@@ -325,14 +294,10 @@
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_wonders_atlas.dds,5,2",
     "id": "cities:specialbuilding_world_bank",
     "name": "World Bank",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": false
+    "unsupported": []
   },
   {
     "era": null,
@@ -340,13 +305,9 @@
     "icon": "Art/Interface/Buttons/Buildings/ZUplink.dds",
     "id": "cities:specialbuilding_zurich_orbital_uplink",
     "name": "Zurich-Orbital Uplink",
-    "obsoleteTech": null,
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "techPrereqAnyone": null,
-    "traitProductionModifiers": {},
-    "unsupported": [],
-    "valid": false
+    "unsupported": []
   }
 ]

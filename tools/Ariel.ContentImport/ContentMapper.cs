@@ -331,11 +331,11 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         {
             World = Integer(classRecord.Node.Value("iMaxGlobalInstances"), -1), Team = Integer(classRecord.Node.Value("iMaxTeamInstances"), -1),
             Player = Integer(classRecord.Node.Value("iMaxPlayerInstances"), -1), ExtraPlayer = Integer(classRecord.Node.Value("iExtraPlayerInstances")),
-            NoLimit = Boolean(classRecord.Node.Value("bNoLimit")), Monument = Boolean(classRecord.Node.Value("bMonument"))
+            NoLimit = Boolean(classRecord.Node.Value("bNoLimit"))
         };
         Mark(record.Node.Child(sourceField), sourceField, mapped);
         if (!MappedPaths.TryGetValue(classFamily, out var paths)) MappedPaths[classFamily] = paths = new(StringComparer.Ordinal);
-        foreach (var field in new[] { "Type", "DefaultBuilding", "DefaultUnit", "iMaxGlobalInstances", "iMaxTeamInstances", "iMaxPlayerInstances", "iExtraPlayerInstances", "bNoLimit", "bMonument" }) Mark(classRecord.Node.Child(field), field, paths);
+        foreach (var field in new[] { "Type", "DefaultBuilding", "DefaultUnit", "iMaxGlobalInstances", "iMaxTeamInstances", "iMaxPlayerInstances", "iExtraPlayerInstances", "bNoLimit" }) Mark(classRecord.Node.Child(field), field, paths);
     }
 
     public string? Reference(string family, string? value, EffectiveRecord record, string field)

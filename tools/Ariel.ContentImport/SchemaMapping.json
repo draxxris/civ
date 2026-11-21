@@ -876,12 +876,6 @@
         "default": 0
       },
       {
-        "source": "iMaxNationalWondersOCC",
-        "property": "MaxNationalWondersOCC",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iMaxTeamWonders",
         "property": "MaxTeamWonders",
         "kind": "int",
@@ -2260,29 +2254,8 @@
         "value": "iHappinessChange"
       },
       {
-        "source": "CivicOption",
-        "property": "CivicOption",
-        "kind": "ref",
-        "target": "CivicOptionInfo"
-      },
-      {
-        "source": "CommerceChangeDoubleTimes",
-        "property": "CommerceChangeDoubleTimes",
-        "kind": "commerce"
-      },
-      {
-        "source": "CommerceChangeOriginalOwners",
-        "property": "CommerceChangeOriginalOwners",
-        "kind": "commerce"
-      },
-      {
         "source": "CommerceChanges",
         "property": "CommerceChanges",
-        "kind": "commerce"
-      },
-      {
-        "source": "CommerceHappinesses",
-        "property": "CommerceHappinesses",
         "kind": "commerce"
       },
       {
@@ -2352,12 +2325,6 @@
         "target": "PromotionInfo"
       },
       {
-        "source": "FreeStartEra",
-        "property": "FreeStartEra",
-        "kind": "ref",
-        "target": "EraInfo"
-      },
-      {
         "source": "GlobalBuildingClassProductionModifiers",
         "property": "GlobalBuildingClassProductionModifiers",
         "kind": "mapInt",
@@ -2377,12 +2344,6 @@
         "kind": "commerce"
       },
       {
-        "source": "GlobalCorporationCommerce",
-        "property": "GlobalCorporationCommerce",
-        "kind": "ref",
-        "target": "CorporationInfo"
-      },
-      {
         "source": "GlobalSeaPlotYieldChanges",
         "property": "GlobalSeaPlotYieldChanges",
         "kind": "yield"
@@ -2399,20 +2360,6 @@
         "target": "TraitInfo",
         "key": "HappinessTraitType",
         "value": "iHappinessTrait"
-      },
-      {
-        "source": "ImprovementFreeSpecialists",
-        "property": "ImprovementFreeSpecialists",
-        "kind": "mapInt",
-        "target": "ImprovementInfo",
-        "key": "ImprovementType",
-        "value": "iFreeSpecialistCount"
-      },
-      {
-        "source": "MaxStartEra",
-        "property": "MaxStartEra",
-        "kind": "ref",
-        "target": "EraInfo"
       },
       {
         "source": "NoBonus",
@@ -2473,12 +2420,6 @@
         "source": "SeaPlotYieldChanges",
         "property": "SeaPlotYieldChanges",
         "kind": "yield"
-      },
-      {
-        "source": "SpecialBuildingType",
-        "property": "Category",
-        "kind": "ref",
-        "target": "SpecialBuildingInfo"
       },
       {
         "source": "SpecialistCommercePercentChanges",
@@ -2589,20 +2530,8 @@
         "default": 0
       },
       {
-        "source": "bApplyFreePromotionOnMove",
-        "property": "ApplyFreePromotionOnMove",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bAreaCleanPower",
         "property": "AreaCleanPower",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bBorderObstacle",
-        "property": "BorderObstacle",
         "kind": "bool",
         "default": 0
       },
@@ -2631,24 +2560,6 @@
         "default": 0
       },
       {
-        "source": "bForceAllTradeRoutes",
-        "property": "ForceAllTradeRoutes",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bForceNoPrereqScaling",
-        "property": "ForceNoPrereqScaling",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bFreshWater",
-        "property": "FreshWater",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bGoldenAge",
         "property": "GoldenAge",
         "kind": "bool",
@@ -2657,12 +2568,6 @@
       {
         "source": "bGovernmentCenter",
         "property": "GovernmentCenter",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bMapCentering",
-        "property": "MapCentering",
         "kind": "bool",
         "default": 0
       },
@@ -2715,18 +2620,6 @@
         "default": 0
       },
       {
-        "source": "bProtectedCulture",
-        "property": "ProtectedCulture",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bProvidesFreshWater",
-        "property": "ProvidesFreshWater",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bRequiresActiveCivics",
         "property": "RequiresActiveCivics",
         "kind": "bool",
@@ -2757,20 +2650,8 @@
         "default": false
       },
       {
-        "source": "bZoneOfControl",
-        "property": "ZoneOfControl",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "iAIWeight",
         "property": "AiWeight",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAdjacentDamagePercent",
-        "property": "AdjacentDamagePercent",
         "kind": "int",
         "default": 0
       },
@@ -2795,12 +2676,6 @@
       {
         "source": "iAirUnitCapacity",
         "property": "AirUnitCapacity",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAirlift",
-        "property": "Airlift",
         "kind": "int",
         "default": 0
       },
@@ -2841,12 +2716,6 @@
         "default": 0
       },
       {
-        "source": "iAsset",
-        "property": "Asset",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBombardDefense",
         "property": "BombardDefense",
         "kind": "int",
@@ -2859,32 +2728,8 @@
         "default": 0
       },
       {
-        "source": "iCitiesPrereq",
-        "property": "CitiesPrereq",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCitiesRequiredPerDomesticConnectedCity",
-        "property": "CitiesRequiredPerDomesticConnectedCity",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCitiesRequiredPerForeignConnectedCity",
-        "property": "CitiesRequiredPerForeignConnectedCity",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iCoastalDistanceMaintenanceModifier",
         "property": "CoastalDistanceMaintenanceModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iConnectedCityMaintenanceModifier",
-        "property": "ConnectedCityMaintenanceModifier",
         "kind": "int",
         "default": 0
       },
@@ -2901,12 +2746,6 @@
         "default": 0
       },
       {
-        "source": "iDCMAirbombMission",
-        "property": "AirBombMission",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDefense",
         "property": "DefensePercent",
         "kind": "int",
@@ -2919,30 +2758,6 @@
         "default": 0
       },
       {
-        "source": "iDomesticConnectedCommerce",
-        "property": "DomesticConnectedCommerce",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDomesticGreatGeneralRateModifier",
-        "property": "DomesticGreatGeneralRateModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iEnemyWarWearinessModifier",
-        "property": "EnemyWarWearinessModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iEspionageDefense",
-        "property": "EspionageDefense",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iExperience",
         "property": "Experience",
         "kind": "int",
@@ -2951,18 +2766,6 @@
       {
         "source": "iFoodKept",
         "property": "FoodKept",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iForeignCapitalExtraCommerce",
-        "property": "ForeignCapitalExtraCommerce",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iForeignConnectedCommerce",
-        "property": "ForeignConnectedCommerce",
         "kind": "int",
         "default": 0
       },
@@ -3021,30 +2824,6 @@
         "default": 0
       },
       {
-        "source": "iGlobalPopulationChange",
-        "property": "GlobalPopulationChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGlobalSpaceProductionModifier",
-        "property": "GlobalSpaceProductionModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGlobalWarWearinessModifier",
-        "property": "GlobalWarWearinessModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGreatGeneralRateModifier",
-        "property": "GreatGeneralRateModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iGreatPeopleRateChange",
         "property": "GreatPeopleRateChange",
         "kind": "int",
@@ -3099,38 +2878,8 @@
         "default": 0
       },
       {
-        "source": "iInterestMax",
-        "property": "InterestMax",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iInterestPercent",
-        "property": "InterestPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iLevelPrereq",
-        "property": "LevelPrereq",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iMaintenanceModifier",
         "property": "MaintenanceModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iMaxDomesticConnectedCommerce",
-        "property": "MaxDomesticConnectedCommerce",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iMaxForeignConnectedCommerce",
-        "property": "MaxForeignConnectedCommerce",
         "kind": "int",
         "default": 0
       },
@@ -3159,12 +2908,6 @@
         "default": 0
       },
       {
-        "source": "iNoEntryDefenseLevel",
-        "property": "NoEntryDefenseLevel",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iNukeExplosionRand",
         "property": "NukeExplosionRand",
         "kind": "int",
@@ -3189,26 +2932,8 @@
         "default": 0
       },
       {
-        "source": "iNumPopulationEmployed",
-        "property": "NumPopulationEmployed",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iNumUnitFullHeal",
-        "property": "NumUnitFullHeal",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iOccupationTimeModifier",
         "property": "OccupationTimeModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iOtherAreaMaintenanceModifier",
-        "property": "OtherAreaMaintenanceModifier",
         "kind": "int",
         "default": 0
       },
@@ -3219,38 +2944,8 @@
         "default": 0
       },
       {
-        "source": "iPower",
-        "property": "Power",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iPrereqPopulation",
         "property": "MinimumPopulation",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iSpaceProductionModifier",
-        "property": "SpaceProductionModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTeamsPrereq",
-        "property": "TeamsPrereq",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitUpgradePriceModifier",
-        "property": "UnitUpgradePriceModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iWarWearinessModifier",
-        "property": "WarWearinessModifier",
         "kind": "int",
         "default": 0
       },
@@ -3263,12 +2958,6 @@
       {
         "source": "iWorkableRadius",
         "property": "WorkableRadius",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iWorkerSpeedModifier",
-        "property": "WorkerSpeedModifier",
         "kind": "int",
         "default": 0
       },
@@ -6070,32 +5759,7 @@
     "definition": "BuildingCategoryDef",
     "mod": "cities",
     "fields": [
-      {
-        "source": "ObsoleteTech",
-        "property": "ObsoleteTech",
-        "kind": "ref",
-        "target": "TechInfo"
-      },
-      {
-        "source": "ProductionTraits",
-        "property": "TraitProductionModifiers",
-        "kind": "mapInt",
-        "target": "TraitInfo",
-        "key": "ProductionTraitType",
-        "value": "iProductionTrait"
-      },
-      {
-        "source": "TechPrereqAnyone",
-        "property": "TechPrereqAnyone",
-        "kind": "ref",
-        "target": "TechInfo"
-      },
-      {
-        "source": "bValid",
-        "property": "Valid",
-        "kind": "bool",
-        "default": 0
-      }
+      
     ],
     "requirements": [
       {

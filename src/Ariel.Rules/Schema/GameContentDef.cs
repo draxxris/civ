@@ -24,7 +24,6 @@ public sealed record ClassLimits
     public int Player { get; init; } = -1;
     public int ExtraPlayer { get; init; }
     public bool NoLimit { get; init; }
-    public bool Monument { get; init; }
 }
 
 /// <summary>Calendar steps retain source order. Months and turn counts are exact integers.</summary>

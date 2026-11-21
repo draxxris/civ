@@ -81,7 +81,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 1,
       "team": -1,
@@ -230,7 +229,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -398,7 +396,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -572,7 +569,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -720,7 +716,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -869,7 +864,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -1030,7 +1024,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -1176,7 +1169,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -1337,7 +1329,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 3,
       "team": -1,
@@ -1477,7 +1468,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -1617,7 +1607,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -1772,7 +1761,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -1914,7 +1902,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -2058,7 +2045,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -2234,7 +2220,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -2397,7 +2382,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -2539,7 +2523,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -2705,7 +2688,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -2834,7 +2816,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -2976,7 +2957,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -3152,7 +3132,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -3315,7 +3294,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -3458,7 +3436,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -3616,7 +3593,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -3759,7 +3735,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -3920,7 +3895,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -4093,7 +4067,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -4253,7 +4226,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -4415,7 +4387,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -4576,7 +4547,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -4717,7 +4687,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -4881,7 +4850,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -5021,7 +4989,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -5163,7 +5130,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -5326,7 +5292,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -5493,7 +5458,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -5636,7 +5600,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -5769,7 +5732,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -5904,7 +5866,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -6047,7 +6008,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -6208,7 +6168,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -6356,7 +6315,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -6495,7 +6453,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -6645,7 +6602,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -6811,7 +6767,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -6963,7 +6918,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -7114,7 +7068,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -7264,7 +7217,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -7404,7 +7356,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -7563,7 +7514,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -7718,7 +7668,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -7863,7 +7812,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -8007,7 +7955,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -8155,7 +8102,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -8304,7 +8250,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -8449,7 +8394,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -8598,7 +8542,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -8743,7 +8686,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -8891,7 +8833,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -9046,7 +8987,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -9194,7 +9134,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -9339,7 +9278,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -9483,7 +9421,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -9632,7 +9569,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -9780,7 +9716,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -9932,7 +9867,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -10084,7 +10018,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -10232,7 +10165,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -10383,7 +10315,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -10557,7 +10488,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -10708,7 +10638,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -10859,7 +10788,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -11019,7 +10947,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -11168,7 +11095,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -11301,7 +11227,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -11440,7 +11365,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -11595,7 +11519,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -11746,7 +11669,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -11881,7 +11803,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -12038,7 +11959,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 5,
       "team": -1,
@@ -12215,7 +12135,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -12408,7 +12327,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -12552,7 +12470,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -12698,7 +12615,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -12835,7 +12751,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -12987,7 +12902,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -13145,7 +13059,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -13294,7 +13207,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -13464,7 +13376,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -13625,7 +13536,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -13770,7 +13680,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -13914,7 +13823,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -14065,7 +13973,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -14231,7 +14138,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -14374,7 +14280,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -14530,7 +14435,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 5,
       "team": -1,
@@ -14685,7 +14589,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -14847,7 +14750,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -15005,7 +14907,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -15171,7 +15072,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -15339,7 +15239,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -15483,7 +15382,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -15634,7 +15532,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -15776,7 +15673,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -15937,7 +15833,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -16090,7 +15985,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -16252,7 +16146,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -16406,7 +16299,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -16536,7 +16428,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -16677,7 +16568,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 2,
       "team": -1,
@@ -16816,7 +16706,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -16958,7 +16847,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -17102,7 +16990,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -17246,7 +17133,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -17390,7 +17276,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -17534,7 +17419,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -17678,7 +17562,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -17822,7 +17705,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -17966,7 +17848,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -18110,7 +17991,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -18256,7 +18136,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -18402,7 +18281,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -18548,7 +18426,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -18694,7 +18571,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -18838,7 +18714,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -18984,7 +18859,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -19130,7 +19004,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -19276,7 +19149,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -19422,7 +19294,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -19566,7 +19437,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -19712,7 +19582,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -19856,7 +19725,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -20000,7 +19868,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -20146,7 +20013,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -20292,7 +20158,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -20438,7 +20303,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -20584,7 +20448,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -20728,7 +20591,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -20872,7 +20734,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -21018,7 +20879,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -21164,7 +21024,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -21308,7 +21167,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -21452,7 +21310,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -21596,7 +21453,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -21740,7 +21596,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -21884,7 +21739,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -22026,7 +21880,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 1,
       "team": -1,
@@ -22195,7 +22048,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -22330,7 +22182,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -22501,7 +22352,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -22668,7 +22518,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -22818,7 +22667,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -22984,7 +22832,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -23148,7 +22995,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -23293,7 +23139,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -23446,7 +23291,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 5,
       "team": -1,
@@ -23586,7 +23430,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -23727,7 +23570,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -23889,7 +23731,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -24040,7 +23881,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -24195,7 +24035,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -24351,7 +24190,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 1,
       "team": -1,
@@ -24512,7 +24350,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 5,
       "team": -1,
@@ -24681,7 +24518,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -24845,7 +24681,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -24994,7 +24829,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -25164,7 +24998,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -25310,7 +25143,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -25455,7 +25287,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -25598,7 +25429,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -25748,7 +25578,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -25895,7 +25724,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -26060,7 +25888,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -26210,7 +26037,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -26382,7 +26208,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -26523,7 +26348,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -26658,7 +26482,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -26787,7 +26610,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -26947,7 +26769,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -27092,7 +26913,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -27267,7 +27087,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -27435,7 +27254,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -27582,7 +27400,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -27748,7 +27565,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -27912,7 +27728,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -28061,7 +27876,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -28219,7 +28033,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -28388,7 +28201,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -28530,7 +28342,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -28678,7 +28489,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -28820,7 +28630,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -28986,7 +28795,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -29140,7 +28948,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -29297,7 +29104,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -29457,7 +29263,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -29624,7 +29429,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -29788,7 +29592,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -29952,7 +29755,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -30111,7 +29913,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -30271,7 +30072,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -30426,7 +30226,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -30592,7 +30391,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -30782,7 +30580,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -30914,7 +30711,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -31054,7 +30850,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 3,
       "team": -1,
@@ -31215,7 +31010,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -31369,7 +31163,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -31519,7 +31312,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -31684,7 +31476,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -31851,7 +31642,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -32018,7 +31808,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -32157,7 +31946,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -32299,7 +32087,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -32453,7 +32240,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -32598,7 +32384,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -32753,7 +32538,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -32915,7 +32699,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -33062,7 +32845,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -33225,7 +33007,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -33391,7 +33172,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -33544,7 +33324,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -33693,7 +33472,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -33837,7 +33615,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -33992,7 +33769,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -34158,7 +33934,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -34318,7 +34093,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -34485,7 +34259,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -34630,7 +34403,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -34789,7 +34561,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -34960,7 +34731,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -35115,7 +34885,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -35258,7 +35027,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -35412,7 +35180,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -35551,7 +35318,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -35695,7 +35461,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -35865,7 +35630,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -36024,7 +35788,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -36169,7 +35932,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -36328,7 +36090,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -36483,7 +36244,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 5,
       "team": -1,
@@ -36643,7 +36403,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -36772,7 +36531,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -36913,7 +36671,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -37085,7 +36842,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -37243,7 +36999,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -37408,7 +37163,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -37583,7 +37337,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -37730,7 +37483,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -37874,7 +37626,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -38014,7 +37765,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -38157,7 +37907,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -38334,7 +38083,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -38485,7 +38233,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -38631,7 +38378,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -38787,7 +38533,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -38951,7 +38696,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -39128,7 +38872,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -39284,7 +39027,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -39445,7 +39187,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -39590,7 +39331,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -39734,7 +39474,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 3,
       "team": -1,
@@ -39888,7 +39627,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -40040,7 +39778,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 3,
       "team": -1,
@@ -40190,7 +39927,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -40330,7 +40066,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -40478,7 +40213,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -40645,7 +40379,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -40821,7 +40554,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -40996,7 +40728,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -41154,7 +40885,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -41312,7 +41042,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -41451,7 +41180,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -41586,7 +41314,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -41728,7 +41455,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -41886,7 +41612,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -42038,7 +41763,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -42191,7 +41915,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -42332,7 +42055,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -42491,7 +42213,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 1,
       "team": -1,
@@ -42636,7 +42357,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -42783,7 +42503,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -42930,7 +42649,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -43087,7 +42805,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -43234,7 +42951,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -43403,7 +43119,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -43567,7 +43282,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -43724,7 +43438,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -43916,7 +43629,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -44042,7 +43754,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -44181,7 +43892,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -44322,7 +44032,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -44486,7 +44195,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -44643,7 +44351,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -44796,7 +44503,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -44949,7 +44655,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -45100,7 +44805,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -45229,7 +44933,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -45364,7 +45067,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -45529,7 +45231,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -45687,7 +45388,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -45851,7 +45551,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -45981,7 +45680,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -46125,7 +45823,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -46265,7 +45962,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -46427,7 +46123,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -46579,7 +46274,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -46716,7 +46410,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -46890,7 +46583,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -47040,7 +46732,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -47183,7 +46874,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -47340,7 +47030,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -47504,7 +47193,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -47668,7 +47356,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 5,
       "team": -1,
@@ -47823,7 +47510,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 3,
       "team": -1,
@@ -47958,7 +47644,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -48102,7 +47787,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -48236,7 +47920,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 3,
       "team": -1,
@@ -48399,7 +48082,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -48536,7 +48218,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -48679,7 +48360,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -48848,7 +48528,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -49014,7 +48693,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -49188,7 +48866,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -49351,7 +49028,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -49511,7 +49187,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -49683,7 +49358,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -49855,7 +49529,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -50013,7 +49686,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -50158,7 +49830,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -50314,7 +49985,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -50482,7 +50152,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -50635,7 +50304,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -50804,7 +50472,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -50949,7 +50616,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 5,
       "team": -1,
@@ -51085,7 +50751,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -51247,7 +50912,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -51374,7 +51038,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -51515,7 +51178,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -51666,7 +51328,6 @@
     "invisible": true,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 5,
       "team": -1,
@@ -51836,7 +51497,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -52001,7 +51661,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -52144,7 +51803,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -52295,7 +51953,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -52449,7 +52106,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -52601,7 +52257,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -52778,7 +52433,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -52930,7 +52584,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -53079,7 +52732,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -53215,7 +52867,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -53354,7 +53005,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": 10,
       "team": -1,
@@ -53495,7 +53145,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -53628,7 +53277,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -53771,7 +53419,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -53977,7 +53624,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -54160,7 +53806,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -54307,7 +53952,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -54480,7 +54124,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -54643,7 +54286,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
@@ -54787,7 +54429,6 @@
     "invisible": false,
     "limits": {
       "extraPlayer": 0,
-      "monument": false,
       "noLimit": false,
       "player": -1,
       "team": -1,
