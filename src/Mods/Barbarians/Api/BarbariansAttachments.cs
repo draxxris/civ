@@ -15,8 +15,8 @@ public sealed class HandicapBarbariansDef : ContentAttachment<HandicapDef>
     public static readonly HandicapBarbariansDef None = new();
     /// <summary>Turns before barbarians may appear, before the game speed's <see cref="GameSpeedBarbariansDef.BarbPercent"/>.</summary>
     public int BarbarianCreationTurnsElapsed { get; init; }
-    /// <summary>Unowned land tiles per barbarian land unit, as imported; the mod's hex rules scale it. Zero or less
-    /// spawns no land units.</summary>
+    /// <summary>Unowned land tiles per barbarian land unit. The data file holds the imported value; the loaded row
+    /// holds it multiplied by the mod's hex <c>UnownedTilesMultiplier</c>. Zero or less spawns no land units.</summary>
     public int UnownedTilesPerBarbarianUnit { get; init; }
     /// <summary>Unowned coastal water tiles per barbarian ship, before the factor of three; zero or less means 40.</summary>
     public int UnownedWaterTilesPerBarbarianUnit { get; init; }
