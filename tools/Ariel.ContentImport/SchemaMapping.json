@@ -3467,14 +3467,6 @@
         "target": "UnitClassInfo"
       },
       {
-        "source": "CivilizationNames",
-        "property": "CivilizationNames",
-        "kind": "mapText",
-        "target": "CivilizationInfo",
-        "key": "CivilizationType",
-        "value": "CivilizationUniqueName"
-      },
-      {
         "source": "Combat",
         "property": "CombatType",
         "kind": "ref",
@@ -3525,14 +3517,6 @@
         "value": "bFeatureImpassable"
       },
       {
-        "source": "FeatureNatives",
-        "property": "FeatureNatives",
-        "kind": "mapBool",
-        "target": "FeatureInfo",
-        "key": "FeatureType",
-        "value": "bFeatureNative"
-      },
-      {
         "source": "FlankingStrikes",
         "property": "FlankingStrikes",
         "kind": "mapInt",
@@ -3554,14 +3538,6 @@
         "target": "TechInfo"
       },
       {
-        "source": "ForceObsoleteUnitClasses",
-        "property": "ForceObsoleteUnitClasses",
-        "kind": "mapBool",
-"target": "UnitClassInfo",
-        "key": "ForceObsoleteUnitClassType",
-        "value": "bForceObsoleteUnitClass"
-      },
-      {
         "source": "FreePromotions",
         "property": "FreePromotions",
         "kind": "mapBool",
@@ -3574,20 +3550,6 @@
         "property": "Invisibility",
         "kind": "ref",
         "target": "InvisibleInfo"
-      },
-      {
-        "source": "NotUnitAIs",
-        "property": "ExcludedUnitAiTypes",
-        "kind": "mapBool",
-        "target": "UnitAIInfo",
-        "key": "UnitAIType",
-        "value": "bUnitAI"
-      },
-      {
-        "source": "OverrideResourceBuilding",
-        "property": "OverrideResourceBuilding",
-        "kind": "refs",
-        "target": "BuildingInfo"
       },
       {
         "source": "ProductionTraits",
@@ -3632,14 +3594,6 @@
         "value": "bTerrainImpassable"
       },
       {
-        "source": "TerrainNatives",
-        "property": "TerrainNatives",
-        "kind": "mapBool",
-        "target": "TerrainInfo",
-        "key": "TerrainType",
-        "value": "bTerrainNative"
-      },
-      {
         "source": "TerrainPassableTechs",
         "property": "TerrainPassableTechs",
         "kind": "mapRef",
@@ -3647,11 +3601,6 @@
         "valueTarget": "TechInfo",
         "key": "TerrainType",
         "value": "PassableTech"
-      },
-      {
-        "source": "UniqueNames",
-        "property": "UniqueNames",
-        "kind": "texts"
       },
       {
         "source": "UnitAIs",
@@ -3670,28 +3619,12 @@
         "value": "iUnitClassMod"
       },
       {
-        "source": "UnitClassDefenders",
-        "property": "DefenderUnits",
-        "kind": "mapBool",
-        "target": "UnitClassInfo",
-        "key": "UnitClassDefenderType",
-        "value": "bUnitClassDefender"
-      },
-      {
         "source": "UnitClassDefenseMods",
         "property": "UnitDefenseModifiers",
         "kind": "mapInt",
         "target": "UnitClassInfo",
         "key": "UnitClassType",
         "value": "iUnitClassMod"
-      },
-      {
-        "source": "UnitClassTargets",
-        "property": "TargetUnits",
-        "kind": "mapBool",
-        "target": "UnitClassInfo",
-        "key": "UnitClassTargetType",
-        "value": "bUnitClassTarget"
       },
       {
         "source": "UnitClassUpgrades",
@@ -3710,28 +3643,12 @@
         "value": "iUnitCombatCollateralImmune"
       },
       {
-        "source": "UnitCombatDefenders",
-        "property": "DefenderCombatTypes",
-        "kind": "mapBool",
-        "target": "UnitCombatInfo",
-        "key": "UnitCombatDefenderType",
-        "value": "bUnitCombatDefender"
-      },
-      {
         "source": "UnitCombatMods",
         "property": "CombatTypeModifiers",
         "kind": "mapInt",
         "target": "UnitCombatInfo",
         "key": "UnitCombatType",
         "value": "iUnitCombatMod"
-      },
-      {
-        "source": "UnitCombatTargets",
-        "property": "TargetCombatTypes",
-        "kind": "mapBool",
-        "target": "UnitCombatInfo",
-        "key": "UnitCombatTargetType",
-        "value": "bUnitCombatTarget"
       },
       {
         "source": "bAlwaysHostile",
@@ -3746,18 +3663,6 @@
         "default": 0
       },
       {
-        "source": "bBarbariansColonisator",
-        "property": "BarbariansColonisator",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bBribeBarbarian",
-        "property": "BribeBarbarian",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bCanMoveAllTerrain",
         "property": "CanMoveAllTerrain",
         "kind": "bool",
@@ -3766,48 +3671,6 @@
       {
         "source": "bCanMoveImpassable",
         "property": "CanMoveImpassable",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDCMAirBomb1",
-        "property": "AirBomb1",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDCMAirBomb2",
-        "property": "AirBomb2",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDCMAirBomb3",
-        "property": "AirBomb3",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDCMAirBomb4",
-        "property": "AirBomb4",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDCMAirBomb5",
-        "property": "AirBomb5",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDCMFighterEngage",
-        "property": "FighterEngagement",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bDestroy",
-        "property": "Destroy",
         "kind": "bool",
         "default": 0
       },
@@ -3830,12 +3693,6 @@
         "default": 0
       },
       {
-        "source": "bForcePeace",
-        "property": "ForcePeace",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bFound",
         "property": "CanFoundCity",
         "kind": "bool",
@@ -3844,12 +3701,6 @@
       {
         "source": "bGoldenAge",
         "property": "GoldenAge",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bGoodwill",
-        "property": "Goodwill",
         "kind": "bool",
         "default": 0
       },
@@ -3878,28 +3729,10 @@
         "default": false
       },
       {
-        "source": "bInvestigate",
-        "property": "Investigate",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bInvisible",
         "property": "Invisible",
         "kind": "bool",
         "default": 0
-      },
-      {
-        "source": "bLineOfSight",
-        "property": "LineOfSight",
-        "kind": "bool",
-        "default": false
-      },
-      {
-        "source": "bMechanized",
-        "property": "Mechanized",
-        "kind": "bool",
-        "default": false
       },
       {
         "source": "bMilitaryHappiness",
@@ -3918,12 +3751,6 @@
         "property": "MilitarySupport",
         "kind": "bool",
         "default": 0
-      },
-      {
-        "source": "bMilitaryTrade",
-        "property": "MilitaryTrade",
-        "kind": "bool",
-        "default": false
       },
       {
         "source": "bNoBadGoodies",
@@ -3968,44 +3795,8 @@
         "default": 0
       },
       {
-        "source": "bPrereqBonuses",
-        "property": "RequiresResourceArea",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bPrereqReligion",
-        "property": "RequiresReligion",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bQuickCombat",
-        "property": "QuickCombat",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bRivalTerritory",
         "property": "RivalTerritory",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bSabotage",
-        "property": "Sabotage",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bStateReligion",
-        "property": "RequiresStateReligion",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bStealPlans",
-        "property": "StealPlans",
         "kind": "bool",
         "default": 0
       },
@@ -4013,24 +3804,6 @@
         "source": "bSuicide",
         "property": "Suicide",
         "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bUpgradeImprovements",
-        "property": "UpgradeImprovements",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bWorkerTrade",
-        "property": "WorkerTrade",
-        "kind": "bool",
-        "default": false
-      },
-      {
-        "source": "iAIWeight",
-        "property": "AiWeight",
-        "kind": "int",
         "default": 0
       },
       {
@@ -4060,18 +3833,6 @@
       {
         "source": "iAnimalCombat",
         "property": "AnimalCombat",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAsset",
-        "property": "Asset",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iBaseFoodChange",
-        "property": "BaseFoodChange",
         "kind": "int",
         "default": 0
       },
@@ -4142,20 +3903,8 @@
         "default": 0
       },
       {
-        "source": "iCommandRange",
-        "property": "CommandRange",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iConscription",
         "property": "Conscription",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iControlPoints",
-        "property": "ControlPoints",
         "kind": "int",
         "default": 0
       },
@@ -4166,26 +3915,8 @@
         "default": 0
       },
       {
-        "source": "iCultureGarrison",
-        "property": "CultureGarrison",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDCMBombRange",
         "property": "BombRange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDropRange",
-        "property": "DropRange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iEspionagePoints",
-        "property": "EspionagePoints",
         "kind": "int",
         "default": 0
       },
@@ -4226,12 +3957,6 @@
         "default": 0
       },
       {
-        "source": "iMinAreaSize",
-        "property": "MinAreaSize",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iMoves",
         "property": "Moves",
         "kind": "int",
@@ -4242,23 +3967,6 @@
         "property": "NukeRange",
         "kind": "int",
         "default": 0
-      },
-      {
-        "source": "iOrderPriority",
-        "property": "OrderPriority",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iPower",
-        "property": "Power",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iSpecialCargoSpace",
-        "property": "SpecialCargoCapacity",
-        "kind": "csvInts"
       },
       {
         "source": "iTotalCargo",
@@ -4438,12 +4146,6 @@
         "value": "bFeatureDoubleMove"
       },
       {
-        "source": "IgnoreTerrainDamage",
-        "property": "IgnoreTerrainDamage",
-        "kind": "ref",
-        "target": "TerrainInfo"
-      },
-      {
         "source": "ObsoleteTech",
         "property": "ObsoleteTech",
         "kind": "ref",
@@ -4508,12 +4210,6 @@
         "default": 0
       },
       {
-        "source": "bCanLeadThroughPeaks",
-        "property": "CanLeadThroughPeaks",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bCanMovePeaks",
         "property": "CanMovePeaks",
         "kind": "bool",
@@ -4538,20 +4234,8 @@
         "default": 0
       },
       {
-        "source": "bIsPirate",
-        "property": "IsPirate",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bLeader",
         "property": "Leader",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bOnslaught",
-        "property": "Onslaught",
         "kind": "bool",
         "default": 0
       },
@@ -4624,18 +4308,6 @@
       {
         "source": "iCombatPercent",
         "property": "CombatPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCommandRange",
-        "property": "CommandRange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iControlPoints",
-        "property": "ControlPoints",
         "kind": "int",
         "default": 0
       },
@@ -4738,12 +4410,6 @@
       {
         "source": "iWithdrawalChange",
         "property": "WithdrawalChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iRevoltProtection",
-        "property": "RevoltProtectionPercent",
         "kind": "int",
         "default": 0
       }
@@ -6445,26 +6111,7 @@
     "definition": "UnitCategoryDef",
     "mod": "military",
     "fields": [
-      {
-        "source": "CarrierUnitAIs",
-        "property": "CarrierUnitAis",
-        "kind": "mapBool",
-        "target": "UnitAIInfo",
-        "key": "UnitAIType",
-        "value": "bUnitAI"
-      },
-      {
-        "source": "bCityLoad",
-        "property": "CityLoad",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bValid",
-        "property": "Valid",
-        "kind": "bool",
-        "default": 0
-      }
+      
     ],
     "requirements": []
   },
@@ -6647,18 +6294,6 @@
     "definition": "VictoryIdentityDef",
     "mod": "foundation",
     "fields": [],
-    "requirements": []
-  },
-  {
-    "sourceClass": "MissionInfo",
-    "definition": "MissionDef",
-    "mod": "military",
-    "fields": [
-      { "source": "iTime", "property": "Time", "kind": "int", "default": 0 },
-      { "source": "bTarget", "property": "Target", "kind": "bool", "default": false },
-      { "source": "bBuild", "property": "Build", "kind": "bool", "default": false },
-      { "source": "bVisible", "property": "Visible", "kind": "bool", "default": false }
-    ],
     "requirements": []
   },
   {

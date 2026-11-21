@@ -1,9 +1,5 @@
 [
   {
-    "carrierUnitAis": {
-      "military:unitai_carrier_sea": true
-    },
-    "cityLoad": false,
     "era": null,
     "help": "",
     "icon": "",
@@ -12,14 +8,15 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "CarrierUnitAIs",
+      "CarrierUnitAIs/CarrierUnitAI",
+      "CarrierUnitAIs/CarrierUnitAI/UnitAIType",
+      "CarrierUnitAIs/CarrierUnitAI/bUnitAI",
+      "bValid"
+    ]
   },
   {
-    "carrierUnitAis": {
-      "military:unitai_assault_sea": true
-    },
-    "cityLoad": false,
     "era": null,
     "help": "",
     "icon": "",
@@ -28,14 +25,15 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "CarrierUnitAIs",
+      "CarrierUnitAIs/CarrierUnitAI",
+      "CarrierUnitAIs/CarrierUnitAI/UnitAIType",
+      "CarrierUnitAIs/CarrierUnitAI/bUnitAI",
+      "bValid"
+    ]
   },
   {
-    "carrierUnitAis": {
-      "military:unitai_missile_carrier_sea": true
-    },
-    "cityLoad": true,
     "era": null,
     "help": "",
     "icon": "",
@@ -44,16 +42,16 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "CarrierUnitAIs",
+      "CarrierUnitAIs/CarrierUnitAI",
+      "CarrierUnitAIs/CarrierUnitAI/UnitAIType",
+      "CarrierUnitAIs/CarrierUnitAI/bUnitAI",
+      "bCityLoad",
+      "bValid"
+    ]
   },
   {
-    "carrierUnitAis": {
-      "military:unitai_assault_sea": true,
-      "military:unitai_missionary_sea": true,
-      "military:unitai_spy_sea": true
-    },
-    "cityLoad": false,
     "era": null,
     "help": "",
     "icon": "",
@@ -62,14 +60,15 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "CarrierUnitAIs",
+      "CarrierUnitAIs/CarrierUnitAI",
+      "CarrierUnitAIs/CarrierUnitAI/UnitAIType",
+      "CarrierUnitAIs/CarrierUnitAI/bUnitAI",
+      "bValid"
+    ]
   },
   {
-    "carrierUnitAis": {
-      "military:unitai_carrier_sea": true
-    },
-    "cityLoad": false,
     "era": null,
     "help": "",
     "icon": "",
@@ -78,14 +77,15 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "CarrierUnitAIs",
+      "CarrierUnitAIs/CarrierUnitAI",
+      "CarrierUnitAIs/CarrierUnitAI/UnitAIType",
+      "CarrierUnitAIs/CarrierUnitAI/bUnitAI",
+      "bValid"
+    ]
   },
   {
-    "carrierUnitAis": {
-      "military:unitai_missile_carrier_sea": true
-    },
-    "cityLoad": true,
     "era": null,
     "help": "",
     "icon": "",
@@ -94,14 +94,16 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "CarrierUnitAIs",
+      "CarrierUnitAIs/CarrierUnitAI",
+      "CarrierUnitAIs/CarrierUnitAI/UnitAIType",
+      "CarrierUnitAIs/CarrierUnitAI/bUnitAI",
+      "bCityLoad",
+      "bValid"
+    ]
   },
   {
-    "carrierUnitAis": {
-      "military:unitai_missile_carrier_sea": true
-    },
-    "cityLoad": true,
     "era": null,
     "help": "",
     "icon": "",
@@ -110,12 +112,16 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "CarrierUnitAIs",
+      "CarrierUnitAIs/CarrierUnitAI",
+      "CarrierUnitAIs/CarrierUnitAI/UnitAIType",
+      "CarrierUnitAIs/CarrierUnitAI/bUnitAI",
+      "bCityLoad",
+      "bValid"
+    ]
   },
   {
-    "carrierUnitAis": {},
-    "cityLoad": false,
     "era": null,
     "help": "",
     "icon": "",
@@ -124,12 +130,11 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "bValid"
+    ]
   },
   {
-    "carrierUnitAis": {},
-    "cityLoad": false,
     "era": null,
     "help": "",
     "icon": "",
@@ -138,7 +143,8 @@
     "pedia": "",
     "requirements": null,
     "strategy": "",
-    "unsupported": [],
-    "valid": true
+    "unsupported": [
+      "bValid"
+    ]
   }
 ]

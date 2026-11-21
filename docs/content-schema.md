@@ -20,7 +20,7 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
 - Economy: `ProcessDef`.
 - Cities: `BuildingDef`, `BuildingCategoryDef`, and `HurryDef`.
 - Military: `UnitDef`, `UnitCombatDef`, `UnitAiDef`, `UnitCategoryDef`, `DomainDef`,
-  `InvisibilityDef`, `PromotionDef`, and `MissionDef`.
+  `InvisibilityDef`, and `PromotionDef`.
 - Government: `CivicDef`, `CivicOptionDef`, and `UpkeepDef`.
 - Peoples: `CivilizationDef`, `LeaderDef`, and `TraitDef`.
 - Victory: `VictoryDef`, the executable victory conditions (`data/victory.json`, hand-written;
