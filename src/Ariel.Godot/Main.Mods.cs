@@ -9,14 +9,12 @@ public partial class Main
     private ModManagerScreen? _modManager;
     private bool _loadAttempted;
     private string? _profileError;
-    private string? _migrationNotice;
     private string ProfilePath => System.IO.Path.Combine(OS.GetUserDataDir(), "mod-profile.json");
     private bool AutomaticStartup => DisplayServer.GetName() == "headless" || _debug.Unattended
         || OS.GetCmdlineUserArgs().Contains("--skip-mod-manager");
 
     private void BeginModStartup()
     {
-        MigrateOldUserData();
         try
         {
             _discovery = ModDiscovery.DiscoverMerged(BundledModsRoots(), System.IO.Path.Combine(OS.GetUserDataDir(), "mods"),
@@ -32,26 +30,6 @@ public partial class Main
         catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException)
         {
             ModLoadFailed("Could not discover mods: " + error.Message);
-        }
-    }
-
-    /// <summary>Copy the previous application name's saves and mods once, before discovery reads the mod folder.</summary>
-    private void MigrateOldUserData()
-    {
-        var userData = OS.GetUserDataDir();
-        try
-        {
-            var report = UserDataMigration.Migrate(UserDataMigration.LegacyRootFor(userData), userData);
-            if (report.Conflicts.Count == 0) return;
-            _migrationNotice = "The old data folder holds a different copy of these files. Both copies were kept; "
-                + "this run uses the new folder:\n" + string.Join("\n", report.Conflicts);
-            GD.PrintErr(_migrationNotice);
-        }
-        catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException)
-        {
-            // Starting with the new folder is always better than refusing to start.
-            _migrationNotice = "Could not copy saves and mods from the old data folder: " + error.Message;
-            GD.PrintErr(_migrationNotice);
         }
     }
 
@@ -81,7 +59,7 @@ public partial class Main
         _setup?.Hide();
         _status.Visible = false;
         _modManager?.QueueFree();
-        _modManager = new ModManagerScreen(_discovery, _enabledMods, _loadAttempted, _profileError, _migrationNotice,
+        _modManager = new ModManagerScreen(_discovery, _enabledMods, _loadAttempted, _profileError,
             _setup == null ? null : CloseModManager);
         _modManager.ApplyRequested += ApplyModSelection;
         AddChild(_modManager);

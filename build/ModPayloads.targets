@@ -25,12 +25,6 @@
   </ItemGroup>
 
   <Target Name="CopyModPayloads" AfterTargets="Build">
-    <!-- The base modules (the rules modules and the AI) were mods once. A payload an earlier build staged would load
-         beside the linked-in module and claim its id, so drop it. -->
-    <ItemGroup>
-      <_FormerMod Include="Foundation;World;Research;Economy;Cities;Military;Government;Peoples;Ai;TechTree;Diplomacy" />
-    </ItemGroup>
-    <RemoveDir Directories="@(_FormerMod->'$(OutDir)mods/%(Identity)');@(_FormerMod->'$(OutDir)optional-mods/%(Identity)')" />
     <ItemGroup>
       <_MainMod Include="$(ArielMainMods)" />
       <_MainBin Include="$(_ArielModsSource)/%(_MainMod.Identity)/bin/$(Configuration)/net10.0/Ariel.Mods.*.dll" ModDir="%(_MainMod.Identity)" />

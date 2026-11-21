@@ -45,7 +45,7 @@ public sealed class ModSelection
         var pending = new Queue<string>(enabledIds.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal));
         while (pending.TryDequeue(out var id))
         {
-            if (!visited.Add(id) || Ariel.Composition.BaseGame.IsBase(id) || Ariel.Composition.BaseGame.IsFoldedMod(id)) continue;
+            if (!visited.Add(id) || Ariel.Composition.BaseGame.IsBase(id)) continue;
             if (!available.TryGetValue(id, out var candidates))
             {
                 string reason = reasons.TryGetValue(id, out var parents) ? $" Required by: {string.Join(", ", parents.Order(StringComparer.Ordinal))}." : "";

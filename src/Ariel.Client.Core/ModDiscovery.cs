@@ -109,16 +109,6 @@ public static class ModDiscovery
             ids = ReadIdentities(json);
             if (ids.Count > 1) throw new InvalidDataException("The manifest declares conflicting IDs.");
             var manifest = ReadManifest(json);
-            var assembly = Path.Combine(dir, manifest.Assembly);
-            if (LegacyModuleCheck.RequiresPreRenameCore(assembly))
-            {
-                // A binary that needs the pre-rename core assembly cannot bind, so it is dropped instead of reserving
-                // its ID: a bundled copy of the same ID is obsoleted by this one, not replaced by it, and must still
-                // start. The report tells the player what to do with the file.
-                errors.Add($"Mod '{manifest.Id}' in '{dir}' was built against {LegacyModuleCheck.PreRenameStem}.Core " +
-                    "before the rename and cannot load. Update it to the current mod API, or disable or remove it.");
-                return [];
-            }
             return [new(manifest, dir) { Source = source }];
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException or InvalidDataException)

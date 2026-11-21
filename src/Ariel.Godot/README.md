@@ -84,34 +84,16 @@ dependency-valid selection can still lack the content for game setup. The client
 this error without starting a game.
 
 Headless runs, screenshot runs, FPS probes, and `--skip-mod-manager` bypass the startup
-screen but honor the profile. They use all installed mods when no profile exists.
+screen but honor the profile. With no profile they use the default selection (every
+installed mod but the bundled optional ones), plus the mod whose screen `--stage` or
+`--open-screen` names.
 Invalid profiles or selections make these runs exit with code 1. For an isolated smoke
 run, use a separate Godot user-data directory through `XDG_DATA_HOME` on Linux.
 
-### User data migration and legacy mods
+### Environment variables
 
-The Godot user-data directory is named after the application name `Ariel` (previously
-`Civ`). On first startup, the client performs a one-time, restart-safe migration copying
-`saves`, `mods`, and `mod-profile.json` from the legacy `Civ` directory to `Ariel`:
-
-- Each copied file is verified against its source before finalizing.
-- If identical files exist at both paths, copying is skipped.
-- If differing files exist at both paths, neither is overwritten: both copies are kept,
-  the new `Ariel` directory wins for the run, and a non-fatal conflict notice is logged.
-- On completion, `user-data-migration.json` is written to the user-data root so future
-  runs do not re-run migration or repeat conflict notices.
-
-Mod assemblies built against pre-rename assemblies (`Civ.*`, including `Civ.Core`)
-cannot bind to the current engine. Mod discovery detects these binaries via assembly
-reference inspection and excludes them from loading so that incompatible legacy mods do
-not crash startup. The mod manager displays an actionable error telling the user to
-update, disable, or remove the mod.
-
-Environment variables:
-
-- `ARIEL_MODS`: optional additional mod discovery root (replaces `CIV_MODS`).
-- `ARIEL_TRACE_STARTUP`: set to `1` to output startup phase timings on stderr (replaces
-  `CIV_TRACE_STARTUP`).
+- `ARIEL_MODS`: optional additional mod discovery root.
+- `ARIEL_TRACE_STARTUP`: set to `1` to output startup phase timings on stderr.
 
 ## Controls
 
