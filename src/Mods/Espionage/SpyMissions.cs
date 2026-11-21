@@ -145,10 +145,10 @@ internal sealed class SpyMissionRules(EspionageService service)
                 break;
             case EspionageMissionKind.FomentUnhappiness:
                 // The unrest is the city's, so it ends if the city changes hands; fomenting again restarts it.
-                sim.Rules().TimedEffects.Set(sim, new TimedEffect
+                sim.Rules().Timers.Start(sim, new GameTimer
                 {
-                    Source = FomentUnhappinessSource, City = city.Id,
-                    ExpiresTurn = checked(sim.State.Turn + GamePace.Scale(sim, rules.FomentUnhappinessTurns)),
+                    Kind = FomentUnhappinessKind, Holder = TimerHolder.OfCity(city.Id),
+                    ExpiresTurn = sim.Rules().Timers.Expiry(sim, rules.FomentUnhappinessTurns),
                     Effects = [new() { Scope = ModifierScope.City, Key = "cities:unhappiness", Amount = rules.FomentUnhappiness }],
                 });
                 break;
@@ -177,8 +177,8 @@ internal sealed class SpyMissionRules(EspionageService service)
         city.ProductionQueue[0] = order with { Progress = order.Progress - EspionageService.Percent(order.Progress, percent) };
     }
 
-    /// <summary>The ledger source of a spy's fomented unhappiness, a timed effect on the city.</summary>
-    internal const string FomentUnhappinessSource = "espionage:foment_unhappiness";
+    /// <summary>The timer kind, and the ledger source, of a spy's fomented unhappiness: a timer on the city.</summary>
+    internal const string FomentUnhappinessKind = "espionage:foment_unhappiness";
 
     private static EspionageCityState CityState(Simulation sim, City city)
     {

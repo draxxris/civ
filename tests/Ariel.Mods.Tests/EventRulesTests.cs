@@ -145,8 +145,8 @@ public sealed class EventRulesTests
         sim.State.Turn += 1;
         Assert.Equal(0, Yield().Food);
         Turn(sim);
-        sim.Content.TurnSystems.Get("cities:timed_effects").Run(sim);
-        Assert.Empty(sim.Rules().TimedEffects.Active(sim));
+        sim.Content.TurnSystems.Get("foundation:timers").Run(sim);
+        Assert.Empty(sim.Rules().Timers.Active(sim));
     }
 
     [Fact]
@@ -182,6 +182,7 @@ public sealed class EventRulesTests
             {
                 Id = "empire_probe:decree_accept", Name = "Accept", Trigger = "empire_probe:decree", IsDefault = true, HappinessDelta = 1, HealthDelta = 1,
             });
+            context.RegisterService<ITimerKind>("other_timer", new TimerKind("empire_probe:other_timer"));
         }
     }
     private static Simulation EmpireScenario() => Scenario(EmpireContent.Value);
@@ -238,11 +239,11 @@ public sealed class EventRulesTests
         var e = Wait(sim, "events:herbalists");
         Choose(sim, e, "events:herbalists_fund");
         var effect = Assert.Single(Events(sim).ActiveEffects(sim, 0));
-        Assert.Same(effect, Assert.Single(sim.Rules().TimedEffects.Active(sim)));
+        Assert.Same(effect, Assert.Single(sim.Rules().Timers.Active(sim)));
         Assert.Equal("events:herbalists_fund", effect.Source);
-        Assert.Equal("events:herbalists", sim.Content.Get<EventOptionDef>(effect.Source).Trigger);
-        Assert.Equal(0, effect.Player);
-        Assert.Equal(city.Id, effect.City);
+        Assert.Equal("events:herbalists", sim.Content.Get<EventOptionDef>(effect.Key).Trigger);
+        Assert.Equal(0, effect.Holder.Player);
+        Assert.Equal(city.Id, effect.Holder.City);
         Assert.True(effect.IsPermanent);
         Assert.Empty(Events(sim).ActiveEffects(sim, 1));
     }
@@ -255,13 +256,13 @@ public sealed class EventRulesTests
         sim.TeamOf(0).Techs.Add("research:agriculture");
         var e = Wait(sim, "events:herbalists");
         Choose(sim, e, "events:herbalists_fund");
-        Assert.Contains(sim.Rules().TimedEffects.Active(sim), eff => eff.City == city.Id);
+        Assert.Contains(sim.Rules().Timers.Active(sim), eff => eff.Holder.City == city.Id);
         Assert.Equal(2, Health(sim, city));
 
         sim.State.SetWar(0, 1, true);
         sim.Rules().CityCapture.Capture(sim, city.Id, 1);
 
-        Assert.DoesNotContain(sim.Rules().TimedEffects.Active(sim), eff => eff.City == city.Id);
+        Assert.DoesNotContain(sim.Rules().Timers.Active(sim), eff => eff.Holder.City == city.Id);
         var capturedCity = sim.State.CityById(city.Id);
         Assert.Equal(0, Health(sim, capturedCity));
     }
@@ -360,13 +361,13 @@ public sealed class EventRulesTests
     [Fact]
     public void Active_event_effects_list_only_the_players_event_options()
     {
-        var sim = Scenario();
-        var store = sim.Rules().TimedEffects;
-        var mine = store.Add(sim, new TimedEffect { Source = "events:herbalists_fund", Player = 0 });
-        store.Add(sim, new TimedEffect { Source = "events:herbalists_fund", Player = 1 });
-        store.Add(sim, new TimedEffect { Source = "espionage:foment_unhappiness", Player = 0 });
+        var sim = EmpireScenario();
+        var store = sim.Rules().Timers;
+        var mine = store.Start(sim, new GameTimer { Kind = "events:option_effect", Key = "events:herbalists_fund", Holder = TimerHolder.OfPlayer(0) });
+        store.Start(sim, new GameTimer { Kind = "events:option_effect", Key = "events:herbalists_fund", Holder = TimerHolder.OfPlayer(1) });
+        store.Start(sim, new GameTimer { Kind = "empire_probe:other_timer", Holder = TimerHolder.OfPlayer(0) });
         Assert.Equal([mine], Events(sim).ActiveEffects(sim, 0));
-        Assert.True(store.Remove(sim, mine.Id));
+        Assert.True(store.Cancel(sim, mine.Id));
         Assert.Empty(Events(sim).ActiveEffects(sim, 0));
     }
 }

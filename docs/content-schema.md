@@ -134,8 +134,8 @@ happiness, health, and plot-yield changes use integer units (`GoldDelta`,
 culture uses hundredths of a point (`CityCultureHundredthsDelta`). Negative gold
 indicates a cost. `DurationTurns` makes happiness, health, and plot effects temporary,
 counted from the turn the event is answered and still applying on the turn that count
-reaches; zero means permanent. The lasting effects are kept as timed effects in the base
-game's store (see "Timed effects" in DESIGN.md). `Outcome` provides post-choice feedback text.
+reaches; zero means permanent. The lasting effects are kept as timers in the base
+game's store (see "Timers" in DESIGN.md). `Outcome` provides post-choice feedback text.
 
 ### Civic fields, effects and attachments
 

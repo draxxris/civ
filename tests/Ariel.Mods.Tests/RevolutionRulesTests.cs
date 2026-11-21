@@ -176,7 +176,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(9, Service(sim).DescribeCityStability(sim, city.Id).CooldownTurns);
         state.InstabilityIndex = 1000; Rebellions(sim);
         Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
-        var unrestEffect = sim.Rules().TimedEffects.Find(sim, "revolution:unrest", city: city.Id)!;
+        var unrestEffect = sim.Rules().Timers.Find(sim, "revolution:unrest", TimerHolder.OfCity(city.Id))!;
         Assert.Equal(sim.State.Turn + 1 + 3 * 85 / 100, unrestEffect.ExpiresTurn);
         Assert.Equal(unrestEffect.ExpiresTurn - sim.State.Turn, Service(sim).DescribeCityStability(sim, city.Id).UnrestTurns);
         sim.State.Turn = unrestEffect.ExpiresTurn;
@@ -293,11 +293,11 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var state = State(sim, city, 100);
         Assert.True(Service(sim).Incite(sim, city.Id));
         Assert.Equal(400, state.InstabilityIndex);
-        var store = sim.Rules().TimedEffects;
-        var unrest = store.Find(sim, "revolution:unrest", city: city.Id)!;
+        var store = sim.Rules().Timers;
+        var unrest = store.Find(sim, "revolution:unrest", TimerHolder.OfCity(city.Id))!;
         Assert.Equal(sim.State.Turn + 1 + 3 * 85 / 100, unrest.ExpiresTurn);
         // Inciting again only lengthens the unrest already under way, never shortens it.
-        store.Set(sim, unrest with { ExpiresTurn = sim.State.Turn + 50 });
+        store.Start(sim, unrest with { ExpiresTurn = sim.State.Turn + 50 });
         Assert.True(Service(sim).Incite(sim, city.Id));
         Assert.Equal(sim.State.Turn + 50, Assert.Single(store.Active(sim), e => e.Source == "revolution:unrest").ExpiresTurn);
         Assert.Equal(700, state.InstabilityIndex);
@@ -380,9 +380,9 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var city = P7ModFixture.City(sim);
         city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 900, RebellionCooldownUntilTurn = 5 });
         city.Extensions.Set(sim.Content, new EspionageCityState { RevoltUntilTurn = 9 });
-        var store = sim.Rules().TimedEffects;
-        store.Add(sim, new TimedEffect { Source = "revolution:unrest", City = city.Id, ExpiresTurn = 5 });
-        store.Add(sim, new TimedEffect { Source = "espionage:foment_unhappiness", City = city.Id, ExpiresTurn = 9 });
+        var store = sim.Rules().Timers;
+        store.Start(sim, new GameTimer { Kind = "revolution:unrest", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 5 });
+        store.Start(sim, new GameTimer { Kind = "espionage:foment_unhappiness", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 9 });
         sim.Events.Publish(new CityCaptured(city.Id, 0, 1));
         var revolution = city.Extensions.Get<RevolutionCityState>(sim.Content);
         var espionage = city.Extensions.Get<EspionageCityState>(sim.Content);

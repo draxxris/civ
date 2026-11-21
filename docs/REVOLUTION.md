@@ -143,7 +143,7 @@ already in disorder cannot be incited.
 ## State
 
 `RevolutionCityState` holds `InstabilityIndex`, `LastUpdatedTurn`,
-`RebellionCooldownUntilTurn` and `RevoltTurns`; unrest is a timed effect in the base
+`RebellionCooldownUntilTurn` and `RevoltTurns`; unrest is a timer in the base
 game's store. A conquest or a secession resets the component, so the loser's instability
 never reaches the winner and a new nation's capital starts calm.
 

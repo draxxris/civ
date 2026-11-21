@@ -28,6 +28,8 @@ public sealed class EspionageMod : IPreparableMod
         context.RegisterStateComponent<EspionagePlayerState>("player_state");
         context.RegisterStateComponent<EspionageCityState>("city_state");
         context.RegisterCommand<SetEspionageWeightCommand>("set_weight");
+        // Fomenting again restarts the unrest; it ends if the city changes hands.
+        context.RegisterService<ITimerKind>("foment_unhappiness", new TimerKind(SpyMissionRules.FomentUnhappinessKind));
         // Registration order is the order a spy's panel lists them in.
         foreach (var kind in EspionageMissionOrder.Display)
             context.RegisterService<IMission>(EspionageMissions.Of(kind)["espionage:".Length..], new SpyMission(service, service.Missions, kind));

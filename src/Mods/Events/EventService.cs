@@ -17,8 +17,11 @@ internal sealed class EventService : IEventService
     public IReadOnlyList<PendingEvent> Pending(Simulation sim, int player) =>
         Read(sim).Pending.Where(p => p.Player == player).OrderBy(p => p.Id).ToArray();
 
-    public IReadOnlyList<TimedEffect> ActiveEffects(Simulation sim, int player) => sim.Rules().TimedEffects.Active(sim)
-        .Where(e => e.Player == player && sim.Content.TryGet<EventOptionDef>(e.Source, out _)).ToArray();
+    /// <summary>The timer kind of every kept event option effect; the timer's key is the option.</summary>
+    internal const string OptionEffectKind = "events:option_effect";
+
+    public IReadOnlyList<GameTimer> ActiveEffects(Simulation sim, int player) => sim.Rules().Timers.Active(sim, OptionEffectKind)
+        .Where(e => e.Holder.Player == player).ToArray();
 
     public IReadOnlyList<string> Options(Simulation sim, int eventId) =>
         Read(sim).FindPending(eventId) is { } pending ? LegalOptions(sim, pending).Select(o => o.Id).ToArray() : [];
@@ -61,17 +64,20 @@ internal sealed class EventService : IEventService
         }
         var kept = KeptEffects(option);
         if (kept.Length == 0) return;
-        sim.Rules().TimedEffects.Add(sim, new TimedEffect
+        sim.Rules().Timers.Start(sim, new GameTimer
         {
-            Source = option.Id,
+            Kind = OptionEffectKind, Key = option.Id,
             // A city event ends with the city's capture; an empire-wide one (no city) covers every city the player owns.
-            Player = player.Id, City = pending.City, Plot = pending.Plot,
+            Holder = new() { Player = player.Id, City = Held(pending.City), Plot = Held(pending.Plot) },
             // Timed effects count from the resolution turn, so a late answer still gets its full duration, and last
             // through the expiry turn itself, as they always have.
             ExpiresTurn = option.DurationTurns > 0 ? sim.State.Turn + option.DurationTurns + 1 : 0,
             Effects = kept,
         });
     }
+
+    /// <summary>An event's city or plot, where a negative id means it has none.</summary>
+    private static int? Held(int id) => id >= 0 ? id : null;
 
     /// <summary>The option's lasting happiness, health and plot yield changes as modifiers.</summary>
     private static System.Collections.Immutable.ImmutableArray<ModifierEffect> KeptEffects(EventOptionDef option)

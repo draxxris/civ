@@ -25,6 +25,8 @@ public sealed class EventsMod : IPreparableMod
         context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new EventNotices());
         context.RegisterService<Ariel.Presentation.IPediaSource>("pedia", new EventPedia());
         context.RegisterStateComponent<EventState>("state");
+        // Each resolution is its own effect, so two answers to one trigger both apply.
+        context.RegisterService<ITimerKind>("option_effect", new TimerKind(EventService.OptionEffectKind) { Stacking = TimerStacking.Stack });
         context.RegisterCommand<ChooseEventOptionCommand>("choose_option");
         context.TurnSystems.Register(new EventTurn(service));
     }

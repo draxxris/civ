@@ -1245,7 +1245,7 @@ nation and returns the new player. Nothing is fought over, so it is not a captur
 - `ValidateSecession` refuses a nation's capital and last city, a game with no free
   civilization, and a game with no computer player to lead the nation.
 - `CitySeceded(City, PreviousOwner, Player)` is published, never `CityCaptured`: no capture
-  gold, razing or war score follows. Timed effects, the victory check, and the Espionage
+  gold, razing or war score follows. Timers, the victory check, and the Espionage
   and Revolution city state react to it as they do to a capture.
 
 The base rule that uses it is `cities:faction_breakaway`, a global step at
@@ -1610,14 +1610,14 @@ investigation. The service answers the base seam `IEspionageSpending`, so the ec
 leaves banking to it. Spy missions spend points and use a calculated success chance; running a
 mission lowers the attacker's own investment, so later missions cost more. Counter-
 espionage raises both cost and risk for a fixed number of turns. Fomented unhappiness is
-a timed effect on the city (Timed effects). All numbers come from
+a timer on the city (Timers). All numbers come from
 `data/espionage-rules.json`. Saved team, player, and city state tracks points, weights,
 remainders, and timers.
 
 Events roll eligible triggers per turn with the simulation RNG. Trigger definitions set
 eligibility, chance, repeat policy, and cooldown. Pending events hold a player choice.
 Options can change treasury, research, city stores, happiness, health, and plot yields.
-The lasting changes are timed effects (Timed effects) whose source is the option and whose
+The lasting changes are timers (Timers) whose key is the option and whose
 holder is the event's player, city and plot. A timed option counts its duration from the
 turn it is answered and still applies on its expiry turn. Unresolved events use a default
 option. AI players resolve events automatically.
@@ -1628,7 +1628,7 @@ the base game's movement barriers with its wonders that keep barbarians out (`IM
 timers, while completed effects do not repeat. Revolution tracks city instability from
 wellbeing, distance, religion, civics, anarchy, garrisons, Golden Ages, and natural
 recovery. Thresholds can trigger mutiny or rebellion; a rebellion and an incited revolt leave
-unrest, a timed effect on the city. Mutiny adds unhappiness; Warning
+unrest, a timer on the city. Mutiny adds unhappiness; Warning
 is a display-only alert. Players can suppress instability with gold, priced by the
 reduction, or with a military garrison. A city with no legal rebel tile does not rebel.
 A city left in revolt for `SecessionTurns` breaks away as a new nation through the base
@@ -2378,31 +2378,87 @@ key whose provider the content's mod does not reference. Effects are part of the
 definition, so they are in the content hash. A key nobody reads is legal and inert; the
 computer player values only the keys it knows (Computer players).
 
-### Timed effects
+### Timers
 
-A feature that grants modifiers for a while keeps them in the base game's one store,
-`ITimedEffects` (`GameRules.TimedEffects`, in Cities, contracts in
-`Contracts/TimedEffectContracts.cs`), instead of its own "until turn N" field, modifier
-source and pruning. A `TimedEffect` is a bundle of `ModifierEffect`s with a `Source` (the
-feature's id and the ledger source of every line), a holder (`Player`, `City`, `Plot`,
--1 when unused) and an `ExpiresTurn`, the first turn it no longer applies (0: never).
+Everything that "lasts N turns" is a timer in the base game's one store, `ITimers`
+(`GameRules.Timers`, a Foundation service; contracts in `Contracts/TimerContracts.cs`),
+not a feature's own "until turn N" field, modifier source and pruning. It lives in
+Foundation because nothing about it is specific to cities: Foundation is what every other
+module already references, and Cities (the modifier source) and the mods read it from
+there. A `GameTimer` has:
 
-- Where it applies: one `IModifierSource` (`cities:timed_effect_modifiers`) adds each
-  active effect to the calculations of its own scope that its holder takes part in. A
-  plot effect applies to `Plot`. A city effect applies to `City`, or, with no city, to
-  every city `Player` owns. A player effect applies to `Player`.
-- When it ends: an effect applies while `Turn < ExpiresTurn`. The turn system
-  `cities:timed_effects` (`TurnPhase.GameBegin`) drops the expired ones. An effect held by a
-  city ends when the city is captured or razed, because a conquest must not hand the loser's
-  spy unrest or event bonus to the winner.
-- API: `Add` (gives the next id), `Set` (replaces the effect with the same source and
-  holder), `Remove(id)`, `Find` (by id, or the active one by source and holder) and
-  `Active`. `TimedEffect.TurnsRemaining(turn)` is what a screen shows as "N turns
-  remaining". The store is saved as `TimedEffectState` (`cities:timed_effects`).
+- a `Kind`, the id of a registered `ITimerKind`, and an optional `Key` that tells apart
+  timers of one kind and holder (an event option's id); the ledger source of its modifier
+  lines is the key, or else the kind;
+- a `TimerHolder`: any of `Player`, `City`, `Plot`, `Unit`, and `Team` with `Rival` for a
+  pair (something one team has against another); unused parts are null;
+- an `ExpiresTurn`, the first turn it no longer applies (0: never), a `Value` (a number
+  the kind keeps with it, such as a cost percentage) and optional `Effects`, modifiers.
 
-On the store: an event option's lasting happiness, health and plot yields (Events), a
-spy's fomented unhappiness (Espionage, `espionage:foment_unhappiness`) and the unrest a
-rebellion or an incited revolt leaves (Revolution, `revolution:unrest`). Not on it, because
+A timer is active while `Turn < ExpiresTurn`. `Find(sim, kind, holder, key)`, `IsActive`
+and `Active` answer "is it on", and `GameTimer.TurnsRemaining(turn)` "how long is left";
+`ITimers.Expiry(sim, turns, lead)` is the standard expiry, `Turn + lead +
+GamePace.Scale(turns)`. Queries are a pass over the live timers, which are few. The store
+is saved as `TimerState` (`foundation:timers`) in start order.
+
+**A kind is registered like a victory condition or a mission**: a service implementing
+`ITimerKind : IHasId` (`ctx.RegisterService<ITimerKind>("name", kind)`); two kinds with
+one id fail at load, and starting a timer of an unregistered kind throws. `TimerKind` is
+the ready-made base. The kind declares the rules, so no caller re-implements them:
+
+| Declared on the kind | Choices |
+| --- | --- |
+| `Stacking`: what starting a timer does when one of its kind, key and holder is stored | `Replace` (the new one wins and counts as started again), `Prolong` (like Replace, but a running timer is never shortened: the later expiry wins), `Stack` (both are kept) |
+| `OnOwnerChange`: a city-held timer when the city is captured or breaks away | `End` (the default: a conquest must not hand the loser's penalties to the winner), `Keep`, `Transfer` (held by the new owner). A destroyed city always ends its timers |
+| `Expiry`: when a timer that ran out is dropped | `TurnStart` (`foundation:timers`, `TurnPhase.GameBegin`), or `OwnerTurnEnd` (`foundation:timers_turn_end`, `TimerSystems.TurnEndOrder`, the end of the last turn it applies, in its holder's owner's turn) for a timer whose end a rule of the owner's own turn depends on |
+
+**Hooks** are overridable on the kind (`Started`, `Changed` when a timer replaced or
+prolonged another, `Ended` with a `TimerEnd` reason: `Expired`, `Cancelled`, `HolderLost`),
+and the same moments are published as `TimerStarted`, `TimerChanged` and `TimerEnded`
+events, so a mod can react to a kind it does not own. Hooks run after the store is
+updated, so they may start or cancel timers.
+
+**Lifecycle**: every pass runs in start order (timer ids rise with each start), so expiry
+and hook order are deterministic and use no RNG. Passes allocate nothing when nothing
+ends. A city or unit that no longer exists ends its timers at the next turn start with
+`HolderLost`; a city that is captured, seceded or razed does so at once through
+`CityCaptured`, `CitySeceded` and `CityRazed`. Nothing publishes a unit's removal or a
+player's elimination, so the turn-start pass catches the unit, and a player's timers
+simply run out.
+
+**Modifiers**: one `IModifierSource` (`cities:timer_modifiers`) adds each active timer's
+`Effects` to the calculations of the effect's own scope that the holder takes part in. A
+plot effect applies to `Plot`, a city effect to `City` or, with no city, to every city
+`Player` owns, a player effect to `Player`, a unit effect to `Unit`.
+
+**How a mod adds a timed thing**:
+
+```csharp
+// Register the kind once, in Register.
+context.RegisterService<ITimerKind>("blessing",
+    new TimerKind("mymod:blessing") { Stacking = TimerStacking.Prolong });
+
+// Start it where the thing happens. A repeat prolongs the first.
+sim.Rules().Timers.Start(sim, new GameTimer
+{
+    Kind = "mymod:blessing", Holder = TimerHolder.OfCity(city.Id),
+    ExpiresTurn = sim.Rules().Timers.Expiry(sim, turns: 5),
+    Effects = [new() { Scope = ModifierScope.City, Key = "cities:happiness", Amount = 2 }],
+});
+
+// Ask: is it on, how long is left.
+var left = timers.Find(sim, "mymod:blessing", TimerHolder.OfCity(city.Id))?.TurnsRemaining(sim.State.Turn);
+```
+
+A timer with no `Effects` only limits an action (a cooldown). To react to a start or an
+end, subclass `TimerKind` and override `Started` / `Ended`, or subscribe to `TimerEnded`.
+
+On the store: an event option's lasting happiness, health and plot yields (Events,
+`events:option_effect`, `Stack`), a spy's fomented unhappiness (Espionage,
+`espionage:foment_unhappiness`, `Replace`) and the unrest a rebellion or an incited revolt
+leaves (Revolution, `revolution:unrest`, `Prolong`).
+
+Not on it, because they are not a plain "ends on turn N" timer:
 they are not a fixed modifier with an expiry:
 - Hurry and conscription anger (`HurryAngerTurns`, `ConscriptAngerTurns`) are pooled
   counters. Each use adds turns, the anger grows in steps with the turns left, and hurry
@@ -2442,7 +2498,7 @@ Registered state components across mods include:
 
 - Game: `ReligionGameState` (founded holy cities), `EspionageGameState` (global
   espionage points), `MilitaryGameState` (temporary recon sights), `VictoryGameState` (`victory:game_state`, the recorded win) and
-  `TimedEffectState` (`cities:timed_effects`, every timed modifier effect).
+  `TimerState` (`foundation:timers`, every timer).
 - Player: `EconomyPlayerState` (sliders, inflation, settlement), `GovernmentPlayerState`
   (anarchy, cooldowns), `ReligionPlayerState` (state religion, cooldown),
   `GreatPeoplePlayerState` (Golden Age timers), `MilitaryPlayerState` (combat general

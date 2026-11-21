@@ -26,6 +26,8 @@ public sealed class RevolutionMod : IPreparableMod
         context.RegisterService<IModifierSource>("unrest", service);
         context.RegisterStateComponent<RevolutionCityState>("city_state");
         context.RegisterCommand<SuppressRebellionCommand>("suppress_rebellion");
+        // Another rebellion or incited revolt prolongs unrest under way; a conquest ends it.
+        context.RegisterService<ITimerKind>("unrest_timer", new TimerKind(RevolutionService.UnrestKind) { Stacking = TimerStacking.Prolong });
         // A conquest must not hand the loser's instability, cooldown or unrest to the winner.
         context.Subscribe<CityCaptured>("reset_capture", (sim, captured) =>
         {
