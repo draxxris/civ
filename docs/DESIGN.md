@@ -452,7 +452,13 @@ attaches `CivicTradeDef` to civics (`trade:mercantilism` about
 and the state-religion bonuses), Revolution `CivicRevolutionDef` and ProjectsVictory
 `CivicProjectsDef`.
 
-The base schema keeps only the fields the base game reads. A field that only a mod reads is
+The base schema keeps only the fields the base game reads, except fields kept for planned
+work: the advanced start costs and points (`AdvancedStart*`) and the nuclear fields
+(`AllowsNukes`, `AllowsNuclearStrikes`, `NukeImmune`, `NukeRange`, `NukeModifier`,
+`NukeExplosionRand`), which wait for the roadmap's advanced start and nuclear weapons. An
+attachment that keeps unread fields for rules its mod does not run yet says so on its
+type (`CivicDiplomacyDef`, `CivicTradeDef`, `CivicRevolutionDef`, `CivicProjectsDef`). A
+field that only a mod reads is
 that mod's attachment, one type per (mod, target type) named `<Target><Mod>Def`. A rule
 constant only a mod reads is a row about the base game's single `RuleConstantsDef`
 (`trade:rule_constants` about `foundation:rule_constants`, type `RuleConstantsTradeDef`),
