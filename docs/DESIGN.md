@@ -2455,8 +2455,9 @@ end, subclass `TimerKind` and override `Started` / `Ended`, or subscribe to `Tim
 
 On the store: an event option's lasting happiness, health and plot yields (Events,
 `events:option_effect`, `Stack`), a spy's fomented unhappiness (Espionage,
-`espionage:foment_unhappiness`, `Replace`) and the unrest a rebellion or an incited revolt
-leaves (Revolution, `revolution:unrest`, `Prolong`).
+`espionage:foment_unhappiness`, `Replace`), the unrest a rebellion or an incited revolt
+leaves (Revolution, `revolution:unrest`, `Prolong`) and the cooldown before a city may
+rebel again (Revolution, `revolution:rebellion_cooldown`, `Replace`, no modifiers).
 
 Not on it, because they are not a plain "ends on turn N" timer:
 they are not a fixed modifier with an expiry:
@@ -2469,8 +2470,8 @@ they are not a fixed modifier with an expiry:
   read directly; no modifier calculation collects it.
 - A golden age stacks its length and can start a turn late. It sets the base golden-age
   flag and adds threshold-dependent plot yields through a yield finalizer.
-- Cooldowns ("may not rebel again until", civic and religion changes, event repeats)
-  limit actions; they modify nothing.
+- Other cooldowns (civic and religion changes, event repeats) are counters that run down
+  or records of the last time, not an expiry turn.
 
 ## Events and extension state
 

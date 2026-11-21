@@ -35,11 +35,11 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         var rules = Rules(sim);
         var ledger = InstabilityLedger(sim, city, rules);
         var status = Status(state.InstabilityIndex, rules);
-        if (state.IsRebellionOnCooldown(sim.State.Turn) && status == CityStabilityStatus.Rebellion)
+        if (status == CityStabilityStatus.Rebellion && CooldownTimer(sim, city) is not null)
             status = CityStabilityStatus.Mutiny;
         return new(cityId, state.InstabilityIndex, status,
             checked((int)ledger.Total("revolution:change")),
-            state.CooldownTurnsRemaining(sim.State.Turn),
+            CooldownTimer(sim, city)?.TurnsRemaining(sim.State.Turn) ?? 0,
             UnrestTimer(sim, city)?.TurnsRemaining(sim.State.Turn) ?? 0, SuppressionGold(sim, state.InstabilityIndex), ledger)
             { SecessionTurns = RevoltSecession.TurnsLeft(sim, city, state, rules) };
     }
@@ -174,6 +174,20 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         return true;
     }
 
+    /// <summary>The timer kind of the cooldown after a rebellion, during which the city cannot rebel again: a timer on
+    /// the city with no modifiers, which ends if the city changes hands.</summary>
+    internal const string CooldownKind = "revolution:rebellion_cooldown";
+
+    internal static GameTimer? CooldownTimer(Simulation sim, City city) =>
+        sim.Rules().Timers.Find(sim, CooldownKind, TimerHolder.OfCity(city.Id));
+
+    /// <summary>No rebellion for the configured turns after this one.</summary>
+    internal static void StartCooldown(Simulation sim, City city, RevolutionRulesDef rules)
+    {
+        var timers = sim.Rules().Timers;
+        timers.Start(sim, new GameTimer { Kind = CooldownKind, Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = timers.Expiry(sim, rules.CooldownTurns, lead: 1) });
+    }
+
     /// <summary>The timer kind, and the ledger source, of the unrest a rebellion or an incited revolt leaves: a timer on
     /// the city that ends if the city changes hands. A new one never shortens one still running.</summary>
     internal const string UnrestKind = "revolution:unrest";
@@ -205,7 +219,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (!PlayerRules.IsNation(sim, city.Owner)) return;
         var state = Read(sim, city);
         var rules = Rules(sim);
-        if (state.InstabilityIndex < rules.RebellionThreshold || state.IsRebellionOnCooldown(sim.State.Turn)) return;
+        if (state.InstabilityIndex < rules.RebellionThreshold || CooldownTimer(sim, city) is not null) return;
         RebellionSpawns.Trigger(sim, city, rules);
     }
 
