@@ -137,14 +137,11 @@ public sealed class UnitDef : GameContentDef
     public int AdvancedStartCost { get; init; } = 0;
     public int AdvancedStartCostIncrease { get; init; } = 0;
     public int AirCombat { get; init; } = 0;
-    public int AirCombatLimit { get; init; } = 0;
-    public int AirRange { get; init; } = 0;
     public int AirUnitCap { get; init; } = 0;
     public int AnimalCombat { get; init; } = 0;
     public int Asset { get; init; } = 0;
     public int BaseFoodChange { get; init; } = 0;
     public int BaseTrade { get; init; } = 0;
-    public int BombRate { get; init; } = 0;
     public int BombardRate { get; init; } = 0;
     public int Cargo { get; init; } = 0;
     public int ChanceFirstStrikes { get; init; } = 0;
@@ -164,7 +161,6 @@ public sealed class UnitDef : GameContentDef
     public int BombRange { get; init; } = 0;
     public int DropRange { get; init; } = 0;
     public int EspionagePoints { get; init; } = 0;
-    public int EvasionPercent { get; init; } = 0;
     public int ExtraCost { get; init; } = 0;
     public int FirstStrikes { get; init; } = 0;
     public int HillsAttack { get; init; } = 0;

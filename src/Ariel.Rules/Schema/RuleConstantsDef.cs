@@ -11,7 +11,6 @@ public sealed class RuleConstantsDef : GameContentDef
 
 public sealed record RuleConstants
 {
-    public int AirCombatDamage { get; init; }
     public int AmphibAttackModifier { get; init; }
     public int AtWarCultureAngerModifier { get; init; }
     public int BaseCityGrowthThreshold { get; init; }

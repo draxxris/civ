@@ -7,10 +7,19 @@ namespace Ariel.Mods.AirCombat;
 /// The base game keeps what aircraft are and where they may stand (bases, carriers, landing when a carrier sinks), the
 /// intercept activity and the reconnaissance sight it draws; this mod owns the missions, how likely a unit intercepts,
 /// the unit panel's mission orders, and how the computer player builds and flies aircraft.</summary>
-public sealed class AirCombatMod : IMod
+public sealed class AirCombatMod : IPreparableMod
 {
+    /// <summary>What units, improvements and the rule constants mean to air missions, attached to the base rows.</summary>
+    private static readonly ModJsonFile<UnitAirCombatDef[]> Units = new("data/unit-air-combat.json");
+    private static readonly ModJsonFile<ImprovementAirCombatDef[]> Improvements = new("data/improvement-air-combat.json");
+    private static readonly ModJsonFile<RuleConstantsAirCombatDef[]> Constants = new("data/rule-constants-air-combat.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Units, Improvements, Constants];
+
     public void Register(IModContext context)
     {
+        Ariel.Rules.ContentRegistration.Load(context, Units);
+        Ariel.Rules.ContentRegistration.Load(context, Improvements);
+        Ariel.Rules.ContentRegistration.Load(context, Constants);
         var service = new AirMissionService();
         context.RegisterService<IAirMissionService>("missions", service);
         context.RegisterService<IAirOperations>("operations", service);

@@ -92,7 +92,7 @@ internal sealed class AircraftWishes : IProductionWishes
         int wing = ctx.Units.Count(u => Aircraft.Is(ctx.Def(u))) + ctx.Cities.SelectMany(c => c.ProductionQueue)
             .Count(o => o.Kind == "cities:unit" && ctx.Sim.Content.TryGet<UnitDef>(o.ContentId, out var def) && Aircraft.Is(def));
         if (wing >= Math.Max(1, ctx.LandArmy / 6)) yield break;
-        if (ctx.BestUnit(city, Aircraft.Is, u => u.AirCombat * 10 + u.BombRate + u.InterceptionPercent) is { } best)
+        if (ctx.BestUnit(city, Aircraft.Is, u => u.AirCombat * 10 + AirMissionService.AirRules(ctx.Sim.Content, u.Id).BombRate + u.InterceptionPercent) is { } best)
             yield return new("cities:unit", best.Id, AircraftScore);
     }
 }

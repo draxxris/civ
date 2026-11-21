@@ -1704,12 +1704,6 @@
         "default": 0
       },
       {
-        "source": "iAirBombDefense",
-        "property": "AirBombDefense",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDefenseModifier",
         "property": "DefenseModifier",
         "kind": "int",
@@ -4094,18 +4088,6 @@
         "default": 0
       },
       {
-        "source": "iAirCombatLimit",
-        "property": "AirCombatLimit",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAirRange",
-        "property": "AirRange",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iAirUnitCap",
         "property": "AirUnitCap",
         "kind": "int",
@@ -4132,12 +4114,6 @@
       {
         "source": "iBaseTrade",
         "property": "BaseTrade",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iBombRate",
-        "property": "BombRate",
         "kind": "int",
         "default": 0
       },
@@ -4252,12 +4228,6 @@
       {
         "source": "iEspionagePoints",
         "property": "EspionagePoints",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iEvasionProbability",
-        "property": "EvasionPercent",
         "kind": "int",
         "default": 0
       },
@@ -7180,6 +7150,52 @@
         "source": "bSpy",
         "property": "Spy",
         "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitAirCombatDef",
+    "mod": "air_combat",
+    "fields": [
+      {
+        "source": "iAirCombatLimit",
+        "property": "AirCombatLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirRange",
+        "property": "AirRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBombRate",
+        "property": "BombRate",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEvasionProbability",
+        "property": "EvasionPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "ImprovementInfo",
+    "definition": "ImprovementAirCombatDef",
+    "mod": "air_combat",
+    "fields": [
+      {
+        "source": "iAirBombDefense",
+        "property": "AirBombDefense",
+        "kind": "int",
         "default": 0
       }
     ],

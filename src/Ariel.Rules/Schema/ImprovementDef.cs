@@ -47,7 +47,6 @@ public sealed class ImprovementDef : GameContentDef
     public bool IsWater { get; init; } = false;
     public int AdvancedStartCost { get; init; } = 0;
     public int AdvancedStartCostIncrease { get; init; } = 0;
-    public int AirBombDefense { get; init; } = 0;
     public int DefenseModifier { get; init; } = 0;
     public int DepletionRand { get; init; } = 0;
     public int FeatureGrowth { get; init; } = 0;

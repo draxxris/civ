@@ -462,7 +462,8 @@ percents in `BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeop
 and the per-handicap and per-world-size maintenance percents in `UnitCorporationsDef`,
 `HandicapCorporationsDef` and `WorldSizeCorporationsDef`, and Espionage marks spies and
 counter-spies in `UnitEspionageDef`, and Votes keeps a seat building's forced candidacy in
-the `BuildingVotesDef` row that already names its council; GreatPeople, which skips shrines when a great
+the `BuildingVotesDef` row that already names its council, and AirCombat keeps mission
+range, bombing and evasion in `UnitAirCombatDef` and `ImprovementAirCombatDef`; GreatPeople, which skips shrines when a great
 person builds, reads `BuildingReligionDef` through the Religion API it already references. A rule constant only a mod reads is a row about the base game's single
 `RuleConstantsDef` (`trade:rule_constants` about `foundation:rule_constants`, type
 `RuleConstantsTradeDef`), and a setting that varies by game speed, handicap, era or world size
@@ -1137,9 +1138,14 @@ registers `IAirOperations`, the unit panel's mission orders (`IUnitActionSource`
 `AiPlannerOrder.Air`) and aircraft production wishes (`air_combat:aircraft`: at war, the
 best aircraft at score 360 while the air wing is under a sixth of the land army).
 
+The mission numbers only this mod reads are its own rows: a unit's `AirRange`,
+`AirCombatLimit`, `BombRate` and `EvasionPercent` (`UnitAirCombatDef`), an improvement's
+`AirBombDefense` (`ImprovementAirCombatDef`) and the `AirCombatDamage` constant
+(`RuleConstantsAirCombatDef`).
+
 What stays in the base game: the unit, promotion and building fields that describe
-aircraft (`AirRange`, `AirCombat`, `AirCombatLimit`, `BombRate`, `InterceptionPercent`,
-`EvasionPercent`, `AirUnitCap`, `AirModifier`, `AirUnitCapacity`); where an aircraft may
+aircraft and that the base game or another mod reads (`AirCombat`, `InterceptionPercent`,
+`AirUnitCap`, `AirModifier`, `AirUnitCapacity`); where an aircraft may
 stand, with carriers and landing when a carrier sinks; the intercept activity and
 `InterceptedThisTurn` with its per-turn reset; and `MilitaryGameState.ReconSights`, which
 visibility reveals and the turn clears. The `IAirOperations` seam

@@ -3,7 +3,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 10,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 15,
@@ -75,7 +74,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 10,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 15,
@@ -147,7 +145,6 @@
     "actsAsCity": false,
     "advancedStartCost": 0,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 0,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -219,7 +216,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -302,7 +298,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -422,7 +417,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -542,7 +536,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:apple": {
         "connects": true,
@@ -676,7 +669,6 @@
     "actsAsCity": true,
     "advancedStartCost": 60,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 40,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 75,
@@ -755,7 +747,6 @@
     "actsAsCity": false,
     "advancedStartCost": 24,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:deer": {
         "connects": true,
@@ -883,7 +874,6 @@
     "actsAsCity": false,
     "advancedStartCost": 24,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -964,7 +954,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -1039,7 +1028,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:banana": {
         "connects": true,
@@ -1355,7 +1343,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {
       "world:ancienttemple": {
         "connects": true,
@@ -1497,7 +1484,6 @@
     "actsAsCity": false,
     "advancedStartCost": 60,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:methane": {
         "connects": true,
@@ -1601,7 +1587,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:corn": {
         "connects": true,
@@ -1738,7 +1723,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:clam": {
         "connects": true,
@@ -1887,7 +1871,6 @@
     "actsAsCity": false,
     "advancedStartCost": 48,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 20,
     "bonusEffects": {
       "world:banana": {
         "connects": false,
@@ -2071,7 +2054,6 @@
     "actsAsCity": true,
     "advancedStartCost": 60,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 20,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 50,
@@ -2150,7 +2132,6 @@
     "actsAsCity": true,
     "advancedStartCost": 80,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 60,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 100,
@@ -2229,7 +2210,6 @@
     "actsAsCity": false,
     "advancedStartCost": 50,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:thermal_vent": {
         "connects": true,
@@ -2346,7 +2326,6 @@
     "actsAsCity": false,
     "advancedStartCost": 60,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": true,
     "defenseModifier": 0,
@@ -2439,7 +2418,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -2520,7 +2498,6 @@
     "actsAsCity": false,
     "advancedStartCost": 120,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:apple": {
         "connects": true,
@@ -2665,7 +2642,6 @@
     "actsAsCity": false,
     "advancedStartCost": 24,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:banana": {
         "connects": false,
@@ -2812,7 +2788,6 @@
     "actsAsCity": false,
     "advancedStartCost": 48,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -2923,7 +2898,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -2998,7 +2972,6 @@
     "actsAsCity": false,
     "advancedStartCost": 24,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 10,
     "bonusEffects": {
       "world:coal": {
         "connects": true,
@@ -3235,7 +3208,6 @@
     "actsAsCity": false,
     "advancedStartCost": 64,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 10,
     "bonusEffects": {
       "world:bauxite": {
         "connects": true,
@@ -3504,7 +3476,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 10,
     "bonusEffects": {
       "world:oil": {
         "connects": true,
@@ -3594,7 +3565,6 @@
     "actsAsCity": false,
     "advancedStartCost": 24,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:cow": {
         "connects": true,
@@ -3727,7 +3697,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -3803,7 +3772,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:banana": {
         "connects": true,
@@ -4024,7 +3992,6 @@
     "actsAsCity": false,
     "advancedStartCost": 36,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 10,
     "bonusEffects": {
       "world:marble": {
         "connects": true,
@@ -4183,7 +4150,6 @@
     "actsAsCity": false,
     "advancedStartCost": 60,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 50,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -4258,7 +4224,6 @@
     "actsAsCity": false,
     "advancedStartCost": 60,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 0,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 50,
@@ -4333,7 +4298,6 @@
     "actsAsCity": false,
     "advancedStartCost": 48,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 10,
     "bonusEffects": {
       "world:bauxite": {
         "connects": true,
@@ -4586,7 +4550,6 @@
     "actsAsCity": false,
     "advancedStartCost": 60,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -4667,7 +4630,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -4741,7 +4703,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -4817,7 +4778,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -4891,7 +4851,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -5023,7 +4982,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -5140,7 +5098,6 @@
     "actsAsCity": false,
     "advancedStartCost": 48,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -5233,7 +5190,6 @@
     "actsAsCity": false,
     "advancedStartCost": 60,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 10,
     "bonusEffects": {
       "world:oil": {
         "connects": true,
@@ -5328,7 +5284,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:whale": {
         "connects": true,
@@ -5433,7 +5388,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -5516,7 +5470,6 @@
     "actsAsCity": false,
     "advancedStartCost": 50,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -5597,7 +5550,6 @@
     "actsAsCity": false,
     "advancedStartCost": 30,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {
       "world:wine": {
         "connects": true,
@@ -5702,7 +5654,6 @@
     "actsAsCity": false,
     "advancedStartCost": 24,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 0,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -5776,7 +5727,6 @@
     "actsAsCity": false,
     "advancedStartCost": 36,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": 5,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -5898,7 +5848,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -5970,7 +5919,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,
@@ -6042,7 +5990,6 @@
     "actsAsCity": false,
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
-    "airBombDefense": -1,
     "bonusEffects": {},
     "carriesIrrigation": false,
     "defenseModifier": 0,

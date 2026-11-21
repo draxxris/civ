@@ -724,7 +724,6 @@
     "strategy": "",
     "unsupported": [],
     "values": {
-      "airCombatDamage": 30,
       "amphibAttackModifier": -50,
       "atWarCultureAngerModifier": 50,
       "baseCityGrowthThreshold": 30,

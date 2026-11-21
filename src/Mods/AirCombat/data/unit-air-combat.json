@@ -1,0 +1,442 @@
+[
+  {
+    "airCombatLimit": 0,
+    "airRange": 2,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:acvsam",
+    "name": "",
+    "requirements": null,
+    "target": "military:acvsam"
+  },
+  {
+    "airCombatLimit": 20,
+    "airRange": 6,
+    "bombRate": 5,
+    "evasionPercent": 0,
+    "id": "air_combat:airship",
+    "name": "",
+    "requirements": null,
+    "target": "military:airship"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 1,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:assault_droid",
+    "name": "",
+    "requirements": null,
+    "target": "military:assault_droid"
+  },
+  {
+    "airCombatLimit": 50,
+    "airRange": 2,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:assault_mech",
+    "name": "",
+    "requirements": null,
+    "target": "military:assault_mech"
+  },
+  {
+    "airCombatLimit": 10,
+    "airRange": 7,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:atomic",
+    "name": "",
+    "requirements": null,
+    "target": "military:atomic"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 16,
+    "bombRate": 20,
+    "evasionPercent": 0,
+    "id": "air_combat:b52",
+    "name": "",
+    "requirements": null,
+    "target": "military:b52"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 4,
+    "bombRate": 0,
+    "evasionPercent": 65,
+    "id": "air_combat:biological_warfare_missile",
+    "name": "",
+    "requirements": null,
+    "target": "military:biological_warfare_missile"
+  },
+  {
+    "airCombatLimit": 50,
+    "airRange": 8,
+    "bombRate": 15,
+    "evasionPercent": 0,
+    "id": "air_combat:bomber",
+    "name": "",
+    "requirements": null,
+    "target": "military:bomber"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 0,
+    "bombRate": 0,
+    "evasionPercent": 30,
+    "id": "air_combat:dropship",
+    "name": "",
+    "requirements": null,
+    "target": "military:dropship"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 0,
+    "bombRate": 0,
+    "evasionPercent": 50,
+    "id": "air_combat:experimental",
+    "name": "",
+    "requirements": null,
+    "target": "military:experimental"
+  },
+  {
+    "airCombatLimit": 70,
+    "airRange": 14,
+    "bombRate": 14,
+    "evasionPercent": 60,
+    "id": "air_combat:f117",
+    "name": "",
+    "requirements": null,
+    "target": "military:f117"
+  },
+  {
+    "airCombatLimit": 60,
+    "airRange": 12,
+    "bombRate": 12,
+    "evasionPercent": 0,
+    "id": "air_combat:f15",
+    "name": "",
+    "requirements": null,
+    "target": "military:f15"
+  },
+  {
+    "airCombatLimit": 50,
+    "airRange": 6,
+    "bombRate": 5,
+    "evasionPercent": 0,
+    "id": "air_combat:fighter",
+    "name": "",
+    "requirements": null,
+    "target": "military:fighter"
+  },
+  {
+    "airCombatLimit": 40,
+    "airRange": 4,
+    "bombRate": 3,
+    "evasionPercent": 0,
+    "id": "air_combat:fokkerdr1",
+    "name": "",
+    "requirements": null,
+    "target": "military:fokkerdr1"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 0,
+    "bombRate": 0,
+    "evasionPercent": 75,
+    "id": "air_combat:fusion_nova",
+    "name": "",
+    "requirements": null,
+    "target": "military:fusion_nova"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 0,
+    "bombRate": 0,
+    "evasionPercent": 50,
+    "id": "air_combat:fusion_nuke",
+    "name": "",
+    "requirements": null,
+    "target": "military:fusion_nuke"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 8,
+    "bombRate": 16,
+    "evasionPercent": 100,
+    "id": "air_combat:guided_missile",
+    "name": "",
+    "requirements": null,
+    "target": "military:guided_missile"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 1,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:halftrack",
+    "name": "",
+    "requirements": null,
+    "target": "military:halftrack"
+  },
+  {
+    "airCombatLimit": 75,
+    "airRange": 3,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:hitech_robot",
+    "name": "",
+    "requirements": null,
+    "target": "military:hitech_robot"
+  },
+  {
+    "airCombatLimit": 50,
+    "airRange": 6,
+    "bombRate": 10,
+    "evasionPercent": 0,
+    "id": "air_combat:il2",
+    "name": "",
+    "requirements": null,
+    "target": "military:il2"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 16,
+    "bombRate": 0,
+    "evasionPercent": 25,
+    "id": "air_combat:irbm",
+    "name": "",
+    "requirements": null,
+    "target": "military:irbm"
+  },
+  {
+    "airCombatLimit": 50,
+    "airRange": 10,
+    "bombRate": 10,
+    "evasionPercent": 0,
+    "id": "air_combat:jet_fighter",
+    "name": "",
+    "requirements": null,
+    "target": "military:jet_fighter"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 1,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:light_aa",
+    "name": "",
+    "requirements": null,
+    "target": "military:light_aa"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 1,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:mobile_sam",
+    "name": "",
+    "requirements": null,
+    "target": "military:mobile_sam"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 0,
+    "bombRate": 0,
+    "evasionPercent": 25,
+    "id": "air_combat:modern_paratrooper",
+    "name": "",
+    "requirements": null,
+    "target": "military:modern_paratrooper"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 8,
+    "bombRate": 0,
+    "evasionPercent": 32,
+    "id": "air_combat:mrbm",
+    "name": "",
+    "requirements": null,
+    "target": "military:mrbm"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 0,
+    "bombRate": 0,
+    "evasionPercent": 75,
+    "id": "air_combat:nanite_cloud",
+    "name": "",
+    "requirements": null,
+    "target": "military:nanite_cloud"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 0,
+    "bombRate": 0,
+    "evasionPercent": 75,
+    "id": "air_combat:nanite_swarm",
+    "name": "",
+    "requirements": null,
+    "target": "military:nanite_swarm"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 32,
+    "bombRate": 35,
+    "evasionPercent": 50,
+    "id": "air_combat:orbital_bomber",
+    "name": "",
+    "requirements": null,
+    "target": "military:orbital_bomber"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 30,
+    "bombRate": 25,
+    "evasionPercent": 30,
+    "id": "air_combat:orbital_fighter",
+    "name": "",
+    "requirements": null,
+    "target": "military:orbital_fighter"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 0,
+    "bombRate": 0,
+    "evasionPercent": 25,
+    "id": "air_combat:paratrooper",
+    "name": "",
+    "requirements": null,
+    "target": "military:paratrooper"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": -1,
+    "bombRate": 0,
+    "evasionPercent": 50,
+    "id": "air_combat:poison_nova",
+    "name": "",
+    "requirements": null,
+    "target": "military:poison_nova"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": -1,
+    "bombRate": 0,
+    "evasionPercent": 50,
+    "id": "air_combat:poison_nuke",
+    "name": "",
+    "requirements": null,
+    "target": "military:poison_nuke"
+  },
+  {
+    "airCombatLimit": 50,
+    "airRange": 1,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:power_armored_infantry",
+    "name": "",
+    "requirements": null,
+    "target": "military:power_armored_infantry"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 12,
+    "bombRate": 32,
+    "evasionPercent": 100,
+    "id": "air_combat:precision_attack_missile",
+    "name": "",
+    "requirements": null,
+    "target": "military:precision_attack_missile"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 1,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:sam_infantry",
+    "name": "",
+    "requirements": null,
+    "target": "military:sam_infantry"
+  },
+  {
+    "airCombatLimit": 50,
+    "airRange": 1,
+    "bombRate": 0,
+    "evasionPercent": 0,
+    "id": "air_combat:scout_mech",
+    "name": "",
+    "requirements": null,
+    "target": "military:scout_mech"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 20,
+    "bombRate": 20,
+    "evasionPercent": 30,
+    "id": "air_combat:scramjet",
+    "name": "",
+    "requirements": null,
+    "target": "military:scramjet"
+  },
+  {
+    "airCombatLimit": 30,
+    "airRange": 4,
+    "bombRate": 5,
+    "evasionPercent": 0,
+    "id": "air_combat:seaplane",
+    "name": "",
+    "requirements": null,
+    "target": "military:seaplane"
+  },
+  {
+    "airCombatLimit": 1,
+    "airRange": 20,
+    "bombRate": 0,
+    "evasionPercent": 65,
+    "id": "air_combat:sr71",
+    "name": "",
+    "requirements": null,
+    "target": "military:sr71"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 24,
+    "bombRate": 26,
+    "evasionPercent": 50,
+    "id": "air_combat:stealth_bomber",
+    "name": "",
+    "requirements": null,
+    "target": "military:stealth_bomber"
+  },
+  {
+    "airCombatLimit": 0,
+    "airRange": 4,
+    "bombRate": 0,
+    "evasionPercent": 50,
+    "id": "air_combat:tactical_nuke",
+    "name": "",
+    "requirements": null,
+    "target": "military:tactical_nuke"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 20,
+    "bombRate": 30,
+    "evasionPercent": 50,
+    "id": "air_combat:uav",
+    "name": "",
+    "requirements": null,
+    "target": "military:uav"
+  },
+  {
+    "airCombatLimit": 100,
+    "airRange": 3,
+    "bombRate": 10,
+    "evasionPercent": 100,
+    "id": "air_combat:v1",
+    "name": "",
+    "requirements": null,
+    "target": "military:v1"
+  }
+]

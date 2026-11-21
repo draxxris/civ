@@ -1,6 +1,5 @@
 {
   "values": {
-    "AIR_COMBAT_DAMAGE": "AirCombatDamage",
     "AMPHIB_ATTACK_MODIFIER": "AmphibAttackModifier",
     "AT_WAR_CULTURE_ANGER_MODIFIER": "AtWarCultureAngerModifier",
     "BASE_CITY_GROWTH_THRESHOLD": "BaseCityGrowthThreshold",
@@ -66,6 +65,13 @@
     "MAX_CITY_DEFENSE_DAMAGE": "MaximumCityDefenseDamage"
   },
   "attachments": [
+    {
+      "mod": "air_combat",
+      "definition": "RuleConstantsAirCombatDef",
+      "constants": {
+        "AIR_COMBAT_DAMAGE": "AirCombatDamage"
+      }
+    },
     {
       "mod": "great_people",
       "definition": "RuleConstantsGreatPeopleDef",
