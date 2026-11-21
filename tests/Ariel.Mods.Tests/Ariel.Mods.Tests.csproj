@@ -11,12 +11,15 @@
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
     <!-- The rules tests read the feature mods' published APIs directly; the client no longer brings them along. -->
     <ProjectReference Include="../../src/Mods/AirCombat/Api/Ariel.Mods.AirCombat.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Barbarians/Api/Ariel.Mods.Barbarians.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Corporations/Api/Ariel.Mods.Corporations.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Votes/Api/Ariel.Mods.Votes.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Espionage/Api/Ariel.Mods.Espionage.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Events/Api/Ariel.Mods.Events.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/GlobalWarming/Api/Ariel.Mods.GlobalWarming.Api.csproj" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
     <ProjectReference Include="../../src/Mods/ProjectsVictory/Api/Ariel.Mods.ProjectsVictory.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/RangedCombat/Api/Ariel.Mods.RangedCombat.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Religion/Api/Ariel.Mods.Religion.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
     <ProjectReference Include="../../src/Mods/ScriptedWonders/Api/Ariel.Mods.ScriptedWonders.Api.csproj" />

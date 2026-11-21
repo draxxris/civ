@@ -11,7 +11,6 @@ public sealed class RuleConstantsDef : GameContentDef
 
 public sealed record RuleConstants
 {
-    public int AirCombatDamage { get; init; }
     public int AmphibAttackModifier { get; init; }
     public int AtWarCultureAngerModifier { get; init; }
     public int BaseCityGrowthThreshold { get; init; }
@@ -62,10 +61,7 @@ public sealed record RuleConstants
     public int ResearchDiffusionWelfareThreshold { get; init; }
     public int RevolutionResearchCostPercent { get; init; } = 100;
     public int BaseCivicAnarchyTurns { get; init; }
-    public int BaseReligionAnarchyTurns { get; init; }
     public int MaximumAnarchyTurns { get; init; }
-    public int GoldenAgeTurns { get; init; }
-    public int GoldenAgeGreatPeoplePercent { get; init; }
     public int InitialFreeUnits { get; init; }
     public int InitialFreeUnitsPopulationPercent { get; init; }
     public int UpkeepCityOffset { get; init; }
@@ -79,5 +75,4 @@ public sealed record RuleConstants
     public int PercentAngerDivisor { get; init; }
     public int NoMilitaryPercentAnger { get; init; }
     public int MaximumCityDefenseDamage { get; init; }
-    public int TradeProfitPercent { get; init; }
 }

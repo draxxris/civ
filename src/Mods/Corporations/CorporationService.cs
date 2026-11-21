@@ -52,8 +52,11 @@ internal sealed class CorporationService : ICorporationService
     public long MaintenanceHundredths(Simulation sim, int city)
     {
         var cityObj = sim.State.CityById(city);
-        var world = sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize!);
-        var handicap = sim.Content.Get<HandicapDef>(sim.Settings.Handicap);
+        // Look the ids up as before, so an unknown world size or handicap still fails loudly.
+        var world = sim.Content.Attachment<WorldSizeCorporationsDef>(sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize!).Id)
+            ?? WorldSizeCorporationsDef.None;
+        var handicap = sim.Content.Attachment<HandicapCorporationsDef>(sim.Content.Get<HandicapDef>(sim.Settings.Handicap).Id)
+            ?? HandicapCorporationsDef.None;
         long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total(MaintenanceKey);
         int inflation = InflationPercent(sim, cityObj.Owner) + 100;
         bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
@@ -89,7 +92,7 @@ internal sealed class CorporationService : ICorporationService
         sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).DefaultUnit == def.RequiredGreatPersonClass;
     /// <summary>Whether a unit is an executive of a corporation.</summary>
     internal static bool Spreads(Simulation sim, Unit unit, CorporationDef def) =>
-        sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).CorporationSpreads.GetValueOrDefault(def.Identity) > 0;
+        (sim.Content.Attachment<UnitCorporationsDef>(unit.Type) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Identity) > 0;
 
     internal string? ValidateFound(Simulation sim, MissionOrder order)
     {

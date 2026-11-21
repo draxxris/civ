@@ -59,7 +59,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
             return value;
         value += HolyCityValue;
         string identity = ReligionIdentities.Identity(ctx.Sim.Content, id);
-        if (city.Buildings.Any(b => ctx.Sim.Content.Get<BuildingDef>(b).GlobalReligionCommerce == identity)) value += ShrineValue;
+        if (city.Buildings.Any(b => ReligionData.Building(ctx.Sim.Content, b).GlobalReligionCommerce == identity)) value += ShrineValue;
         return value;
     }
 
@@ -77,7 +77,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
     private void Spread(Unit unit, IReligionService religion)
     {
         // Units name the faiths they spread by identity; missions and presence use the religion's own id.
-        var spreads = ctx.Def(unit).ReligionSpreads.Where(p => p.Value > 0)
+        var spreads = ReligionData.Spreads(ctx.Sim.Content, unit.Type).Where(p => p.Value > 0)
             .Select(p => ReligionIdentities.Religion(ctx.Sim.Content, p.Key)).OfType<string>().Order(StringComparer.Ordinal);
         foreach (var faith in spreads)
         {

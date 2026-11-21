@@ -1,0 +1,9 @@
+[
+  {
+    "airCombatDamage": 30,
+    "id": "air_combat:rule_constants",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:rule_constants"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "aiWeightPercent": 80,
+    "goldenAgeYield": 1,
+    "goldenAgeYieldThreshold": 1,
+    "id": "great_people:yield_commerce",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:yield_commerce"
+  },
+  {
+    "aiWeightPercent": 100,
+    "goldenAgeYield": 0,
+    "goldenAgeYieldThreshold": 0,
+    "id": "great_people:yield_food",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:yield_food"
+  },
+  {
+    "aiWeightPercent": 110,
+    "goldenAgeYield": 1,
+    "goldenAgeYieldThreshold": 1,
+    "id": "great_people:yield_production",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:yield_production"
+  }
+]

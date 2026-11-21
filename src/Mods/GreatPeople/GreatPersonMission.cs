@@ -71,7 +71,7 @@ internal abstract class GreatPersonMission(string id, string label, bool needsCi
     {
         protected override void Apply(Simulation sim, MissionOrder order, GreatPersonAction action)
         {
-            int turns = GreatPeopleData.Raw(sim, "GREAT_WORKS_CULTURE_TURNS", 20) * GreatPeopleData.Speed(sim).UnitGreatWorkPercent / 100;
+            int turns = GreatPeopleData.Raw(sim, "GREAT_WORKS_CULTURE_TURNS", 20) * GreatPeopleData.SpeedRules(sim).UnitGreatWorkPercent / 100;
             sim.Rules().CityCulture.AddCulture(sim, order.City.Id, action.Amount, turns);
         }
     }

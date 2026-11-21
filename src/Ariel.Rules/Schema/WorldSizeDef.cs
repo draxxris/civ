@@ -9,7 +9,6 @@ public sealed class WorldSizeDef : GameContentDef
     public int AdvancedStartPointsMod { get; init; } = 0;
     public int BuildingClassPrereqModifier { get; init; } = 0;
     public int ColonyMaintenancePercent { get; init; } = 0;
-    public int CorporationMaintenancePercent { get; init; } = 0;
     public int DefaultPlayers { get; init; } = 0;
     public int DistanceMaintenancePercent { get; init; } = 0;
     public int FeatureGrainChange { get; init; } = 0;
@@ -23,7 +22,6 @@ public sealed class WorldSizeDef : GameContentDef
     public int ResearchPercent { get; init; } = 0;
     public int TargetNumCities { get; init; } = 0;
     public int TerrainGrainChange { get; init; } = 0;
-    public int TradeProfitPercent { get; init; } = 0;
     public int UnitNameModifier { get; init; } = 0;
     public int WarWearinessModifier { get; init; } = 0;
 }

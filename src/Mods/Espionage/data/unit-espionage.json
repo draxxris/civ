@@ -1,0 +1,50 @@
+[
+  {
+    "counterSpy": true,
+    "id": "espionage:007",
+    "name": "",
+    "requirements": null,
+    "spy": true,
+    "target": "military:007"
+  },
+  {
+    "counterSpy": true,
+    "id": "espionage:agent",
+    "name": "",
+    "requirements": null,
+    "spy": true,
+    "target": "military:agent"
+  },
+  {
+    "counterSpy": true,
+    "id": "espionage:hacker",
+    "name": "",
+    "requirements": null,
+    "spy": true,
+    "target": "military:hacker"
+  },
+  {
+    "counterSpy": true,
+    "id": "espionage:nanite_spy",
+    "name": "",
+    "requirements": null,
+    "spy": true,
+    "target": "military:nanite_spy"
+  },
+  {
+    "counterSpy": true,
+    "id": "espionage:special_agent",
+    "name": "",
+    "requirements": null,
+    "spy": true,
+    "target": "military:special_agent"
+  },
+  {
+    "counterSpy": true,
+    "id": "espionage:spy",
+    "name": "",
+    "requirements": null,
+    "spy": true,
+    "target": "military:spy"
+  }
+]

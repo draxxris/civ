@@ -38,8 +38,8 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   world sizes (`WorldSizeDef`), speeds (`GameSpeedDef`), handicaps (`HandicapDef`), eras
   (`EraDef`), player teams, and initial gold.
 - **Hex tuning overrides**: `src/Ariel.Rules/Foundation/data/hex-overrides.json` controls
-  hex-specific balance, including `barbarianUnownedTilesMultiplier` and
-  `aiMinimumCityGarrison`.
+  hex-specific balance, including `aiMinimumCityGarrison`; the Barbarians mod's
+  `data/barbarian-rules.json` holds its own, `unownedTilesMultiplier`.
 - **Base modules and mods**: The base game is linked in from `src/Ariel.Rules` and
   `src/Ariel.Ai`; optional features are standalone mods (`src/Mods/*`) on the same
   registration API. `Ariel.Core` and `Ariel.Client.Core` hold no hard-coded mod IDs or

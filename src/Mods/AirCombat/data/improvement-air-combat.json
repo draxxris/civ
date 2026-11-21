@@ -1,0 +1,352 @@
+[
+  {
+    "airBombDefense": 10,
+    "id": "air_combat:city_ruins",
+    "name": "",
+    "requirements": null,
+    "target": "world:city_ruins"
+  },
+  {
+    "airBombDefense": 10,
+    "id": "air_combat:city_ruins_arcology",
+    "name": "",
+    "requirements": null,
+    "target": "world:city_ruins_arcology"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:goody_hut",
+    "name": "",
+    "requirements": null,
+    "target": "world:goody_hut"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_3factory",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_3factory"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_5factory",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_5factory"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_apple_farm",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_apple_farm"
+  },
+  {
+    "airBombDefense": 40,
+    "id": "air_combat:improvement_improvement_bunker",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_bunker"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_camp",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_camp"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_cottage",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_cottage"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_desertwindmill",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_desertwindmill"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_dome_farm",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_dome_farm"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:improvement_improvement_exploretemple",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_exploretemple"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_extraction_facility",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_extraction_facility"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_farm",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_farm"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_fishing_boats",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_fishing_boats"
+  },
+  {
+    "airBombDefense": 20,
+    "id": "air_combat:improvement_improvement_forest_preserve",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_forest_preserve"
+  },
+  {
+    "airBombDefense": 20,
+    "id": "air_combat:improvement_improvement_fort",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_fort"
+  },
+  {
+    "airBombDefense": 60,
+    "id": "air_combat:improvement_improvement_future_bunker",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_future_bunker"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_geothermal_borehole",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_geothermal_borehole"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_groundwater_well",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_groundwater_well"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_hamlet",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_hamlet"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_hybrid_forest",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_hybrid_forest"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_jungle_camp",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_jungle_camp"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_lumbermill",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_lumbermill"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:improvement_improvement_make_jungle",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_make_jungle"
+  },
+  {
+    "airBombDefense": 10,
+    "id": "air_combat:improvement_improvement_mine",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_mine"
+  },
+  {
+    "airBombDefense": 10,
+    "id": "air_combat:improvement_improvement_modern_mine",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_modern_mine"
+  },
+  {
+    "airBombDefense": 10,
+    "id": "air_combat:improvement_improvement_offshore_platform",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_offshore_platform"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_pasture",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_pasture"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:improvement_improvement_plant_forest",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_plant_forest"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_plantation",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_plantation"
+  },
+  {
+    "airBombDefense": 10,
+    "id": "air_combat:improvement_improvement_quarry",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_quarry"
+  },
+  {
+    "airBombDefense": 50,
+    "id": "air_combat:improvement_improvement_sea_air_defense",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_sea_air_defense"
+  },
+  {
+    "airBombDefense": 10,
+    "id": "air_combat:improvement_improvement_shaft_mine",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_shaft_mine"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_submerged_town",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_submerged_town"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:improvement_improvement_terraform_grass",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_terraform_grass"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:improvement_improvement_terraform_plains",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_terraform_plains"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:improvement_improvement_terraform_tundra",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_terraform_tundra"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_town",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_town"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_village",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_village"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_watermill",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_watermill"
+  },
+  {
+    "airBombDefense": 10,
+    "id": "air_combat:improvement_improvement_well",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_well"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_whaling_boats",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_whaling_boats"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_windmill",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_windmill"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_windtrap",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_windtrap"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_winery",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_winery"
+  },
+  {
+    "airBombDefense": 5,
+    "id": "air_combat:improvement_improvement_workshop",
+    "name": "",
+    "requirements": null,
+    "target": "world:improvement_improvement_workshop"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:land_worked",
+    "name": "",
+    "requirements": null,
+    "target": "world:land_worked"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:machu_picchu",
+    "name": "",
+    "requirements": null,
+    "target": "world:machu_picchu"
+  },
+  {
+    "airBombDefense": -1,
+    "id": "air_combat:water_worked",
+    "name": "",
+    "requirements": null,
+    "target": "world:water_worked"
+  }
+]

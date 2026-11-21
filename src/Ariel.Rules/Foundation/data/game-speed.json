@@ -1,7 +1,6 @@
 [
   {
     "anarchyPercent": 100,
-    "barbPercent": 100,
     "buildPercent": 80,
     "constructPercent": 88,
     "createPercent": 88,
@@ -10,7 +9,6 @@
     "featureProductionPercent": 88,
     "goldModifier": 110,
     "goldenAgePercent": 100,
-    "greatPeoplePercent": 160,
     "growthPercent": 55,
     "help": "Gamespeed Normal Blitz",
     "hurryConscriptAngerPercent": 100,
@@ -71,16 +69,11 @@
         "turns": 1
       }
     ],
-    "unitDiscoverPercent": 88,
-    "unitGreatWorkPercent": 88,
-    "unitHurryPercent": 88,
-    "unitTradePercent": 88,
     "unsupported": [],
     "victoryDelayPercent": 100
   },
   {
     "anarchyPercent": 300,
-    "barbPercent": 300,
     "buildPercent": 240,
     "constructPercent": 264,
     "createPercent": 264,
@@ -89,7 +82,6 @@
     "featureProductionPercent": 264,
     "goldModifier": 115,
     "goldenAgePercent": 300,
-    "greatPeoplePercent": 480,
     "growthPercent": 165,
     "help": "Experience the full sweep of time when you choose this speed.  The game is balanced to take longer but still feel like a normal game.",
     "hurryConscriptAngerPercent": 300,
@@ -150,16 +142,11 @@
         "turns": 1
       }
     ],
-    "unitDiscoverPercent": 264,
-    "unitGreatWorkPercent": 264,
-    "unitHurryPercent": 264,
-    "unitTradePercent": 264,
     "unsupported": [],
     "victoryDelayPercent": 300
   },
   {
     "anarchyPercent": 800,
-    "barbPercent": 800,
     "buildPercent": 640,
     "constructPercent": 704,
     "createPercent": 704,
@@ -168,7 +155,6 @@
     "featureProductionPercent": 704,
     "goldModifier": 120,
     "goldenAgePercent": 800,
-    "greatPeoplePercent": 1280,
     "growthPercent": 440,
     "help": "Expect to spend all of time completing these games!",
     "hurryConscriptAngerPercent": 800,
@@ -233,16 +219,11 @@
         "turns": 1
       }
     ],
-    "unitDiscoverPercent": 704,
-    "unitGreatWorkPercent": 704,
-    "unitHurryPercent": 704,
-    "unitTradePercent": 704,
     "unsupported": [],
     "victoryDelayPercent": 800
   },
   {
     "anarchyPercent": 400,
-    "barbPercent": 400,
     "buildPercent": 320,
     "constructPercent": 352,
     "createPercent": 352,
@@ -251,7 +232,6 @@
     "featureProductionPercent": 352,
     "goldModifier": 120,
     "goldenAgePercent": 400,
-    "greatPeoplePercent": 640,
     "growthPercent": 220,
     "help": "This extremely long game speed will allow almost an entire normal game\u0027s worth of turns for each era.",
     "hurryConscriptAngerPercent": 400,
@@ -308,16 +288,11 @@
         "turns": 78
       }
     ],
-    "unitDiscoverPercent": 352,
-    "unitGreatWorkPercent": 352,
-    "unitHurryPercent": 352,
-    "unitTradePercent": 352,
     "unsupported": [],
     "victoryDelayPercent": 400
   },
   {
     "anarchyPercent": 200,
-    "barbPercent": 200,
     "buildPercent": 160,
     "constructPercent": 176,
     "createPercent": 176,
@@ -326,7 +301,6 @@
     "featureProductionPercent": 176,
     "goldModifier": 115,
     "goldenAgePercent": 200,
-    "greatPeoplePercent": 320,
     "growthPercent": 110,
     "help": "This is the traditional game speed for Civ.",
     "hurryConscriptAngerPercent": 200,
@@ -383,16 +357,11 @@
         "turns": 1
       }
     ],
-    "unitDiscoverPercent": 176,
-    "unitGreatWorkPercent": 176,
-    "unitHurryPercent": 176,
-    "unitTradePercent": 176,
     "unsupported": [],
     "victoryDelayPercent": 200
   },
   {
     "anarchyPercent": 150,
-    "barbPercent": 150,
     "buildPercent": 120,
     "constructPercent": 132,
     "createPercent": 132,
@@ -401,7 +370,6 @@
     "featureProductionPercent": 132,
     "goldModifier": 135,
     "goldenAgePercent": 150,
-    "greatPeoplePercent": 240,
     "growthPercent": 83,
     "help": "Choose this for a game where everything happens a bit quicker.  The game will be faster but is balanced to still feel like a normal game.",
     "hurryConscriptAngerPercent": 150,
@@ -462,16 +430,11 @@
         "turns": 1
       }
     ],
-    "unitDiscoverPercent": 132,
-    "unitGreatWorkPercent": 132,
-    "unitHurryPercent": 132,
-    "unitTradePercent": 132,
     "unsupported": [],
     "victoryDelayPercent": 110
   },
   {
     "anarchyPercent": 600,
-    "barbPercent": 600,
     "buildPercent": 480,
     "constructPercent": 528,
     "createPercent": 528,
@@ -480,7 +443,6 @@
     "featureProductionPercent": 528,
     "goldModifier": 120,
     "goldenAgePercent": 600,
-    "greatPeoplePercent": 960,
     "growthPercent": 330,
     "help": "This extremely slow game speed will allow games that can last weeks or even months!",
     "hurryConscriptAngerPercent": 600,
@@ -541,10 +503,6 @@
         "turns": 1
       }
     ],
-    "unitDiscoverPercent": 528,
-    "unitGreatWorkPercent": 528,
-    "unitHurryPercent": 528,
-    "unitTradePercent": 528,
     "unsupported": [],
     "victoryDelayPercent": 600
   }

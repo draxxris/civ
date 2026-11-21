@@ -1,0 +1,365 @@
+[
+  {
+    "corporationSpreads": {
+      "foundation:blacksmguild": 40,
+      "foundation:carpenterguild": 40,
+      "foundation:glassguild": 40,
+      "foundation:goldsmguild": 40,
+      "foundation:masonguild": 40
+    },
+    "id": "corporations:bgmaster",
+    "name": "",
+    "requirements": null,
+    "target": "military:bgmaster"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:1": 40
+    },
+    "id": "corporations:executive_1",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_1"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:2": 40
+    },
+    "id": "corporations:executive_2",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_2"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:3": 40
+    },
+    "id": "corporations:executive_3",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_3"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:4": 40
+    },
+    "id": "corporations:executive_4",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_4"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:5": 40
+    },
+    "id": "corporations:executive_5",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_5"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:6": 40
+    },
+    "id": "corporations:executive_6",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_6"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:7": 40
+    },
+    "id": "corporations:executive_7",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_7"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:adventure": 40
+    },
+    "id": "corporations:executive_adventure",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_adventure"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:apotheguild": 40
+    },
+    "id": "corporations:executive_apotheguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_apotheguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:artistguild": 40
+    },
+    "id": "corporations:executive_artistguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_artistguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:bakerguild": 40
+    },
+    "id": "corporations:executive_bakerguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_bakerguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:blacksmguild": 40
+    },
+    "id": "corporations:executive_blacksmguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_blacksmguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:burgerworld": 40
+    },
+    "id": "corporations:executive_burgerworld",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_burgerworld"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:butcherguild": 40
+    },
+    "id": "corporations:executive_butcherguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_butcherguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:carpenterguild": 40
+    },
+    "id": "corporations:executive_carpenterguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_carpenterguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:clerksguild": 40
+    },
+    "id": "corporations:executive_clerksguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_clerksguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:drapersguild": 40
+    },
+    "id": "corporations:executive_drapersguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_drapersguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:empcloth": 40
+    },
+    "id": "corporations:executive_empcloth",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_empcloth"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:equestguild": 40
+    },
+    "id": "corporations:executive_equestguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_equestguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:ewtrade": 40
+    },
+    "id": "corporations:executive_ewtrade",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_ewtrade"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:fashion": 40
+    },
+    "id": "corporations:executive_fashion",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_fashion"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:fishmonguild": 40
+    },
+    "id": "corporations:executive_fishmonguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_fishmonguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:glassguild": 40
+    },
+    "id": "corporations:executive_glassguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_glassguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:goldsmguild": 40
+    },
+    "id": "corporations:executive_goldsmguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_goldsmguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:grocerguild": 40
+    },
+    "id": "corporations:executive_grocerguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_grocerguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:mallwart": 40
+    },
+    "id": "corporations:executive_mallwart",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_mallwart"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:mapster": 40
+    },
+    "id": "corporations:executive_mapster",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_mapster"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:masonguild": 40
+    },
+    "id": "corporations:executive_masonguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_masonguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:mercerguild": 40
+    },
+    "id": "corporations:executive_mercerguild",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_mercerguild"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:milehigh": 40
+    },
+    "id": "corporations:executive_milehigh",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_milehigh"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:mobby": 40
+    },
+    "id": "corporations:executive_mobby",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_mobby"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:red": 40
+    },
+    "id": "corporations:executive_red",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_red"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:safari": 40
+    },
+    "id": "corporations:executive_safari",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_safari"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:ultsoldier": 40
+    },
+    "id": "corporations:executive_ultsoldier",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_ultsoldier"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:wonka": 40
+    },
+    "id": "corporations:executive_wonka",
+    "name": "",
+    "requirements": null,
+    "target": "military:executive_wonka"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:bakerguild": 40,
+      "foundation:butcherguild": 40,
+      "foundation:fishmonguild": 40,
+      "foundation:grocerguild": 40,
+      "foundation:mercerguild": 40
+    },
+    "id": "corporations:ggmaster",
+    "name": "",
+    "requirements": null,
+    "target": "military:ggmaster"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:moonbean": 40
+    },
+    "id": "corporations:moonbean_executive",
+    "name": "",
+    "requirements": null,
+    "target": "military:moonbean_executive"
+  },
+  {
+    "corporationSpreads": {
+      "foundation:apotheguild": 40,
+      "foundation:artistguild": 40,
+      "foundation:clerksguild": 40,
+      "foundation:drapersguild": 40,
+      "foundation:equestguild": 40
+    },
+    "id": "corporations:wgmaster",
+    "name": "",
+    "requirements": null,
+    "target": "military:wgmaster"
+  }
+]

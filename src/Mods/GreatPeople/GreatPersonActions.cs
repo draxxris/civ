@@ -24,11 +24,11 @@ internal static partial class GreatPersonActions
     }
     private static void CityActions(Simulation sim, City city, S.UnitDef def, List<GreatPersonAction> actions)
     {
-        foreach (var specialist in def.GreatPeoples.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal))
+        foreach (var specialist in GreatPeopleData.Unit(sim.Content, def.Id).GreatPeoples.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal))
             actions.Add(new(GreatPersonMissions.Join, specialist.Key, 1));
         AddConstructionActions(sim, city, def, actions);
         if (Hurry(sim, city, def) is { } hurry) actions.Add(hurry);
-        long culture = Math.Max(0, (long)def.GreatWorkCulture * GreatPeopleData.Speed(sim).UnitGreatWorkPercent / 100);
+        long culture = Math.Max(0, (long)GreatPeopleData.Unit(sim.Content, def.Id).GreatWorkCulture * GreatPeopleData.SpeedRules(sim).UnitGreatWorkPercent / 100);
         if (culture > 0) actions.Add(new(GreatPersonMissions.Culture, "", culture));
     }
     private static GreatPersonAction? Hurry(Simulation sim, City city, S.UnitDef def)
@@ -37,14 +37,16 @@ internal static partial class GreatPersonActions
         if (order is null || order.Kind != "cities:building") return null;
         var production = sim.Rules().CityProduction;
         if (!production.Validate(sim, city.Id, order.Kind, order.ContentId).Success) return null;
-        long capacity = Math.Max(0, ((long)def.BaseHurry + (long)def.HurryMultiplier * city.Population) * GreatPeopleData.Speed(sim).UnitHurryPercent / 100);
+        var gp = GreatPeopleData.Unit(sim.Content, def.Id);
+        long capacity = Math.Max(0, ((long)gp.BaseHurry + (long)gp.HurryMultiplier * city.Population) * GreatPeopleData.SpeedRules(sim).UnitHurryPercent / 100);
         long amount = Math.Min(capacity, Math.Max(0, production.Calculate(sim, city.Id, order.Kind, order.ContentId).Cost - order.Progress));
         return amount > 0 ? new(GreatPersonMissions.Hurry, order.ContentId, amount) : null;
     }
     private static GreatPersonAction? Discovery(Simulation sim, int player, S.UnitDef def)
     {
         long population = sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == sim.TeamOf(player).Id).Sum(c => (long)c.Population);
-        long capacity = Math.Max(0, ((long)def.BaseDiscover + (long)def.DiscoverMultiplier * population) * GreatPeopleData.Speed(sim).UnitDiscoverPercent / 100);
+        var gp = GreatPeopleData.Unit(sim.Content, def.Id);
+        long capacity = Math.Max(0, ((long)gp.BaseDiscover + (long)gp.DiscoverMultiplier * population) * GreatPeopleData.SpeedRules(sim).UnitDiscoverPercent / 100);
         if (capacity <= 0) return null;
         var research = sim.Rules().Research;
         var choice = sim.Content.Get<S.TechDef>().All.Where(t => research.Validate(sim, player, t.Id).Success)

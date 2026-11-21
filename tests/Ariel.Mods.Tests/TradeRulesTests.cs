@@ -63,7 +63,9 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var sim = Scenario(); var city = sim.State.Cities[0]; city.Buildings.Add("cities:palace");
         var result = Service(sim).Calculate(sim, city.Id);
         var foreign = Assert.Single(result.Routes, r => r.Foreign);
-        long basis = Math.Max(100, Math.Min(500, 5 * sim.Content.Get<S.WorldSizeDef>(sim.Settings.WorldSize!).TradeProfitPercent) * sim.Content.Get<S.RuleConstantsDef>().All.Single().Values.TradeProfitPercent / 100);
+        int worldPercent = sim.Content.Attachment<WorldSizeTradeDef>(sim.Settings.WorldSize!)!.TradeProfitPercent;
+        int profitPercent = sim.Content.Attachment<RuleConstantsTradeDef>(sim.Content.Get<S.RuleConstantsDef>().All.Single().Id)!.TradeProfitPercent;
+        long basis = Math.Max(100, Math.Min(500, 5 * worldPercent) * profitPercent / 100);
         Assert.Equal(basis * 225 / 100, foreign.ProfitHundredths);
         Assert.Equal(foreign.ProfitHundredths, foreign.YieldsHundredths.Commerce);
         var yields = sim.Rules().CityYields.Calculate(sim, city.Id);
@@ -167,7 +169,8 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         public void Register(IModContext context)
         {
             context.Content<S.RuleConstantsDef>().Override(new() { Id = original.Id, Values = original.Values, Raw = original.Raw.SetItem("INITIAL_TRADE_ROUTES", "2").SetItem("MAX_TRADE_ROUTES", "3") });
-            context.Content<S.BuildingDef>().Register(new() { Id = "trade_probe:hub", DefaultBuilding = "trade_probe:hub", TradeRoutes = 10 });
+            context.Content<S.BuildingDef>().Register(new() { Id = "trade_probe:hub", DefaultBuilding = "trade_probe:hub" });
+            context.Content<BuildingTradeDef>().Register(new() { Id = "trade_probe:hub_trade", Target = "trade_probe:hub", TradeRoutes = 10 });
         }
     }
 }

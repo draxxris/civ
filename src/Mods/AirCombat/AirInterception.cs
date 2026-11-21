@@ -8,7 +8,7 @@ internal sealed partial class AirMissionService
 {
     private AirMissionReport? TryIntercept(Simulation sim, Unit unit, Hex target, AirMissionReport report)
     {
-        int evasion = Math.Clamp(Definition(sim, unit).EvasionPercent + sim.Rules().Units.Effect(sim, unit.Id, "evasion"), 0, 100);
+        int evasion = Math.Clamp(AirRules(sim.Content, unit.Type).EvasionPercent + sim.Rules().Units.Effect(sim, unit.Id, "evasion"), 0, 100);
         if (sim.Rng.Next(100) < evasion) return null;
         var interceptor = BestInterceptor(sim, unit, target);
         if (interceptor is null || sim.Rng.Next(100) >= InterceptionProbability(sim, interceptor.Id)) return null;

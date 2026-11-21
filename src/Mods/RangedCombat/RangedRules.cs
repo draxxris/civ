@@ -79,7 +79,8 @@ internal static class RangedRules
         var rules = sim.Rules();
         var def = Definition(sim, unit);
         var defender = rules.Combat.BestDefender(sim, unitId, target) is { } id ? sim.State.UnitById(id) : null;
-        int accuracy = Math.Clamp(def.BombAccuracyPercent > 0 ? def.BombAccuracyPercent : 50, 10, 100);
+        int bombAccuracy = (sim.Content.Attachment<UnitRangedCombatDef>(def.Id) ?? UnitRangedCombatDef.None).BombAccuracyPercent;
+        int accuracy = Math.Clamp(bombAccuracy > 0 ? bombAccuracy : 50, 10, 100);
         bool hit = sim.Rng.Next(100) < accuracy;
         IReadOnlyList<CollateralHit> collateral = hit && defender is not null ? HitDefender(sim, unit, defender) : [];
         if (hit && BombardRate(sim, unit) > 0 && BombardTarget(sim, unit, target) is { } city) ReduceCityDefense(sim, unit, city);

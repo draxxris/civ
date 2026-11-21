@@ -7,7 +7,6 @@ public sealed class EraDef : GameContentDef
 {
     public bool NoAnimals { get; init; } = false;
     public bool NoBarbCities { get; init; } = false;
-    public bool NoBarbUnits { get; init; } = false;
     public bool NoGoodies { get; init; } = false;
     public int AdvancedStartPoints { get; init; } = 0;
     public int AnarchyPercent { get; init; } = 0;
@@ -19,7 +18,6 @@ public sealed class EraDef : GameContentDef
     public int CulturePercent { get; init; } = 0;
     public int EventChancePerTurn { get; init; } = 0;
     public int FreePopulation { get; init; } = 0;
-    public int GreatPeoplePercent { get; init; } = 0;
     public int GrowthPercent { get; init; } = 0;
     public int ImprovementPercent { get; init; } = 0;
     public int InitialCityMaintenancePercent { get; init; } = 0;

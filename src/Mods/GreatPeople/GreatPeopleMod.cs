@@ -4,10 +4,28 @@ using Ariel.Modding;
 
 namespace Ariel.Mods.GreatPeople;
 
-public sealed class GreatPeopleMod : IMod
+public sealed class GreatPeopleMod : IPreparableMod
 {
+    private static readonly ModJsonFile<BuildingGreatPeopleDef[]> Buildings = new("data/building-great-people.json");
+    private static readonly ModJsonFile<UnitGreatPeopleDef[]> Units = new("data/unit-great-people.json");
+    private static readonly ModJsonFile<SpecialistGreatPeopleDef[]> Specialists = new("data/specialist-great-people.json");
+    private static readonly ModJsonFile<YieldGreatPeopleDef[]> Yields = new("data/yield-great-people.json");
+    private static readonly ModJsonFile<GameSpeedGreatPeopleDef[]> Speeds = new("data/game-speed-great-people.json");
+    private static readonly ModJsonFile<EraGreatPeopleDef[]> Eras = new("data/era-great-people.json");
+    private static readonly ModJsonFile<RuleConstantsGreatPeopleDef[]> Constants = new("data/rule-constants-great-people.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Buildings, Units, Specialists, Yields, Speeds, Eras, Constants];
+
     public void Register(IModContext context)
     {
+        // What base definitions mean to great people. TechGreatPeopleDef has no shipped rows: no source field sets
+        // a technology's trade mission modifier, but another mod may attach one.
+        Ariel.Rules.ContentRegistration.Load(context, Buildings);
+        Ariel.Rules.ContentRegistration.Load(context, Units);
+        Ariel.Rules.ContentRegistration.Load(context, Specialists);
+        Ariel.Rules.ContentRegistration.Load(context, Yields);
+        Ariel.Rules.ContentRegistration.Load(context, Speeds);
+        Ariel.Rules.ContentRegistration.Load(context, Eras);
+        Ariel.Rules.ContentRegistration.Load(context, Constants);
         var service = new GreatPeopleService();
         var effects = new GreatPeopleEffects();
         context.RegisterService<IGreatPeopleService>("queries", service);

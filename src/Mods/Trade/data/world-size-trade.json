@@ -1,0 +1,58 @@
+[
+  {
+    "id": "trade:worldsize_duel",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_duel",
+    "tradeProfitPercent": 80
+  },
+  {
+    "id": "trade:worldsize_giant",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_giant",
+    "tradeProfitPercent": 20
+  },
+  {
+    "id": "trade:worldsize_gigantic",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_gigantic",
+    "tradeProfitPercent": 15
+  },
+  {
+    "id": "trade:worldsize_huge",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_huge",
+    "tradeProfitPercent": 30
+  },
+  {
+    "id": "trade:worldsize_large",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_large",
+    "tradeProfitPercent": 40
+  },
+  {
+    "id": "trade:worldsize_small",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_small",
+    "tradeProfitPercent": 60
+  },
+  {
+    "id": "trade:worldsize_standard",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_standard",
+    "tradeProfitPercent": 50
+  },
+  {
+    "id": "trade:worldsize_tiny",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:worldsize_tiny",
+    "tradeProfitPercent": 70
+  }
+]

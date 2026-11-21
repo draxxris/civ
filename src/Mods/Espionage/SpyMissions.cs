@@ -38,7 +38,7 @@ internal sealed class SpyMissionRules(EspionageService service)
     public string? Validate(Simulation sim, MissionOrder order, EspionageMissionKind mission)
     {
         var (player, city) = (order.Player, order.City);
-        if (!sim.Content.Get<Ariel.Content.Schema.UnitDef>(order.Unit.Type).Spy) return "Requires your spy unit";
+        if (!EspionageService.UnitRules(sim.Content, order.Unit.Type).Spy) return "Requires your spy unit";
         if (sim.TeamOf(city.Owner).Id == sim.TeamOf(player).Id) return "Requires a rival city";
         if (!sim.Rules().Relations.HasMet(sim, sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id))
             return "Requires a known rival team";
@@ -195,7 +195,7 @@ internal sealed class SpyMission(EspionageService service, SpyMissionRules rules
     /// <summary>A technology theft is chosen in the technology picker, which issues the order itself, so it is not
     /// listed as one order per technology.</summary>
     public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) =>
-        kind != EspionageMissionKind.StealTech && sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Spy ? [""] : [];
+        kind != EspionageMissionKind.StealTech && EspionageService.UnitRules(sim.Content, unit.Type).Spy ? [""] : [];
 
     public string Label(Simulation sim, string subject) => kind switch
     {

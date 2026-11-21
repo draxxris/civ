@@ -11,7 +11,7 @@ internal sealed class ShrineMission(ReligionService service) : IMission
 
     public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) =>
         sim.Content.Get<S.UnitDef>(unit.Type).ConstructibleBuildings.Where(p => p.Value).Select(p => p.Key)
-            .Where(id => sim.Content.TryGet<S.BuildingDef>(id, out var building) && building.GlobalReligionCommerce is not null)
+            .Where(id => sim.Content.TryGet<S.BuildingDef>(id, out _) && ReligionData.Building(sim.Content, id).GlobalReligionCommerce is not null)
             .Order(StringComparer.Ordinal);
 
     public string Label(Simulation sim, string subject) => "Build " + sim.Content.Get<S.BuildingDef>(subject).Name;
@@ -19,10 +19,11 @@ internal sealed class ShrineMission(ReligionService service) : IMission
     public string? Validate(Simulation sim, MissionOrder order)
     {
         if (order.City.Owner != order.Player) return "Unit must be in your city";
-        if (!sim.Content.TryGet<S.BuildingDef>(order.Subject, out var def) || def.GlobalReligionCommerce is null) return "Not a shrine";
+        if (!sim.Content.TryGet<S.BuildingDef>(order.Subject, out var def)
+            || ReligionData.Building(sim.Content, def.Id).GlobalReligionCommerce is not { } shrine) return "Not a shrine";
         if (!sim.Content.Get<S.UnitDef>(order.Unit.Type).ConstructibleBuildings.GetValueOrDefault(order.Subject))
             return "Unit cannot construct this shrine";
-        if (ReligionIdentities.Religion(sim.Content, def.GlobalReligionCommerce) is not { } religion
+        if (ReligionIdentities.Religion(sim.Content, shrine) is not { } religion
             || service.HolyCity(sim, religion) != order.City.Id) return "Requires the holy city";
         // Prophets bypass the negative production cost, not requirements, replacements or class limits.
         var result = sim.Rules().CityProduction.Validate(sim, order.City.Id, "cities:building", def.Id);

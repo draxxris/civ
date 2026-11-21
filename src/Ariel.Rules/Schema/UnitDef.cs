@@ -17,8 +17,6 @@ public sealed class UnitDef : GameContentDef
     public ImmutableDictionary<string, string> CivilizationNames { get; init; } = ImmutableDictionary<string, string>.Empty;
     [ContentReference(typeof(UnitCombatDef), ReferencePart.Values)]
     public string? CombatType { get; init; } = null;
-    [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, int> CorporationSpreads { get; init; } = ImmutableDictionary<string, int>.Empty;
     [ContentReference(typeof(DomainDef), ReferencePart.Values)]
     public string? Domain { get; init; } = null;
     [ContentReference(typeof(DomainDef), ReferencePart.Values)]
@@ -36,28 +34,20 @@ public sealed class UnitDef : GameContentDef
     [ContentReference(typeof(UnitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> FlankingStrikes { get; init; } = ImmutableDictionary<string, int>.Empty;
     public ImmutableDictionary<string, int> Flavors { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, bool> ForceBuildings { get; init; } = ImmutableDictionary<string, bool>.Empty;
     [ContentReference(typeof(TechDef), ReferencePart.Values)]
     public string? ForceObsoleteTech { get; init; } = null;
     [ContentReference(typeof(UnitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, bool> ForceObsoleteUnitClasses { get; init; } = ImmutableDictionary<string, bool>.Empty;
     [ContentReference(typeof(PromotionDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, bool> FreePromotions { get; init; } = ImmutableDictionary<string, bool>.Empty;
-    [ContentReference(typeof(SpecialistDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, bool> GreatPeoples { get; init; } = ImmutableDictionary<string, bool>.Empty;
     [ContentReference(typeof(InvisibilityDef), ReferencePart.Values)]
     public string? Invisibility { get; init; } = null;
-    [ContentReference(typeof(PromotionDef), ReferencePart.Values)]
-    public string? LeaderPromotion { get; init; } = null;
     [ContentReference(typeof(UnitAiDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, bool> ExcludedUnitAiTypes { get; init; } = ImmutableDictionary<string, bool>.Empty;
     [ContentReference(typeof(BuildingDef), ReferencePart.Values)]
     public ImmutableArray<string> OverrideResourceBuilding { get; init; } = [];
     [ContentReference(typeof(TraitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> TraitProductionModifiers { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, int> ReligionSpreads { get; init; } = ImmutableDictionary<string, int>.Empty;
     [ContentReference(typeof(InvisibilityDef), ReferencePart.Values)]
     public ImmutableArray<string> VisibleInvisibilityTypes { get; init; } = [];
     [ContentReference(typeof(UnitCategoryDef), ReferencePart.Values)]
@@ -100,7 +90,6 @@ public sealed class UnitDef : GameContentDef
     public bool BribeBarbarian { get; init; } = false;
     public bool CanMoveAllTerrain { get; init; } = false;
     public bool CanMoveImpassable { get; init; } = false;
-    public bool CounterSpy { get; init; } = false;
     public bool AirBomb1 { get; init; } = false;
     public bool AirBomb2 { get; init; } = false;
     public bool AirBomb3 { get; init; } = false;
@@ -115,7 +104,6 @@ public sealed class UnitDef : GameContentDef
     public bool CanFoundCity { get; init; } = false;
     public bool GoldenAge { get; init; } = false;
     public bool Goodwill { get; init; } = false;
-    public bool GreatGeneral { get; init; } = false;
     public bool HiddenNationality { get; init; } = false;
     public bool IgnoreBuildingDefense { get; init; } = false;
     public bool IgnoreTerrainCost { get; init; } = false;
@@ -140,7 +128,6 @@ public sealed class UnitDef : GameContentDef
     public bool QuickCombat { get; init; } = false;
     public bool RivalTerritory { get; init; } = false;
     public bool Sabotage { get; init; } = false;
-    public bool Spy { get; init; } = false;
     public bool RequiresStateReligion { get; init; } = false;
     public bool StealPlans { get; init; } = false;
     public bool Suicide { get; init; } = false;
@@ -150,16 +137,11 @@ public sealed class UnitDef : GameContentDef
     public int AdvancedStartCost { get; init; } = 0;
     public int AdvancedStartCostIncrease { get; init; } = 0;
     public int AirCombat { get; init; } = 0;
-    public int AirCombatLimit { get; init; } = 0;
-    public int AirRange { get; init; } = 0;
     public int AirUnitCap { get; init; } = 0;
     public int AnimalCombat { get; init; } = 0;
     public int Asset { get; init; } = 0;
-    public int BaseDiscover { get; init; } = 0;
     public int BaseFoodChange { get; init; } = 0;
-    public int BaseHurry { get; init; } = 0;
     public int BaseTrade { get; init; } = 0;
-    public int BombRate { get; init; } = 0;
     public int BombardRate { get; init; } = 0;
     public int Cargo { get; init; } = 0;
     public int ChanceFirstStrikes { get; init; } = 0;
@@ -175,21 +157,15 @@ public sealed class UnitDef : GameContentDef
     public int ControlPoints { get; init; } = 0;
     public int Cost { get; init; } = 0;
     public int CultureGarrison { get; init; } = 0;
-    public int BombAccuracyPercent { get; init; } = 0;
     public int BombRange { get; init; } = 0;
-    public int DiscoverMultiplier { get; init; } = 0;
     public int DropRange { get; init; } = 0;
     public int EspionagePoints { get; init; } = 0;
-    public int EvasionPercent { get; init; } = 0;
     public int ExtraCost { get; init; } = 0;
     public int FirstStrikes { get; init; } = 0;
-    public int GreatWorkCulture { get; init; } = 0;
     public int HillsAttack { get; init; } = 0;
     public int HillsDefense { get; init; } = 0;
     public int HurryCostModifier { get; init; } = 0;
-    public int HurryMultiplier { get; init; } = 0;
     public int InterceptionPercent { get; init; } = 0;
-    public int LeaderExperience { get; init; } = 0;
     public int MinAreaSize { get; init; } = 0;
     public int Moves { get; init; } = 0;
     public int NukeRange { get; init; } = 0;

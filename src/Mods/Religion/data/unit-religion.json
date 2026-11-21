@@ -1,0 +1,119 @@
+[
+  {
+    "id": "religion:asatru_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:asatru": 40
+    },
+    "requirements": null,
+    "target": "military:asatru_missionary"
+  },
+  {
+    "id": "religion:buddhist_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:buddhism": 40
+    },
+    "requirements": null,
+    "target": "military:buddhist_missionary"
+  },
+  {
+    "id": "religion:christian_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:christianity": 40
+    },
+    "requirements": null,
+    "target": "military:christian_missionary"
+  },
+  {
+    "id": "religion:confucian_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:confucianism": 40
+    },
+    "requirements": null,
+    "target": "military:confucian_missionary"
+  },
+  {
+    "id": "religion:egypt_myth_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:egypt_mythology": 30
+    },
+    "requirements": null,
+    "target": "military:egypt_myth_missionary"
+  },
+  {
+    "id": "religion:hellenic_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:hellenism": 40
+    },
+    "requirements": null,
+    "target": "military:hellenic_missionary"
+  },
+  {
+    "id": "religion:hindu_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:hinduism": 40
+    },
+    "requirements": null,
+    "target": "military:hindu_missionary"
+  },
+  {
+    "id": "religion:islamic_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:islam": 40
+    },
+    "requirements": null,
+    "target": "military:islamic_missionary"
+  },
+  {
+    "id": "religion:jewish_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:judaism": 40
+    },
+    "requirements": null,
+    "target": "military:jewish_missionary"
+  },
+  {
+    "id": "religion:nagualism_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:mesoamericanism": 30
+    },
+    "requirements": null,
+    "target": "military:nagualism_missionary"
+  },
+  {
+    "id": "religion:shinto_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:shinto": 40
+    },
+    "requirements": null,
+    "target": "military:shinto_missionary"
+  },
+  {
+    "id": "religion:taoist_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:taoism": 40
+    },
+    "requirements": null,
+    "target": "military:taoist_missionary"
+  },
+  {
+    "id": "religion:zoroastrian_missionary",
+    "name": "",
+    "religionSpreads": {
+      "foundation:zoroastrianism": 30
+    },
+    "requirements": null,
+    "target": "military:zoroastrian_missionary"
+  }
+]

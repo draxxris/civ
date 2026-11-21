@@ -6,10 +6,15 @@ namespace Ariel.Mods.RangedCombat;
 /// <summary>Fire from a distance: bombarding an adjacent city's defences and striking a tile within a unit's range.
 /// The base game keeps what such fire acts on (city defences, collateral damage, the combat record); this mod owns the
 /// two orders, their rules, and how the unit panel and assault planners reach them.</summary>
-public sealed class RangedCombatMod : IMod
+public sealed class RangedCombatMod : IPreparableMod
 {
+    /// <summary>What units mean to ranged strikes, attached to the base units.</summary>
+    private static readonly ModJsonFile<UnitRangedCombatDef[]> Units = new("data/unit-ranged-combat.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Units];
+
     public void Register(IModContext context)
     {
+        Ariel.Rules.ContentRegistration.Load(context, Units);
         context.RegisterCommand<BombardCityCommand>("bombard_city");
         context.RegisterCommand<RangedStrikeCommand>("ranged_strike");
         context.RegisterService<IUnitActionSource>("artillery", new ArtilleryActions());

@@ -34,10 +34,16 @@ public sealed class RunningBuildingsTests
             var buildings = context.Content<S.BuildingDef>();
             // The grant source gives every city of its owner the granted building, which no city builds itself.
             buildings.Register(new() { Id = Probe + "grant", DefaultBuilding = Probe + "grant", FreeBuilding = Probe + "granted" });
-            buildings.Register(new() { Id = Probe + "granted", DefaultBuilding = Probe + "granted", TradeRoutes = 1,
-                AnarchyModifier = -50, GreatPersonUnit = "military:warrior", GreatPeopleRateChange = 3 });
+            buildings.Register(new() { Id = Probe + "granted", DefaultBuilding = Probe + "granted",
+                AnarchyModifier = -50, GreatPeopleRateChange = 3 });
             buildings.Register(new() { Id = Probe + "unpowered", DefaultBuilding = Probe + "unpowered", RequiresPower = true,
-                TradeRoutes = 1, AnarchyModifier = -25, GreatPersonUnit = "military:warrior", GreatPeopleRateChange = 5 });
+                AnarchyModifier = -25, GreatPeopleRateChange = 5 });
+            // Trade keeps what a building means to routes in its own rows.
+            context.Content<BuildingTradeDef>().Register(new() { Id = Probe + "granted_trade", Target = Probe + "granted", TradeRoutes = 1 });
+            context.Content<BuildingTradeDef>().Register(new() { Id = Probe + "unpowered_trade", Target = Probe + "unpowered", TradeRoutes = 1 });
+            // Great people keep which person a building's points produce in their own rows.
+            context.Content<BuildingGreatPeopleDef>().Register(new() { Id = Probe + "granted_great_people", Target = Probe + "granted", GreatPersonUnit = "military:warrior" });
+            context.Content<BuildingGreatPeopleDef>().Register(new() { Id = Probe + "unpowered_great_people", Target = Probe + "unpowered", GreatPersonUnit = "military:warrior" });
         }
     }
 

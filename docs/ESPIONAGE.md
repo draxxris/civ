@@ -159,7 +159,7 @@ chance = base
 chance = clamp(chance, minSuccessPercent, maxSuccessPercent)
 ```
 
-- `defenders` counts units on the city plot with `UnitDef.CounterSpy == true` and more
+- `defenders` counts units on the city plot with `UnitEspionageDef.CounterSpy == true` and more
   than zero hit points. Past `MaxDefenders` the penalty stops growing, so the cliff is
   explicit content rather than a hidden constant.
 - Counter-espionage protection moves cost and risk together: a 250% cost multiplier
@@ -184,8 +184,9 @@ are deleted at the next turn boundary.
 ## Integration
 
 - Buildings and specialists (`src/Ariel.Rules/Cities`) add espionage commerce.
-- Spy units (`src/Ariel.Rules/Military`) set `spy: true`. Counter-spy units set
-  `counterSpy: true`.
+- Spy and counter-spy units are base units (`src/Ariel.Rules/Military`); the mod's
+  `data/unit-espionage.json` attaches a `UnitEspionageDef` row to each, with `spy: true`
+  or `counterSpy: true`.
 - The mod's contracts, commands, state and events live in its published API
   (`Ariel.Mods.Espionage`, assembly `Ariel.Mods.Espionage.Api`).
 - Revolution is optional. The mod incites a revolt through the Revolution mod's API when

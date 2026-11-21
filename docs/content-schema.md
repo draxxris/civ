@@ -38,7 +38,8 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
   space race is a base `VictoryDef` row in its own `data/victory.json`.
 - Votes: `VoteSourceDef` (a council and its interval and civic), `VoteDef` (a
   resolution: the councils that hold it, its threshold, and what it forces), and
-  `BuildingVotesDef` attached to the buildings that seat a council. They live in the
+  `BuildingVotesDef` attached to the buildings that seat a council (its `voteSource`,
+  and `forceTeamVoteEligible` when the owner's team always stands). They live in the
   mod's published API (`Ariel.Mods.Votes`, assembly `Ariel.Mods.Votes.Api`).
 - Corporations: `CorporationDef` for founding, required resources, branch output,
   headquarters output, spread cost, and maintenance. It lives in the mod's published
@@ -58,12 +59,14 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
 
 Foundation loads hand-authored `HexOverridesDef` separately from imported definition
 families. Its noise, climate, sight, lake, source-grid scale, and start-balance integers
-enter the content hash. `HexOverridesDef` also specifies barbarian and garrison tuning
-(`BarbarianUnownedTilesMultiplier`, `AiMinimumGarrison`, `AiThreatStrengthPerDefender`,
-`AiMaximumGarrison`, `GovernorFoodWeight`, `GovernorProductionWeight`, and
-`GovernorCommerceWeight`), along with `FeatureClimate` latitude bounds. When loading
-handicaps into `ContentDb`, Foundation scales `HandicapDef.UnownedTilesPerBarbarianUnit`
-by `BarbarianUnownedTilesMultiplier`. The importer never writes `hex-overrides.json`.
+enter the content hash. `HexOverridesDef` also specifies garrison and governor tuning
+(`AiMinimumGarrison`, `AiThreatStrengthPerDefender`, `AiMaximumGarrison`,
+`GovernorFoodWeight`, `GovernorProductionWeight`, and `GovernorCommerceWeight`), along
+with `FeatureClimate` latitude bounds. The importer never writes `hex-overrides.json`.
+The Barbarians mod keeps its own hand-authored hex tuning in `data/barbarian-rules.json`
+(`BarbarianRulesDef.UnownedTilesMultiplier`, at least 1): when it loads its handicap rows
+into `ContentDb`, it scales `HandicapBarbariansDef.UnownedTilesPerBarbarianUnit` by that
+multiplier. The importer never writes `barbarian-rules.json` either.
 
 Foundation reserves `GameOptionDef` and `ConditionDef`, plus identity records
 `CorporationIdentityDef`, `ReligionIdentityDef` (`data/religion-identity.json`) and
@@ -189,6 +192,54 @@ An attachment row has its own id in the attaching mod's namespace and names the 
   "target": "government:mercantilism", "noForeignTrade": true, ... }
 ```
 
+The same holds for every base definition: a field only a mod reads is in that mod's
+attachment file, with a row only for the definitions where it is not at its default, and a
+definition without a row reads as the defaults:
+
+- Trade: `data/building-trade.json` (`BuildingTradeDef`: `tradeRoutes`, `globalTradeRoutes`,
+  `coastalTradeRoutes`, `tradeRouteModifier`, `foreignTradeRouteModifier`),
+  `data/tech-trade.json` (`TechTradeDef`: `tradeRoutes`), `data/yield-trade.json`
+  (`YieldTradeDef`: `tradeModifier`), `data/world-size-trade.json` (`WorldSizeTradeDef`:
+  `tradeProfitPercent`) and `data/rule-constants-trade.json` (`RuleConstantsTradeDef`:
+  `tradeProfitPercent`, about `foundation:rule_constants`).
+- GreatPeople: `data/building-great-people.json` (`BuildingGreatPeopleDef`:
+  `greatPersonUnit`, `goldenAgeModifier`, `tradeMissionModifier`),
+  `data/unit-great-people.json` (`UnitGreatPeopleDef`: `greatPeoples`, `forceBuildings`,
+  `greatGeneral`, `leaderPromotion`, `leaderExperience`, `baseDiscover`,
+  `discoverMultiplier`, `baseHurry`, `hurryMultiplier`, `greatWorkCulture`),
+  `data/specialist-great-people.json` (`SpecialistGreatPeopleDef`: `greatPersonUnit`),
+  `data/yield-great-people.json` (`YieldGreatPeopleDef`: `goldenAgeYield`,
+  `goldenAgeYieldThreshold`, `aiWeightPercent`), `data/game-speed-great-people.json`
+  (`GameSpeedGreatPeopleDef`: `greatPeoplePercent`, `unitDiscoverPercent`,
+  `unitGreatWorkPercent`, `unitHurryPercent`, `unitTradePercent`),
+  `data/era-great-people.json` (`EraGreatPeopleDef`: `greatPeoplePercent`) and
+  `data/rule-constants-great-people.json` (`RuleConstantsGreatPeopleDef`:
+  `goldenAgeTurns`, `goldenAgeGreatPeoplePercent`). `TechGreatPeopleDef`
+  (`tradeMissionModifier`) ships no rows; no source field sets it.
+- Religion: `data/building-religion.json` (`BuildingReligionDef`: `religionChanges`,
+  `stateReligionCommerces`, `freeFromStateReligion`, `stateReligionHappiness`,
+  `globalReligionCommerce`), `data/unit-religion.json` (`UnitReligionDef`:
+  `religionSpreads`) and `data/rule-constants-religion.json` (`RuleConstantsReligionDef`:
+  `baseReligionAnarchyTurns`).
+- Corporations: `data/unit-corporations.json` (`UnitCorporationsDef`:
+  `corporationSpreads`), `data/handicap-corporations.json` (`HandicapCorporationsDef`:
+  `corporationMaintenancePercent`) and `data/world-size-corporations.json`
+  (`WorldSizeCorporationsDef`: `corporationMaintenancePercent`).
+- Espionage: `data/unit-espionage.json` (`UnitEspionageDef`: `spy`, `counterSpy`).
+- AirCombat: `data/unit-air-combat.json` (`UnitAirCombatDef`: `airCombatLimit`, `airRange`,
+  `bombRate`, `evasionPercent`), `data/improvement-air-combat.json`
+  (`ImprovementAirCombatDef`: `airBombDefense`) and `data/rule-constants-air-combat.json`
+  (`RuleConstantsAirCombatDef`: `airCombatDamage`).
+- RangedCombat: `data/unit-ranged-combat.json` (`UnitRangedCombatDef`:
+  `bombAccuracyPercent`).
+- Barbarians: `data/handicap-barbarians.json` (`HandicapBarbariansDef`:
+  `barbarianCreationTurnsElapsed`, `unownedTilesPerBarbarianUnit`,
+  `unownedWaterTilesPerBarbarianUnit`), `data/game-speed-barbarians.json`
+  (`GameSpeedBarbariansDef`: `barbPercent`) and `data/era-barbarians.json`
+  (`EraBarbariansDef`: `noBarbUnits`).
+- GlobalWarming: `data/feature-global-warming.json` (`FeatureGlobalWarmingDef`:
+  `warmingDefense`).
+
 To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
 one of the mod's own. New players start a new option on its `defaultCivic`, or else on
 its first civic without requirements. To give it a new kind of
@@ -224,11 +275,13 @@ values use that default too. Explicit zeroes and negative integers remain intact
 entries. A missing map entry uses the source getter's default slot value. Most effect
 maps use zero, not a percentage multiplier.
 
-`RuleConstantsDef.Values` contains 68 integer constants for growth, food, culture,
-combat, healing, research (including research diffusion), anarchy, upkeep, golden ages,
-hurried production, conscription, anger, city defense damage, and trade profit. The
+`RuleConstantsDef.Values` contains 63 integer constants for growth, food, culture,
+combat, healing, research (including research diffusion), anarchy, upkeep,
+hurried production, conscription, anger and city defense damage. The
 food-wastage growth factor uses permille: the source value 0.05 becomes 50 in
-`FoodWastageGrowthPermille`. Conversion is exact without rounding. `Raw` retains all
+`FoodWastageGrowthPermille`. Conversion is exact without rounding. A constant only a mod
+reads is that mod's row about `foundation:rule_constants` instead (Trade's
+`tradeProfitPercent`, GreatPeople's golden age length and great people percent, Religion's conversion anarchy, AirCombat's air strike damage). `Raw` retains all
 other XML define entries as exact string key-value pairs. Raw floating-point strings are
 preserved for reference but are not authoritative JSON numbers.
 

@@ -12,6 +12,12 @@ internal sealed partial class AirMissionService : IAirMissionService, IAirOperat
 
     internal static S.UnitDef Definition(Simulation sim, Unit unit) => sim.Content.Get<S.UnitDef>(unit.Type);
     internal static S.RuleConstants Constants(Simulation sim) => sim.Content.Get<S.RuleConstantsDef>().All.Single().Values;
+    /// <summary>What a unit means to air missions.</summary>
+    internal static UnitAirCombatDef AirRules(Ariel.Content.ContentDb content, string unit) =>
+        content.Attachment<UnitAirCombatDef>(unit) ?? UnitAirCombatDef.None;
+    /// <summary>The air combat rule constants.</summary>
+    internal static RuleConstantsAirCombatDef AirConstants(Simulation sim) =>
+        sim.Content.Attachment<RuleConstantsAirCombatDef>(sim.Content.Get<S.RuleConstantsDef>().All.Single().Id) ?? RuleConstantsAirCombatDef.None;
     internal static int Raw(Simulation sim, string key, int fallback) =>
         sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var value)
         && int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number) ? number : fallback;
@@ -34,7 +40,7 @@ internal sealed partial class AirMissionService : IAirMissionService, IAirOperat
     public int AirRange(Simulation sim, int unitId)
     {
         var unit = sim.State.UnitById(unitId);
-        return Math.Max(0, Definition(sim, unit).AirRange + Effect(sim, unit, "air_range"));
+        return Math.Max(0, AirRules(sim.Content, unit.Type).AirRange + Effect(sim, unit, "air_range"));
     }
 
     public int InterceptionProbability(Simulation sim, int unitId)
@@ -81,7 +87,7 @@ internal sealed partial class AirMissionService : IAirMissionService, IAirOperat
 
     private static string? ValidateBomb(Simulation sim, Unit unit, Hex target)
     {
-        if (Definition(sim, unit).BombRate <= 0) return "Aircraft cannot bomb";
+        if (AirRules(sim.Content, unit.Type).BombRate <= 0) return "Aircraft cannot bomb";
         var plot = sim.State.PlotAt(target);
         if (!plot.Visible.Contains(sim.TeamOf(unit.Owner).Id)) return "Target is not visible";
         if (plot.Owner is not { } owner || !Enemy(sim, unit.Owner, owner)) return "Target is not enemy territory";
@@ -93,7 +99,7 @@ internal sealed partial class AirMissionService : IAirMissionService, IAirOperat
     private static Unit? AirStrikeTarget(Simulation sim, Unit unit, Hex target)
     {
         var combat = sim.Rules().Combat;
-        int limit = Definition(sim, unit).AirCombatLimit;
+        int limit = AirRules(sim.Content, unit.Type).AirCombatLimit;
         int maximum = Constants(sim).MaxHitPoints;
         return sim.State.UnitsAt(target).Where(u => combat.CanDefend(sim, unit.Id, u.Id) && maximum - u.Health < limit)
             .OrderByDescending(u => combat.Preview(sim, unit.Id, u.Id).DefenseStrength.Current).ThenBy(u => u.Id).FirstOrDefault();
@@ -161,10 +167,10 @@ internal sealed partial class AirMissionService : IAirMissionService, IAirOperat
         int airStrength = Definition(sim, unit).AirCombat * unit.Health / maximum;
         int defense = combat.Preview(sim, unit.Id, defender.Id).DefenseStrength.Current / 100;
         int factor = (airStrength + defense + 1) / 2;
-        int damage = Math.Max(1, Constants(sim).AirCombatDamage * (airStrength + factor) / Math.Max(1, defense + factor));
+        int damage = Math.Max(1, AirConstants(sim).AirCombatDamage * (airStrength + factor) / Math.Max(1, defense + factor));
         if (sim.State.CityAt(target) is { } city)
             damage = damage * Math.Max(0, 100 + combat.AirStrikeModifier(sim, city.Id)) / 100;
-        int remaining = Definition(sim, unit).AirCombatLimit - (maximum - defender.Health);
+        int remaining = AirRules(sim.Content, unit.Type).AirCombatLimit - (maximum - defender.Health);
         damage = Math.Max(0, Math.Min(defender.Health, Math.Min(damage, remaining)));
         combat.Collateral(sim, unit.Id, defender.Id);
         defender.Health -= damage;
@@ -174,8 +180,7 @@ internal sealed partial class AirMissionService : IAirMissionService, IAirOperat
 
     private static AirMissionReport Bomb(Simulation sim, Unit unit, Hex target, AirMissionReport report)
     {
-        var def = Definition(sim, unit);
-        int rate = Math.Max(1, def.BombRate * unit.Health / Constants(sim).MaxHitPoints);
+        int rate = Math.Max(1, AirRules(sim.Content, unit.Type).BombRate * unit.Health / Constants(sim).MaxHitPoints);
         if (sim.State.CityAt(target) is { } city)
         {
             var combat = sim.Rules().Combat;
@@ -186,7 +191,7 @@ internal sealed partial class AirMissionService : IAirMissionService, IAirOperat
         var plot = sim.State.PlotAt(target);
         string id = plot.Improvement!;
         var improvement = sim.Content.Get<S.ImprovementDef>(id);
-        if (sim.Rng.Next(rate) < sim.Rng.Next(Math.Max(1, improvement.AirBombDefense))) return report;
+        if (sim.Rng.Next(rate) < sim.Rng.Next(Math.Max(1, (sim.Content.Attachment<ImprovementAirCombatDef>(id) ?? ImprovementAirCombatDef.None).AirBombDefense))) return report;
         plot.Improvement = improvement.ImprovementPillage; plot.ImprovementTurns = 0; plot.BuildProgress.Clear();
         return report with { DestroyedImprovement = id };
     }

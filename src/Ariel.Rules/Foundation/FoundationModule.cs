@@ -1,6 +1,4 @@
 using Ariel.Content.Schema;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using Ariel.Game;
 using Ariel.Modding;
 
@@ -16,7 +14,7 @@ public sealed class FoundationModule : IPreparableMod
     private static readonly ModJsonFile<EraDef[]> Eras = new("data/era.json");
     private static readonly ModJsonFile<GameOptionDef[]> Options = new("data/game-option.json");
     private static readonly ModJsonFile<GameSpeedDef[]> Speeds = new("data/game-speed.json");
-    private static readonly ModJsonFile<JsonArray> Handicaps = new("data/handicap.json");
+    private static readonly ModJsonFile<HandicapDef[]> Handicaps = new("data/handicap.json");
     private static readonly ModJsonFile<SpecialistDef[]> Specialists = new("data/specialist.json");
     private static readonly ModJsonFile<VictoryIdentityDef[]> Victories = new("data/victory-identity.json");
     private static readonly ModJsonFile<ReligionIdentityDef[]> Religions = new("data/religion-identity.json");
@@ -35,25 +33,18 @@ public sealed class FoundationModule : IPreparableMod
         public string? Evaluate(Ariel.Content.Requirement.Leaf leaf, Ariel.Content.RequirementContext context) =>
             context.Sim.IsOptionEnabled(leaf.Id) ? null : $"Required game-option: {leaf.Id}";
     }
-    private static void LoadHexHandicaps(IModContext context)
+    private static void ValidateHexTuning(IModContext context)
     {
         var tuning = HexOverrides.Read(context.Data).Single();
-        if (tuning.BarbarianUnownedTilesMultiplier < 1 || tuning.AiMinimumGarrison < 1
-            || tuning.AiThreatStrengthPerDefender < 1 || tuning.AiMaximumGarrison < tuning.AiMinimumGarrison)
-            throw new InvalidDataException("Invalid hex barbarian or garrison tuning");
-        // Adapt the loaded definitions, not the imported sidecar. Military consumes the effective handicap.
-        var rows = Handicaps.Read(context.Data);
-        foreach (var row in rows)
-        {
-            int tiles = row!["unownedTilesPerBarbarianUnit"]!.GetValue<int>();
-            row["unownedTilesPerBarbarianUnit"] = checked(tiles * tuning.BarbarianUnownedTilesMultiplier);
-            context.Content<HandicapDef>().Register(row.Deserialize<HandicapDef>(ModLoader.Json)!);
-        }
+        if (tuning.AiMinimumGarrison < 1 || tuning.AiThreatStrengthPerDefender < 1
+            || tuning.AiMaximumGarrison < tuning.AiMinimumGarrison)
+            throw new InvalidDataException("Invalid hex garrison tuning");
     }
 
     public void Register(IModContext context)
     {
         context.RegisterService<Ariel.Game.ISetupPolicy>("setup_policy", new SetupPolicy());
+        ValidateHexTuning(context);
         ContentRegistration.Load(context, HexOverrides);
         context.RegisterService<Ariel.Game.IRuleset>("ruleset", new Ariel.Game.GameRules());
         ContentRegistration.Load(context, Commerce);
@@ -62,7 +53,7 @@ public sealed class FoundationModule : IPreparableMod
         ContentRegistration.Load(context, Eras);
         ContentRegistration.Load(context, Options);
         ContentRegistration.Load(context, Speeds);
-        LoadHexHandicaps(context);
+        ContentRegistration.Load(context, Handicaps);
 
         ContentRegistration.Load(context, Specialists);
         ContentRegistration.Load(context, Victories);

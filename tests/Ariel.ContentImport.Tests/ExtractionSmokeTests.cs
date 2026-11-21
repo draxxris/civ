@@ -131,7 +131,8 @@ public sealed class ExtractionSmokeTests
         Assert.DoesNotContain(result.Definitions, d => d.Definition is GameContentDef { Era: { } era } && era != "foundation:era_ancient");
         using var directory = new TemporaryDirectory();
         ContentEmission.Write(result, Roots(directory.Path), directory.Path);
-        Assert.Equal(SchemaCatalog.Definitions.Count + 2, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));
+        // One file per family, one per mod's rule constants row, and Foundation's conditions and rule constants.
+        Assert.Equal(SchemaCatalog.Definitions.Count + SchemaCatalog.Constants.Attachments.Length + 2, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));
         Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "rules/Foundation/data/handicap.json")).Trim());
     }
 

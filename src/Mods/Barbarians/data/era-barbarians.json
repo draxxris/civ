@@ -1,0 +1,30 @@
+[
+  {
+    "id": "barbarians:era_future",
+    "name": "",
+    "noBarbUnits": true,
+    "requirements": null,
+    "target": "foundation:era_future"
+  },
+  {
+    "id": "barbarians:era_industrial",
+    "name": "",
+    "noBarbUnits": true,
+    "requirements": null,
+    "target": "foundation:era_industrial"
+  },
+  {
+    "id": "barbarians:era_modern",
+    "name": "",
+    "noBarbUnits": true,
+    "requirements": null,
+    "target": "foundation:era_modern"
+  },
+  {
+    "id": "barbarians:era_transhuman",
+    "name": "",
+    "noBarbUnits": true,
+    "requirements": null,
+    "target": "foundation:era_transhuman"
+  }
+]

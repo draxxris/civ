@@ -1,0 +1,79 @@
+[
+  {
+    "greatPeoplePercent": 160,
+    "id": "great_people:gamespeed_blitz",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_blitz",
+    "unitDiscoverPercent": 88,
+    "unitGreatWorkPercent": 88,
+    "unitHurryPercent": 88,
+    "unitTradePercent": 88
+  },
+  {
+    "greatPeoplePercent": 480,
+    "id": "great_people:gamespeed_epic",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_epic",
+    "unitDiscoverPercent": 264,
+    "unitGreatWorkPercent": 264,
+    "unitHurryPercent": 264,
+    "unitTradePercent": 264
+  },
+  {
+    "greatPeoplePercent": 1280,
+    "id": "great_people:gamespeed_eternity",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_eternity",
+    "unitDiscoverPercent": 704,
+    "unitGreatWorkPercent": 704,
+    "unitHurryPercent": 704,
+    "unitTradePercent": 704
+  },
+  {
+    "greatPeoplePercent": 640,
+    "id": "great_people:gamespeed_marathon",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_marathon",
+    "unitDiscoverPercent": 352,
+    "unitGreatWorkPercent": 352,
+    "unitHurryPercent": 352,
+    "unitTradePercent": 352
+  },
+  {
+    "greatPeoplePercent": 320,
+    "id": "great_people:gamespeed_normal",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_normal",
+    "unitDiscoverPercent": 176,
+    "unitGreatWorkPercent": 176,
+    "unitHurryPercent": 176,
+    "unitTradePercent": 176
+  },
+  {
+    "greatPeoplePercent": 240,
+    "id": "great_people:gamespeed_quick",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_quick",
+    "unitDiscoverPercent": 132,
+    "unitGreatWorkPercent": 132,
+    "unitHurryPercent": 132,
+    "unitTradePercent": 132
+  },
+  {
+    "greatPeoplePercent": 960,
+    "id": "great_people:gamespeed_snail",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:gamespeed_snail",
+    "unitDiscoverPercent": 528,
+    "unitGreatWorkPercent": 528,
+    "unitHurryPercent": 528,
+    "unitTradePercent": 528
+  }
+]

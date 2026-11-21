@@ -5,26 +5,8 @@
     "mod": "foundation",
     "fields": [
       {
-        "source": "iAIWeightPercent",
-        "property": "AiWeightPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iCityChange",
         "property": "CityChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGoldenAgeYield",
-        "property": "GoldenAgeYield",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGoldenAgeYieldThreshold",
-        "property": "GoldenAgeYieldThreshold",
         "kind": "int",
         "default": 0
       },
@@ -61,12 +43,6 @@
       {
         "source": "iPopulationChangeOffset",
         "property": "PopulationChangeOffset",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTradeModifier",
-        "property": "TradeModifier",
         "kind": "int",
         "default": 0
       }
@@ -119,12 +95,6 @@
       {
         "source": "bNoBarbCities",
         "property": "NoBarbCities",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bNoBarbUnits",
-        "property": "NoBarbUnits",
         "kind": "bool",
         "default": 0
       },
@@ -191,12 +161,6 @@
       {
         "source": "iFreePopulation",
         "property": "FreePopulation",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGreatPeoplePercent",
-        "property": "GreatPeoplePercent",
         "kind": "int",
         "default": 0
       },
@@ -305,12 +269,6 @@
         "default": 0
       },
       {
-        "source": "iBarbPercent",
-        "property": "BarbPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBuildPercent",
         "property": "BuildPercent",
         "kind": "int",
@@ -349,12 +307,6 @@
       {
         "source": "iGoldenAgePercent",
         "property": "GoldenAgePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGreatPeoplePercent",
-        "property": "GreatPeoplePercent",
         "kind": "int",
         "default": 0
       },
@@ -403,30 +355,6 @@
       {
         "source": "iTrainPercent",
         "property": "TrainPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitDiscoverPercent",
-        "property": "UnitDiscoverPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitGreatWorkPercent",
-        "property": "UnitGreatWorkPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitHurryPercent",
-        "property": "UnitHurryPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitTradePercent",
-        "property": "UnitTradePercent",
         "kind": "int",
         "default": 0
       },
@@ -653,12 +581,6 @@
         "default": 0
       },
       {
-        "source": "iBarbarianCreationTurnsElapsed",
-        "property": "BarbarianCreationTurnsElapsed",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBarbarianDefenders",
         "property": "BarbarianDefenders",
         "kind": "int",
@@ -673,12 +595,6 @@
       {
         "source": "iColonyMaintenancePercent",
         "property": "ColonyMaintenancePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCorporationMaintenancePercent",
-        "property": "CorporationMaintenancePercent",
         "kind": "int",
         "default": 0
       },
@@ -797,20 +713,8 @@
         "default": 0
       },
       {
-        "source": "iUnownedTilesPerBarbarianUnit",
-        "property": "UnownedTilesPerBarbarianUnit",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iUnownedTilesPerGameAnimal",
         "property": "UnownedTilesPerGameAnimal",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnownedWaterTilesPerBarbarianUnit",
-        "property": "UnownedWaterTilesPerBarbarianUnit",
         "kind": "int",
         "default": 0
       }
@@ -844,12 +748,6 @@
       {
         "source": "iColonyMaintenancePercent",
         "property": "ColonyMaintenancePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iCorporationMaintenancePercent",
-        "property": "CorporationMaintenancePercent",
         "kind": "int",
         "default": 0
       },
@@ -928,12 +826,6 @@
       {
         "source": "iTerrainGrainChange",
         "property": "TerrainGrainChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTradeProfitPercent",
-        "property": "TradeProfitPercent",
         "kind": "int",
         "default": 0
       },
@@ -1027,12 +919,6 @@
         "kind": "mapInt",
         "key": "FlavorType",
         "value": "iFlavor"
-      },
-      {
-        "source": "GreatPeopleUnitClass",
-        "property": "GreatPersonUnit",
-        "kind": "ref",
-        "target": "UnitClassInfo"
       },
       {
         "source": "Yields",
@@ -1338,12 +1224,6 @@
       {
         "source": "iTurnDamage",
         "property": "TurnDamage",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iWarmingDefense",
-        "property": "WarmingDefense",
         "kind": "int",
         "default": 0
       }
@@ -1784,12 +1664,6 @@
       {
         "source": "iAdvancedStartCostIncrease",
         "property": "AdvancedStartCostIncrease",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAirBombDefense",
-        "property": "AirBombDefense",
         "kind": "int",
         "default": 0
       },
@@ -2299,12 +2173,6 @@
         "default": 0
       },
       {
-        "source": "iTradeRoutes",
-        "property": "TradeRoutes",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iWorkerSpeedModifier",
         "property": "WorkerSpeedModifier",
         "kind": "int",
@@ -2515,12 +2383,6 @@
         "target": "CorporationInfo"
       },
       {
-        "source": "GlobalReligionCommerce",
-        "property": "GlobalReligionCommerce",
-        "kind": "ref",
-        "target": "ReligionInfo"
-      },
-      {
         "source": "GlobalSeaPlotYieldChanges",
         "property": "GlobalSeaPlotYieldChanges",
         "kind": "yield"
@@ -2529,12 +2391,6 @@
         "source": "GlobalYieldModifiers",
         "property": "GlobalYieldModifiers",
         "kind": "yield"
-      },
-      {
-        "source": "GreatPeopleUnitClass",
-        "property": "GreatPersonUnit",
-        "kind": "ref",
-        "target": "UnitClassInfo"
       },
       {
         "source": "HappinessTraits",
@@ -2595,14 +2451,6 @@
         "value": "iProductionTrait"
       },
       {
-        "source": "ReligionChanges",
-        "property": "ReligionChanges",
-        "kind": "mapInt",
-        "target": "ReligionInfo",
-        "key": "ReligionType",
-        "value": "iReligionChange"
-      },
-      {
         "source": "ReligionType",
         "property": "ReligionType",
         "kind": "ref",
@@ -2660,11 +2508,6 @@
         "target": "SpecialistInfo",
         "key": "SpecialistType",
         "value": "YieldChanges"
-      },
-      {
-        "source": "StateReligionCommerces",
-        "property": "StateReligionCommerces",
-        "kind": "commerce"
       },
       {
         "source": "TechCommerceChanges",
@@ -2796,18 +2639,6 @@
       {
         "source": "bForceNoPrereqScaling",
         "property": "ForceNoPrereqScaling",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bForceTeamVoteEligible",
-        "property": "ForceTeamVoteEligible",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bFreeFromStateReligion",
-        "property": "FreeFromStateReligion",
         "kind": "bool",
         "default": 0
       },
@@ -3052,12 +2883,6 @@
         "default": 0
       },
       {
-        "source": "iCoastalTradeRoutes",
-        "property": "CoastalTradeRoutes",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iConnectedCityMaintenanceModifier",
         "property": "ConnectedCityMaintenanceModifier",
         "kind": "int",
@@ -3142,12 +2967,6 @@
         "default": 0
       },
       {
-        "source": "iForeignTradeRouteModifier",
-        "property": "ForeignTradeRouteModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iFreeSpecialist",
         "property": "FreeSpecialist",
         "kind": "int",
@@ -3214,20 +3033,8 @@
         "default": 0
       },
       {
-        "source": "iGlobalTradeRoutes",
-        "property": "GlobalTradeRoutes",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iGlobalWarWearinessModifier",
         "property": "GlobalWarWearinessModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGoldenAgeModifier",
-        "property": "GoldenAgeModifier",
         "kind": "int",
         "default": 0
       },
@@ -3430,26 +3237,8 @@
         "default": 0
       },
       {
-        "source": "iStateReligionHappiness",
-        "property": "StateReligionHappiness",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iTeamsPrereq",
         "property": "TeamsPrereq",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTradeRouteModifier",
-        "property": "TradeRouteModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTradeRoutes",
-        "property": "TradeRoutes",
         "kind": "int",
         "default": 0
       },
@@ -3692,14 +3481,6 @@
         "target": "UnitCombatInfo"
       },
       {
-        "source": "CorporationSpreads",
-        "property": "CorporationSpreads",
-        "kind": "mapInt",
-        "target": "CorporationInfo",
-        "key": "CorporationType",
-        "value": "iCorporationSpread"
-      },
-      {
         "source": "Domain",
         "property": "Domain",
         "kind": "ref",
@@ -3767,14 +3548,6 @@
         "value": "iFlavor"
       },
       {
-        "source": "ForceBuildings",
-        "property": "ForceBuildings",
-        "kind": "mapBool",
-        "target": "BuildingInfo",
-        "key": "BuildingType",
-        "value": "bForceBuilding"
-      },
-      {
         "source": "ForceObsoleteTech",
         "property": "ForceObsoleteTech",
         "kind": "ref",
@@ -3797,24 +3570,10 @@
         "value": "bFreePromotion"
       },
       {
-        "source": "GreatPeoples",
-        "property": "GreatPeoples",
-        "kind": "mapBool",
-        "target": "SpecialistInfo",
-        "key": "GreatPeopleType",
-        "value": "bGreatPeople"
-      },
-      {
         "source": "Invisible",
         "property": "Invisibility",
         "kind": "ref",
         "target": "InvisibleInfo"
-      },
-      {
-        "source": "LeaderPromotion",
-        "property": "LeaderPromotion",
-        "kind": "ref",
-        "target": "PromotionInfo"
       },
       {
         "source": "NotUnitAIs",
@@ -3837,14 +3596,6 @@
         "target": "TraitInfo",
         "key": "ProductionTraitType",
         "value": "iProductionTrait"
-      },
-      {
-        "source": "ReligionSpreads",
-        "property": "ReligionSpreads",
-        "kind": "mapInt",
-        "target": "ReligionInfo",
-        "key": "ReligionType",
-        "value": "iReligionSpread"
       },
       {
         "source": "SeeInvisible",
@@ -4019,12 +3770,6 @@
         "default": 0
       },
       {
-        "source": "bCounterSpy",
-        "property": "CounterSpy",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bDCMAirBomb1",
         "property": "AirBomb1",
         "kind": "bool",
@@ -4107,12 +3852,6 @@
         "property": "Goodwill",
         "kind": "bool",
         "default": 0
-      },
-      {
-        "source": "bGreatGeneral",
-        "property": "GreatGeneral",
-        "kind": "bool",
-        "default": false
       },
       {
         "source": "bHiddenNationality",
@@ -4259,12 +3998,6 @@
         "default": 0
       },
       {
-        "source": "bSpy",
-        "property": "Spy",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bStateReligion",
         "property": "RequiresStateReligion",
         "kind": "bool",
@@ -4319,18 +4052,6 @@
         "default": 0
       },
       {
-        "source": "iAirCombatLimit",
-        "property": "AirCombatLimit",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iAirRange",
-        "property": "AirRange",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iAirUnitCap",
         "property": "AirUnitCap",
         "kind": "int",
@@ -4349,32 +4070,14 @@
         "default": 0
       },
       {
-        "source": "iBaseDiscover",
-        "property": "BaseDiscover",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBaseFoodChange",
         "property": "BaseFoodChange",
         "kind": "int",
         "default": 0
       },
       {
-        "source": "iBaseHurry",
-        "property": "BaseHurry",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBaseTrade",
         "property": "BaseTrade",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iBombRate",
-        "property": "BombRate",
         "kind": "int",
         "default": 0
       },
@@ -4469,20 +4172,8 @@
         "default": 0
       },
       {
-        "source": "iDCMBombAccuracy",
-        "property": "BombAccuracyPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDCMBombRange",
         "property": "BombRange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDiscoverMultiplier",
-        "property": "DiscoverMultiplier",
         "kind": "int",
         "default": 0
       },
@@ -4499,12 +4190,6 @@
         "default": 0
       },
       {
-        "source": "iEvasionProbability",
-        "property": "EvasionPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iExtraCost",
         "property": "ExtraCost",
         "kind": "int",
@@ -4513,12 +4198,6 @@
       {
         "source": "iFirstStrikes",
         "property": "FirstStrikes",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGreatWorkCulture",
-        "property": "GreatWorkCulture",
         "kind": "int",
         "default": 0
       },
@@ -4541,20 +4220,8 @@
         "default": 0
       },
       {
-        "source": "iHurryMultiplier",
-        "property": "HurryMultiplier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iInterceptionProbability",
         "property": "InterceptionPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iLeaderExperience",
-        "property": "LeaderExperience",
         "kind": "int",
         "default": 0
       },
@@ -7058,7 +6725,519 @@
     "definition": "BuildingVotesDef",
     "mod": "votes",
     "fields": [
-      { "source": "DiploVoteType", "property": "VoteSource", "kind": "ref", "target": "VoteSourceInfo" }
+      { "source": "DiploVoteType", "property": "VoteSource", "kind": "ref", "target": "VoteSourceInfo" },
+      { "source": "bForceTeamVoteEligible", "property": "ForceTeamVoteEligible", "kind": "bool", "default": 0 }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "iCoastalTradeRoutes",
+        "property": "CoastalTradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iForeignTradeRouteModifier",
+        "property": "ForeignTradeRouteModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGlobalTradeRoutes",
+        "property": "GlobalTradeRoutes",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRouteModifier",
+        "property": "TradeRouteModifier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iTradeRoutes",
+        "property": "TradeRoutes",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "TechInfo",
+    "definition": "TechTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "iTradeRoutes",
+        "property": "TradeRoutes",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "YieldInfo",
+    "definition": "YieldTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "iTradeModifier",
+        "property": "TradeModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "WorldInfo",
+    "definition": "WorldSizeTradeDef",
+    "mod": "trade",
+    "fields": [
+      {
+        "source": "iTradeProfitPercent",
+        "property": "TradeProfitPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "GreatPeopleUnitClass",
+        "property": "GreatPersonUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      },
+      {
+        "source": "iGoldenAgeModifier",
+        "property": "GoldenAgeModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "ForceBuildings",
+        "property": "ForceBuildings",
+        "kind": "mapBool",
+        "target": "BuildingInfo",
+        "key": "BuildingType",
+        "value": "bForceBuilding"
+      },
+      {
+        "source": "GreatPeoples",
+        "property": "GreatPeoples",
+        "kind": "mapBool",
+        "target": "SpecialistInfo",
+        "key": "GreatPeopleType",
+        "value": "bGreatPeople"
+      },
+      {
+        "source": "LeaderPromotion",
+        "property": "LeaderPromotion",
+        "kind": "ref",
+        "target": "PromotionInfo"
+      },
+      {
+        "source": "bGreatGeneral",
+        "property": "GreatGeneral",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "iBaseDiscover",
+        "property": "BaseDiscover",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseHurry",
+        "property": "BaseHurry",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDiscoverMultiplier",
+        "property": "DiscoverMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatWorkCulture",
+        "property": "GreatWorkCulture",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryMultiplier",
+        "property": "HurryMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLeaderExperience",
+        "property": "LeaderExperience",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "SpecialistInfo",
+    "definition": "SpecialistGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "GreatPeopleUnitClass",
+        "property": "GreatPersonUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "YieldInfo",
+    "definition": "YieldGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "iAIWeightPercent",
+        "property": "AiWeightPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldenAgeYield",
+        "property": "GoldenAgeYield",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldenAgeYieldThreshold",
+        "property": "GoldenAgeYieldThreshold",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "GameSpeedInfo",
+    "definition": "GameSpeedGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "iGreatPeoplePercent",
+        "property": "GreatPeoplePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitDiscoverPercent",
+        "property": "UnitDiscoverPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitGreatWorkPercent",
+        "property": "UnitGreatWorkPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitHurryPercent",
+        "property": "UnitHurryPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitTradePercent",
+        "property": "UnitTradePercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "EraInfo",
+    "definition": "EraGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "iGreatPeoplePercent",
+        "property": "GreatPeoplePercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingReligionDef",
+    "mod": "religion",
+    "fields": [
+      {
+        "source": "GlobalReligionCommerce",
+        "property": "GlobalReligionCommerce",
+        "kind": "ref",
+        "target": "ReligionInfo"
+      },
+      {
+        "source": "ReligionChanges",
+        "property": "ReligionChanges",
+        "kind": "mapInt",
+        "target": "ReligionInfo",
+        "key": "ReligionType",
+        "value": "iReligionChange"
+      },
+      {
+        "source": "StateReligionCommerces",
+        "property": "StateReligionCommerces",
+        "kind": "commerce"
+      },
+      {
+        "source": "bFreeFromStateReligion",
+        "property": "FreeFromStateReligion",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "iStateReligionHappiness",
+        "property": "StateReligionHappiness",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitReligionDef",
+    "mod": "religion",
+    "fields": [
+      {
+        "source": "ReligionSpreads",
+        "property": "ReligionSpreads",
+        "kind": "mapInt",
+        "target": "ReligionInfo",
+        "key": "ReligionType",
+        "value": "iReligionSpread"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitCorporationsDef",
+    "mod": "corporations",
+    "fields": [
+      {
+        "source": "CorporationSpreads",
+        "property": "CorporationSpreads",
+        "kind": "mapInt",
+        "target": "CorporationInfo",
+        "key": "CorporationType",
+        "value": "iCorporationSpread"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "HandicapInfo",
+    "definition": "HandicapCorporationsDef",
+    "mod": "corporations",
+    "fields": [
+      {
+        "source": "iCorporationMaintenancePercent",
+        "property": "CorporationMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "WorldInfo",
+    "definition": "WorldSizeCorporationsDef",
+    "mod": "corporations",
+    "fields": [
+      {
+        "source": "iCorporationMaintenancePercent",
+        "property": "CorporationMaintenancePercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitEspionageDef",
+    "mod": "espionage",
+    "fields": [
+      {
+        "source": "bCounterSpy",
+        "property": "CounterSpy",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bSpy",
+        "property": "Spy",
+        "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitAirCombatDef",
+    "mod": "air_combat",
+    "fields": [
+      {
+        "source": "iAirCombatLimit",
+        "property": "AirCombatLimit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iAirRange",
+        "property": "AirRange",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBombRate",
+        "property": "BombRate",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iEvasionProbability",
+        "property": "EvasionPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "ImprovementInfo",
+    "definition": "ImprovementAirCombatDef",
+    "mod": "air_combat",
+    "fields": [
+      {
+        "source": "iAirBombDefense",
+        "property": "AirBombDefense",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitRangedCombatDef",
+    "mod": "ranged_combat",
+    "fields": [
+      {
+        "source": "iDCMBombAccuracy",
+        "property": "BombAccuracyPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "HandicapInfo",
+    "definition": "HandicapBarbariansDef",
+    "mod": "barbarians",
+    "fields": [
+      {
+        "source": "iBarbarianCreationTurnsElapsed",
+        "property": "BarbarianCreationTurnsElapsed",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnownedTilesPerBarbarianUnit",
+        "property": "UnownedTilesPerBarbarianUnit",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnownedWaterTilesPerBarbarianUnit",
+        "property": "UnownedWaterTilesPerBarbarianUnit",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "GameSpeedInfo",
+    "definition": "GameSpeedBarbariansDef",
+    "mod": "barbarians",
+    "fields": [
+      {
+        "source": "iBarbPercent",
+        "property": "BarbPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "EraInfo",
+    "definition": "EraBarbariansDef",
+    "mod": "barbarians",
+    "fields": [
+      {
+        "source": "bNoBarbUnits",
+        "property": "NoBarbUnits",
+        "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "FeatureInfo",
+    "definition": "FeatureGlobalWarmingDef",
+    "mod": "global_warming",
+    "fields": [
+      {
+        "source": "iWarmingDefense",
+        "property": "WarmingDefense",
+        "kind": "int",
+        "default": 0
+      }
     ],
     "requirements": []
   }

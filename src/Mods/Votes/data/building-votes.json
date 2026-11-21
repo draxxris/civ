@@ -1,5 +1,6 @@
 [
   {
+    "forceTeamVoteEligible": true,
     "id": "votes:apostolic_palace",
     "name": "",
     "requirements": null,
@@ -7,6 +8,7 @@
     "voteSource": "votes:diplovote_pope"
   },
   {
+    "forceTeamVoteEligible": true,
     "id": "votes:un_mission",
     "name": "",
     "requirements": null,
@@ -14,6 +16,7 @@
     "voteSource": "votes:diplovote_un"
   },
   {
+    "forceTeamVoteEligible": true,
     "id": "votes:united_nations",
     "name": "",
     "requirements": null,

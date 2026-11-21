@@ -8,6 +8,11 @@ internal static class TradeData
 {
     internal static S.RuleConstantsDef Constants(Simulation sim) => sim.Content.Get<S.RuleConstantsDef>().All.Single();
     internal static int Raw(Simulation sim, string key, int fallback) => int.TryParse(Constants(sim).Raw.GetValueOrDefault(key), out int n) ? n : fallback;
+    /// <summary>The trade rule constants, attached to the base game's rule constants.</summary>
+    internal static RuleConstantsTradeDef Rules(Simulation sim) =>
+        sim.Content.Attachment<RuleConstantsTradeDef>(Constants(sim).Id) ?? RuleConstantsTradeDef.None;
+    internal static BuildingTradeDef Building(Simulation sim, string building) =>
+        sim.Content.Attachment<BuildingTradeDef>(building) ?? BuildingTradeDef.None;
     /// <summary>What the player's civics mean to trade, in civic id order; a civic without an attachment means nothing.</summary>
     internal static IEnumerable<CivicTradeDef> Civics(Simulation sim, int player)
     {

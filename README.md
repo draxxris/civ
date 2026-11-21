@@ -55,7 +55,8 @@ assets). A mod teaches the standard computer player its feature by registering a
 computer player implements `IPlayerAI`. A mod publishes an API for other mods by shipping an
 assembly marked `[assembly: ModApi("<mod id>")]` and naming it in `mod.json` as `"api"`,
 as the Trade mod does with `Ariel.Mods.Trade.Api`; every feature mod with
-services publishes one. The base game never references a mod's API: when its rules need an
+services publishes one, and so does every mod that keeps its own rows about base
+definitions (content attachments, see [docs/content-schema.md](docs/content-schema.md)). The base game never references a mod's API: when its rules need an
 answer from a feature, it owns a small seam that the mod answers (see "Mod APIs" in
 [docs/DESIGN.md](docs/DESIGN.md)). A mod asks AI cities to build what its feature needs
 through `IProductionWishes`, and adjusts what the AI thinks resources, buildings, units,

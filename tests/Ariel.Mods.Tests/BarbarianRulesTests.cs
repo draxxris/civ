@@ -1,6 +1,7 @@
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.Barbarians;
 using Xunit;
 using S = Ariel.Content.Schema;
 
@@ -12,7 +13,7 @@ public sealed class BarbarianRulesTests
     private static readonly Lazy<ContentDb> NavalContent = new(() =>
     {
         var loaded = new LoadedMods();
-        var probe = new ModSource { Manifest = new() { Id = "naval_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation"] },
+        var probe = new ModSource { Manifest = new() { Id = "naval_probe", Version = "1", Dependencies = ["barbarians"], References = ["foundation"] },
             Root = loaded.Root, Instance = new NavalSpawns() };
         return ModLoader.Build(loaded.Sources.Append(probe));
     });
@@ -129,9 +130,9 @@ public sealed class BarbarianRulesTests
 
     private sealed class NavalSpawns : IMod
     {
-        public void Register(IModContext context) => context.Content<S.HandicapDef>().Override(new()
+        public void Register(IModContext context) => context.Content<HandicapBarbariansDef>().Override(new()
         {
-            Id = "foundation:handicap_noble", UnownedWaterTilesPerBarbarianUnit = 1,
+            Id = "barbarians:handicap_noble", Target = "foundation:handicap_noble", UnownedWaterTilesPerBarbarianUnit = 1,
         });
     }
 }

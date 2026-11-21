@@ -193,7 +193,11 @@ typed closure, golden records, and branding without the extraction.
 ## Typed emission
 
 The declarative `SchemaMapping.json` maps source fields to clean Core properties.
-`RuleConstantMapping.json` selects typed rule constants. The mapper preserves native
+`RuleConstantMapping.json` selects typed rule constants: `values` maps a define to a
+property of the base game's `RuleConstants`, and each entry of `attachments` maps defines to a
+property of a mod's attachment to `RuleConstantsDef` (`RuleConstantsTradeDef` for `trade`),
+emitted as the row `<mod>:rule_constants` only when one of its constants is not zero. Every
+other define stays in `Raw`. The mapper preserves native
 positional pairs, partial vectors, explicit zeroes, negative costs and slots, and
 prerequisite scopes. Building and unit classes resolve to their default definitions.
 Civilization overrides apply to starting grants too. Every definition includes inline
@@ -213,7 +217,10 @@ A mapping whose `definition` is a `ContentAttachment` (for example `CivicTradeDe
 `"mod": "trade"`) maps fields of the same source class into the named mod's own
 attachment file. A record gets a row, with id `<mod>:<name>` and the record's id as
 `target`, only when one of the mapped fields is not at its default. Fields that an
-attachment maps count as mapped for the record's primary definition too.
+attachment maps count as mapped for the record's primary definition too. This is how a field
+only a mod reads leaves the base schema: `BuildingTradeDef` maps `BuildingInfo`'s trade route
+fields into `trade`'s `building-trade.json`, for example, and the base `BuildingDef` no
+longer has them.
 
 Output arrays use ordinal id order. Object properties use ordinal order. Ordered source
 arrays retain their order. Output uses indented camelCase JSON. The importer scans

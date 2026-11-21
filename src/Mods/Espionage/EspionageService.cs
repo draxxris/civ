@@ -16,6 +16,9 @@ internal sealed class EspionageService : IEspionageService
         missions.StealableTechnologies(sim, player, city);
 
     internal static EspionageRulesDef Rules(Simulation sim) => sim.Content.Get<EspionageRulesDef>().All.Single();
+    /// <summary>Whether a unit is a spy or a counter-spy.</summary>
+    internal static UnitEspionageDef UnitRules(Ariel.Content.ContentDb content, string unit) =>
+        content.Attachment<UnitEspionageDef>(unit) ?? UnitEspionageDef.None;
 
     internal static EspionageTeamState Read(Simulation sim, int team) => sim.State.TeamById(team).Extensions.Get<EspionageTeamState>(sim.Content) ?? new();
     internal static EspionageTeamState Edit(Simulation sim, int team)
@@ -187,7 +190,7 @@ internal sealed class EspionageService : IEspionageService
         var target = sim.State.CityById(city);
         int defenderTeam = sim.TeamOf(target.Owner).Id;
         int defenders = Math.Min(rules.MaxDefenders, sim.State.UnitsAt(target.Position)
-            .Count(u => u.Health > 0 && sim.TeamOf(u.Owner).Id == defenderTeam && sim.Content.Get<Ariel.Content.Schema.UnitDef>(u.Type).CounterSpy));
+            .Count(u => u.Health > 0 && sim.TeamOf(u.Owner).Id == defenderTeam && EspionageService.UnitRules(sim.Content, u.Type).CounterSpy));
         int ratio = (int)RatioPercent(sim, sim.TeamOf(player).Id, defenderTeam);
         long protection = CounterEspionage(sim, defenderTeam, sim.TeamOf(player).Id) is { } effect
             ? Percent(Math.Max(0, effect.CostPercent - 100), rules.ProtectionSuccessPenalty) : 0;

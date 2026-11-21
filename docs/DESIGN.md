@@ -55,9 +55,9 @@ extend both through one registration API.
 - `src/Mods/*`: mods, each its own DLL referencing `Ariel.Core` and `Ariel.Rules`, and
   `Ariel.Ai` when it contributes an AI planner, all with `Private="false"` because the
   host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
-  publish an API assembly in its `Api/` folder (see Mod APIs below); Corporations,
-  Espionage, Events, GreatPeople, ProjectsVictory, Religion, Revolution,
-  ScriptedWonders, Trade and Votes do.
+  publish an API assembly in its `Api/` folder (see Mod APIs below); AirCombat,
+  Barbarians, Corporations, Espionage, Events, GlobalWarming, GreatPeople, ProjectsVictory,
+  RangedCombat, Religion, Revolution, ScriptedWonders, Trade and Votes do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
@@ -315,9 +315,12 @@ requires the owning namespace. Overrides can replace earlier content.
   support fire. Military keeps what such fire acts on and offers it as entry points:
   `ICombatService.CityDefense`, `BombardResistance`, `DamageCityDefense`, `Collateral`
   and `RecordStrike`, and `IUnitService.Effect` and `SpendAttack`. The unit and
-  building fields that describe the weapons (`BombardRate`, `BombRange`,
-  `BombardDefense`) stay in the base schema, as unit data carries them. Without the
-  mod no fire is offered and siege units fight only in melee.
+  building fields that describe the weapons and that the base game also reads
+  (`BombardRate` and `BombRange`, which the computer player's siege and naval planning
+  weigh, and `BombardDefense`, which city defence sums) stay in the base schema; the
+  strike accuracy only this mod reads is its own `UnitRangedCombatDef` row
+  (`BombAccuracyPercent`). Without the mod no fire is offered and siege units fight only
+  in melee.
 - The AirCombat mod follows the same model for aircraft (see Air combat under the
   military rules). It owns the air-mission command, rebasing, reconnaissance, air strikes,
   bombing and interception, the unit panel's mission orders, and the computer player's
@@ -448,6 +451,43 @@ attaches `CivicTradeDef` to civics (`trade:mercantilism` about
 `government:mercantilism`), Corporations `CivicCorporationsDef`, Religion `CivicReligionDef` (state religion, inquisitions, spread
 and the state-religion bonuses), Revolution `CivicRevolutionDef` and ProjectsVictory
 `CivicProjectsDef`.
+
+The base schema keeps only the fields the base game reads. A field that only a mod reads is
+that mod's attachment, one type per (mod, target type) named `<Target><Mod>Def`. A rule
+constant only a mod reads is a row about the base game's single `RuleConstantsDef`
+(`trade:rule_constants` about `foundation:rule_constants`, type `RuleConstantsTradeDef`),
+and a setting that varies by game speed, handicap, era or world size is a row about that
+speed, handicap, era or world size, so a mod's numbers sit beside the row they vary with. A
+mod reads a definition with no row as its type's `None`, whose values are the type
+defaults the base field had, so a missing row changes nothing. A field two mods read stays
+with the mod that owns the concept, and the other reads it through that mod's API, unless
+that would make one mod's rules depend on the other being loaded: `InterceptionPercent`
+(AirCombat interception and Espionage's spy interception) and `ConstructibleBuildings`
+(great people's buildings and Religion's shrines, whose prophets also come from
+technologies) stay in base. The mods' rows:
+
+- Trade: route slots and profit (`BuildingTradeDef`, `TechTradeDef`, `YieldTradeDef`,
+  `WorldSizeTradeDef`, `RuleConstantsTradeDef`).
+- GreatPeople: which person a building or specialist produces, what a great person can
+  do, golden age yields and length, and the per-speed and per-era great people percents
+  (`BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeopleDef`,
+  `YieldGreatPeopleDef`, `TechGreatPeopleDef`, `GameSpeedGreatPeopleDef`,
+  `EraGreatPeopleDef`, `RuleConstantsGreatPeopleDef`).
+- Religion: faith spread, state religion yields, shrines and conversion anarchy
+  (`BuildingReligionDef`, `UnitReligionDef`, `RuleConstantsReligionDef`). GreatPeople,
+  which skips shrines when a great person builds, reads `BuildingReligionDef` through the
+  Religion API it already references.
+- Corporations: executives' spreads and the per-handicap and per-world-size maintenance
+  percents (`UnitCorporationsDef`, `HandicapCorporationsDef`, `WorldSizeCorporationsDef`).
+- Espionage: spies and counter-spies (`UnitEspionageDef`).
+- Votes: a seat building's forced candidacy, in the `BuildingVotesDef` row that already
+  names its council.
+- AirCombat: mission range, strike limit, bombing, evasion and strike damage
+  (`UnitAirCombatDef`, `ImprovementAirCombatDef`, `RuleConstantsAirCombatDef`).
+- RangedCombat: strike accuracy (`UnitRangedCombatDef`).
+- Barbarians: when barbarians first appear and how much unclaimed land or water feeds one
+  (`HandicapBarbariansDef`, `GameSpeedBarbariansDef`, `EraBarbariansDef`).
+- GlobalWarming: a feature's defence against warming (`FeatureGlobalWarmingDef`).
 
 - Loading validates an attachment like any definition: `ModLoader.Json` rejects an
   unknown property, `Target` is a content reference to `TTarget` (a missing id or one
@@ -714,10 +754,11 @@ uses the reference zero-consumption path until a resource-consumption service ex
 
 Global warming is the GlobalWarming mod (`src/Mods/GlobalWarming`, id `global_warming`,
 a main mod); without it the world never warms. Its turn system
-(`global_warming:warming`) runs at `TurnPhase.Environment`. The base game keeps what
-it reads: `FeatureDef.WarmingDefense`, the `GLOBAL_WARMING_*` rule constants and
-`ICityWellbeingService.EnvironmentalUnhealth`. Global warming defense sums map
-features (`FeatureDef.WarmingDefense`), doubled for players with active health civics
+(`global_warming:warming`) runs at `TurnPhase.Environment`. The mod keeps each feature's
+warming defence in its own `FeatureGlobalWarmingDef` rows (`data/feature-global-warming.json`,
+in its API `Ariel.Mods.GlobalWarming.Api`); the base game keeps the rest of what it reads:
+the `GLOBAL_WARMING_*` rule constants and `ICityWellbeingService.EnvironmentalUnhealth`.
+Global warming defense sums map features (`FeatureGlobalWarmingDef.WarmingDefense`), doubled for players with active health civics
 (`TREEHUGGER_DEFENSE_BONUS`), scaled by `GLOBAL_WARMING_FOREST` per land plot. City
 pollution sums building unhealthiness (`GLOBAL_WARMING_UNHEALTH_WEIGHT`), bonus
 unhealthiness (`GLOBAL_WARMING_BONUS_WEIGHT`), and dirty power
@@ -925,8 +966,8 @@ elapsed turn boundaries based on game speed and civic `HurryInflationModifier`.
 
 `CorporationService.MaintenanceHundredths` calculates city corporate branch expenses:
 base headquarter commerce (100 per gold, research, culture, and espionage), resource
-consumption scaled by world size, population scaling `(population + 17) / 18`, handicap
-scaling, player civic modifier (`corporations:maintenance_percent`, from the civic's
+consumption scaled by world size (`WorldSizeCorporationsDef`), population scaling
+`(population + 17) / 18`, handicap scaling (`HandicapCorporationsDef`), player civic modifier (`corporations:maintenance_percent`, from the civic's
 `CivicCorporationsDef`, selecting `RealisticMaintenancePercent` when realistic
 corporations is active), inflation
 pre-division `* 100 / (100 + inflation)` to balance subsequent economy inflation, and
@@ -1116,9 +1157,14 @@ registers `IAirOperations`, the unit panel's mission orders (`IUnitActionSource`
 `AiPlannerOrder.Air`) and aircraft production wishes (`air_combat:aircraft`: at war, the
 best aircraft at score 360 while the air wing is under a sixth of the land army).
 
+The mission numbers only this mod reads are its own rows: a unit's `AirRange`,
+`AirCombatLimit`, `BombRate` and `EvasionPercent` (`UnitAirCombatDef`), an improvement's
+`AirBombDefense` (`ImprovementAirCombatDef`) and the `AirCombatDamage` constant
+(`RuleConstantsAirCombatDef`).
+
 What stays in the base game: the unit, promotion and building fields that describe
-aircraft (`AirRange`, `AirCombat`, `AirCombatLimit`, `BombRate`, `InterceptionPercent`,
-`EvasionPercent`, `AirUnitCap`, `AirModifier`, `AirUnitCapacity`); where an aircraft may
+aircraft and that the base game or another mod reads (`AirCombat`, `InterceptionPercent`,
+`AirUnitCap`, `AirModifier`, `AirUnitCapacity`); where an aircraft may
 stand, with carriers and landing when a carrier sinks; the intercept activity and
 `InterceptedThisTurn` with its per-turn reset; and `MilitaryGameState.ReconSights`, which
 visibility reveals and the turn clears. The `IAirOperations` seam
@@ -1221,11 +1267,15 @@ uprisings. It runs two turn systems: `barbarians:behavior` at `TurnPhase.GameBeg
 barbarian unit attacks a neighbour it likely beats or marches on the nearest enemy city;
 ships hunt ships and raid fishing boats) and `barbarians:spawns` at `TurnPhase.Spawns + 1`,
 just after the phase's random events. Each spawn turn the barbarians also learn every
-technology more than half the other teams know. It publishes no API.
+technology more than half the other teams know. Its API (`Ariel.Mods.Barbarians.Api`)
+holds only its rows about the base handicaps, game speeds and eras
+(`HandicapBarbariansDef`, `GameSpeedBarbariansDef`, `EraBarbariansDef`), which tune
+spawning; its hand-authored `BarbarianRulesDef` scales the handicaps' unowned land tiles
+per unit for the hex map as the mod loads them.
 
-What stays in the base game is the `peoples:barbarian` civilization and leader, the
-handicap, game-speed and era fields that tune spawning, and the faction rules above, which
-serve any faction. Without the mod no faction is loaded. Movement asks every
+What stays in the base game is the `peoples:barbarian` civilization and leader and the
+faction rules above, which serve any faction. Without the mod no faction is loaded.
+Movement asks every
 `IMovementBarrier` in `GameRules.MovementBarriers` before any unit's non-attack move,
 without asking whose unit it is; ScriptedWonders' border wonders answer it and bar only
 faction land units.
@@ -1265,15 +1315,18 @@ religion definitions, founding, city presence, state choice, spread, decay, inqu
 and shrine construction. Its API (`Ariel.Mods.Religion.Api`) publishes `IReligionService`
 (presence, holy cities, adoption choices, odds and conversion costs), `ReligionDef`, the
 state components, events, `SetStateReligionCommand`, `ReligionMissions`,
-`ReligionMemories` and `CivicReligionDef`. Other mods read it through
+`ReligionMemories`, `CivicReligionDef` and its rows about buildings (`BuildingReligionDef`:
+spread influence, state religion yields and the shrine's faith), units (`UnitReligionDef`:
+missionary spread chances) and the rule constants (`RuleConstantsReligionDef`: conversion
+anarchy). Other mods read it through
 `sim.Service<IReligionService>()`, null when the mod is not loaded.
 
 What stays in the base game:
 
 - **Identities.** Foundation's `ReligionIdentityDef` (`foundation:buddhism`, ...) is what
-  buildings (`ReligionType`, `GlobalReligionCommerce`, `ReligionChanges`,
-  `FoundsReligion`), units (`ReligionSpreads`), leaders (`FavoriteReligion`) and the
-  `religion` requirement leaf name. A `ReligionDef` is the mod's rules about one
+  buildings (`ReligionType`, `FoundsReligion`), leaders (`FavoriteReligion`), the
+  `religion` requirement leaf and the mod's own building and unit rows
+  (`GlobalReligionCommerce`, `ReligionChanges`, `ReligionSpreads`) name. A `ReligionDef` is the mod's rules about one
   identity: its id (`religion:buddhism`, kept in saves) and `Identity`. `ReligionIdentities`
   translates both ways.
 - **The question seam** `ICityReligions` (`GameRules.CityReligions`): which faiths a city
@@ -1522,7 +1575,8 @@ completed project asks the victory check again.
 
 Votes runs the world councils (`Ariel.Mods.Votes.Api`: `VoteSourceDef`, `VoteDef`, the
 `BuildingVotesDef` attachment and `IVotesService`). A building that names a council (the
-United Nations, a UN mission, the Apostolic Palace) founds it; one that requires a state
+United Nations, a UN mission, the Apostolic Palace) founds it, and its owner's team always
+stands for election when its row says `ForceTeamVoteEligible`; one that requires a state
 religion binds the council to its builder's faith, and then only that faith's cities
 vote. Votes are citizens (or cities, or one per civilization, as the vote says), with a
 bonus for members of the council's state religion. A voting member has votes; a full

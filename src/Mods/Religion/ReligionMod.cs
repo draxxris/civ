@@ -18,7 +18,11 @@ public sealed class ReligionMod : IPreparableMod
     private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
     /// <summary>What each civic means to religion, attached to the base civics.</summary>
     private static readonly ModJsonFile<CivicReligionDef[]> Civics = new("data/civic-religion.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Religions, FoundingWonders, Memories, Civics];
+    /// <summary>What buildings, units and the rule constants mean to religion, attached to the base rows.</summary>
+    private static readonly ModJsonFile<BuildingReligionDef[]> Buildings = new("data/building-religion.json");
+    private static readonly ModJsonFile<UnitReligionDef[]> Units = new("data/unit-religion.json");
+    private static readonly ModJsonFile<RuleConstantsReligionDef[]> Constants = new("data/rule-constants-religion.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Religions, FoundingWonders, Memories, Civics, Buildings, Units, Constants];
 
     public void Register(IModContext context)
     {
@@ -26,6 +30,9 @@ public sealed class ReligionMod : IPreparableMod
         ContentRegistration.Load(context, FoundingWonders);
         MemoryKinds.Load(context, Memories);
         ContentRegistration.Load(context, Civics);
+        ContentRegistration.Load(context, Buildings);
+        ContentRegistration.Load(context, Units);
+        ContentRegistration.Load(context, Constants);
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);
         context.RegisterService<ICityReligions>("city_religions", new CityReligions(service));
