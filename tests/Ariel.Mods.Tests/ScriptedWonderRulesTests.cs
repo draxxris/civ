@@ -46,14 +46,8 @@ public sealed class P7ModFixture
         sim.State.AddCity(city);
         return city;
     }
-    public static Unit Unit(Simulation sim, City city, string type = "military:warrior", int? owner = null)
-    {
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner ?? city.Owner,
-            Position = city.Position, Type = type };
-        sim.State.AddUnit(unit);
-        sim.Events.Publish(new UnitCreated(unit.Id, unit.Owner, type, unit.Position));
-        return unit;
-    }
+    public static Unit Unit(Simulation sim, City city, string type = "military:warrior", int? owner = null) =>
+        sim.Rules().Units.Create(sim, owner ?? city.Owner, type, city.Position);
 }
 
 public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7ModFixture>

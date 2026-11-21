@@ -260,11 +260,9 @@ internal sealed class MovementService : IMovementService
         {
             var def = MilitaryData.Definition(sim, other);
             MilitaryData.RemoveUnit(sim, other.Id);
+            // A captured unit changes hands spent.
             if (def.Capture is { } type && !MilitaryData.Definition(sim, unit).NoCapture)
-            {
-                var captured = MilitaryData.Spawn(sim, unit.Owner, type, target);
-                captured.MovesLeft = 0;
-            }
+                sim.Rules().Units.Create(sim, unit.Owner, type, target, captured => captured.MovesLeft = 0);
         }
     }
 }

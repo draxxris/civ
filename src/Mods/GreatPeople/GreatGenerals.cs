@@ -19,7 +19,7 @@ internal sealed class GreatGenerals(IGreatPeopleService service) : ICombatLeader
         while (threshold > 0 && state.GeneralPoints >= threshold)
         {
             var city = BirthCity(sim, winner.Owner);
-            var unit = Spawn(sim, winner.Owner, general.Id, city?.Position ?? winner.Position);
+            var unit = sim.Rules().Units.Create(sim, winner.Owner, general.Id, city?.Position ?? winner.Position);
             state.GeneralPoints -= threshold;
             state.GreatGeneralsCreated++;
             state.GeneralThresholdModifier += Raw(sim, "GREAT_GENERALS_THRESHOLD_INCREASE", 30) * (state.GreatGeneralsCreated / 10 + 1);
@@ -57,14 +57,6 @@ internal sealed class GreatGenerals(IGreatPeopleService service) : ICombatLeader
     {
         int rank = 1;
         foreach (var city in cities) ranks[city.Id] += rank++;
-    }
-
-    private static Unit Spawn(Simulation sim, int owner, string type, Hex position)
-    {
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = position };
-        sim.State.AddUnit(unit);
-        sim.Events.Publish(new UnitCreated(unit.Id, owner, type, position));
-        return unit;
     }
 
     private static MilitaryPlayerState Player(Simulation sim, int player) =>

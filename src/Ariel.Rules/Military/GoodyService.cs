@@ -66,7 +66,7 @@ internal static class GoodyService
     {
         var civ = sim.Content.Get<S.CivilizationDef>(sim.State.PlayerById(unit.Owner).Civilization);
         string? replacement = civ.UnitOverrides.GetValueOrDefault(sim.Content.Get<S.UnitDef>(type).DefaultUnit, type);
-        if (replacement is not null) MilitaryData.Spawn(sim, unit.Owner, replacement, unit.Position);
+        if (replacement is not null) sim.Rules().Units.Create(sim, unit.Owner, replacement, unit.Position);
     }
     private static void RevealMap(Simulation sim, Unit unit, S.GoodyDef goody)
     {
@@ -86,6 +86,6 @@ internal static class GoodyService
         int spawned = 0;
         foreach (var tile in candidates)
             if (sim.Rng.Next(100) < goody.BarbarianUnitProbability || spawned < goody.MinBarbarians)
-            { MilitaryData.Spawn(sim, owner, type, sim.State.Grid.HexOf(tile)); spawned++; }
+            { sim.Rules().Units.Create(sim, owner, type, sim.State.Grid.HexOf(tile)); spawned++; }
     }
 }

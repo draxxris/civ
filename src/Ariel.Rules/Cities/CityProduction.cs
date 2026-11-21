@@ -193,17 +193,13 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     internal static void Spawn(Simulation sim, City city, string id, bool conscript = false)
     {
         var def = sim.Content.Get<S.UnitDef>(id);
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = city.Owner, Position = city.Position,
-            Type = id, MovesLeft = def.Moves * CityData.Constants(sim).MoveDenominator };
-        sim.State.AddUnit(unit);
-        // Initialize before publishing: Military grants promotions, experience and full movement here.
-        sim.Rules().Units?.Initialize(sim, unit.Id);
-        unit.Experience += LocalExperience(sim, city, def);
-        if (conscript)
+        // After Military's own experience and promotions: the city's local experience, then a draft's halving.
+        sim.Rules().Units.Create(sim, city.Owner, id, city.Position, unit =>
         {
+            unit.Experience += LocalExperience(sim, city, def);
+            if (!conscript) return;
             unit.Experience /= 2;
             unit.MovesLeft = 0;
-        }
-        sim.Events.Publish(new UnitCreated(unit.Id, unit.Owner, unit.Type, unit.Position));
+        });
     }
 }

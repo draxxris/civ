@@ -63,11 +63,6 @@ internal static class MilitaryData
     internal static IEnumerable<S.BuildingDef> Buildings(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
         .Select(sim.Content.Get<S.BuildingDef>).Where(b => b.ObsoleteTech is null || !sim.KnowsTech(city.Owner, b.ObsoleteTech))
         .Where(b => !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city, sim.State.Grid.TileAt(city.Position)), "civic").Success);
-    internal static Unit Spawn(Simulation sim, int owner, string type, Hex position)
-    {
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = position };
-        sim.State.AddUnit(unit); sim.Events.Publish(new UnitCreated(unit.Id, owner, type, position)); return unit;
-    }
 }
 
 /// <summary>Promotions remain data, never permanently baked into the unit's base definition.</summary>

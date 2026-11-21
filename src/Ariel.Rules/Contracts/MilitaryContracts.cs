@@ -127,6 +127,11 @@ public interface IUnitService
     string? Validate(Simulation sim, int player, int unit, UnitAction action, string argument);
     void Execute(Simulation sim, int unit, UnitAction action, string argument);
     void Initialize(Simulation sim, int unit);
+    /// <summary>The one way rules and mods bring a new unit into play. It allocates the id, adds the unit and
+    /// initialises it (<see cref="Initialize"/>: free promotions, initial experience and full movement), then runs
+    /// <paramref name="prepare"/> for what only the caller knows (a city's local experience, a unit that arrives spent),
+    /// refreshes team sight and contacts, and last publishes <see cref="UnitCreated"/>.</summary>
+    Unit Create(Simulation sim, int owner, string type, Hex position, Action<Unit>? prepare = null);
 }
 public sealed record UnitSupportCount(int Total, int Military, int OutsideBorders);
 /// <summary>Counts only. Economy owns free allowances and prices.</summary>

@@ -26,14 +26,6 @@ internal static class ReligionFoundingRules
         var civilization = sim.Content.Get<CivilizationDef>(player.Civilization);
         var unitType = civilization.UnitOverrides.GetValueOrDefault(defaultUnit, defaultUnit);
         if (unitType is null) return;
-        // Full health is the Unit default; moves must be set here or the award is immobile until the next refill.
-        var def = sim.Content.Get<UnitDef>(unitType);
-        int moves = def.Moves * sim.Content.Get<RuleConstantsDef>().All.Single().Values.MoveDenominator;
-        for (int i = 0; i < religion.FreeUnits; i++)
-        {
-            var unit = new Unit { Id = sim.State.NextUnitId++, Owner = player.Id, Type = unitType, Position = city.Position, MovesLeft = moves };
-            sim.State.AddUnit(unit);
-            sim.Events.Publish(new UnitCreated(unit.Id, player.Id, unit.Type, city.Position));
-        }
+        for (int i = 0; i < religion.FreeUnits; i++) sim.Rules().Units.Create(sim, player.Id, unitType, city.Position);
     }
 }

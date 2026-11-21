@@ -104,10 +104,7 @@ internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeople
     private static void Birth(Simulation sim, City city, string unitClass)
     {
         string type = GreatPeopleData.ResolveUnit(sim, city.Owner, unitClass)!;
-        var def = sim.Content.Get<S.UnitDef>(type);
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = city.Owner, Position = city.Position, Type = type,
-            MovesLeft = def.Moves * GreatPeopleData.Constants(sim).Values.MoveDenominator };
-        sim.State.AddUnit(unit);
+        var unit = sim.Rules().Units.Create(sim, city.Owner, type, city.Position);
         var player = GreatPeopleData.Edit(sim, city.Owner);
         player.Births++;
         int scale = player.Births / 10 + 1;
@@ -117,7 +114,6 @@ internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeople
         int teamScale = team.Sum(m => GreatPeopleData.Read(sim, m).Births) / 10 + 1;
         foreach (int member in team.Order())
             GreatPeopleData.Edit(sim, member).ThresholdModifier += GreatPeopleData.Raw(sim, "GREAT_PEOPLE_THRESHOLD_INCREASE_TEAM", 50) * teamScale;
-        sim.Events.Publish(new UnitCreated(unit.Id, unit.Owner, unit.Type, unit.Position));
         sim.Events.Publish(new GreatPersonBorn(city.Owner, city.Id, unit.Id, unitClass));
     }
 }

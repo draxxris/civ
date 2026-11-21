@@ -185,6 +185,17 @@ internal sealed partial class UnitService : IUnitService, IUnitSupportService
         unit.Experience += Math.Max(0, MilitaryData.Effect(effects, "initial_experience"));
         unit.MovesLeft = MaximumMoves(sim, unitId);
     }
+    public Unit Create(Simulation sim, int owner, string type, Hex position, Action<Unit>? prepare = null)
+    {
+        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = position };
+        sim.State.AddUnit(unit);
+        Initialize(sim, unit.Id);
+        prepare?.Invoke(unit);
+        // Sight first, so contact discovery and every subscriber see the new unit's sight.
+        MilitaryData.Sight(sim);
+        sim.Events.Publish(new UnitCreated(unit.Id, owner, type, position));
+        return unit;
+    }
     public UnitSupportCount Count(Simulation sim, int player)
     {
         var units = sim.State.Units.Where(u => u.Owner == player).ToArray();

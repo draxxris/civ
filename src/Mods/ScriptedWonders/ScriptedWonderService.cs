@@ -62,7 +62,7 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
         if (progress.CompletionApplied) return;
         progress.CompletionApplied = true;
         progress.LastProcessedTurn = sim.State.Turn; // The completion turn is not a full active turn.
-        for (int i = 0; i < rule.CompletionUnits; i++) Spawn(sim, city, rule.Unit!);
+        for (int i = 0; i < rule.CompletionUnits; i++) sim.Rules().Units.Create(sim, city.Owner, rule.Unit!, city.Position);
         if (rule.CompletionUnits > 0) Effect(sim, city, rule, "units", rule.CompletionUnits);
         if (rule.CompletionCulture > 0)
         {
@@ -93,7 +93,7 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
             int interval = Interval(sim, rule);
             if (progress.ElapsedTurns < interval) continue;
             progress.ElapsedTurns -= interval;
-            Spawn(sim, city, rule.Unit!);
+            sim.Rules().Units.Create(sim, city.Owner, rule.Unit!, city.Position);
             Effect(sim, city, rule, "periodic_unit", 1);
         }
     }
@@ -172,13 +172,6 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
     private static void AddCulture(Simulation sim, City city, int amount) =>
         sim.Rules().CityCulture.AddCulture(sim, city.Id, amount, 1);
 
-    private static void Spawn(Simulation sim, City city, string type)
-    {
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = city.Owner, Type = type, Position = city.Position };
-        sim.State.AddUnit(unit);
-        sim.Events.Publish(new UnitCreated(unit.Id, unit.Owner, unit.Type, unit.Position));
-        sim.Rules().Visibility?.Recompute(sim);
-    }
 
     private static void Effect(Simulation sim, City city, WonderScriptDef rule, string effect, long amount) =>
         sim.Events.Publish(new ScriptedWonderEffectApplied(city.Id, rule.Building, effect, amount));

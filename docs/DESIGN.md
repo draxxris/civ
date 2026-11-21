@@ -949,6 +949,19 @@ destination can consume the remaining sub-moves. A\* minimizes total edge cost, 
 number of turns. Route movement and combat share the hex river-edge policy. Military
 recomputes World visibility after movement and unit removal.
 
+`IUnitService.Create(sim, owner, type, position, prepare)` is the one way rules and mods
+bring a unit into play: city production and drafts, goody huts, captured civilians, free
+units from technologies, religions and wonders, great people and generals, barbarians and
+rebels. It allocates the id, adds the unit, initialises it (`Initialize`: free promotions,
+initial experience, the creation turn and full movement), runs the caller's `prepare`
+for what only the caller knows, recomputes team sight and discovers contacts, and last
+publishes `UnitCreated`, so every subscriber sees a finished unit. Cities adds the city's
+local experience in `prepare` and a draft halves it and spends the unit's moves there; a
+captured civilian also arrives spent. `UnitCreated` is only an announcement: nothing
+initialises a unit or refreshes sight from it. New-game setup and debug scenes place
+units directly, as a save does, and Military initialises every unit when a turn starts.
+`DogfoodTests` fails if rules, AI or mod code allocates a unit id itself.
+
 Command identities include:
 
 - `military:move_unit` (`MoveUnitPathCommand`), `military:promote_unit`

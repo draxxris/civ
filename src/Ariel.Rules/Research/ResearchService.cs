@@ -147,12 +147,7 @@ internal sealed class ResearchService : IResearchService
         var city = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id).FirstOrDefault();
         var tile = sim.State.PlayerById(player).StartingPlot;
         if (city is null && tile is null) return;
-        var def = sim.Content.Get<UnitDef>(type);
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = player, Type = type,
-            Position = city?.Position ?? sim.State.Grid.HexOf(tile!.Value),
-            MovesLeft = def.Moves * sim.Content.Get<RuleConstantsDef>().All.Single().Values.MoveDenominator };
-        sim.State.AddUnit(unit);
-        sim.Events.Publish(new UnitCreated(unit.Id, player, type, unit.Position));
+        sim.Rules().Units.Create(sim, player, type, city?.Position ?? sim.State.Grid.HexOf(tile!.Value));
     }
     private static RequirementResult Reject(string reason) => new(false, [new(null, reason)]);
     private static ResearchTeamState Read(Simulation sim, Team team) => team.Extensions.Get<ResearchTeamState>(sim.Content) ?? new();

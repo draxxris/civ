@@ -23,7 +23,6 @@ public sealed class RelationsModule : IPreparableMod
         context.RegisterCommand<MakePeaceCommand>("make_peace");
         context.Subscribe<TurnStarted>("contact_turn", (sim, _) => service.DiscoverContacts(sim));
         context.Subscribe<CityFounded>("contact_city", (sim, _) => service.DiscoverContacts(sim));
-        context.Subscribe<UnitCreated>("contact_unit", (sim, _) => service.DiscoverContacts(sim));
         context.Subscribe<CityRazed>("memory_raze", RelationsService.RememberRaze);
         context.TurnSystems.Register(new RelationsTurn(service));
     }

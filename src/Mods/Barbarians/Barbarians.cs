@@ -39,7 +39,6 @@ internal sealed class BarbarianSpawns : ITurnSystem
         ShareTechnologies(sim, player);
         foreach (var area in sim.State.Grid.Tiles.GroupBy(t => sim.State.Plots[t.Value].AreaId).OrderBy(g => g.Key)) SpawnArea(sim, player, area.ToArray());
         SpawnWater(sim, player);
-        Barbarian.Sight(sim);
     }
     private static void SpawnWater(Simulation sim, int player)
     {
@@ -56,7 +55,7 @@ internal sealed class BarbarianSpawns : ITurnSystem
         {
             int index = sim.Rng.Next(candidates.Count);
             var tile = candidates[index]; candidates.RemoveAt(index);
-            Barbarian.Spawn(sim, player, best.Id, sim.State.Grid.HexOf(tile));
+            sim.Rules().Units.Create(sim, player, best.Id, sim.State.Grid.HexOf(tile));
         }
     }
     private static S.UnitDef? NavalUnit(Simulation sim)
@@ -117,7 +116,7 @@ internal sealed class BarbarianSpawns : ITurnSystem
             var tile = candidates[index]; candidates.RemoveAt(index);
             var unit = units.Select(u => (Def: u, Score: 1 + sim.Rng.Next(1000) + (u.UnitAiTypes.GetValueOrDefault("military:unitai_attack") ? 200 : 0)))
                 .OrderByDescending(u => u.Score).ThenBy(u => u.Def.Id, StringComparer.Ordinal).First().Def;
-            Barbarian.Spawn(sim, player, unit.Id, sim.State.Grid.HexOf(tile));
+            sim.Rules().Units.Create(sim, player, unit.Id, sim.State.Grid.HexOf(tile));
         }
     }
     private static bool SpawnPlot(Simulation sim, TileId tile)
@@ -227,15 +226,5 @@ internal static class Barbarian
         var state = sim.State.Extensions.Get<MilitaryGameState>(sim.Content);
         if (state is not null) return state;
         state = new(); sim.State.Extensions.Set(sim.Content, state); return state;
-    }
-    internal static Unit Spawn(Simulation sim, int owner, string type, Hex position)
-    {
-        var unit = new Unit { Id = sim.State.NextUnitId++, Owner = owner, Type = type, Position = position };
-        sim.State.AddUnit(unit); sim.Events.Publish(new UnitCreated(unit.Id, owner, type, position)); return unit;
-    }
-    internal static void Sight(Simulation sim)
-    {
-        sim.Rules().Visibility.Recompute(sim);
-        sim.Rules().Relations.DiscoverContacts(sim);
     }
 }

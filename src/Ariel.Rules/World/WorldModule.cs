@@ -63,7 +63,6 @@ public sealed class WorldModule : IPreparableMod
             CliffRules.EnsureAccess(sim.State, sim.Content, sim.State.Grid.TileAt(e.Position));
             visibility.Recompute(sim);
         });
-        context.Subscribe<Ariel.Game.UnitCreated>("unit_sight", (sim, _) => visibility.Recompute(sim));
         context.Subscribe<Ariel.Game.TechDiscovered>("resource_reveal", ResourceTurnRules.RevealResources);
         // Refresh at the mutation, not only at turn end: later map events can be out of sight.
         context.Subscribe<Ariel.Game.FeatureChanged>("feature_sight", (sim, _) => visibility.Recompute(sim));

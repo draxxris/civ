@@ -24,21 +24,13 @@ internal static class RebellionSpawns
         var tiles = candidates.Take(rules.RebelUnits).ToArray();
         int rebel = sim.Rules().HostileFaction!.Ensure(sim);
         var units = new List<int>();
-        foreach (var tile in tiles)
-        {
-            var unit = new Unit { Id = sim.State.NextUnitId++, Owner = rebel,
-                Type = rules.RebelUnit, Position = sim.State.Grid.HexOf(tile) };
-            sim.State.AddUnit(unit);
-            sim.Events.Publish(new UnitCreated(unit.Id, rebel, unit.Type, unit.Position));
-            units.Add(unit.Id);
-        }
+        foreach (var tile in tiles) units.Add(sim.Rules().Units.Create(sim, rebel, rules.RebelUnit, sim.State.Grid.HexOf(tile)).Id);
         // Pressure above the threshold is discarded, so a rebellion always leaves the city below it.
         int before = state.InstabilityIndex;
         state.TriggerRebellion(sim.State.Turn, rules.RebellionThreshold, rules.RebellionRelease,
             GamePace.Scale(sim, rules.CooldownTurns), GamePace.Scale(sim, rules.UnrestTurns));
         int releasedUnits = before - state.InstabilityIndex;
         sim.Events.Publish(new CityRebellionTriggered(city.Id, city.Owner, rebel, units.AsReadOnly(), releasedUnits));
-        sim.Rules().Visibility?.Recompute(sim);
     }
 
     /// <summary>Fisher-Yates over the seeded simulation rng: which neighbour rebels appear on is random per game
