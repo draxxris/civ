@@ -13,9 +13,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildCityRuins.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,9",
@@ -61,7 +58,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -84,9 +80,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildCityRuins.dds,Art/Interface/Buttons/NextWar_Atlas.dds,4,4",
@@ -132,7 +125,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -155,9 +147,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,10",
@@ -203,7 +192,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -226,9 +214,6 @@
     "freshWaterMakesValid": false,
     "goody": true,
     "goodyRange": 3,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildTribalVillage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,10",
@@ -275,7 +260,6 @@
       "WorldSoundscapeAudioScript"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {
       "world:forest": true,
       "world:jungle": true,
@@ -308,9 +292,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": -100,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,11",
@@ -395,10 +376,11 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem",
+      "iHealthPercent"
     ],
     "upgradeTime": 40,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -427,9 +409,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": -200,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,11",
@@ -514,10 +493,11 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem",
+      "iHealthPercent"
     ],
     "upgradeTime": 0,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -580,9 +560,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,9",
@@ -651,10 +628,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 40,
-    "useLSystem": true,
     "validFeatures": {
       "world:forest": true
     },
@@ -679,9 +656,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,9",
@@ -724,10 +698,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 0,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -791,9 +765,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildCamp.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,1,7",
@@ -861,7 +832,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -884,9 +854,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildCottage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,7",
@@ -935,10 +902,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 10,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:grass": true,
@@ -964,9 +931,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": true,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,9",
@@ -1012,7 +976,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 20,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -1270,9 +1233,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,9",
@@ -1324,7 +1284,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -1376,9 +1335,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 1,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,10",
@@ -1468,10 +1424,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "iHappiness"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -1517,9 +1473,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,7,9",
@@ -1571,7 +1524,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:coast": true,
@@ -1642,9 +1594,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildFarm.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,7",
@@ -1703,10 +1652,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 40,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:grass": true,
@@ -1789,9 +1738,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildFishingBoats.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,7",
@@ -1858,7 +1804,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -1948,9 +1893,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 50,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,4,14",
@@ -2035,10 +1977,11 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem",
+      "iHealthPercent"
     ],
     "upgradeTime": 40,
-    "useLSystem": true,
     "validFeatures": {
       "world:forest": true,
       "world:jungle": true
@@ -2064,9 +2007,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildFort.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,7,9",
@@ -2109,10 +2049,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 0,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -2142,9 +2082,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,8,10",
@@ -2190,7 +2127,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -2232,9 +2168,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": true,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,10",
@@ -2307,7 +2240,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -2336,9 +2268,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,11",
@@ -2400,7 +2329,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -2428,9 +2356,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildHamlet.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,10",
@@ -2479,10 +2404,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 20,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:grass": true,
@@ -2542,9 +2467,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 100,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,9",
@@ -2623,10 +2545,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "iHealthPercent"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {
       "world:forest": true,
       "world:jungle": true
@@ -2719,9 +2641,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,11",
@@ -2773,7 +2692,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 20,
-    "useLSystem": false,
     "validFeatures": {
       "world:jungle": true
     },
@@ -2798,9 +2716,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildLumberMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,7",
@@ -2883,7 +2798,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 40,
-    "useLSystem": false,
     "validFeatures": {
       "world:forest": true
     },
@@ -2908,9 +2822,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": true,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": "Art/Interface/Buttons/TerrainFeatures/Jungle.dds",
@@ -2953,10 +2864,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bGraphicalOnly"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:grass": true,
@@ -3115,9 +3026,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": -50,
     "help": "",
     "hillsMakesValid": true,
     "icon": ",Art/Interface/Buttons/Builds/BuildMine.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,7",
@@ -3192,10 +3100,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "iHealthPercent"
     ],
     "upgradeTime": 20,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -3373,9 +3281,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": -100,
     "help": "",
     "hillsMakesValid": true,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,5,10",
@@ -3460,10 +3365,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "iHealthPercent"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -3498,9 +3403,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildOffshorePlatform.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,9",
@@ -3552,7 +3454,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 40,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -3620,9 +3521,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildPasture.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,7",
@@ -3684,7 +3582,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 40,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -3707,9 +3604,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": true,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": "Art/Interface/Buttons/TerrainFeatures/Forest.dds",
@@ -3752,10 +3646,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bGraphicalOnly"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:grass": true,
@@ -3915,9 +3809,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildPlantation.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,1,9",
@@ -3976,10 +3867,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 40,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -4047,9 +3938,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildQuarry.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,2,9",
@@ -4137,7 +4025,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -4160,9 +4047,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "{icon:bullet}\u002B50% Air Defense",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,4,10",
@@ -4208,7 +4092,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:coast": true,
@@ -4234,9 +4117,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,10",
@@ -4282,7 +4162,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:coast": true,
@@ -4463,9 +4342,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": -100,
     "help": "",
     "hillsMakesValid": true,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,10",
@@ -4534,10 +4410,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "iHealthPercent"
     ],
     "upgradeTime": 40,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -4560,9 +4436,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,6,9",
@@ -4614,7 +4487,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:coast": true,
@@ -4640,9 +4512,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": true,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/baseterrain/grassland.dds",
@@ -4685,10 +4554,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bGraphicalOnly"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:plains": true
@@ -4713,9 +4582,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": true,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/baseterrain/plains.dds",
@@ -4758,10 +4624,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bGraphicalOnly"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -4788,9 +4654,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": true,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/baseterrain/tundra.dds",
@@ -4833,10 +4696,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bGraphicalOnly"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:snow": true
@@ -4861,9 +4724,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": -100,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildTown.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,10",
@@ -4963,10 +4823,11 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem",
+      "iHealthPercent"
     ],
     "upgradeTime": 0,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:grass": true,
@@ -4992,9 +4853,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": -50,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildVillage.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,9",
@@ -5079,10 +4937,11 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem",
+      "iHealthPercent"
     ],
     "upgradeTime": 40,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:grass": true,
@@ -5108,9 +4967,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildWaterMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,3,8",
@@ -5177,7 +5033,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -5212,9 +5067,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildWell.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,4,8",
@@ -5271,7 +5123,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -5306,9 +5157,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildWhalingBoats.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,9",
@@ -5375,7 +5223,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -5398,9 +5245,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": true,
     "icon": ",Art/Interface/Buttons/Builds/BuildWindMill.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,5,8",
@@ -5457,7 +5301,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 10,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -5480,9 +5323,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": true,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,1,11",
@@ -5531,10 +5371,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 0,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {
       "world:desert": true,
@@ -5572,9 +5412,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildWinery.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,6,8",
@@ -5638,10 +5475,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bUseLSystem"
     ],
     "upgradeTime": 40,
-    "useLSystem": true,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -5664,9 +5501,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,2,9",
@@ -5712,7 +5546,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 10,
-    "useLSystem": false,
     "validFeatures": {
       "world:forest": true
     },
@@ -5737,9 +5570,6 @@
     "freshWaterMakesValid": true,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Builds/BuildWorkshop.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,8,8",
@@ -5832,7 +5662,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 20,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {
       "world:grass": true,
@@ -5858,9 +5687,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": true,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Brown_empty.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,-1,-1",
@@ -5903,10 +5729,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bGraphicalOnly"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -5929,9 +5755,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": false,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_wonders_atlas.dds,4,6",
@@ -5977,7 +5800,6 @@
       "ArtDefineTag"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {
@@ -6000,9 +5822,6 @@
     "freshWaterMakesValid": false,
     "goody": false,
     "goodyRange": 0,
-    "graphicalOnly": true,
-    "happiness": 0,
-    "healthPercent": 0,
     "help": "",
     "hillsMakesValid": false,
     "icon": ",Art/Interface/Buttons/Brown_empty.dds,Art/Interface/Buttons/Actions_Builds_LeaderHeads_Specialists_Atlas.dds,-1,-1",
@@ -6045,10 +5864,10 @@
     "tilesPerGoody": 0,
     "traitYieldChanges": {},
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bGraphicalOnly"
     ],
     "upgradeTime": 0,
-    "useLSystem": false,
     "validFeatures": {},
     "validTerrains": {},
     "yieldChanges": {

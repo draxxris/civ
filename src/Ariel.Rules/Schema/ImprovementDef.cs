@@ -32,7 +32,6 @@ public sealed class ImprovementDef : GameContentDef
     public bool DepletedMine { get; init; } = false;
     public bool FreshWaterMakesValid { get; init; } = false;
     public bool Goody { get; init; } = false;
-    public bool GraphicalOnly { get; init; } = false;
     public bool HillsMakesValid { get; init; } = false;
     public bool NoFreshWater { get; init; } = false;
     public bool OutsideBorders { get; init; } = false;
@@ -43,7 +42,6 @@ public sealed class ImprovementDef : GameContentDef
     public bool RequiresIrrigation { get; init; } = false;
     public bool RequiresRiverSide { get; init; } = false;
     public bool RiverSideMakesValid { get; init; } = false;
-    public bool UseLSystem { get; init; } = false;
     public bool IsWater { get; init; } = false;
     public int AdvancedStartCost { get; init; } = 0;
     public int AdvancedStartCostIncrease { get; init; } = 0;
@@ -51,8 +49,6 @@ public sealed class ImprovementDef : GameContentDef
     public int DepletionRand { get; init; } = 0;
     public int FeatureGrowth { get; init; } = 0;
     public int GoodyRange { get; init; } = 0;
-    public int Happiness { get; init; } = 0;
-    public int HealthPercent { get; init; } = 0;
     public int PillageGold { get; init; } = 0;
     public int TilesPerGoody { get; init; } = 0;
     public int UpgradeTime { get; init; } = 0;

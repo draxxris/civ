@@ -20,14 +20,10 @@ public sealed class BonusDef : GameContentDef
     public ImmutableDictionary<string, bool> Terrains { get; init; } = ImmutableDictionary<string, bool>.Empty;
     public YieldVector YieldChanges { get; init; } = default;
     public bool Area { get; init; } = false;
-    public bool Currency { get; init; } = false;
     public bool Flatlands { get; init; } = false;
     public bool Hills { get; init; } = false;
     public bool NoRiverSide { get; init; } = false;
-    public bool Normalize { get; init; } = false;
     public bool Peaks { get; init; } = false;
-    public bool UseLSystem { get; init; } = false;
-    public int AiObjective { get; init; } = 0;
     public int AiTradeModifier { get; init; } = 0;
     public int ConstAppearance { get; init; } = 0;
     public int GroupRand { get; init; } = 0;

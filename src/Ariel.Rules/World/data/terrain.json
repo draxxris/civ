@@ -7,7 +7,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": false,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Coast.dds",
@@ -48,7 +47,6 @@
     "era": null,
     "foundCoast": true,
     "foundFreshWater": true,
-    "graphicalOnly": false,
     "healthPercent": -15,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Desert.dds",
@@ -89,7 +87,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": false,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Grass.dds",
@@ -130,7 +127,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": true,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Hill.dds",
@@ -153,7 +149,8 @@
       "ArtDefineTag",
       "FootstepSounds",
       "FootstepSounds/FootstepSound",
-      "FootstepSounds/FootstepSound/FootstepAudioType"
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "bGraphicalOnly"
     ],
     "yields": {
       "commerce": 0,
@@ -169,7 +166,6 @@
     "era": null,
     "foundCoast": true,
     "foundFreshWater": true,
-    "graphicalOnly": false,
     "healthPercent": 0,
     "help": "",
     "icon": ",Art/Interface/Buttons/BaseTerrain/marsh.dds,Art/Interface/Buttons/Atlases/BaseTerrain_TerrainFeatures_Atlas.dds,2,2",
@@ -210,7 +206,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": true,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\space.dds",
@@ -230,7 +225,8 @@
     "seeThrough": 0,
     "strategy": "",
     "unsupported": [
-      "ArtDefineTag"
+      "ArtDefineTag",
+      "bGraphicalOnly"
     ],
     "yields": {
       "commerce": 0,
@@ -246,7 +242,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": false,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Ocean.dds",
@@ -287,7 +282,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": false,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\feature_peak.dds",
@@ -310,7 +304,8 @@
       "ArtDefineTag",
       "FootstepSounds",
       "FootstepSounds/FootstepSound",
-      "FootstepSounds/FootstepSound/FootstepAudioType"
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "bGraphicalOnly"
     ],
     "yields": {
       "commerce": 0,
@@ -326,7 +321,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": false,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Plains.dds",
@@ -367,7 +361,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": false,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Coast.dds",
@@ -392,7 +385,8 @@
       "FootstepSounds/FootstepSound",
       "FootstepSounds/FootstepSound/FootstepAudioScript",
       "FootstepSounds/FootstepSound/FootstepAudioType",
-      "WorldSoundscapeAudioScript"
+      "WorldSoundscapeAudioScript",
+      "bGraphicalOnly"
     ],
     "yields": {
       "commerce": 1,
@@ -408,7 +402,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": true,
     "healthPercent": 0,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Ocean.dds",
@@ -433,7 +426,8 @@
       "FootstepSounds/FootstepSound",
       "FootstepSounds/FootstepSound/FootstepAudioScript",
       "FootstepSounds/FootstepSound/FootstepAudioType",
-      "WorldSoundscapeAudioScript"
+      "WorldSoundscapeAudioScript",
+      "bGraphicalOnly"
     ],
     "yields": {
       "commerce": 1,
@@ -449,7 +443,6 @@
     "era": null,
     "foundCoast": true,
     "foundFreshWater": true,
-    "graphicalOnly": false,
     "healthPercent": -15,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Ice.dds",
@@ -490,7 +483,6 @@
     "era": null,
     "foundCoast": false,
     "foundFreshWater": false,
-    "graphicalOnly": false,
     "healthPercent": -15,
     "help": "",
     "icon": "Art/Interface\\Buttons\\WorldBuilder\\Terrain_Tundra.dds",

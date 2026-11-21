@@ -23,17 +23,14 @@ public sealed class FeatureDef : GameContentDef
     /// <summary>Restricts placement to peaks. Features without this flag cannot occupy peaks.</summary>
     public bool RequiresPeaks { get; init; } = false;
     public bool RequiresRiver { get; init; } = false;
-    public bool VisibleAlways { get; init; } = false;
     public int AdvancedStartRemoveCost { get; init; } = 0;
     public int Appearance { get; init; } = 0;
     public int CultureDistance { get; init; } = 0;
     public int DefensePercent { get; init; } = 0;
     public int Disappearance { get; init; } = 0;
-    public int EffectProbability { get; init; } = 0;
     public int Growth { get; init; } = 0;
     public int HealthPercent { get; init; } = 0;
     public int MovementCost { get; init; } = 0;
     public int SeeThrough { get; init; } = 0;
     public int Spread { get; init; } = 0;
-    public int TurnDamage { get; init; } = 0;
 }

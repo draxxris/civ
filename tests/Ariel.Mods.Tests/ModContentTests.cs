@@ -139,7 +139,6 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(new YieldVector(0, 1, 0), copper.YieldChanges);
         Assert.Equal("research:bronze_working", copper.RevealTech);
         var mine = db.Get<Schema.ImprovementDef>("world:improvement_improvement_mine");
-        Assert.Equal(-50, mine.HealthPercent);
         Assert.True(mine.BonusEffects["world:copper"].Connects);
         Assert.Equal(10000, mine.BonusEffects["world:copper"].DiscoveryRandomRange);
         Assert.Equal(new YieldVector(2, 0, 0), db.Get<Schema.TerrainDef>("world:grass").Yields);

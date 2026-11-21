@@ -986,12 +986,6 @@
         "default": 0
       },
       {
-        "source": "bGraphicalOnly",
-        "property": "GraphicalOnly",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bImpassable",
         "property": "Impassable",
         "kind": "bool",
@@ -1144,12 +1138,6 @@
         "default": 0
       },
       {
-        "source": "bVisibleAlways",
-        "property": "VisibleAlways",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "iAdvancedStartRemoveCost",
         "property": "AdvancedStartRemoveCost",
         "kind": "int",
@@ -1180,12 +1168,6 @@
         "default": 0
       },
       {
-        "source": "iEffectProbability",
-        "property": "EffectProbability",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iGrowth",
         "property": "Growth",
         "kind": "int",
@@ -1212,12 +1194,6 @@
       {
         "source": "iSpread",
         "property": "Spread",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iTurnDamage",
-        "property": "TurnDamage",
         "kind": "int",
         "default": 0
       }
@@ -1300,12 +1276,6 @@
         "default": 0
       },
       {
-        "source": "bCurrency",
-        "property": "Currency",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bFlatlands",
         "property": "Flatlands",
         "kind": "bool",
@@ -1324,27 +1294,9 @@
         "default": 0
       },
       {
-        "source": "bNormalize",
-        "property": "Normalize",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bPeaks",
         "property": "Peaks",
         "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bUseLSystem",
-        "property": "UseLSystem",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "iAIObjective",
-        "property": "AiObjective",
-        "kind": "int",
         "default": 0
       },
       {
@@ -1572,12 +1524,6 @@
         "default": 0
       },
       {
-        "source": "bGraphicalOnly",
-        "property": "GraphicalOnly",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bHillsMakesValid",
         "property": "HillsMakesValid",
         "kind": "bool",
@@ -1638,12 +1584,6 @@
         "default": 0
       },
       {
-        "source": "bUseLSystem",
-        "property": "UseLSystem",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bWater",
         "property": "IsWater",
         "kind": "bool",
@@ -1682,18 +1622,6 @@
       {
         "source": "iGoodyRange",
         "property": "GoodyRange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iHappiness",
-        "property": "Happiness",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iHealthPercent",
-        "property": "HealthPercent",
         "kind": "int",
         "default": 0
       },

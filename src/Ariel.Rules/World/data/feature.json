@@ -7,7 +7,6 @@
     "cultureDistance": 0,
     "defensePercent": 0,
     "disappearance": 150,
-    "effectProbability": 0,
     "era": null,
     "growth": 0,
     "healthPercent": -100,
@@ -48,14 +47,13 @@
       "world:snow": true,
       "world:tundra": true
     },
-    "turnDamage": 25,
     "unsupported": [
       "ArtDefineTag",
       "FootstepSounds",
       "FootstepSounds/FootstepSound",
-      "FootstepSounds/FootstepSound/FootstepAudioType"
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "iTurnDamage"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": -10,
       "food": -10,
@@ -70,7 +68,6 @@
     "cultureDistance": 0,
     "defensePercent": 0,
     "disappearance": 500,
-    "effectProbability": 0,
     "era": null,
     "growth": 100,
     "healthPercent": -80,
@@ -100,14 +97,13 @@
     "spread": 0,
     "strategy": "",
     "terrains": {},
-    "turnDamage": 20,
     "unsupported": [
       "ArtDefineTag",
       "FootstepSounds",
       "FootstepSounds/FootstepSound",
-      "FootstepSounds/FootstepSound/FootstepAudioType"
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "iTurnDamage"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": -5,
       "food": -5,
@@ -122,7 +118,6 @@
     "cultureDistance": 0,
     "defensePercent": 0,
     "disappearance": 0,
-    "effectProbability": 0,
     "era": null,
     "growth": 0,
     "healthPercent": -25,
@@ -155,7 +150,6 @@
       "world:desert": true,
       "world:plains": true
     },
-    "turnDamage": 0,
     "unsupported": [
       "ArtDefineTag",
       "FootstepSounds",
@@ -163,7 +157,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioScript",
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": 0,
       "food": 1,
@@ -178,7 +171,6 @@
     "cultureDistance": 1,
     "defensePercent": 25,
     "disappearance": 0,
-    "effectProbability": 15,
     "era": null,
     "growth": 15,
     "healthPercent": 25,
@@ -213,7 +205,6 @@
       "world:plains": true,
       "world:tundra": true
     },
-    "turnDamage": 0,
     "unsupported": [
       "ArtDefineTag",
       "EffectType",
@@ -222,9 +213,9 @@
       "FootstepSounds/FootstepSound/FootstepAudioScript",
       "FootstepSounds/FootstepSound/FootstepAudioType",
       "GrowthSound",
-      "WorldSoundscapeAudioScript"
+      "WorldSoundscapeAudioScript",
+      "iEffectProbability"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -239,7 +230,6 @@
     "cultureDistance": 2,
     "defensePercent": 0,
     "disappearance": 0,
-    "effectProbability": 0,
     "era": null,
     "growth": 0,
     "healthPercent": 0,
@@ -272,7 +262,6 @@
       "world:coast": true,
       "world:ocean": true
     },
-    "turnDamage": 0,
     "unsupported": [
       "ArtDefineTag",
       "FootstepSounds",
@@ -280,7 +269,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioScript",
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -295,7 +283,6 @@
     "cultureDistance": 1,
     "defensePercent": 25,
     "disappearance": 0,
-    "effectProbability": 15,
     "era": null,
     "growth": 20,
     "healthPercent": 0,
@@ -328,7 +315,6 @@
       "world:grass": true,
       "world:marsh": true
     },
-    "turnDamage": 0,
     "unsupported": [
       "ArtDefineTag",
       "EffectType",
@@ -337,9 +323,9 @@
       "FootstepSounds/FootstepSound/FootstepAudioScript",
       "FootstepSounds/FootstepSound/FootstepAudioType",
       "GrowthSound",
-      "WorldSoundscapeAudioScript"
+      "WorldSoundscapeAudioScript",
+      "iEffectProbability"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -354,7 +340,6 @@
     "cultureDistance": 0,
     "defensePercent": 0,
     "disappearance": 0,
-    "effectProbability": 0,
     "era": null,
     "growth": 0,
     "healthPercent": 0,
@@ -386,7 +371,6 @@
     "terrains": {
       "world:desert": true
     },
-    "turnDamage": 0,
     "unsupported": [
       "ArtDefineTag",
       "FootstepSounds",
@@ -395,7 +379,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioType",
       "WorldSoundscapeAudioScript"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": 2,
       "food": 3,
@@ -410,7 +393,6 @@
     "cultureDistance": 0,
     "defensePercent": 0,
     "disappearance": 150,
-    "effectProbability": 0,
     "era": null,
     "growth": 0,
     "healthPercent": -200,
@@ -451,14 +433,13 @@
       "world:snow": true,
       "world:tundra": true
     },
-    "turnDamage": 50,
     "unsupported": [
       "ArtDefineTag",
       "FootstepSounds",
       "FootstepSounds/FootstepSound",
-      "FootstepSounds/FootstepSound/FootstepAudioType"
+      "FootstepSounds/FootstepSound/FootstepAudioType",
+      "iTurnDamage"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": -25,
       "food": -25,
@@ -473,7 +454,6 @@
     "cultureDistance": 0,
     "defensePercent": -25,
     "disappearance": 1000,
-    "effectProbability": 0,
     "era": null,
     "growth": 10,
     "healthPercent": -50,
@@ -506,7 +486,6 @@
       "world:coast": true,
       "world:ocean": true
     },
-    "turnDamage": 20,
     "unsupported": [
       "ArtDefineTag",
       "FootstepSounds",
@@ -514,9 +493,9 @@
       "FootstepSounds/FootstepSound/FootstepAudioScript",
       "FootstepSounds/FootstepSound/FootstepAudioType",
       "GrowthSound",
-      "WorldSoundscapeAudioScript"
+      "WorldSoundscapeAudioScript",
+      "iTurnDamage"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": -1,
       "food": -1,
@@ -531,7 +510,6 @@
     "cultureDistance": 1,
     "defensePercent": 25,
     "disappearance": 0,
-    "effectProbability": 0,
     "era": null,
     "growth": 0,
     "healthPercent": -50,
@@ -564,7 +542,6 @@
       "world:marsh": true,
       "world:tundra": true
     },
-    "turnDamage": 0,
     "unsupported": [
       "ArtDefineTag",
       "FootstepSounds",
@@ -572,7 +549,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioScript",
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
-    "visibleAlways": false,
     "yieldChanges": {
       "commerce": 0,
       "food": 0,
