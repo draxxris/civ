@@ -1,7 +1,7 @@
 # Ariel
 
 A super-moddable, hex-grid Civilization 4 clone. The base game (world, cities, units,
-research, economy, government, relations and diplomacy between players, and the computer player) is linked in from `src/Ariel.Rules`
+research, economy, government, relations and diplomacy between players, score and victory, and the computer player) is linked in from `src/Ariel.Rules`
 and `src/Ariel.Ai`, composed by `src/Ariel.Composition`; everything else is a mod on the
 same registration API. See [docs/DESIGN.md](docs/DESIGN.md).
 
@@ -11,8 +11,8 @@ Mods in `src/Mods`:
   ranged support fire), AirCombat (air missions and interception), Barbarians (the hostile
   faction's spawns and raids) and Religion (faiths, state religion, missionaries and
   inquisitions).
-- Optional mods, enabled in the mod manager: Votes (world councils), ProjectsVictory,
-  Corporations, Espionage, Events, ScriptedWonders, Revolution, and the alternative
+- Optional mods, enabled in the mod manager: Votes (world councils and the diplomatic
+  victory), ProjectsVictory (team and world projects and the space race), Corporations, Espionage, Events, ScriptedWonders, Revolution, and the alternative
   research mod CardResearch. The browsable tech tree is part of the base Research module.
 
 ```

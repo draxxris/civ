@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- The Projects and Victory mod's published API: projects, scores and victory, and the project and victory definitions.
+  <!-- The Projects and Victory mod's published API: team and world projects, their definitions and the space race condition id.
        Consumers compile against it; the provider mod implements it. See "Mod APIs" in docs/DESIGN.md. -->
   <ItemGroup>
     <!-- The host supplies the kernel and the base game; an API never carries its own copy. -->

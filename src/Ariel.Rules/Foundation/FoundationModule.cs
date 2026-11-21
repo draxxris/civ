@@ -85,10 +85,10 @@ public sealed class FoundationModule : IPreparableMod
         ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation", (leaf, subject) =>
             subject.City is { } city && subject.Sim.Rules().CityCorporations
                 is { } corporations && corporations.HasIdentity(subject.Sim, city.Id, leaf.Id));
-        // A victory requirement is that victory being on in this game (CvGame::isVictoryValid). The feature that runs
-        // victory conditions answers; without one the leaf fails, so a victory's buildings stay unavailable.
+        // A victory requirement is that victory being on in this game (CvGame::isVictoryValid). A victory whose
+        // condition no loaded module registers is not on, so its buildings stay unavailable.
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory", (leaf, subject) =>
-            subject.Sim.Rules().VictoryConditions?.IsEnabled(subject.Sim, leaf.Id) == true);
+            subject.Sim.Rules().Victory.IsEnabled(subject.Sim, leaf.Id));
         // A religion requirement is the religion's presence in the city (no parameter), the player's state religion
         // (1) or the city's holy city status (2). The mod that runs religion answers; without one the leaf fails, so
         // religious buildings, missionaries and promotions stay unavailable rather than free.

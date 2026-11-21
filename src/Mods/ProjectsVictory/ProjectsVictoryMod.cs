@@ -7,7 +7,8 @@ using Ariel.Mods;
 
 namespace Ariel.Mods.ProjectsVictory;
 
-/// <summary>Projects as a production kind, plus the executable victory conditions.</summary>
+/// <summary>Team and world projects as a production kind, and the space race they win, which the mod adds to the base
+/// game's victories as a victory condition.</summary>
 public sealed class ProjectsVictoryMod : IPreparableMod
 {
     private static readonly ModJsonFile<ProjectDef[]> Projects = new("data/project.json");
@@ -20,39 +21,25 @@ public sealed class ProjectsVictoryMod : IPreparableMod
         ContentRegistration.Load(context, Projects);
         ContentRegistration.Load(context, Victories);
         ContentRegistration.Load(context, Civics);
-        var service = new ProjectVictoryService();
-        context.RegisterService<IProjectVictoryService>("queries", service);
-        context.RegisterService<Ariel.Presentation.IGameScreen>("victory", new VictoryScreen());
-        context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new VictoryNotices());
+        var service = new ProjectService();
+        context.RegisterService<IProjectService>("queries", service);
+        context.RegisterService<IVictoryCondition>("spaceship", new SpaceshipVictory(service));
+        context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new ProjectNotices());
         context.RegisterService<Ariel.Presentation.IPediaSource>("projects", new ProjectPedia());
-        context.RegisterService<Ariel.Presentation.IPediaSource>("victories", new VictoryPedia());
         context.RegisterService<IProductionKind>("project_kind", new ProjectKind(service));
         context.RegisterService<IProductionCompletion>("project_completion", new ProjectCompletion(service));
-        context.RegisterStateComponent<VictoryGameState>("game_state");
         context.RegisterStateComponent<TeamProjectState>("team_state");
-        context.Subscribe<CityCaptured>("check_capture", (sim, _) => service.Evaluate(sim, false));
-        context.Subscribe<CityRazed>("check_raze", (sim, _) => service.Evaluate(sim, false));
-        context.Subscribe<ProjectCompleted>("check_project", (sim, _) => service.Evaluate(sim, false));
-        context.TurnSystems.Register(new VictoryCheck(service));
-        context.RegisterService<IPlayerScores>("scores", service);
-        context.RegisterService<IVictoryConditions>("victory_conditions", service);
+        context.Subscribe<ProjectCompleted>("check_project", (sim, _) => sim.Rules().Victory.Evaluate(sim, false));
     }
 }
 
-internal sealed class VictoryCheck(ProjectVictoryService service) : ITurnSystem
-{
-    public string Id => "projects_victory:check";
-    public int Order => TurnPhase.GameEnd;
-    public void Run(Simulation sim) => service.Evaluate(sim, true);
-}
-
-internal sealed class ProjectCompletion(ProjectVictoryService service) : IProductionCompletion
+internal sealed class ProjectCompletion(ProjectService service) : IProductionCompletion
 {
     public string Kind => ProjectKind.KindId;
     public void Complete(Simulation sim, int city, string content) => service.CompleteProject(sim, city, content);
 }
 
-internal sealed class ProjectKind(ProjectVictoryService service) : IProductionKind
+internal sealed class ProjectKind(ProjectService service) : IProductionKind
 {
     internal const string KindId = "projects_victory:project";
     private static readonly string[] Hidden = ["Unknown project", "Project cannot be built", "The game is over"];

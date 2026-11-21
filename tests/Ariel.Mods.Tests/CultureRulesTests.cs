@@ -3,7 +3,6 @@ using Ariel.Client;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
-using Ariel.Mods.ProjectsVictory;
 using Xunit;
 using S = Ariel.Content.Schema;
 
@@ -14,10 +13,9 @@ public sealed class CultureRulesTests
     private static readonly Lazy<ContentDb> Content = new(() =>
     {
         var loaded = new LoadedMods();
-        var victory = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "ProjectsVictory"));
         var probe = new ModSource { Root = loaded.Root, Manifest = new() { Id = "culture_probe", Version = "1",
             Dependencies = ["foundation"], References = ["foundation", "cities", "military", "government", "peoples", "research"] }, Instance = new Probe() };
-        return ModLoader.Build(loaded.Sources.Append(victory).Append(probe));
+        return ModLoader.Build(loaded.Sources.Append(probe));
     });
     private static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
     private static Simulation Scenario(string speed = "normal", bool sameTeam = false)
@@ -105,16 +103,16 @@ public sealed class CultureRulesTests
         var cities = new[] { AddCity(sim, 1, 14), AddCity(sim, 1, 39), AddCity(sim, 1, 57) };
         foreach (var city in cities) city.Culture = 240000;
         var culture = Service<ICityCultureService>(sim);
-        var victory = Service<IProjectVictoryService>(sim);
+        var victory = sim.Rules().Victory;
         // The probe makes the legendary tier require bronze_working, so raw culture alone cannot reach it: the
         // victory rule counts eligible tiers, not stored culture. The rule's own counting is proven by
-        // ProjectsVictoryRulesTests.Cultural_victory_needs_three_legendary_cities_in_one_team.
+        // VictoryRulesTests.Cultural_victory_needs_three_legendary_cities_in_one_team.
         Assert.NotEqual("foundation:culturelevel_legendary", culture.Level(sim, cities[0].Id).Id);
         Assert.False(victory.Evaluate(sim, true).IsGameOver);
         sim.TeamOf(1).Techs.Add("research:bronze_working");
         Assert.All(cities, c => Assert.Equal("foundation:culturelevel_legendary", culture.Level(sim, c.Id).Id));
         var status = victory.Evaluate(sim, true);
-        Assert.Equal("projects_victory:cultural", status.VictoryId);
+        Assert.Equal("victory:cultural", status.VictoryId);
         Assert.Equal(1, status.WinningTeamId);
     }
     [Theory]

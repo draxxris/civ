@@ -7,30 +7,21 @@ using Xunit;
 
 namespace Ariel.Mods.Tests;
 
-/// <summary>The diplomacy and victory mods' screens, driven through the client's headless host.</summary>
+/// <summary>The diplomacy and victory screens of the base game, driven through the client's headless host.</summary>
 public sealed class ClientDiplomacyVictoryTests
 {
-    private static readonly ConcurrentDictionary<bool, Lazy<ContentDb>> Contents = new();
-    private static ModSource Optional(string name) => ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name));
+    /// <summary>One frozen content with the main mods; xunit builds a new test class instance for every test.
+    /// Diplomacy and Victory are base modules, so their screens are always there.</summary>
+    private static readonly Lazy<ContentDb> Content = new(() => new LoadedMods().Content);
 
-    /// <summary>One frozen content with or without the victory mod; xunit builds a new test class instance for every
-    /// test. Diplomacy is a base module, so it is always there.</summary>
-    private static ContentDb Content(bool victory) => Contents.GetOrAdd(victory, key => new(() =>
+    private GameSession Session()
     {
-        var loaded = new LoadedMods();
-        var sources = loaded.Sources.AsEnumerable();
-        if (key) sources = sources.Append(Optional("ProjectsVictory"));
-        return ModLoader.Build(sources);
-    })).Value;
-
-    private GameSession Session(bool victory = true)
-    {
-        var sim = GameFactory.Create(Content(victory), 5, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar");
+        var sim = GameFactory.Create(Content.Value, 5, "peoples:leader_gjergj_kastrioti", "peoples:leader_julius_caesar");
         sim.TeamOf(0).Techs.UnionWith(["research:writing", "research:currency", "research:alphabet", "research:political_philosophy"]);
         return new(sim);
     }
 
-    private const string DiplomacyId = "diplomacy:screen", VictoryId = "projects_victory:victory";
+    private const string DiplomacyId = "diplomacy:screen", VictoryId = "victory:screen";
 
     private static IReadOnlyList<ViewElement> Rival(GameSession session, int player) =>
         ScreenProbe.Section(ScreenProbe.Body(session, DiplomacyId), $"rival:{player}");
@@ -42,13 +33,13 @@ public sealed class ClientDiplomacyVictoryTests
         session.Sim.Rules().Relations.EstablishContact(session.Sim, session.MyTeam.Id, session.Sim.TeamOf(1).Id);
 
     [Fact]
-    public void Victory_screen_is_absent_without_its_mod_and_diplomacy_is_always_there()
+    public void Diplomacy_and_victory_screens_are_always_there()
     {
-        var session = Session(victory: false);
-        Assert.False(ScreenProbe.Registered(session, VictoryId));
-        // Diplomacy is a base module; the rest are the main mods' screens.
+        var session = Session();
+        // Diplomacy and Victory are base modules; the rest are the main mods' screens.
         Assert.True(ScreenProbe.Registered(session, DiplomacyId));
-        Assert.Equal(["diplomacy:screen", "religion:screen"], session.Screens.Entries().Select(e => e.Id).Order(StringComparer.Ordinal));
+        Assert.True(ScreenProbe.Registered(session, VictoryId));
+        Assert.Equal(["diplomacy:screen", "religion:screen", "victory:screen"], session.Screens.Entries().Select(e => e.Id).Order(StringComparer.Ordinal));
     }
 
     [Fact]

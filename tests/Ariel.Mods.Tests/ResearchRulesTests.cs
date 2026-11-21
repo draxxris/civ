@@ -17,7 +17,7 @@ public sealed class ResearchRulesTests
     private static ContentDb BuildContent(IMod? custom = null)
     {
         var loaded = new LoadedMods();
-        var optional = new[] { "Espionage", "ProjectsVictory" }.Select(name =>
+        var optional = new[] { "Espionage" }.Select(name =>
             ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", name)));
         var sources = loaded.Sources.Concat(optional);
         if (custom is not null) sources = sources.Append(new ModSource { Manifest = new() { Id = "probe", Version = "1",
