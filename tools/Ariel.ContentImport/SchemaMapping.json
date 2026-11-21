@@ -2685,12 +2685,6 @@
         "default": 0
       },
       {
-        "source": "bForceTeamVoteEligible",
-        "property": "ForceTeamVoteEligible",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bFreshWater",
         "property": "FreshWater",
         "kind": "bool",
@@ -6803,7 +6797,8 @@
     "definition": "BuildingVotesDef",
     "mod": "votes",
     "fields": [
-      { "source": "DiploVoteType", "property": "VoteSource", "kind": "ref", "target": "VoteSourceInfo" }
+      { "source": "DiploVoteType", "property": "VoteSource", "kind": "ref", "target": "VoteSourceInfo" },
+      { "source": "bForceTeamVoteEligible", "property": "ForceTeamVoteEligible", "kind": "bool", "default": 0 }
     ],
     "requirements": []
   },

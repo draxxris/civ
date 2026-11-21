@@ -116,7 +116,6 @@ public sealed class BuildingDef : GameContentDef
     public bool DirtyPower { get; init; } = false;
     public bool ForceAllTradeRoutes { get; init; } = false;
     public bool ForceNoPrereqScaling { get; init; } = false;
-    public bool ForceTeamVoteEligible { get; init; } = false;
     public bool FreshWater { get; init; } = false;
     public bool GoldenAge { get; init; } = false;
     public bool GovernmentCenter { get; init; } = false;

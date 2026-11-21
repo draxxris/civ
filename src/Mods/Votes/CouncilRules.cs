@@ -118,7 +118,7 @@ internal static class CouncilRules
     /// rest of the ballot up to the minimum number of candidates, ties going to the lower team id.</summary>
     internal static IReadOnlyList<int> Candidates(Simulation sim, string source)
     {
-        var eligible = SeatBuildings(sim, source).Where(b => sim.Content.Get<BuildingDef>(b).ForceTeamVoteEligible).ToHashSet(StringComparer.Ordinal);
+        var eligible = SeatBuildings(sim, source).Where(b => sim.Content.Attachment<BuildingVotesDef>(b)?.ForceTeamVoteEligible == true).ToHashSet(StringComparer.Ordinal);
         var forced = Seats(sim, source).Where(c => c.Buildings.Any(eligible.Contains) && Alive(sim, c.Owner))
             .Select(c => sim.State.PlayerById(c.Owner).TeamId).ToHashSet();
         int extra = MinCandidates(sim) - forced.Count;

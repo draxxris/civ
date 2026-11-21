@@ -461,7 +461,8 @@ percents in `BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeop
 `BuildingReligionDef` and `UnitReligionDef`, and Corporations keeps executives' spreads
 and the per-handicap and per-world-size maintenance percents in `UnitCorporationsDef`,
 `HandicapCorporationsDef` and `WorldSizeCorporationsDef`, and Espionage marks spies and
-counter-spies in `UnitEspionageDef`; GreatPeople, which skips shrines when a great
+counter-spies in `UnitEspionageDef`, and Votes keeps a seat building's forced candidacy in
+the `BuildingVotesDef` row that already names its council; GreatPeople, which skips shrines when a great
 person builds, reads `BuildingReligionDef` through the Religion API it already references. A rule constant only a mod reads is a row about the base game's single
 `RuleConstantsDef` (`trade:rule_constants` about `foundation:rule_constants`, type
 `RuleConstantsTradeDef`), and a setting that varies by game speed, handicap, era or world size
@@ -1462,7 +1463,8 @@ completed project asks the victory check again.
 
 Votes runs the world councils (`Ariel.Mods.Votes.Api`: `VoteSourceDef`, `VoteDef`, the
 `BuildingVotesDef` attachment and `IVotesService`). A building that names a council (the
-United Nations, a UN mission, the Apostolic Palace) founds it; one that requires a state
+United Nations, a UN mission, the Apostolic Palace) founds it, and its owner's team always
+stands for election when its row says `ForceTeamVoteEligible`; one that requires a state
 religion binds the council to its builder's faith, and then only that faith's cities
 vote. Votes are citizens (or cities, or one per civilization, as the vote says), with a
 bonus for members of the council's state religion. A voting member has votes; a full

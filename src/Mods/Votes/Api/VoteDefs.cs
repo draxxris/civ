@@ -77,9 +77,12 @@ public sealed class VoteDef : GameContentDef
         && (IsElection || IsStanding || OpenBorders || DefensivePact || ForcePeace || ForceNoTrade || ForceWar);
 }
 
-/// <summary>What a building means to councils: it founds the named one. Any mod may attach one to a building.</summary>
+/// <summary>What a building means to councils: it founds the named one, and its owner's team always stands for
+/// election there. Any mod may attach one to a building.</summary>
 public sealed class BuildingVotesDef : ContentAttachment<BuildingDef>
 {
     [ContentReference(typeof(VoteSourceDef))]
     public string? VoteSource { get; init; }
+    /// <summary>The team owning the building is always a candidate in the council's elections.</summary>
+    public bool ForceTeamVoteEligible { get; init; }
 }
