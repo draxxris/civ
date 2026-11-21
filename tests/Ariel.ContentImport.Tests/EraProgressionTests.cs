@@ -69,11 +69,13 @@ public sealed class EraProgressionTests
             using var payload = JsonDocument.Parse(File.ReadAllText(file));
             AssertNeutral(payload.RootElement);
         }
+        // Every emitted family, with each mod's row about the rule constants beside Foundation's own.
         var families = SchemaCatalog.Definitions.Concat(new[]
         {
                 new DefinitionMapping("", "ConditionDef", "foundation", [], []),
                 new DefinitionMapping("", "RuleConstantsDef", "foundation", [], [])
-            }).ToArray();
+            }).Concat(SchemaCatalog.Constants.Attachments.Select(a => new DefinitionMapping("", a.Definition, a.Mod, [], [])))
+            .ToArray();
         var mods = families.GroupBy(m => m.Mod).Select(group => new ModSource
         {
             Manifest = new ModManifest { Id = group.Key, References = families.Select(m => m.Mod).Distinct().Where(m => m != group.Key).ToArray() },
