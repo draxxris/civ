@@ -59,15 +59,17 @@ never with its research rate. `GamePace.Scale` is the only scaling helper.
 
 The mod registers three state components:
 
-- `EspionageTeamState`: `Points`, lifetime `Spent`, and `CounterEspionage` records per
-  rival team.
+- `EspionageTeamState`: `Points` and lifetime `Spent`.
 - `EspionagePlayerState`: target `Weights` and fractional `RemainderHundredths`.
-- `EspionageCityState`: `UnhappyUntilTurn` and `RevoltUntilTurn`, both absolute turns.
-  Zero means no active effect. The mod clears every field it sets.
 
-A conquest resets the city state: the `CityCaptured` subscription replaces the
-component with a fresh one so the previous owner's spy effects never reach the new
-owner.
+What lasts a while is a timer in the base game's store (Timers in DESIGN.md), and the mod
+registers three kinds: `espionage:counter_espionage` (held by the pair of defending and
+rival team, the cost percentage in its value, replaced by a new one),
+`espionage:foment_unhappiness` (the city's unhappiness modifier, replaced by a new one) and
+`espionage:revolt` (the city's disorder; the kind sets the city's disorder flag when it
+starts and clears it when it runs out, at the end of the last turn it applies, in the
+owner's turn). A conquest or a secession ends a city's timers, so the previous owner's
+spy effects never reach the new owner.
 
 ## Points and allocation
 
@@ -178,8 +180,8 @@ lasts `CounterEspionageTurns` turns from the turn it is set, costs the flat
 `CounterEspionageCost` (the same on every game speed), and multiplies the rival's
 mission costs and passive thresholds by
 `CounterEspionagePercent + CounterEspionagePerInterception * interception`. A repeat
-mission against the same rival is rejected while protection is active. Expired records
-are deleted at the next turn boundary.
+mission against the same rival is rejected while protection is active. The timer is
+inert from its expiry turn and is dropped at the next turn boundary.
 
 ## Integration
 

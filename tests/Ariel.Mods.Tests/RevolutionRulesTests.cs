@@ -379,16 +379,14 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var sim = P7ModFixture.Scenario(SpiesAndRevolution.Value);
         var city = P7ModFixture.City(sim);
         city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 900 });
-        city.Extensions.Set(sim.Content, new EspionageCityState { RevoltUntilTurn = 9 });
         var store = sim.Rules().Timers;
         store.Start(sim, new GameTimer { Kind = "revolution:unrest", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 5 });
         store.Start(sim, new GameTimer { Kind = "revolution:rebellion_cooldown", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 5 });
         store.Start(sim, new GameTimer { Kind = "espionage:foment_unhappiness", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 9 });
+        store.Start(sim, new GameTimer { Kind = "espionage:revolt", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 9 });
         sim.Events.Publish(new CityCaptured(city.Id, 0, 1));
         var revolution = city.Extensions.Get<RevolutionCityState>(sim.Content);
-        var espionage = city.Extensions.Get<EspionageCityState>(sim.Content);
         Assert.Equal(0, revolution?.InstabilityIndex ?? 0);
-        Assert.Equal(0, espionage?.RevoltUntilTurn ?? 0);
         // The unrest, the rebellion cooldown and the fomented unhappiness were the city's timers, which end with its capture.
         Assert.Empty(store.Active(sim));
     }

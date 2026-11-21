@@ -2456,22 +2456,35 @@ end, subclass `TimerKind` and override `Started` / `Ended`, or subscribe to `Tim
 On the store: an event option's lasting happiness, health and plot yields (Events,
 `events:option_effect`, `Stack`), a spy's fomented unhappiness (Espionage,
 `espionage:foment_unhappiness`, `Replace`), the unrest a rebellion or an incited revolt
-leaves (Revolution, `revolution:unrest`, `Prolong`) and the cooldown before a city may
-rebel again (Revolution, `revolution:rebellion_cooldown`, `Replace`, no modifiers).
+leaves (Revolution, `revolution:unrest`, `Prolong`), the cooldown before a city may
+rebel again (Revolution, `revolution:rebellion_cooldown`, `Replace`, no modifiers), a team's
+counter-espionage against a rival (Espionage, `espionage:counter_espionage`, `Replace`,
+held by the pair of teams, the cost percentage in `Value`) and the disorder a spy incites
+(Espionage, `espionage:revolt`, `Replace`, `OwnerTurnEnd`: its hooks set and clear the city's
+disorder flag, which stays a flag because `GovernmentStatus.IsDisorder` is hot).
 
-Not on it, because they are not a plain "ends on turn N" timer:
-they are not a fixed modifier with an expiry:
+Not on it, because each is a counter that runs down or accumulates, or a record of when
+something began, rather than a plain "ends on turn N" timer:
 - Hurry and conscription anger (`HurryAngerTurns`, `ConscriptAngerTurns`) are pooled
   counters. Each use adds turns, the anger grows in steps with the turns left, and hurry
   anger rescales when an anger-modifying building completes.
-- Occupation (`OccupationTurns`) and a spy's incited revolt (`RevoltUntilTurn`) are
-  disorder, a city state rather than a modifier.
-- Counter-espionage is a cost multiplier per rival team that the espionage formulas
-  read directly; no modifier calculation collects it.
-- A golden age stacks its length and can start a turn late. It sets the base golden-age
-  flag and adds threshold-dependent plot yields through a yield finalizer.
-- Other cooldowns (civic and religion changes, event repeats) are counters that run down
-  or records of the last time, not an expiry turn.
+- Occupation (`OccupationTurns`) counts down in the city's own turn-end step, is shown as
+  "N turns remaining" by the city screen and the conquest panel, and is read as a plain
+  integer by the AI planners.
+- A golden age (`GoldenAgeTurns`) is a countdown ticked at the owner's turn end, which
+  stacks by adding length and can start a turn late (`FirstGoldenAgeTurn`). It also sets
+  the base golden-age flag, and the same counter drives a modifier source and a yield
+  finalizer. Turned into an expiry turn, the remaining count shown while it has not started
+  and the moment it stops applying would differ by a turn, so it stays.
+- Anarchy, the civic change cooldown (`AnarchyTurns`, `RevolutionTimer`), religion's
+  `ConversionTimer` and the councils' `Timer` and `SecretaryTimer` are counters that
+  decrement each turn and whose invariants tie them together (the cooldown never drops
+  below the anarchy left).
+- Counters that accumulate while a condition holds (`RevoltTurns`, `StrikeTurns`, the
+  attitude histories) and "since turn" records (the last peace treaty and `HasBindingPeace`,
+  a deal's `StartedTurn` and its ten binding turns, an event's last firing and the
+  once-only rule, `TurnAcquired` and the faction breakaway) are state other rules also
+  read as history, not an expiry.
 
 ## Events and extension state
 

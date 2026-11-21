@@ -135,6 +135,40 @@ public sealed class EspionageRulesTests
     }
 
     [Fact]
+    public void Spy_revolt_ends_with_the_last_turn_of_its_duration_in_the_owners_turn_and_not_before()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; Fund(sim);
+        P6RulesScenario.Apply(sim, Mission(Spy(sim), city, EspionageMissionKind.InciteRevolt));
+        int until = sim.Rules().Timers.Find(sim, "espionage:revolt", TimerHolder.OfCity(city.Id))!.ExpiresTurn;
+        Assert.Equal(sim.State.Turn + 2, until);
+        var end = (IPlayerTurnSystem)sim.Content.TurnSystems.Get("foundation:timers_turn_end");
+        var start = sim.Content.TurnSystems.Get("foundation:timers");
+        // Not the start of a turn, and not another player's turn end: the owner's turn end of the first turn leaves it.
+        start.Run(sim); end.Run(sim, 0);
+        Assert.True(city.Extensions.Get<CityRuleState>(sim.Content)!.Disorder);
+        Assert.True(sim.Rules().Timers.IsActive(sim, "espionage:revolt", TimerHolder.OfCity(city.Id)));
+        end.Run(sim, city.Owner);
+        Assert.True(GovernmentStatus.IsDisorder(sim, city));
+        sim.State.Turn++; // the last turn it applies: the disorder is cleared at the end of the owner's turn
+        start.Run(sim); end.Run(sim, 0);
+        Assert.True(GovernmentStatus.IsDisorder(sim, city));
+        end.Run(sim, city.Owner);
+        Assert.False(GovernmentStatus.IsDisorder(sim, city));
+        Assert.Empty(sim.Rules().Timers.Active(sim));
+        // The revolt may be incited again once it is over.
+        Assert.Null(Mission(Spy(sim), city, EspionageMissionKind.InciteRevolt).Validate(sim));
+    }
+
+    [Fact]
+    public void A_captured_city_loses_the_spy_revolt_and_its_timers()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; Fund(sim);
+        P6RulesScenario.Apply(sim, Mission(Spy(sim), city, EspionageMissionKind.InciteRevolt));
+        sim.Events.Publish(new CityCaptured(city.Id, city.Owner, 0));
+        Assert.Empty(sim.Rules().Timers.Active(sim));
+    }
+
+    [Fact]
     public void Spy_revolt_is_refused_in_a_city_that_is_already_in_disorder()
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; Fund(sim);
@@ -146,7 +180,7 @@ public sealed class EspionageRulesTests
         P6RulesScenario.Apply(sim, Mission(Spy(sim), city, EspionageMissionKind.InciteRevolt));
         Assert.True(GovernmentStatus.IsDisorder(sim, city));
         // Three nominal turns at the Normal pace of 85%: the deadline is two turns away, not one.
-        Assert.Equal(sim.State.Turn + 2, city.Extensions.Get<EspionageCityState>(sim.Content)!.RevoltUntilTurn);
+        Assert.Equal(sim.State.Turn + 2, sim.Rules().Timers.Find(sim, "espionage:revolt", TimerHolder.OfCity(city.Id))!.ExpiresTurn);
     }
 
     [Fact]
@@ -309,11 +343,13 @@ public sealed class EspionageRulesTests
         var loaded = SaveGame.Load(content, SaveGame.Save(sim));
         Assert.Equal(new CounterEspionageEffect(expires, 200), Spies(loaded).CounterEspionage(loaded, 0, 1));
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        TeamState(loaded, 0).CounterEspionage[1] = new(expires + 1, 200);
+        var saved = loaded.State.Extensions.Get<TimerState>(loaded.Content)!;
+        var original = saved.Timers.Single();
+        saved.Timers[0] = original with { ExpiresTurn = expires + 1 };
         Assert.NotEqual(sim.ComputeHash(), loaded.ComputeHash());
-        TeamState(loaded, 0).CounterEspionage[1] = new(expires, 201);
+        saved.Timers[0] = original with { Value = 201 };
         Assert.NotEqual(sim.ComputeHash(), loaded.ComputeHash());
-        TeamState(loaded, 0).CounterEspionage[1] = new(expires, 200);
+        saved.Timers[0] = original;
         for (int turn = 0; turn < duration - 1; turn++)
         {
             sim.AdvanceTurn(); loaded.AdvanceTurn();
@@ -322,17 +358,17 @@ public sealed class EspionageRulesTests
         Assert.Equal(expires - 1, sim.State.Turn);
         Assert.NotNull(Spies(sim).CounterEspionage(sim, 0, 1));
         Assert.Contains("already active", P6RulesScenario.Reject(sim, repeat));
-        Assert.Single(TeamState(sim, 0).CounterEspionage);
+        Assert.Single(sim.Rules().Timers.Active(sim, "espionage:counter_espionage"));
         sim.AdvanceTurn(); loaded.AdvanceTurn();
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         Assert.Equal(expires, sim.State.Turn);
         Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
         // The record is inert from its expiry turn and is deleted at the next turn boundary.
-        Assert.Single(TeamState(sim, 0).CounterEspionage);
+        Assert.Single(sim.State.Extensions.Get<TimerState>(sim.Content)!.Timers);
         sim.AdvanceTurn(); loaded.AdvanceTurn();
         Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        Assert.Empty(TeamState(sim, 0).CounterEspionage);
-        Assert.Empty(TeamState(loaded, 0).CounterEspionage);
+        Assert.Empty(sim.State.Extensions.Get<TimerState>(sim.Content)!.Timers);
+        Assert.Empty(loaded.State.Extensions.Get<TimerState>(loaded.Content)!.Timers);
         Assert.Null(repeat.Validate(sim));
         // Team 0's counter-espionage spent 100 points of its own investment, so team 1's ratio is 99%: 50 -> 49.
         Assert.Equal(49, Spies(sim).MissionCost(sim, 1, home.Id, EspionageMissionKind.StealTreasury));
@@ -374,14 +410,10 @@ public sealed class EspionageRulesTests
     }
 
     [Fact]
-    public void Legacy_team_extension_without_counter_state_loads_with_no_protection()
+    public void A_saved_team_without_protection_loads_with_none()
     {
         var sim = P6RulesScenario.Create(); Fund(sim);
-        var save = System.Text.Json.Nodes.JsonNode.Parse(SaveGame.Save(sim))!;
-        var teams = save["State"]!["Teams"]!.AsArray();
-        var state = teams.Single(t => (int)t!["Id"]! == 0)!["Extensions"]!["espionage:team_state"]!;
-        Assert.True(state.AsObject().Remove("CounterEspionage"));
-        var loaded = SaveGame.Load(sim.Content, save.ToJsonString());
+        var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         Assert.Equal(100000, Spies(loaded).Points(loaded, 0, 1));
         Assert.Null(Spies(loaded).CounterEspionage(loaded, 0, 1));
         Assert.Equal(4, (int)EspionageMissionKind.StealTech);

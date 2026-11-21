@@ -26,26 +26,17 @@ public sealed class EspionageMod : IPreparableMod
         context.RegisterService<IEspionageService>("espionage", service);
         context.RegisterStateComponent<EspionageTeamState>("team_state");
         context.RegisterStateComponent<EspionagePlayerState>("player_state");
-        context.RegisterStateComponent<EspionageCityState>("city_state");
         context.RegisterCommand<SetEspionageWeightCommand>("set_weight");
-        // Fomenting again restarts the unrest; it ends if the city changes hands.
+        // Fomenting again restarts the unrest, and a new counter-espionage restarts its protection. Both, and a spy's
+        // revolt, end if the city changes hands, as the Espionage state of a conquered city always did.
         context.RegisterService<ITimerKind>("foment_unhappiness", new TimerKind(SpyMissionRules.FomentUnhappinessKind));
+        context.RegisterService<ITimerKind>("counter_espionage", new TimerKind(EspionageService.CounterEspionageKind));
+        context.RegisterService<ITimerKind>("revolt", new SpyRevolt());
         // Registration order is the order a spy's panel lists them in.
         foreach (var kind in EspionageMissionOrder.Display)
             context.RegisterService<IMission>(EspionageMissions.Of(kind)["espionage:".Length..], new SpyMission(service, service.Missions, kind));
-        // A conquest must not hand the previous owner's spy effects to the new owner.
-        context.Subscribe<CityCaptured>("reset_capture", (sim, captured) =>
-        {
-            if (sim.State.FindCity(captured.City) is { } city) city.Extensions.Set(sim.Content, new EspionageCityState());
-        });
-        context.Subscribe<CitySeceded>("reset_secession", (sim, seceded) =>
-        {
-            if (sim.State.FindCity(seceded.City) is { } city) city.Extensions.Set(sim.Content, new EspionageCityState());
-        });
         context.Subscribe<EspionageMissionResult>("memory_spy", RememberCaughtSpy);
         context.TurnSystems.Register(new SpyAllocation(service));
-        context.TurnSystems.Register(new SpyTimers());
-        context.TurnSystems.Register(new SpyExpiry());
         context.RegisterService<IEspionageSpending>("spending", service);
         context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new EspionageScreen());
         context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new EspionageNotices());
@@ -101,40 +92,27 @@ internal sealed class SpyAllocation(EspionageService service) : IPlayerTurnSyste
     public void Run(Simulation sim, int player) => service.Allocate(sim, player);
 }
 
-/// <summary>Clears the disorder a spy imposed before its deadline. The deadline is absolute, so a city keeps
-/// exactly the configured number of turns regardless of when the turn interval runs.</summary>
-internal sealed class SpyTimers : IPlayerTurnSystem
+/// <summary>A spy's revolt: the city is in disorder while the timer runs. It sets the city's disorder flag when it
+/// starts and clears it when its time runs out, at the end of the last turn it applies, in the owner's turn, so a
+/// city keeps exactly the configured number of turns regardless of when the turn interval runs. A conquest ends it
+/// without clearing the flag: the capture already did.</summary>
+internal sealed class SpyRevolt() : TimerKind(SpyMissionRules.RevoltKind)
 {
-    public string Id => "espionage:timers";
-    /// <summary>After government timers (PlayerEnd + 1), so an anarchy flag set this interval is already visible.</summary>
-    public int Order => TurnPhase.PlayerEnd + 2;
-    public void Run(Simulation sim, int player)
+    public override TimerExpiry Expiry => TimerExpiry.OwnerTurnEnd;
+    public override void Started(Simulation sim, GameTimer timer) => SetDisorder(sim, timer, true);
+    public override void Changed(Simulation sim, GameTimer before, GameTimer after) => SetDisorder(sim, after, true);
+    public override void Ended(Simulation sim, GameTimer timer, TimerEnd reason)
     {
-        foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id))
-        {
-            var state = city.Extensions.Get<EspionageCityState>(sim.Content);
-            if (state is null || state.RevoltUntilTurn == 0 || sim.State.Turn + 1 < state.RevoltUntilTurn) continue;
-            var rules = city.Extensions.Get<CityRuleState>(sim.Content);
-            if (rules is not null) rules.Disorder = false;
-            state.RevoltUntilTurn = 0;
-        }
+        if (reason == TimerEnd.Expired) SetDisorder(sim, timer, false);
     }
-}
 
-/// <summary>Drops expired counter-espionage records at the first turn boundary after their expiry so dead entries cannot accumulate in authoritative state.</summary>
-internal sealed class SpyExpiry : ITurnSystem
-{
-    public string Id => "espionage:expiry";
-    public int Order => TurnPhase.GameBegin + 1;
-    public void Run(Simulation sim)
+    private static void SetDisorder(Simulation sim, GameTimer timer, bool disorder)
     {
-        foreach (var team in sim.State.Teams.OrderBy(t => t.Id))
-        {
-            var state = team.Extensions.Get<EspionageTeamState>(sim.Content);
-            if (state is null) continue;
-            foreach (int rival in state.CounterEspionage.Where(p => p.Value.ExpiresTurn <= sim.State.Turn).Select(p => p.Key).ToArray())
-                state.CounterEspionage.Remove(rival);
-        }
+        if (timer.Holder.City is not { } id || sim.State.FindCity(id) is not { } city) return;
+        var rules = city.Extensions.Get<CityRuleState>(sim.Content);
+        if (rules is null && !disorder) return;
+        if (rules is null) city.Extensions.Set(sim.Content, rules = new());
+        rules.Disorder = disorder;
     }
 }
 
