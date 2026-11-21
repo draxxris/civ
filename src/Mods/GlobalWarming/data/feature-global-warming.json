@@ -1,0 +1,30 @@
+[
+  {
+    "id": "global_warming:forest",
+    "name": "",
+    "requirements": null,
+    "target": "world:forest",
+    "warmingDefense": 2
+  },
+  {
+    "id": "global_warming:ice",
+    "name": "",
+    "requirements": null,
+    "target": "world:ice",
+    "warmingDefense": 1
+  },
+  {
+    "id": "global_warming:jungle",
+    "name": "",
+    "requirements": null,
+    "target": "world:jungle",
+    "warmingDefense": 3
+  },
+  {
+    "id": "global_warming:swamp",
+    "name": "",
+    "requirements": null,
+    "target": "world:swamp",
+    "warmingDefense": 3
+  }
+]

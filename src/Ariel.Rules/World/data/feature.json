@@ -56,7 +56,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
     "visibleAlways": false,
-    "warmingDefense": 0,
     "yieldChanges": {
       "commerce": -10,
       "food": -10,
@@ -109,7 +108,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
     "visibleAlways": false,
-    "warmingDefense": 0,
     "yieldChanges": {
       "commerce": -5,
       "food": -5,
@@ -166,7 +164,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
     "visibleAlways": false,
-    "warmingDefense": 0,
     "yieldChanges": {
       "commerce": 0,
       "food": 1,
@@ -228,7 +225,6 @@
       "WorldSoundscapeAudioScript"
     ],
     "visibleAlways": false,
-    "warmingDefense": 2,
     "yieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -285,7 +281,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
     "visibleAlways": false,
-    "warmingDefense": 1,
     "yieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -345,7 +340,6 @@
       "WorldSoundscapeAudioScript"
     ],
     "visibleAlways": false,
-    "warmingDefense": 3,
     "yieldChanges": {
       "commerce": 0,
       "food": 0,
@@ -402,7 +396,6 @@
       "WorldSoundscapeAudioScript"
     ],
     "visibleAlways": false,
-    "warmingDefense": 0,
     "yieldChanges": {
       "commerce": 2,
       "food": 3,
@@ -466,7 +459,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
     "visibleAlways": false,
-    "warmingDefense": 0,
     "yieldChanges": {
       "commerce": -25,
       "food": -25,
@@ -525,7 +517,6 @@
       "WorldSoundscapeAudioScript"
     ],
     "visibleAlways": false,
-    "warmingDefense": 0,
     "yieldChanges": {
       "commerce": -1,
       "food": -1,
@@ -582,7 +573,6 @@
       "FootstepSounds/FootstepSound/FootstepAudioType"
     ],
     "visibleAlways": false,
-    "warmingDefense": 3,
     "yieldChanges": {
       "commerce": 0,
       "food": 0,

@@ -62,7 +62,7 @@ internal sealed class GlobalWarmingSystem : ITurnSystem
         {
             if (!Water(sim, plot.Terrain)) land++;
             if (plot.Feature is not { } id) continue;
-            int weight = sim.Content.Get<S.FeatureDef>(id).WarmingDefense;
+            int weight = (sim.Content.Attachment<FeatureGlobalWarmingDef>(id) ?? FeatureGlobalWarmingDef.None).WarmingDefense;
             if (weight <= 0) continue;
             points += (Int128)weight * (plot.Owner is { } owner && environmentalists.Contains(owner) ? civicBonus : 1);
         }

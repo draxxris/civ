@@ -237,6 +237,8 @@ definition without a row reads as the defaults:
   `unownedWaterTilesPerBarbarianUnit`), `data/game-speed-barbarians.json`
   (`GameSpeedBarbariansDef`: `barbPercent`) and `data/era-barbarians.json`
   (`EraBarbariansDef`: `noBarbUnits`).
+- GlobalWarming: `data/feature-global-warming.json` (`FeatureGlobalWarmingDef`:
+  `warmingDefense`).
 
 To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
 one of the mod's own. New players start a new option on its `defaultCivic`, or else on

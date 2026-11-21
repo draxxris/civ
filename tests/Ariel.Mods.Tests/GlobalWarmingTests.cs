@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Ariel.Content;
 using Ariel.Game;
 using Ariel.Modding;
+using Ariel.Mods.GlobalWarming;
 using Xunit;
 using S = Ariel.Content.Schema;
 
@@ -473,8 +474,11 @@ sim.State.Map = new(width, height, false);
                     .SetItem("GW_MOD_ENABLED", flood ? "1" : "0"),
             });
             context.Content<S.GameSpeedDef>().Register(new() { Id = Warming + "speed", VictoryDelayPercent = slow ? 200 : 100 });
-            context.Content<S.FeatureDef>().Register(new() { Id = Warming + "shield", WarmingDefense = extremeDefense ? int.MaxValue : 3,
+            context.Content<S.FeatureDef>().Register(new() { Id = Warming + "shield",
                 Terrains = ImmutableDictionary<string, bool>.Empty.Add("world:grass", true) });
+            // Global warming keeps a feature's defence in its own row.
+            context.Content<FeatureGlobalWarmingDef>().Register(new() { Id = Warming + "shield_warming", Target = Warming + "shield",
+                WarmingDefense = extremeDefense ? int.MaxValue : 3 });
             context.Content<S.FeatureDef>().Register(new() { Id = Warming + "cold_only",
                 Terrains = ImmutableDictionary<string, bool>.Empty.Add("world:snow", true) });
             static ImmutableArray<ModifierEffect> Health(int amount) => [new() { Scope = ModifierScope.City, Key = "cities:health", Amount = amount }];

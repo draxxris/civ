@@ -36,5 +36,4 @@ public sealed class FeatureDef : GameContentDef
     public int SeeThrough { get; init; } = 0;
     public int Spread { get; init; } = 0;
     public int TurnDamage { get; init; } = 0;
-    public int WarmingDefense { get; init; } = 0;
 }

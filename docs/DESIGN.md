@@ -56,8 +56,8 @@ extend both through one registration API.
   `Ariel.Ai` when it contributes an AI planner, all with `Private="false"` because the
   host supplies them. The loader hands a mod the host's copies, so types are shared. A mod may also
   publish an API assembly in its `Api/` folder (see Mod APIs below); AirCombat,
-  Barbarians, Corporations, Espionage, Events, GreatPeople, ProjectsVictory, RangedCombat,
-  Religion, Revolution, ScriptedWonders, Trade and Votes do.
+  Barbarians, Corporations, Espionage, Events, GlobalWarming, GreatPeople, ProjectsVictory,
+  RangedCombat, Religion, Revolution, ScriptedWonders, Trade and Votes do.
 - `Ariel.Net`: lockstep sessions and reliable ordered transport. `InProcessHub` connects
   local peers.
 - `tests/Ariel.Tests/TestRuleset`: a small test-only game with its own content
@@ -488,6 +488,7 @@ technologies) stay in base. The mods' rows:
 - RangedCombat: strike accuracy (`UnitRangedCombatDef`).
 - Barbarians: when barbarians first appear and how much unclaimed land or water feeds one
   (`HandicapBarbariansDef`, `GameSpeedBarbariansDef`, `EraBarbariansDef`).
+- GlobalWarming: a feature's defence against warming (`FeatureGlobalWarmingDef`).
 
 - Loading validates an attachment like any definition: `ModLoader.Json` rejects an
   unknown property, `Target` is a content reference to `TTarget` (a missing id or one
@@ -754,10 +755,11 @@ uses the reference zero-consumption path until a resource-consumption service ex
 
 Global warming is the GlobalWarming mod (`src/Mods/GlobalWarming`, id `global_warming`,
 a main mod); without it the world never warms. Its turn system
-(`global_warming:warming`) runs at `TurnPhase.Environment`. The base game keeps what
-it reads: `FeatureDef.WarmingDefense`, the `GLOBAL_WARMING_*` rule constants and
-`ICityWellbeingService.EnvironmentalUnhealth`. Global warming defense sums map
-features (`FeatureDef.WarmingDefense`), doubled for players with active health civics
+(`global_warming:warming`) runs at `TurnPhase.Environment`. The mod keeps each feature's
+warming defence in its own `FeatureGlobalWarmingDef` rows (`data/feature-global-warming.json`,
+in its API `Ariel.Mods.GlobalWarming.Api`); the base game keeps the rest of what it reads:
+the `GLOBAL_WARMING_*` rule constants and `ICityWellbeingService.EnvironmentalUnhealth`.
+Global warming defense sums map features (`FeatureGlobalWarmingDef.WarmingDefense`), doubled for players with active health civics
 (`TREEHUGGER_DEFENSE_BONUS`), scaled by `GLOBAL_WARMING_FOREST` per land plot. City
 pollution sums building unhealthiness (`GLOBAL_WARMING_UNHEALTH_WEIGHT`), bonus
 unhealthiness (`GLOBAL_WARMING_BONUS_WEIGHT`), and dirty power

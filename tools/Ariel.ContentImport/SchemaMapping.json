@@ -1226,12 +1226,6 @@
         "property": "TurnDamage",
         "kind": "int",
         "default": 0
-      },
-      {
-        "source": "iWarmingDefense",
-        "property": "WarmingDefense",
-        "kind": "int",
-        "default": 0
       }
     ],
     "requirements": []
@@ -7228,6 +7222,20 @@
         "source": "bNoBarbUnits",
         "property": "NoBarbUnits",
         "kind": "bool",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "FeatureInfo",
+    "definition": "FeatureGlobalWarmingDef",
+    "mod": "global_warming",
+    "fields": [
+      {
+        "source": "iWarmingDefense",
+        "property": "WarmingDefense",
+        "kind": "int",
         "default": 0
       }
     ],
