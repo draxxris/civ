@@ -1152,7 +1152,22 @@ safe from parallel AI scoring):
 `IPeoplesService.EnsureFaction(sim, faction)` creates the faction's player on first use (its
 own team, the row's civilization and leader, named by the civilization's short
 description) and returns the same player for the rest of the game.
-`PlayerRules.FactionPlayer` finds it without creating it. Without a faction that fields
+`PlayerRules.FactionPlayer` finds it without creating it.
+
+### Players that join a running game
+
+`IPeoplesService.AddPlayer(sim, NewPlayer)` adds a player mid-game and is the only way
+rules do so; `EnsureFaction` goes through it. The player takes the next free id and a team
+of its own unless `NewPlayer.Team` names one. A nation gets what a seat gets at setup, from
+the same code (`PlayerRoster`): the default civic of every option, its civilization's
+starting civics and starting technologies, plus any `NewPlayer.Techs`. A faction's player
+gets neither and never takes a turn. The always-at-war restriction is applied in both
+directions, so a faction is at war with teams that appear after it. `PlayerJoined(Player,
+Team)` is published. The player's other state (economy, research, government, military) is
+created lazily by its modules like any player's. Call it from a global turn step or an
+event handler: a player added inside another player's turn steps, or while computer players
+decide, would get a partial turn. A joined player has an id at or above
+`SimulationSettings.PlayerCount`, so it is never a multiplayer seat. Without a faction that fields
 uprisings, goody huts never release hostile villagers and a Revolution rebellion releases
 pressure without fielding rebels.
 

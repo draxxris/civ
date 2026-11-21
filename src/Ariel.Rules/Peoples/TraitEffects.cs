@@ -11,17 +11,32 @@ internal sealed class PeoplesService : IPeoplesService
     public IReadOnlyList<S.TraitDef> Traits(Simulation sim, int player) => Leader(sim, player)?.Traits.Where(t => t.Value)
         .OrderBy(t => t.Key, StringComparer.Ordinal).Select(t => sim.Content.Get<S.TraitDef>(t.Key)).ToArray() ?? [];
 
-    public int EnsureFaction(Simulation sim, S.FactionDef faction)
+    public int EnsureFaction(Simulation sim, S.FactionDef faction) =>
+        PlayerRules.FactionPlayer(sim, faction) ?? AddPlayer(sim, new(faction.Target, faction.Leader));
+
+    public int AddPlayer(Simulation sim, NewPlayer spec)
     {
-        if (PlayerRules.FactionPlayer(sim, faction) is { } existing) return existing;
-        var civilization = sim.Content.Get<S.CivilizationDef>(faction.Target);
+        var civilization = sim.Content.Get<S.CivilizationDef>(spec.Civilization);
+        _ = sim.Content.Get<S.LeaderDef>(spec.Leader);
+        if (spec.Ai is not null) _ = sim.Content.PlayerAIs.Get(spec.Ai);
+        bool nation = sim.Content.Attachment<S.FactionDef>(civilization.Id) is null;
         int playerId = sim.State.Players.Max(p => p.Id) + 1;
-        int teamId = sim.State.Teams.Max(t => t.Id) + 1;
-        sim.State.AddTeam(new Team { Id = teamId });
-        sim.State.AddPlayer(new Player { Id = playerId, TeamId = teamId, Civilization = civilization.Id,
-            Leader = faction.Leader, Name = civilization.ShortDescription, EndedTurn = true });
-        if (faction.AlwaysAtWar)
-            foreach (var team in sim.State.Teams.Where(t => t.Id != teamId)) sim.State.SetWar(teamId, team.Id, true);
+        int teamId = spec.Team ?? sim.State.Teams.Max(t => t.Id) + 1;
+        if (spec.Team is null) sim.State.AddTeam(new Team { Id = teamId });
+        var player = new Player
+        {
+            Id = playerId, TeamId = teamId, Civilization = civilization.Id, Leader = spec.Leader, Ai = spec.Ai,
+            Name = spec.Name ?? civilization.ShortDescription, Treasury = spec.Treasury, EndedTurn = !nation,
+        };
+        if (nation) PlayerRoster.StartingCivics(sim.Content, civilization, player.Civics);
+        sim.State.AddPlayer(player);
+        var team = sim.State.TeamById(teamId);
+        if (nation) PlayerRoster.AddTechs(team, civilization.StartingTechs);
+        if (spec.Techs is not null) team.Techs.UnionWith(spec.Techs.Order(StringComparer.Ordinal));
+        foreach (var other in sim.State.Teams.Where(t => t.Id != teamId).OrderBy(t => t.Id).ToArray())
+            if (PlayerRules.TeamAlwaysAtWar(sim, teamId) || PlayerRules.TeamAlwaysAtWar(sim, other.Id))
+                sim.State.SetWar(teamId, other.Id, true);
+        sim.Events.Publish(new PlayerJoined(playerId, teamId));
         return playerId;
     }
 }

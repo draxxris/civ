@@ -72,11 +72,33 @@ public interface IPeoplesService
     LeaderDef? Leader(Simulation sim, int player);
     Ariel.Content.Schema.CivilizationDef? Civilization(Simulation sim, int player);
     IReadOnlyList<TraitDef> Traits(Simulation sim, int player);
-    /// <summary>The player a faction plays as, created on first use: on its own team, named after its civilization and,
-    /// when the faction is always at war, at war with every other team. Every caller gets the same player for the rest
-    /// of the game. Changes state, so call it from rules, never from a query.</summary>
+    /// <summary>The player a faction plays as, created on first use through <see cref="AddPlayer"/>: on its own team,
+    /// named after its civilization. Every caller gets the same player for the rest of the game. Changes state, so
+    /// call it from rules, never from a query.</summary>
     int EnsureFaction(Simulation sim, FactionDef faction);
+    /// <summary>Add a player to a running game and return its id: the next free player id, on a new team unless
+    /// <see cref="NewPlayer.Team"/> names one. A nation starts on the civics a new game would give it and knows its
+    /// civilization's starting technologies besides <see cref="NewPlayer.Techs"/>; a faction's player has neither and
+    /// never takes a turn. War follows the always-at-war restriction in both directions: a faction that has it is at war
+    /// with every other team at once, and every such faction already in the game is at war with the newcomer's team.
+    /// Publishes <see cref="PlayerJoined"/>. Call it from a global turn step or an event handler, never from inside a
+    /// player's own turn steps or while computer players are deciding, and never from a query.</summary>
+    int AddPlayer(Simulation sim, NewPlayer player);
 }
+
+/// <summary>A player to add to a running game (<see cref="IPeoplesService.AddPlayer"/>).</summary>
+/// <param name="Civilization">The civilization it plays as; a civilization with a faction row makes it that faction's player.</param>
+/// <param name="Leader">Its leader.</param>
+/// <param name="Ai">The computer player that runs it, or null for none (a faction, or a seat a human takes).</param>
+/// <param name="Name">Its display name, or null for the civilization's short description.</param>
+/// <param name="Team">An existing team to join, or null for a team of its own.</param>
+/// <param name="Techs">Technologies its team learns on joining.</param>
+/// <param name="Treasury">Its starting gold.</param>
+public sealed record NewPlayer(string Civilization, string Leader, string? Ai = null, string? Name = null, int? Team = null,
+    IReadOnlyCollection<string>? Techs = null, long Treasury = 0);
+
+/// <summary>A player joined a running game.</summary>
+public sealed record PlayerJoined(int Player, int Team) : DomainEvent;
 
 public static class GovernmentStatus
 {

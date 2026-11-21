@@ -44,13 +44,7 @@ internal sealed class NewGameSetup
             Id = id, TeamId = teamId, Civilization = civ.Id, Leader = leader.Id, Name = civ.Name, Ai = ai,
             Treasury = handicap.Gold + sim.Content.Get<EraDef>(settings.StartingEra).StartingGold,
         };
-        foreach (var option in sim.Content.Get<CivicOptionDef>().All)
-        {
-            var defaultCivic = option.DefaultCivic ?? sim.Content.Get<CivicDef>().All.FirstOrDefault(c => c.Option == option.Id && c.Requirements is null)?.Id;
-            if (defaultCivic is not null) player.Civics[option.Id] = defaultCivic;
-        }
-        foreach (var civic in civ.StartingCivics)
-            if (sim.Content.Get<CivicDef>(civic).Option is { } optionId) player.Civics[optionId] = civic;
+        Peoples.PlayerRoster.StartingCivics(sim.Content, civ, player.Civics);
         sim.State.Players.Add(player);
     }
 
@@ -63,8 +57,7 @@ internal sealed class NewGameSetup
         return choices.Length == 1 ? choices[0] : throw new ArgumentException("Select a civilization for a leader with multiple civilizations");
     }
 
-    private static void AddTechs(Team team, IReadOnlyDictionary<string, bool> grants) =>
-        team.Techs.UnionWith(grants.Where(p => p.Value).Select(p => p.Key).Order(StringComparer.Ordinal));
+    private static void AddTechs(Team team, IReadOnlyDictionary<string, bool> grants) => Peoples.PlayerRoster.AddTechs(team, grants);
 
     public void Complete(Simulation sim)
     {
