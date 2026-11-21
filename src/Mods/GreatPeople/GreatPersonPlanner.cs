@@ -31,14 +31,14 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
         if (service is null) return;
         foreach (var unit in ctx.Units.OrderBy(u => u.Id))
         {
-            if (!ctx.Alive(unit) || unit.Health <= 0 || ctx.HasActed(unit) || !IsGreatPerson(ctx.Def(unit))) continue;
+            if (!ctx.Alive(unit) || unit.Health <= 0 || ctx.HasActed(unit) || !IsGreatPerson(ctx.Def(unit), GreatPeopleData.Unit(ctx.Sim.Content, unit.Type))) continue;
             PlanUnit(unit, service);
         }
     }
 
-    private static bool IsGreatPerson(UnitDef def) => def.GreatPeoples.Any(p => p.Value) || def.GreatGeneral
-        || def.BaseDiscover > 0 || def.DiscoverMultiplier > 0 || def.BaseHurry > 0 || def.HurryMultiplier > 0
-        || def.BaseTrade > 0 || def.TradeMultiplier > 0 || def.GreatWorkCulture > 0 || def.LeaderPromotion is not null || def.LeaderExperience > 0;
+    private static bool IsGreatPerson(UnitDef def, UnitGreatPeopleDef gp) => gp.GreatPeoples.Any(p => p.Value) || gp.GreatGeneral
+        || gp.BaseDiscover > 0 || gp.DiscoverMultiplier > 0 || gp.BaseHurry > 0 || gp.HurryMultiplier > 0
+        || def.BaseTrade > 0 || def.TradeMultiplier > 0 || gp.GreatWorkCulture > 0 || gp.LeaderPromotion is not null || gp.LeaderExperience > 0;
 
     private void PlanUnit(Unit unit, IGreatPeopleService service)
     {
@@ -126,7 +126,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
     private long SettlementValue(Unit unit, City city, string specialist)
     {
         var yields = Yields(city);
-        if (ctx.Def(unit).GreatGeneral) return yields.Production * 10;
+        if (GreatPeopleData.Unit(ctx.Sim.Content, unit.Type).GreatGeneral) return yields.Production * 10;
         var def = ctx.Sim.Content.Get<SpecialistDef>(specialist);
         var modifiers = ModifierSink.Collect(new(ctx.Sim, ModifierScope.City, ctx.PlayerId, city)).Ledger;
         return def.Yields.Production * (100 + modifiers.Total("cities:production_percent")) / 100
@@ -137,7 +137,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
 
     private IEnumerable<Choice> LeadChoices(Unit unit, IGreatPeopleService service)
     {
-        if (!ctx.Def(unit).GreatGeneral || ctx.Team.Wars.Count == 0) yield break;
+        if (!GreatPeopleData.Unit(ctx.Sim.Content, unit.Type).GreatGeneral || ctx.Team.Wars.Count == 0) yield break;
         foreach (var position in ctx.Units.Where(ctx.Alive).Where(u => ctx.Def(u).Strength > 0).Select(u => u.Position).Distinct())
             foreach (var action in service.AvailableActions(ctx.Sim, ctx.PlayerId, unit.Id, position).Where(a => a.Mission == GreatPersonMissions.Lead))
             {
@@ -164,9 +164,10 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
     {
         var constants = ctx.Sim.Content.Get<RuleConstantsDef>().All.Single();
         int length = constants.Raw.TryGetValue("GOLDEN_AGE_LENGTH", out var raw)
-            && int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var turns) ? turns : constants.Values.GoldenAgeTurns;
+            && int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var turns) ? turns : GreatPeopleData.Rules(ctx.Sim).GoldenAgeTurns;
         long duration = Math.Max(1, length * ctx.Sim.Content.Get<GameSpeedDef>(ctx.Sim.Settings.GameSpeed).GoldenAgePercent / 100);
-        long gain = ctx.Sim.Content.Get<YieldDef>().All.Sum(y => (long)y.GoldenAgeYield * Math.Max(100, y.AiWeightPercent) / Math.Max(1, 1 + y.GoldenAgeYieldThreshold));
+        long gain = ctx.Sim.Content.Get<YieldDef>().All.Select(y => GreatPeopleData.Yield(ctx.Sim.Content, y.Id))
+            .Sum(y => (long)y.GoldenAgeYield * Math.Max(100, y.AiWeightPercent) / Math.Max(1, 1 + y.GoldenAgeYieldThreshold));
         long value = gain * ctx.Cities.Sum(c => (long)c.Population) * duration / 100;
         if (ctx.Sim.Rules().CityUnrest is { } unrest)
         {

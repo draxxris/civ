@@ -7,8 +7,6 @@ public sealed class SpecialistDef : GameContentDef
 {
     public CommerceVector Commerces { get; init; } = default;
     public ImmutableDictionary<string, int> Flavors { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(UnitDef), ReferencePart.Values)]
-    public string? GreatPersonUnit { get; init; } = null;
     public YieldVector Yields { get; init; } = default;
     public bool Visible { get; init; } = false;
     public int Experience { get; init; } = 0;

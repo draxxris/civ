@@ -231,7 +231,7 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         sim.State.MoveUnit(merchant.Id, foreign.Position);
         long before = sim.State.PlayerById(0).Treasury;
         Apply(sim, Mission(merchant, GreatPersonMissions.Trade, foreign.Id.ToString()));
-        Assert.Equal(before + 100 * sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed).UnitTradePercent / 100, sim.State.PlayerById(0).Treasury);
+        Assert.Equal(before + 100 * sim.Content.Attachment<GameSpeedGreatPeopleDef>(sim.Settings.GameSpeed)!.UnitTradePercent / 100, sim.State.PlayerById(0).Treasury);
         Assert.Null(sim.State.FindUnit(merchant.Id));
     }
 
@@ -273,7 +273,7 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
             var born = sim.Events.Published.OfType<GreatGeneralBorn>().Last();
             Assert.Equal(0, born.Player); Assert.Equal(best.Id, born.City);
             Assert.Equal(best.Position, sim.State.UnitById(born.Unit).Position);
-            Assert.True(sim.Content.Get<S.UnitDef>(born.UnitType).GreatGeneral);
+            Assert.True(sim.Content.Attachment<UnitGreatPeopleDef>(born.UnitType)!.GreatGeneral);
             Assert.Equal(birth, playerState.GreatGeneralsCreated);
             Assert.True(gp.GeneralProgress(sim, 0) < gp.GeneralThreshold(sim, 0));
             Assert.True(gp.GeneralThreshold(sim, 0) > threshold);
@@ -321,21 +321,30 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     {
         public void Register(IModContext context)
         {
-            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:sage", DefaultUnit = "gp_probe:sage", GoldenAge = true, BaseDiscover = 10000, BaseHurry = 10000, GreatWorkCulture = 1000,
-                GreatPeoples = ImmutableDictionary<string, bool>.Empty.Add("gp_probe:settled_sage", true), Flavors = ImmutableDictionary<string, int>.Empty.Add("probe", 100) });
-            context.Content<S.SpecialistDef>().Register(new() { Id = "gp_probe:settled_sage", Commerces = new(0, 6, 0, 0), GreatPeopleRateChange = 2, GreatPersonUnit = "gp_probe:sage" });
+            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:sage", DefaultUnit = "gp_probe:sage", GoldenAge = true, Flavors = ImmutableDictionary<string, int>.Empty.Add("probe", 100) });
+            context.Content<S.SpecialistDef>().Register(new() { Id = "gp_probe:settled_sage", Commerces = new(0, 6, 0, 0), GreatPeopleRateChange = 2 });
             context.Content<S.PromotionDef>().Register(new() { Id = "gp_probe:leader_skill", Leader = true,
                 CombatTypes = ImmutableDictionary<string, bool>.Empty.Add("military:unitcombat_melee", true) });
-            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:general", DefaultUnit = "gp_probe:general", GreatGeneral = true, LeaderExperience = 11, LeaderPromotion = "military:leader" });
-            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:builder", DefaultUnit = "gp_probe:builder", ForceBuildings = ImmutableDictionary<string, bool>.Empty.Add("gp_probe:monument", true) });
+            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:general", DefaultUnit = "gp_probe:general" });
+            context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:builder", DefaultUnit = "gp_probe:builder" });
             context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:merchant", DefaultUnit = "gp_probe:merchant", BaseTrade = 100 });
             context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:engineer", DefaultUnit = "gp_probe:engineer", GoldenAge = true });
             context.Content<S.TechDef>().Register(new() { Id = "gp_probe:insight", Cost = 10, Flavors = ImmutableDictionary<string, int>.Empty.Add("probe", 100) });
-            context.Content<S.BuildingDef>().Register(new() { Id = "gp_probe:academy", DefaultBuilding = "gp_probe:academy", GreatPersonUnit = "gp_probe:sage", GreatPeopleRateChange = 80 });
-            context.Content<S.BuildingDef>().Register(new() { Id = "gp_probe:forge", DefaultBuilding = "gp_probe:forge", GreatPersonUnit = "gp_probe:engineer", GreatPeopleRateChange = 80 });
+            context.Content<S.BuildingDef>().Register(new() { Id = "gp_probe:academy", DefaultBuilding = "gp_probe:academy", GreatPeopleRateChange = 80 });
+            context.Content<S.BuildingDef>().Register(new() { Id = "gp_probe:forge", DefaultBuilding = "gp_probe:forge", GreatPeopleRateChange = 80 });
             context.Content<S.BuildingDef>().Register(new() { Id = "gp_probe:inspiration", DefaultBuilding = "gp_probe:inspiration", GreatPeopleRateModifier = 50 });
             context.Content<S.BuildingDef>().Register(new() { Id = "gp_probe:monument", DefaultBuilding = "gp_probe:monument", Cost = 20 });
             context.Content<S.BuildingDef>().Register(new() { Id = "gp_probe:celebration", DefaultBuilding = "gp_probe:celebration", Cost = 1, GoldenAge = true });
+            // What the probe units, specialist and buildings mean to great people.
+            var units = context.Content<UnitGreatPeopleDef>();
+            units.Register(new() { Id = "gp_probe:sage_great_people", Target = "gp_probe:sage", BaseDiscover = 10000, BaseHurry = 10000, GreatWorkCulture = 1000,
+                GreatPeoples = ImmutableDictionary<string, bool>.Empty.Add("gp_probe:settled_sage", true) });
+            units.Register(new() { Id = "gp_probe:general_great_people", Target = "gp_probe:general", GreatGeneral = true, LeaderExperience = 11, LeaderPromotion = "military:leader" });
+            units.Register(new() { Id = "gp_probe:builder_great_people", Target = "gp_probe:builder", ForceBuildings = ImmutableDictionary<string, bool>.Empty.Add("gp_probe:monument", true) });
+            context.Content<SpecialistGreatPeopleDef>().Register(new() { Id = "gp_probe:settled_sage_great_people", Target = "gp_probe:settled_sage", GreatPersonUnit = "gp_probe:sage" });
+            var buildings = context.Content<BuildingGreatPeopleDef>();
+            buildings.Register(new() { Id = "gp_probe:academy_great_people", Target = "gp_probe:academy", GreatPersonUnit = "gp_probe:sage" });
+            buildings.Register(new() { Id = "gp_probe:forge_great_people", Target = "gp_probe:forge", GreatPersonUnit = "gp_probe:engineer" });
         }
     }
 }

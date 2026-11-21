@@ -64,8 +64,6 @@ public sealed record RuleConstants
     public int BaseCivicAnarchyTurns { get; init; }
     public int BaseReligionAnarchyTurns { get; init; }
     public int MaximumAnarchyTurns { get; init; }
-    public int GoldenAgeTurns { get; init; }
-    public int GoldenAgeGreatPeoplePercent { get; init; }
     public int InitialFreeUnits { get; init; }
     public int InitialFreeUnitsPopulationPercent { get; init; }
     public int UpkeepCityOffset { get; init; }

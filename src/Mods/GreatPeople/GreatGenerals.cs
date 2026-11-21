@@ -11,7 +11,7 @@ internal sealed class GreatGenerals(IGreatPeopleService service) : ICombatLeader
     public void Emerge(Simulation sim, Unit winner)
     {
         var civ = sim.Content.Get<S.CivilizationDef>(sim.State.PlayerById(winner.Owner).Civilization);
-        var general = sim.Content.Get<S.UnitDef>().All.Where(u => u.GreatGeneral
+        var general = sim.Content.Get<S.UnitDef>().All.Where(u => GreatPeopleData.Unit(sim.Content, u.Id).GreatGeneral
             && civ.UnitOverrides.GetValueOrDefault(u.DefaultUnit, u.DefaultUnit) == u.Id).OrderBy(u => u.Id, StringComparer.Ordinal).FirstOrDefault();
         if (general is null) return;
         var state = EditPlayer(sim, winner.Owner);

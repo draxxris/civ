@@ -1,0 +1,1802 @@
+[
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:abu_simbel",
+    "name": "",
+    "requirements": null,
+    "target": "cities:abu_simbel"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:academy",
+    "name": "",
+    "requirements": null,
+    "target": "cities:academy"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:adam_smith",
+    "name": "",
+    "requirements": null,
+    "target": "cities:adam_smith"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:alhambra",
+    "name": "",
+    "requirements": null,
+    "target": "cities:alhambra"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:amusement_park",
+    "name": "",
+    "requirements": null,
+    "target": "cities:amusement_park"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:angkor_wat",
+    "name": "",
+    "requirements": null,
+    "target": "cities:angkor_wat"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:anthem",
+    "name": "",
+    "requirements": null,
+    "target": "cities:anthem"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:apadana_palace",
+    "name": "",
+    "requirements": null,
+    "target": "cities:apadana_palace"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:apostolic_palace",
+    "name": "",
+    "requirements": null,
+    "target": "cities:apostolic_palace"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:art_of_war",
+    "name": "",
+    "requirements": null,
+    "target": "cities:art_of_war"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:artemis",
+    "name": "",
+    "requirements": null,
+    "target": "cities:artemis"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:asatru_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:asatru_shrine"
+  },
+  {
+    "goldenAgeModifier": 100,
+    "greatPersonUnit": null,
+    "id": "great_people:ascension_gate",
+    "name": "",
+    "requirements": null,
+    "target": "cities:ascension_gate"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:bauhaus",
+    "name": "",
+    "requirements": null,
+    "target": "cities:bauhaus"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:blarney",
+    "name": "",
+    "requirements": null,
+    "target": "cities:blarney"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:bolshoi",
+    "name": "",
+    "requirements": null,
+    "target": "cities:bolshoi"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:brandenburg_gate",
+    "name": "",
+    "requirements": null,
+    "target": "cities:brandenburg_gate"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:broadway",
+    "name": "",
+    "requirements": null,
+    "target": "cities:broadway"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:buddhist_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:buddhist_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:burningman",
+    "name": "",
+    "requirements": null,
+    "target": "cities:burningman"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:carhenge",
+    "name": "",
+    "requirements": null,
+    "target": "cities:carhenge"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:centers_for_disease_control",
+    "name": "",
+    "requirements": null,
+    "target": "cities:centers_for_disease_control"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:central_bank",
+    "name": "",
+    "requirements": null,
+    "target": "cities:central_bank"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:cguildhall",
+    "name": "",
+    "requirements": null,
+    "target": "cities:cguildhall"
+  },
+  {
+    "goldenAgeModifier": 20,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:cheomseongdae",
+    "name": "",
+    "requirements": null,
+    "target": "cities:cheomseongdae"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:chichen_itza",
+    "name": "",
+    "requirements": null,
+    "target": "cities:chichen_itza"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:christian_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:christian_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:circus_maximus",
+    "name": "",
+    "requirements": null,
+    "target": "cities:circus_maximus"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:colosseum",
+    "name": "",
+    "requirements": null,
+    "target": "cities:colosseum"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:colossus",
+    "name": "",
+    "requirements": null,
+    "target": "cities:colossus"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:computer_center",
+    "name": "",
+    "requirements": null,
+    "target": "cities:computer_center"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:confucian_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:confucian_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:copernicus_observatory",
+    "name": "",
+    "requirements": null,
+    "target": "cities:copernicus_observatory"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_1",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_1"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_2",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_2"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:corporation_3",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_3"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:corporation_4",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_4"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:corporation_5",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_5"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:corporation_6",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_6"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:corporation_7",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_7"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_adventure_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_adventure_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:corporation_apotheguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_apotheguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:corporation_artistguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_artistguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_bakerguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_bakerguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:corporation_blacksmguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_blacksmguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_burgerworld_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_burgerworld_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_butcherguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_butcherguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:corporation_carpenterguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_carpenterguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:corporation_clerksguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_clerksguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:corporation_drapersguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_drapersguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_empcloth_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_empcloth_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_equestguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_equestguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_ewtrade_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_ewtrade_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:corporation_fashion_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_fashion_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_fishmonguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_fishmonguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:corporation_glassguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_glassguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:corporation_goldsmguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_goldsmguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:corporation_grocerguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_grocerguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_mallwart_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_mallwart_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:corporation_mapster_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_mapster_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:corporation_masonguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_masonguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_mercerguild",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_mercerguild"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:corporation_milehigh_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_milehigh_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_mobby_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_mobby_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_moonbean_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_moonbean_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:corporation_red_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_red_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_safari_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_safari_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:corporation_ultsoldier_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_ultsoldier_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:corporation_wonka_hq",
+    "name": "",
+    "requirements": null,
+    "target": "cities:corporation_wonka_hq"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:courier_system",
+    "name": "",
+    "requirements": null,
+    "target": "cities:courier_system"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:cristo_redentor",
+    "name": "",
+    "requirements": null,
+    "target": "cities:cristo_redentor"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:crusade",
+    "name": "",
+    "requirements": null,
+    "target": "cities:crusade"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:crystal_palace",
+    "name": "",
+    "requirements": null,
+    "target": "cities:crystal_palace"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:deep_core_mine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:deep_core_mine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:deep_space_research",
+    "name": "",
+    "requirements": null,
+    "target": "cities:deep_space_research"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:dinosaur_park",
+    "name": "",
+    "requirements": null,
+    "target": "cities:dinosaur_park"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:djenne",
+    "name": "",
+    "requirements": null,
+    "target": "cities:djenne"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:dosan_seowon",
+    "name": "",
+    "requirements": null,
+    "target": "cities:dosan_seowon"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:east_india_company",
+    "name": "",
+    "requirements": null,
+    "target": "cities:east_india_company"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:edinburgh_castle",
+    "name": "",
+    "requirements": null,
+    "target": "cities:edinburgh_castle"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:edison",
+    "name": "",
+    "requirements": null,
+    "target": "cities:edison"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:egypt_myth_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:egypt_myth_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:eiffel_tower",
+    "name": "",
+    "requirements": null,
+    "target": "cities:eiffel_tower"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:einstein_lab",
+    "name": "",
+    "requirements": null,
+    "target": "cities:einstein_lab"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:federal_reserve",
+    "name": "",
+    "requirements": null,
+    "target": "cities:federal_reserve"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:first_nuclear_test",
+    "name": "",
+    "requirements": null,
+    "target": "cities:first_nuclear_test"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:flak_tower",
+    "name": "",
+    "requirements": null,
+    "target": "cities:flak_tower"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:foundling_hospital",
+    "name": "",
+    "requirements": null,
+    "target": "cities:foundling_hospital"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:fusion_plant",
+    "name": "",
+    "requirements": null,
+    "target": "cities:fusion_plant"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:gardens_bay",
+    "name": "",
+    "requirements": null,
+    "target": "cities:gardens_bay"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:global_stock_exchange",
+    "name": "",
+    "requirements": null,
+    "target": "cities:global_stock_exchange"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:globe_theatre",
+    "name": "",
+    "requirements": null,
+    "target": "cities:globe_theatre"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:golden_spike",
+    "name": "",
+    "requirements": null,
+    "target": "cities:golden_spike"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:great_dam",
+    "name": "",
+    "requirements": null,
+    "target": "cities:great_dam"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:great_firewall",
+    "name": "",
+    "requirements": null,
+    "target": "cities:great_firewall"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:great_library",
+    "name": "",
+    "requirements": null,
+    "target": "cities:great_library"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:great_lighthouse",
+    "name": "",
+    "requirements": null,
+    "target": "cities:great_lighthouse"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:great_palace",
+    "name": "",
+    "requirements": null,
+    "target": "cities:great_palace"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:great_wall",
+    "name": "",
+    "requirements": null,
+    "target": "cities:great_wall"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:greekfire",
+    "name": "",
+    "requirements": null,
+    "target": "cities:greekfire"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:gutenberg",
+    "name": "",
+    "requirements": null,
+    "target": "cities:gutenberg"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:hagia_sophia",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hagia_sophia"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:hanging_garden",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hanging_garden"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:hanseatic",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hanseatic"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:hermitage",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hermitage"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:heroic_epic",
+    "name": "",
+    "requirements": null,
+    "target": "cities:heroic_epic"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:hilltara",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hilltara"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:himeji_castle",
+    "name": "",
+    "requirements": null,
+    "target": "cities:himeji_castle"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:hindu_brihadeeswarar",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hindu_brihadeeswarar"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:hindu_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hindu_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:hippocratic",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hippocratic"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:hollywood",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hollywood"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:house_of_parliment",
+    "name": "",
+    "requirements": null,
+    "target": "cities:house_of_parliment"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:ice_hotel",
+    "name": "",
+    "requirements": null,
+    "target": "cities:ice_hotel"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:independence_hall",
+    "name": "",
+    "requirements": null,
+    "target": "cities:independence_hall"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:iron_works",
+    "name": "",
+    "requirements": null,
+    "target": "cities:iron_works"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:ishtar_gate",
+    "name": "",
+    "requirements": null,
+    "target": "cities:ishtar_gate"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:islamic_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:islamic_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:itsukushima",
+    "name": "",
+    "requirements": null,
+    "target": "cities:itsukushima"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:jewish_masada",
+    "name": "",
+    "requirements": null,
+    "target": "cities:jewish_masada"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:jewish_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:jewish_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:jsbach_cathedral",
+    "name": "",
+    "requirements": null,
+    "target": "cities:jsbach_cathedral"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:kotoku",
+    "name": "",
+    "requirements": null,
+    "target": "cities:kotoku"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:kremlin",
+    "name": "",
+    "requirements": null,
+    "target": "cities:kremlin"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:labor_union",
+    "name": "",
+    "requirements": null,
+    "target": "cities:labor_union"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:labyrinth",
+    "name": "",
+    "requirements": null,
+    "target": "cities:labyrinth"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:las_vegas",
+    "name": "",
+    "requirements": null,
+    "target": "cities:las_vegas"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:lascaux",
+    "name": "",
+    "requirements": null,
+    "target": "cities:lascaux"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:leonardo",
+    "name": "",
+    "requirements": null,
+    "target": "cities:leonardo"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:louvre",
+    "name": "",
+    "requirements": null,
+    "target": "cities:louvre"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:machu_picchu",
+    "name": "",
+    "requirements": null,
+    "target": "cities:machu_picchu"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:madison_avenue",
+    "name": "",
+    "requirements": null,
+    "target": "cities:madison_avenue"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:magellan",
+    "name": "",
+    "requirements": null,
+    "target": "cities:magellan"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:marco_polo",
+    "name": "",
+    "requirements": null,
+    "target": "cities:marco_polo"
+  },
+  {
+    "goldenAgeModifier": 50,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:mausoleum_of_maussollos",
+    "name": "",
+    "requirements": null,
+    "target": "cities:mausoleum_of_maussollos"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:mesoamerican_magician_pyramid",
+    "name": "",
+    "requirements": null,
+    "target": "cities:mesoamerican_magician_pyramid"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:mesoamerican_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:mesoamerican_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:mind_storage",
+    "name": "",
+    "requirements": null,
+    "target": "cities:mind_storage"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:moai_statues",
+    "name": "",
+    "requirements": null,
+    "target": "cities:moai_statues"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:mt_rushmore",
+    "name": "",
+    "requirements": null,
+    "target": "cities:mt_rushmore"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:nanite_defuser",
+    "name": "",
+    "requirements": null,
+    "target": "cities:nanite_defuser"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:national_epic",
+    "name": "",
+    "requirements": null,
+    "target": "cities:national_epic"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:national_mint",
+    "name": "",
+    "requirements": null,
+    "target": "cities:national_mint"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:national_park",
+    "name": "",
+    "requirements": null,
+    "target": "cities:national_park"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:national_redoubt",
+    "name": "",
+    "requirements": null,
+    "target": "cities:national_redoubt"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:national_shield",
+    "name": "",
+    "requirements": null,
+    "target": "cities:national_shield"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:national_tv_station",
+    "name": "",
+    "requirements": null,
+    "target": "cities:national_tv_station"
+  },
+  {
+    "goldenAgeModifier": 25,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:neuschwanstein",
+    "name": "",
+    "requirements": null,
+    "target": "cities:neuschwanstein"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:newtons_university",
+    "name": "",
+    "requirements": null,
+    "target": "cities:newtons_university"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:nhl",
+    "name": "",
+    "requirements": null,
+    "target": "cities:nhl"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:notre_dame",
+    "name": "",
+    "requirements": null,
+    "target": "cities:notre_dame"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:nws",
+    "name": "",
+    "requirements": null,
+    "target": "cities:nws"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:olympic_games",
+    "name": "",
+    "requirements": null,
+    "target": "cities:olympic_games"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:oracle",
+    "name": "",
+    "requirements": null,
+    "target": "cities:oracle"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:orbital_hotel",
+    "name": "",
+    "requirements": null,
+    "target": "cities:orbital_hotel"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:oxford_university",
+    "name": "",
+    "requirements": null,
+    "target": "cities:oxford_university"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:parthenon",
+    "name": "",
+    "requirements": null,
+    "target": "cities:parthenon"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:pentagon",
+    "name": "",
+    "requirements": null,
+    "target": "cities:pentagon"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:petra",
+    "name": "",
+    "requirements": null,
+    "target": "cities:petra"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:pisa",
+    "name": "",
+    "requirements": null,
+    "target": "cities:pisa"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:platos_academy",
+    "name": "",
+    "requirements": null,
+    "target": "cities:platos_academy"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:pleisto_park",
+    "name": "",
+    "requirements": null,
+    "target": "cities:pleisto_park"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:pont_du_gard_aqueduct",
+    "name": "",
+    "requirements": null,
+    "target": "cities:pont_du_gard_aqueduct"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:porcelain_tower",
+    "name": "",
+    "requirements": null,
+    "target": "cities:porcelain_tower"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:potala_palace",
+    "name": "",
+    "requirements": null,
+    "target": "cities:potala_palace"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:propaganda_net",
+    "name": "",
+    "requirements": null,
+    "target": "cities:propaganda_net"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:pyramid",
+    "name": "",
+    "requirements": null,
+    "target": "cities:pyramid"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:quantum_lab",
+    "name": "",
+    "requirements": null,
+    "target": "cities:quantum_lab"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:radio_telescope",
+    "name": "",
+    "requirements": null,
+    "target": "cities:radio_telescope"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:red_cross",
+    "name": "",
+    "requirements": null,
+    "target": "cities:red_cross"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:reichstag",
+    "name": "",
+    "requirements": null,
+    "target": "cities:reichstag"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:rocknroll",
+    "name": "",
+    "requirements": null,
+    "target": "cities:rocknroll"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:rosetta",
+    "name": "",
+    "requirements": null,
+    "target": "cities:rosetta"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:sagas",
+    "name": "",
+    "requirements": null,
+    "target": "cities:sagas"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:san_marco",
+    "name": "",
+    "requirements": null,
+    "target": "cities:san_marco"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:sankore",
+    "name": "",
+    "requirements": null,
+    "target": "cities:sankore"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:school_of_law",
+    "name": "",
+    "requirements": null,
+    "target": "cities:school_of_law"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:school_of_medicine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:school_of_medicine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:scotland_yard",
+    "name": "",
+    "requirements": null,
+    "target": "cities:scotland_yard"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:secret_army_base",
+    "name": "",
+    "requirements": null,
+    "target": "cities:secret_army_base"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:seti_program",
+    "name": "",
+    "requirements": null,
+    "target": "cities:seti_program"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:sguildhall",
+    "name": "",
+    "requirements": null,
+    "target": "cities:sguildhall"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:shaolin",
+    "name": "",
+    "requirements": null,
+    "target": "cities:shaolin"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:shinto_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:shinto_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:shwedagon_paya",
+    "name": "",
+    "requirements": null,
+    "target": "cities:shwedagon_paya"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:silicon_valley",
+    "name": "",
+    "requirements": null,
+    "target": "cities:silicon_valley"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:silk_road",
+    "name": "",
+    "requirements": null,
+    "target": "cities:silk_road"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:sistine_chapel",
+    "name": "",
+    "requirements": null,
+    "target": "cities:sistine_chapel"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:space_elevator",
+    "name": "",
+    "requirements": null,
+    "target": "cities:space_elevator"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:sphinx",
+    "name": "",
+    "requirements": null,
+    "target": "cities:sphinx"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:spiral_minaret",
+    "name": "",
+    "requirements": null,
+    "target": "cities:spiral_minaret"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:statue_of_champion",
+    "name": "",
+    "requirements": null,
+    "target": "cities:statue_of_champion"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:statue_of_liberty",
+    "name": "",
+    "requirements": null,
+    "target": "cities:statue_of_liberty"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:statue_of_zeus",
+    "name": "",
+    "requirements": null,
+    "target": "cities:statue_of_zeus"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:stonehenge",
+    "name": "",
+    "requirements": null,
+    "target": "cities:stonehenge"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:suffrage",
+    "name": "",
+    "requirements": null,
+    "target": "cities:suffrage"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:supercollider",
+    "name": "",
+    "requirements": null,
+    "target": "cities:supercollider"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:supreme_court",
+    "name": "",
+    "requirements": null,
+    "target": "cities:supreme_court"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:taj_mahal",
+    "name": "",
+    "requirements": null,
+    "target": "cities:taj_mahal"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:taoist_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:taoist_shrine"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:taoist_temple_of_heaven",
+    "name": "",
+    "requirements": null,
+    "target": "cities:taoist_temple_of_heaven"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:technological_capital",
+    "name": "",
+    "requirements": null,
+    "target": "cities:technological_capital"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:temple_of_isis",
+    "name": "",
+    "requirements": null,
+    "target": "cities:temple_of_isis"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:temple_of_osiris",
+    "name": "",
+    "requirements": null,
+    "target": "cities:temple_of_osiris"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:temple_of_set",
+    "name": "",
+    "requirements": null,
+    "target": "cities:temple_of_set"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:terracotta",
+    "name": "",
+    "requirements": null,
+    "target": "cities:terracotta"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:the_agency",
+    "name": "",
+    "requirements": null,
+    "target": "cities:the_agency"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:theatre_of_dionysus",
+    "name": "",
+    "requirements": null,
+    "target": "cities:theatre_of_dionysus"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:tournament",
+    "name": "",
+    "requirements": null,
+    "target": "cities:tournament"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:trafalgar_square",
+    "name": "",
+    "requirements": null,
+    "target": "cities:trafalgar_square"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:treasury",
+    "name": "",
+    "requirements": null,
+    "target": "cities:treasury"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:un_mission",
+    "name": "",
+    "requirements": null,
+    "target": "cities:un_mission"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:united_nations",
+    "name": "",
+    "requirements": null,
+    "target": "cities:united_nations"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:venetian_arsenal",
+    "name": "",
+    "requirements": null,
+    "target": "cities:venetian_arsenal"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:versailles",
+    "name": "",
+    "requirements": null,
+    "target": "cities:versailles"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:vguildhall",
+    "name": "",
+    "requirements": null,
+    "target": "cities:vguildhall"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:via_appia",
+    "name": "",
+    "requirements": null,
+    "target": "cities:via_appia"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:wall_street",
+    "name": "",
+    "requirements": null,
+    "target": "cities:wall_street"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:west_point",
+    "name": "",
+    "requirements": null,
+    "target": "cities:west_point"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:willowrun",
+    "name": "",
+    "requirements": null,
+    "target": "cities:willowrun"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:woodstock",
+    "name": "",
+    "requirements": null,
+    "target": "cities:woodstock"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:world_bank",
+    "name": "",
+    "requirements": null,
+    "target": "cities:world_bank"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:world_news_network",
+    "name": "",
+    "requirements": null,
+    "target": "cities:world_news_network"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:world_trade_center",
+    "name": "",
+    "requirements": null,
+    "target": "cities:world_trade_center"
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:zoroastrian_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "cities:zoroastrian_shrine"
+  }
+]

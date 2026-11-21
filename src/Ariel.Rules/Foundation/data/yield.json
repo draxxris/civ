@@ -1,10 +1,7 @@
 [
   {
-    "aiWeightPercent": 80,
     "cityChange": 0,
     "era": null,
-    "goldenAgeYield": 1,
-    "goldenAgeYieldThreshold": 1,
     "help": "",
     "hillsChange": 0,
     "icon": "",
@@ -25,11 +22,8 @@
     ]
   },
   {
-    "aiWeightPercent": 100,
     "cityChange": 0,
     "era": null,
-    "goldenAgeYield": 0,
-    "goldenAgeYieldThreshold": 0,
     "help": "",
     "hillsChange": -1,
     "icon": "",
@@ -50,11 +44,8 @@
     ]
   },
   {
-    "aiWeightPercent": 110,
     "cityChange": 0,
     "era": null,
-    "goldenAgeYield": 1,
-    "goldenAgeYieldThreshold": 1,
     "help": "",
     "hillsChange": 1,
     "icon": "",

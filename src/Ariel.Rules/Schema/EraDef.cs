@@ -19,7 +19,6 @@ public sealed class EraDef : GameContentDef
     public int CulturePercent { get; init; } = 0;
     public int EventChancePerTurn { get; init; } = 0;
     public int FreePopulation { get; init; } = 0;
-    public int GreatPeoplePercent { get; init; } = 0;
     public int GrowthPercent { get; init; } = 0;
     public int ImprovementPercent { get; init; } = 0;
     public int InitialCityMaintenancePercent { get; init; } = 0;

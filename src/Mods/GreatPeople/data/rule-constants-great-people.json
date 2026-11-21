@@ -1,0 +1,10 @@
+[
+  {
+    "goldenAgeGreatPeoplePercent": 100,
+    "goldenAgeTurns": 8,
+    "id": "great_people:rule_constants",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:rule_constants"
+  }
+]

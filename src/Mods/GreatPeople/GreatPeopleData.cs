@@ -23,6 +23,21 @@ internal static class GreatPeopleData
     internal static S.RuleConstantsDef Constants(Simulation sim) => sim.Content.Get<S.RuleConstantsDef>().All.Single();
     internal static int Raw(Simulation sim, string key, int fallback) => int.TryParse(Constants(sim).Raw.GetValueOrDefault(key), out int n) ? n : fallback;
     internal static S.GameSpeedDef Speed(Simulation sim) => sim.Content.Get<S.GameSpeedDef>(sim.Settings.GameSpeed);
+    /// <summary>What the game's speed means to great people.</summary>
+    internal static GameSpeedGreatPeopleDef SpeedRules(Simulation sim) =>
+        sim.Content.Attachment<GameSpeedGreatPeopleDef>(sim.Settings.GameSpeed) ?? GameSpeedGreatPeopleDef.None;
+    /// <summary>What the game's starting era means to great people.</summary>
+    internal static EraGreatPeopleDef EraRules(Simulation sim) =>
+        sim.Content.Attachment<EraGreatPeopleDef>(sim.Settings.StartingEra) ?? EraGreatPeopleDef.None;
+    /// <summary>The golden age rule constants.</summary>
+    internal static RuleConstantsGreatPeopleDef Rules(Simulation sim) =>
+        sim.Content.Attachment<RuleConstantsGreatPeopleDef>(Constants(sim).Id) ?? RuleConstantsGreatPeopleDef.None;
+    internal static UnitGreatPeopleDef Unit(ContentDb content, string unit) =>
+        content.Attachment<UnitGreatPeopleDef>(unit) ?? UnitGreatPeopleDef.None;
+    internal static BuildingGreatPeopleDef Building(ContentDb content, string building) =>
+        content.Attachment<BuildingGreatPeopleDef>(building) ?? BuildingGreatPeopleDef.None;
+    internal static YieldGreatPeopleDef Yield(ContentDb content, string yield) =>
+        content.Attachment<YieldGreatPeopleDef>(yield) ?? YieldGreatPeopleDef.None;
     internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
     internal static ModifierSink Effects(Simulation sim, ModifierScope scope, int player, City? city = null) =>
         ModifierSink.Collect(new(sim, scope, player, city, Team: sim.TeamOf(player)));

@@ -35,16 +35,16 @@ internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeople
     {
         long threshold = GreatPeopleData.Raw(sim, "GREAT_PEOPLE_THRESHOLD", 100)
             * Math.Max(0L, 100L + GreatPeopleData.Read(sim, player).ThresholdModifier) / 100;
-        threshold = threshold * GreatPeopleData.Speed(sim).GreatPeoplePercent / 100;
-        return Math.Max(1, threshold * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).GreatPeoplePercent / 100);
+        threshold = threshold * GreatPeopleData.SpeedRules(sim).GreatPeoplePercent / 100;
+        return Math.Max(1, threshold * GreatPeopleData.EraRules(sim).GreatPeoplePercent / 100);
     }
     public long GeneralThreshold(Simulation sim, int player)
     {
         int modifier = sim.State.PlayerById(player).Extensions.Get<MilitaryPlayerState>(sim.Content)?.GeneralThresholdModifier ?? 0;
         long threshold = GreatPeopleData.Raw(sim, "GREAT_GENERALS_THRESHOLD", 30) * Math.Max(0L, 100L + modifier) / 100;
         var speed = GreatPeopleData.Speed(sim);
-        threshold = threshold * speed.GreatPeoplePercent / Math.Max(1, speed.TrainPercent);
-        return Math.Max(1, threshold * sim.Content.Get<S.EraDef>(sim.Settings.StartingEra).GreatPeoplePercent / 100);
+        threshold = threshold * GreatPeopleData.SpeedRules(sim).GreatPeoplePercent / Math.Max(1, speed.TrainPercent);
+        return Math.Max(1, threshold * GreatPeopleData.EraRules(sim).GreatPeoplePercent / 100);
     }
     public long GeneralProgress(Simulation sim, int player) =>
         sim.State.PlayerById(player).Extensions.Get<MilitaryPlayerState>(sim.Content)?.GeneralPoints ?? 0;
@@ -62,10 +62,10 @@ internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeople
         {
             long count = Math.Max(0, city.Specialists.GetValueOrDefault(specialist.Id))
                 + Math.Max(0, sink.Ledger.Total("cities:free:" + specialist.Id));
-            AddSource(sim, specialist.Id, specialist.GreatPersonUnit, specialist.GreatPeopleRateChange * count, rates, sink);
+            AddSource(sim, specialist.Id, (sim.Content.Attachment<SpecialistGreatPeopleDef>(specialist.Id) ?? SpecialistGreatPeopleDef.None).GreatPersonUnit, specialist.GreatPeopleRateChange * count, rates, sink);
         }
         foreach (var building in GreatPeopleData.Active(sim, city))
-            AddSource(sim, building.Id, building.GreatPersonUnit, building.GreatPeopleRateChange, rates, sink);
+            AddSource(sim, building.Id, GreatPeopleData.Building(sim.Content, building.Id).GreatPersonUnit, building.GreatPeopleRateChange, rates, sink);
         return rates;
     }
     private static void AddSource(Simulation sim, string source, string? unit, long points, SortedDictionary<string, long> rates, ModifierSink sink)

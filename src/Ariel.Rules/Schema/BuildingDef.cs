@@ -59,8 +59,6 @@ public sealed class BuildingDef : GameContentDef
     public string? GlobalReligionCommerce { get; init; } = null;
     public YieldVector GlobalSeaPlotYieldChanges { get; init; } = default;
     public YieldVector GlobalYieldModifiers { get; init; } = default;
-    [ContentReference(typeof(UnitDef), ReferencePart.Values)]
-    public string? GreatPersonUnit { get; init; } = null;
     [ContentReference(typeof(TraitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> TraitHappinessChanges { get; init; } = ImmutableDictionary<string, int>.Empty;
     [ContentReference(typeof(ImprovementDef), ReferencePart.Keys)]
@@ -191,7 +189,6 @@ public sealed class BuildingDef : GameContentDef
     public int GlobalPopulationChange { get; init; } = 0;
     public int GlobalSpaceProductionModifier { get; init; } = 0;
     public int GlobalWarWearinessModifier { get; init; } = 0;
-    public int GoldenAgeModifier { get; init; } = 0;
     public int GreatGeneralRateModifier { get; init; } = 0;
     public int GreatPeopleRateChange { get; init; } = 0;
     public int GreatPeopleRateModifier { get; init; } = 0;
@@ -227,7 +224,6 @@ public sealed class BuildingDef : GameContentDef
     public int SpaceProductionModifier { get; init; } = 0;
     public int StateReligionHappiness { get; init; } = 0;
     public int TeamsPrereq { get; init; } = 0;
-    public int TradeMissionModifier { get; init; } = 0;
     public int UnitUpgradePriceModifier { get; init; } = 0;
     public int WarWearinessModifier { get; init; } = 0;
     public int WonderCapacityIncrement { get; init; } = 0;

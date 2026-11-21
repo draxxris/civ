@@ -59,6 +59,5 @@ public sealed class TechDef : GameContentDef
     public int Happiness { get; init; } = 0;
     public int Health { get; init; } = 0;
     public int Power { get; init; } = 0;
-    public int TradeMissionModifier { get; init; } = 0;
     public int WorkerSpeedModifier { get; init; } = 0;
 }

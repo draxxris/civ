@@ -5,26 +5,8 @@
     "mod": "foundation",
     "fields": [
       {
-        "source": "iAIWeightPercent",
-        "property": "AiWeightPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iCityChange",
         "property": "CityChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGoldenAgeYield",
-        "property": "GoldenAgeYield",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iGoldenAgeYieldThreshold",
-        "property": "GoldenAgeYieldThreshold",
         "kind": "int",
         "default": 0
       },
@@ -189,12 +171,6 @@
         "default": 0
       },
       {
-        "source": "iGreatPeoplePercent",
-        "property": "GreatPeoplePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iGrowthPercent",
         "property": "GrowthPercent",
         "kind": "int",
@@ -347,12 +323,6 @@
         "default": 0
       },
       {
-        "source": "iGreatPeoplePercent",
-        "property": "GreatPeoplePercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iGrowthPercent",
         "property": "GrowthPercent",
         "kind": "int",
@@ -397,30 +367,6 @@
       {
         "source": "iTrainPercent",
         "property": "TrainPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitDiscoverPercent",
-        "property": "UnitDiscoverPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitGreatWorkPercent",
-        "property": "UnitGreatWorkPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitHurryPercent",
-        "property": "UnitHurryPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iUnitTradePercent",
-        "property": "UnitTradePercent",
         "kind": "int",
         "default": 0
       },
@@ -1015,12 +961,6 @@
         "kind": "mapInt",
         "key": "FlavorType",
         "value": "iFlavor"
-      },
-      {
-        "source": "GreatPeopleUnitClass",
-        "property": "GreatPersonUnit",
-        "kind": "ref",
-        "target": "UnitClassInfo"
       },
       {
         "source": "Yields",
@@ -2513,12 +2453,6 @@
         "kind": "yield"
       },
       {
-        "source": "GreatPeopleUnitClass",
-        "property": "GreatPersonUnit",
-        "kind": "ref",
-        "target": "UnitClassInfo"
-      },
-      {
         "source": "HappinessTraits",
         "property": "TraitHappinessChanges",
         "kind": "mapInt",
@@ -3190,12 +3124,6 @@
         "default": 0
       },
       {
-        "source": "iGoldenAgeModifier",
-        "property": "GoldenAgeModifier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iGreatGeneralRateModifier",
         "property": "GreatGeneralRateModifier",
         "kind": "int",
@@ -3719,14 +3647,6 @@
         "value": "iFlavor"
       },
       {
-        "source": "ForceBuildings",
-        "property": "ForceBuildings",
-        "kind": "mapBool",
-        "target": "BuildingInfo",
-        "key": "BuildingType",
-        "value": "bForceBuilding"
-      },
-      {
         "source": "ForceObsoleteTech",
         "property": "ForceObsoleteTech",
         "kind": "ref",
@@ -3749,24 +3669,10 @@
         "value": "bFreePromotion"
       },
       {
-        "source": "GreatPeoples",
-        "property": "GreatPeoples",
-        "kind": "mapBool",
-        "target": "SpecialistInfo",
-        "key": "GreatPeopleType",
-        "value": "bGreatPeople"
-      },
-      {
         "source": "Invisible",
         "property": "Invisibility",
         "kind": "ref",
         "target": "InvisibleInfo"
-      },
-      {
-        "source": "LeaderPromotion",
-        "property": "LeaderPromotion",
-        "kind": "ref",
-        "target": "PromotionInfo"
       },
       {
         "source": "NotUnitAIs",
@@ -4061,12 +3967,6 @@
         "default": 0
       },
       {
-        "source": "bGreatGeneral",
-        "property": "GreatGeneral",
-        "kind": "bool",
-        "default": false
-      },
-      {
         "source": "bHiddenNationality",
         "property": "HiddenNationality",
         "kind": "bool",
@@ -4301,20 +4201,8 @@
         "default": 0
       },
       {
-        "source": "iBaseDiscover",
-        "property": "BaseDiscover",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iBaseFoodChange",
         "property": "BaseFoodChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iBaseHurry",
-        "property": "BaseHurry",
         "kind": "int",
         "default": 0
       },
@@ -4433,12 +4321,6 @@
         "default": 0
       },
       {
-        "source": "iDiscoverMultiplier",
-        "property": "DiscoverMultiplier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iDropRange",
         "property": "DropRange",
         "kind": "int",
@@ -4469,12 +4351,6 @@
         "default": 0
       },
       {
-        "source": "iGreatWorkCulture",
-        "property": "GreatWorkCulture",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iHillsAttack",
         "property": "HillsAttack",
         "kind": "int",
@@ -4493,20 +4369,8 @@
         "default": 0
       },
       {
-        "source": "iHurryMultiplier",
-        "property": "HurryMultiplier",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iInterceptionProbability",
         "property": "InterceptionPercent",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iLeaderExperience",
-        "property": "LeaderExperience",
         "kind": "int",
         "default": 0
       },
@@ -7088,6 +6952,190 @@
       {
         "source": "iTradeProfitPercent",
         "property": "TradeProfitPercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "GreatPeopleUnitClass",
+        "property": "GreatPersonUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      },
+      {
+        "source": "iGoldenAgeModifier",
+        "property": "GoldenAgeModifier",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "ForceBuildings",
+        "property": "ForceBuildings",
+        "kind": "mapBool",
+        "target": "BuildingInfo",
+        "key": "BuildingType",
+        "value": "bForceBuilding"
+      },
+      {
+        "source": "GreatPeoples",
+        "property": "GreatPeoples",
+        "kind": "mapBool",
+        "target": "SpecialistInfo",
+        "key": "GreatPeopleType",
+        "value": "bGreatPeople"
+      },
+      {
+        "source": "LeaderPromotion",
+        "property": "LeaderPromotion",
+        "kind": "ref",
+        "target": "PromotionInfo"
+      },
+      {
+        "source": "bGreatGeneral",
+        "property": "GreatGeneral",
+        "kind": "bool",
+        "default": false
+      },
+      {
+        "source": "iBaseDiscover",
+        "property": "BaseDiscover",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iBaseHurry",
+        "property": "BaseHurry",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iDiscoverMultiplier",
+        "property": "DiscoverMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGreatWorkCulture",
+        "property": "GreatWorkCulture",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iHurryMultiplier",
+        "property": "HurryMultiplier",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iLeaderExperience",
+        "property": "LeaderExperience",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "SpecialistInfo",
+    "definition": "SpecialistGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "GreatPeopleUnitClass",
+        "property": "GreatPersonUnit",
+        "kind": "ref",
+        "target": "UnitClassInfo"
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "YieldInfo",
+    "definition": "YieldGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "iAIWeightPercent",
+        "property": "AiWeightPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldenAgeYield",
+        "property": "GoldenAgeYield",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iGoldenAgeYieldThreshold",
+        "property": "GoldenAgeYieldThreshold",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "GameSpeedInfo",
+    "definition": "GameSpeedGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "iGreatPeoplePercent",
+        "property": "GreatPeoplePercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitDiscoverPercent",
+        "property": "UnitDiscoverPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitGreatWorkPercent",
+        "property": "UnitGreatWorkPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitHurryPercent",
+        "property": "UnitHurryPercent",
+        "kind": "int",
+        "default": 0
+      },
+      {
+        "source": "iUnitTradePercent",
+        "property": "UnitTradePercent",
+        "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "EraInfo",
+    "definition": "EraGreatPeopleDef",
+    "mod": "great_people",
+    "fields": [
+      {
+        "source": "iGreatPeoplePercent",
+        "property": "GreatPeoplePercent",
         "kind": "int",
         "default": 0
       }

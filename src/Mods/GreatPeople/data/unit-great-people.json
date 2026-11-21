@@ -1,0 +1,212 @@
+[
+  {
+    "baseDiscover": 10000,
+    "baseHurry": 0,
+    "discoverMultiplier": 2,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {
+      "foundation:specialist_great_artist": true
+    },
+    "greatWorkCulture": 4000,
+    "hurryMultiplier": 0,
+    "id": "great_people:artist",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:artist"
+  },
+  {
+    "baseDiscover": 10000,
+    "baseHurry": 500,
+    "discoverMultiplier": 2,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {
+      "foundation:specialist_great_engineer": true
+    },
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 20,
+    "id": "great_people:engineer",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:engineer"
+  },
+  {
+    "baseDiscover": 0,
+    "baseHurry": 100,
+    "discoverMultiplier": 0,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {},
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 1,
+    "id": "great_people:freight",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:freight"
+  },
+  {
+    "baseDiscover": 10000,
+    "baseHurry": 0,
+    "discoverMultiplier": 2,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {
+      "foundation:specialist_great_diplomat": true
+    },
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 0,
+    "id": "great_people:great_diplomat",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:great_diplomat"
+  },
+  {
+    "baseDiscover": 0,
+    "baseHurry": 0,
+    "discoverMultiplier": 0,
+    "forceBuildings": {},
+    "greatGeneral": true,
+    "greatPeoples": {
+      "foundation:specialist_great_general": true
+    },
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 0,
+    "id": "great_people:great_general",
+    "leaderExperience": 30,
+    "leaderPromotion": "military:leader",
+    "name": "",
+    "requirements": null,
+    "target": "military:great_general"
+  },
+  {
+    "baseDiscover": 0,
+    "baseHurry": 0,
+    "discoverMultiplier": 0,
+    "forceBuildings": {
+      "cities:scotland_yard": true
+    },
+    "greatGeneral": false,
+    "greatPeoples": {
+      "foundation:specialist_great_spy": true
+    },
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 0,
+    "id": "great_people:great_spy",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:great_spy"
+  },
+  {
+    "baseDiscover": 0,
+    "baseHurry": 50,
+    "discoverMultiplier": 0,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {},
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 1,
+    "id": "great_people:med_caravan",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:med_caravan"
+  },
+  {
+    "baseDiscover": 10000,
+    "baseHurry": 0,
+    "discoverMultiplier": 2,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {
+      "foundation:specialist_great_merchant": true
+    },
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 0,
+    "id": "great_people:merchant",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:merchant"
+  },
+  {
+    "baseDiscover": 10000,
+    "baseHurry": 0,
+    "discoverMultiplier": 2,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {
+      "foundation:specialist_great_priest": true
+    },
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 0,
+    "id": "great_people:prophet",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:prophet"
+  },
+  {
+    "baseDiscover": 15000,
+    "baseHurry": 0,
+    "discoverMultiplier": 3,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {
+      "foundation:specialist_great_scientist": true
+    },
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 0,
+    "id": "great_people:scientist",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:scientist"
+  },
+  {
+    "baseDiscover": 0,
+    "baseHurry": 15,
+    "discoverMultiplier": 0,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {},
+    "greatWorkCulture": 0,
+    "hurryMultiplier": 1,
+    "id": "great_people:trade_caravan",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:trade_caravan"
+  },
+  {
+    "baseDiscover": 0,
+    "baseHurry": 100,
+    "discoverMultiplier": 0,
+    "forceBuildings": {},
+    "greatGeneral": false,
+    "greatPeoples": {},
+    "greatWorkCulture": 200,
+    "hurryMultiplier": 10,
+    "id": "great_people:treasure",
+    "leaderExperience": 0,
+    "leaderPromotion": null,
+    "name": "",
+    "requirements": null,
+    "target": "military:treasure"
+  }
+]

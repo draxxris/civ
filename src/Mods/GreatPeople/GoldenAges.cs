@@ -8,9 +8,9 @@ internal static class GoldenAges
 {
     internal static int Length(Simulation sim, int player)
     {
-        long turns = GreatPeopleData.Raw(sim, "GOLDEN_AGE_LENGTH", GreatPeopleData.Constants(sim).Values.GoldenAgeTurns);
+        long turns = GreatPeopleData.Raw(sim, "GOLDEN_AGE_LENGTH", GreatPeopleData.Rules(sim).GoldenAgeTurns);
         turns = turns * GreatPeopleData.Speed(sim).GoldenAgePercent / 100;
-        long modifier = sim.State.Cities.Where(c => c.Owner == player).SelectMany(c => GreatPeopleData.Active(sim, c)).Sum(b => (long)b.GoldenAgeModifier);
+        long modifier = sim.State.Cities.Where(c => c.Owner == player).SelectMany(c => GreatPeopleData.Active(sim, c)).Sum(b => (long)GreatPeopleData.Building(sim.Content, b.Id).GoldenAgeModifier);
         modifier += GreatPeopleData.Effects(sim, ModifierScope.Player, player).Ledger.Total("great_people:golden_age_length_percent");
         return (int)Math.Clamp(turns * Math.Max(0, 100 + modifier) / 100, 1, int.MaxValue);
     }
@@ -52,14 +52,14 @@ internal sealed class GreatPeopleEffects : IModifierSource, IPlotYieldFinalizer
         foreach (var pair in GreatPeopleData.Read(context.Sim, city).SettledSpecialists)
             sink.Add("great_people:settled", "cities:free:" + pair.Key, pair.Value);
         if (GreatPeopleData.Read(context.Sim, context.Player).GoldenAgeTurns > 0)
-            sink.Add("great_people:golden_age", "cities:great_people_rate_percent", GreatPeopleData.Constants(context.Sim).Values.GoldenAgeGreatPeoplePercent);
+            sink.Add("great_people:golden_age", "cities:great_people_rate_percent", GreatPeopleData.Rules(context.Sim).GoldenAgeGreatPeoplePercent);
     }
     public YieldVector Adjust(Simulation sim, int player, TileId tile, Plot plot, YieldVector yields, ModifierSink sink)
     {
         if (GreatPeopleData.Read(sim, player).GoldenAgeTurns <= 0) return yields;
         long Extra(string id, long value)
         {
-            var def = sim.Content.Get<S.YieldDef>(id);
+            var def = GreatPeopleData.Yield(sim.Content, id);
             return value >= def.GoldenAgeYieldThreshold ? def.GoldenAgeYield : 0;
         }
         var extra = new YieldVector(Extra("foundation:yield_food", yields.Food), Extra("foundation:yield_production", yields.Production), Extra("foundation:yield_commerce", yields.Commerce));

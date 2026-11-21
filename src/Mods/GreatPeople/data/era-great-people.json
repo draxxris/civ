@@ -1,0 +1,58 @@
+[
+  {
+    "greatPeoplePercent": 100,
+    "id": "great_people:era_ancient",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:era_ancient"
+  },
+  {
+    "greatPeoplePercent": 100,
+    "id": "great_people:era_classical",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:era_classical"
+  },
+  {
+    "greatPeoplePercent": 50,
+    "id": "great_people:era_future",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:era_future"
+  },
+  {
+    "greatPeoplePercent": 80,
+    "id": "great_people:era_industrial",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:era_industrial"
+  },
+  {
+    "greatPeoplePercent": 100,
+    "id": "great_people:era_medieval",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:era_medieval"
+  },
+  {
+    "greatPeoplePercent": 70,
+    "id": "great_people:era_modern",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:era_modern"
+  },
+  {
+    "greatPeoplePercent": 90,
+    "id": "great_people:era_renaissance",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:era_renaissance"
+  },
+  {
+    "greatPeoplePercent": 60,
+    "id": "great_people:era_transhuman",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:era_transhuman"
+  }
+]

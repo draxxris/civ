@@ -199,6 +199,20 @@ definition without a row reads as the defaults:
   (`YieldTradeDef`: `tradeModifier`), `data/world-size-trade.json` (`WorldSizeTradeDef`:
   `tradeProfitPercent`) and `data/rule-constants-trade.json` (`RuleConstantsTradeDef`:
   `tradeProfitPercent`, about `foundation:rule_constants`).
+- GreatPeople: `data/building-great-people.json` (`BuildingGreatPeopleDef`:
+  `greatPersonUnit`, `goldenAgeModifier`, `tradeMissionModifier`),
+  `data/unit-great-people.json` (`UnitGreatPeopleDef`: `greatPeoples`, `forceBuildings`,
+  `greatGeneral`, `leaderPromotion`, `leaderExperience`, `baseDiscover`,
+  `discoverMultiplier`, `baseHurry`, `hurryMultiplier`, `greatWorkCulture`),
+  `data/specialist-great-people.json` (`SpecialistGreatPeopleDef`: `greatPersonUnit`),
+  `data/yield-great-people.json` (`YieldGreatPeopleDef`: `goldenAgeYield`,
+  `goldenAgeYieldThreshold`, `aiWeightPercent`), `data/game-speed-great-people.json`
+  (`GameSpeedGreatPeopleDef`: `greatPeoplePercent`, `unitDiscoverPercent`,
+  `unitGreatWorkPercent`, `unitHurryPercent`, `unitTradePercent`),
+  `data/era-great-people.json` (`EraGreatPeopleDef`: `greatPeoplePercent`) and
+  `data/rule-constants-great-people.json` (`RuleConstantsGreatPeopleDef`:
+  `goldenAgeTurns`, `goldenAgeGreatPeoplePercent`). `TechGreatPeopleDef`
+  (`tradeMissionModifier`) ships no rows; no source field sets it.
 
 To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
 one of the mod's own. New players start a new option on its `defaultCivic`, or else on
@@ -235,13 +249,13 @@ values use that default too. Explicit zeroes and negative integers remain intact
 entries. A missing map entry uses the source getter's default slot value. Most effect
 maps use zero, not a percentage multiplier.
 
-`RuleConstantsDef.Values` contains 67 integer constants for growth, food, culture,
-combat, healing, research (including research diffusion), anarchy, upkeep, golden ages,
+`RuleConstantsDef.Values` contains 65 integer constants for growth, food, culture,
+combat, healing, research (including research diffusion), anarchy, upkeep,
 hurried production, conscription, anger and city defense damage. The
 food-wastage growth factor uses permille: the source value 0.05 becomes 50 in
 `FoodWastageGrowthPermille`. Conversion is exact without rounding. A constant only a mod
 reads is that mod's row about `foundation:rule_constants` instead (Trade's
-`tradeProfitPercent`). `Raw` retains all
+`tradeProfitPercent`, GreatPeople's golden age length and great people percent). `Raw` retains all
 other XML define entries as exact string key-value pairs. Raw floating-point strings are
 preserved for reference but are not authoritative JSON numbers.
 

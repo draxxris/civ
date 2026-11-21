@@ -1,0 +1,51 @@
+[
+  {
+    "greatPersonUnit": "military:artist",
+    "id": "great_people:specialist_artist",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_artist"
+  },
+  {
+    "greatPersonUnit": "military:engineer",
+    "id": "great_people:specialist_engineer",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_engineer"
+  },
+  {
+    "greatPersonUnit": "military:great_diplomat",
+    "id": "great_people:specialist_lawyer",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_lawyer"
+  },
+  {
+    "greatPersonUnit": "military:merchant",
+    "id": "great_people:specialist_merchant",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_merchant"
+  },
+  {
+    "greatPersonUnit": "military:prophet",
+    "id": "great_people:specialist_priest",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_priest"
+  },
+  {
+    "greatPersonUnit": "military:scientist",
+    "id": "great_people:specialist_scientist",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_scientist"
+  },
+  {
+    "greatPersonUnit": "military:great_spy",
+    "id": "great_people:specialist_spy",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_spy"
+  }
+]
