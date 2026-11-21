@@ -5,14 +5,13 @@ namespace Ariel.Mods.Revolution;
 
 public enum CityStabilityStatus { Stable, Warning, Mutiny, Rebellion }
 
-/// <summary>Saved city instability and the rebellion cooldown. Queries must not attach this component. The unrest a
-/// rebellion or an incited revolt leaves is a timed effect in the base game's store (<see cref="GameRules.TimedEffects"/>,
-/// source <c>revolution:unrest</c>).</summary>
+/// <summary>Saved city instability. Queries must not attach this component. The unrest a rebellion or an incited
+/// revolt leaves (<c>revolution:unrest</c>) and the cooldown before the next rebellion
+/// (<c>revolution:rebellion_cooldown</c>) are timers in the base game's store (<see cref="GameRules.Timers"/>).</summary>
 public sealed class RevolutionCityState
 {
     private int _instabilityIndex;
     private int _lastUpdatedTurn;
-    private int _rebellionCooldownUntilTurn;
     private int _revoltTurns;
 
     public int InstabilityIndex
@@ -27,12 +26,6 @@ public sealed class RevolutionCityState
         set => _lastUpdatedTurn = Math.Max(0, value);
     }
 
-    public int RebellionCooldownUntilTurn
-    {
-        get => _rebellionCooldownUntilTurn;
-        set => _rebellionCooldownUntilTurn = Math.Max(0, value);
-    }
-
     /// <summary>Turn ends the city has spent in revolt without calming down in between; see
     /// <c>RevolutionRulesDef.SecessionTurns</c>.</summary>
     public int RevoltTurns
@@ -41,20 +34,16 @@ public sealed class RevolutionCityState
         set => _revoltTurns = Math.Max(0, value);
     }
 
-    public bool IsRebellionOnCooldown(int currentTurn) => currentTurn < _rebellionCooldownUntilTurn;
-
-    public int CooldownTurnsRemaining(int currentTurn) => Math.Max(0, _rebellionCooldownUntilTurn - currentTurn);
-
     public void RecordInstabilityChange(long delta, int turn)
     {
         _instabilityIndex = (int)Math.Clamp(_instabilityIndex + delta, 0, int.MaxValue);
         _lastUpdatedTurn = Math.Max(0, turn);
     }
 
-    public void TriggerRebellion(int currentTurn, int threshold, int release, int cooldownTurns)
+    /// <summary>Discard the pressure above the threshold and release some more.</summary>
+    public void TriggerRebellion(int threshold, int release)
     {
         _instabilityIndex = Math.Max(0, Math.Min(_instabilityIndex, threshold) - release);
-        _rebellionCooldownUntilTurn = currentTurn + 1 + cooldownTurns;
     }
 
     public void Suppress(int reduction)

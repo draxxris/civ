@@ -62,6 +62,15 @@ public sealed class FoundationModule : IPreparableMod
         ContentRegistration.Load(context, Yields);
         ContentRegistration.Load(context, Conditions);
         ContentRegistration.Load(context, Constants);
+        var timers = new Timers();
+        context.RegisterService<Ariel.Game.ITimers>("timers", timers);
+        context.RegisterStateComponent<Ariel.Game.TimerState>("timers");
+        context.TurnSystems.Register(new TimersTurnStart(timers));
+        context.TurnSystems.Register(new TimersTurnEnd(timers));
+        // A timer held by a city follows its kind's rule when the city changes hands, and ends when it is destroyed.
+        context.Subscribe<Ariel.Game.CityCaptured>("timers_capture", (sim, captured) => timers.CityLeft(sim, captured.City, captured.Player));
+        context.Subscribe<Ariel.Game.CitySeceded>("timers_secession", (sim, seceded) => timers.CityLeft(sim, seceded.City, seceded.Player));
+        context.Subscribe<Ariel.Game.CityRazed>("timers_raze", (sim, razed) => timers.CityLeft(sim, razed.City, null));
         var calendar = new GameCalendar();
         foreach (var speed in Speeds.Read(context.Data)) calendar.ValidateShipped(speed);
         context.RegisterService<Ariel.Game.IGameCalendar>("calendar", calendar);

@@ -18,7 +18,7 @@ internal static class RevoltSecession
             if (read.RevoltTurns > 0) RevolutionService.Edit(sim, city).RevoltTurns = 0;
             return;
         }
-        bool unrest = RevolutionService.UnrestEffect(sim, city) is not null;
+        bool unrest = RevolutionService.UnrestTimer(sim, city) is not null;
         if (read.InstabilityIndex >= rules.MutinyThreshold || unrest) RevolutionService.Edit(sim, city).RevoltTurns++;
         else if (read.InstabilityIndex < rules.WarningThreshold && read.RevoltTurns > 0) RevolutionService.Edit(sim, city).RevoltTurns = 0;
         if (TurnsLeft(sim, city, RevolutionService.Read(sim, city), rules) != 0) return;

@@ -176,12 +176,12 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(9, Service(sim).DescribeCityStability(sim, city.Id).CooldownTurns);
         state.InstabilityIndex = 1000; Rebellions(sim);
         Assert.Single(sim.Events.Published.OfType<CityRebellionTriggered>());
-        var unrestEffect = sim.Rules().TimedEffects.Find(sim, "revolution:unrest", city: city.Id)!;
+        var unrestEffect = sim.Rules().Timers.Find(sim, "revolution:unrest", TimerHolder.OfCity(city.Id))!;
         Assert.Equal(sim.State.Turn + 1 + 3 * 85 / 100, unrestEffect.ExpiresTurn);
         Assert.Equal(unrestEffect.ExpiresTurn - sim.State.Turn, Service(sim).DescribeCityStability(sim, city.Id).UnrestTurns);
         sim.State.Turn = unrestEffect.ExpiresTurn;
         Assert.DoesNotContain(ModifierSink.Collect(new(sim, ModifierScope.City, 0, city)).Ledger.Lines, l => l.Source == "revolution:unrest");
-        sim.State.Turn = state.RebellionCooldownUntilTurn; Rebellions(sim);
+        sim.State.Turn = sim.Rules().Timers.Find(sim, "revolution:rebellion_cooldown", TimerHolder.OfCity(city.Id))!.ExpiresTurn; Rebellions(sim);
         Assert.Equal(2, sim.Events.Published.OfType<CityRebellionTriggered>().Count());
         Assert.Single(sim.State.Players, p => p.Name == "Barbarians");
     }
@@ -202,7 +202,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         Assert.Equal(-1, rebellion.RebelPlayer);
         Assert.Empty(rebellion.Units);
         Assert.Equal(600, rebellion.InstabilityReleased);
-        Assert.True(state.IsRebellionOnCooldown(sim.State.Turn));
+        Assert.NotNull(sim.Rules().Timers.Find(sim, "revolution:rebellion_cooldown", TimerHolder.OfCity(city.Id)));
         // Cooldown prevents immediate re-triggering.
         state.InstabilityIndex = 1000;
         Rebellions(sim);
@@ -293,11 +293,11 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var state = State(sim, city, 100);
         Assert.True(Service(sim).Incite(sim, city.Id));
         Assert.Equal(400, state.InstabilityIndex);
-        var store = sim.Rules().TimedEffects;
-        var unrest = store.Find(sim, "revolution:unrest", city: city.Id)!;
+        var store = sim.Rules().Timers;
+        var unrest = store.Find(sim, "revolution:unrest", TimerHolder.OfCity(city.Id))!;
         Assert.Equal(sim.State.Turn + 1 + 3 * 85 / 100, unrest.ExpiresTurn);
         // Inciting again only lengthens the unrest already under way, never shortens it.
-        store.Set(sim, unrest with { ExpiresTurn = sim.State.Turn + 50 });
+        store.Start(sim, unrest with { ExpiresTurn = sim.State.Turn + 50 });
         Assert.True(Service(sim).Incite(sim, city.Id));
         Assert.Equal(sim.State.Turn + 50, Assert.Single(store.Active(sim), e => e.Source == "revolution:unrest").ExpiresTurn);
         Assert.Equal(700, state.InstabilityIndex);
@@ -378,18 +378,16 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
     {
         var sim = P7ModFixture.Scenario(SpiesAndRevolution.Value);
         var city = P7ModFixture.City(sim);
-        city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 900, RebellionCooldownUntilTurn = 5 });
-        city.Extensions.Set(sim.Content, new EspionageCityState { RevoltUntilTurn = 9 });
-        var store = sim.Rules().TimedEffects;
-        store.Add(sim, new TimedEffect { Source = "revolution:unrest", City = city.Id, ExpiresTurn = 5 });
-        store.Add(sim, new TimedEffect { Source = "espionage:foment_unhappiness", City = city.Id, ExpiresTurn = 9 });
+        city.Extensions.Set(sim.Content, new RevolutionCityState { InstabilityIndex = 900 });
+        var store = sim.Rules().Timers;
+        store.Start(sim, new GameTimer { Kind = "revolution:unrest", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 5 });
+        store.Start(sim, new GameTimer { Kind = "revolution:rebellion_cooldown", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 5 });
+        store.Start(sim, new GameTimer { Kind = "espionage:foment_unhappiness", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 9 });
+        store.Start(sim, new GameTimer { Kind = "espionage:revolt", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = 9 });
         sim.Events.Publish(new CityCaptured(city.Id, 0, 1));
         var revolution = city.Extensions.Get<RevolutionCityState>(sim.Content);
-        var espionage = city.Extensions.Get<EspionageCityState>(sim.Content);
         Assert.Equal(0, revolution?.InstabilityIndex ?? 0);
-        Assert.Equal(0, revolution?.RebellionCooldownUntilTurn ?? 0);
-        Assert.Equal(0, espionage?.RevoltUntilTurn ?? 0);
-        // The unrest and the fomented unhappiness were the city's timed effects, which end with its capture.
+        // The unrest, the rebellion cooldown and the fomented unhappiness were the city's timers, which end with its capture.
         Assert.Empty(store.Active(sim));
     }
 
@@ -514,17 +512,12 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var state = new RevolutionCityState();
         Assert.Equal(0, state.InstabilityIndex);
         Assert.Equal(0, state.LastUpdatedTurn);
-        Assert.Equal(0, state.RebellionCooldownUntilTurn);
-        Assert.False(state.IsRebellionOnCooldown(0));
-        Assert.Equal(0, state.CooldownTurnsRemaining(0));
 
         // Clamping non-negative values
         state.InstabilityIndex = -10;
         state.LastUpdatedTurn = -1;
-        state.RebellionCooldownUntilTurn = -5;
         Assert.Equal(0, state.InstabilityIndex);
         Assert.Equal(0, state.LastUpdatedTurn);
-        Assert.Equal(0, state.RebellionCooldownUntilTurn);
 
         // RecordInstabilityChange
         state.RecordInstabilityChange(500, turn: 5);
@@ -550,14 +543,29 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
 
         // TriggerRebellion
         state.InstabilityIndex = 1200;
-        state.TriggerRebellion(currentTurn: 20, threshold: 1000, release: 600, cooldownTurns: 8);
+        state.TriggerRebellion(threshold: 1000, release: 600);
         Assert.Equal(400, state.InstabilityIndex); // 1000 - 600
-        Assert.Equal(29, state.RebellionCooldownUntilTurn); // 20 + 1 + 8
-        Assert.True(state.IsRebellionOnCooldown(20));
-        Assert.True(state.IsRebellionOnCooldown(28));
-        Assert.False(state.IsRebellionOnCooldown(29));
-        Assert.Equal(9, state.CooldownTurnsRemaining(20));
-        Assert.Equal(0, state.CooldownTurnsRemaining(29));
+    }
+
+    [Fact]
+    public void The_cooldown_timer_starts_the_turn_after_a_rebellion_scaled_to_the_pace()
+    {
+        var sim = P7ModFixture.Scenario(mods.Revolution);
+        var city = P7ModFixture.City(sim);
+        State(sim, city, 1200);
+        sim.State.Turn = 20;
+        Rebellions(sim);
+        var cooldown = sim.Rules().Timers.Find(sim, "revolution:rebellion_cooldown", TimerHolder.OfCity(city.Id))!;
+        Assert.Equal(29, cooldown.ExpiresTurn); // 20 + 1 + 8
+        Assert.Empty(cooldown.Effects);
+        Assert.Equal(9, cooldown.TurnsRemaining(20));
+        Assert.Equal(0, cooldown.TurnsRemaining(29));
+        Assert.Equal(9, Service(sim).DescribeCityStability(sim, city.Id).CooldownTurns);
+        sim.State.Turn = 28;
+        Assert.NotNull(sim.Rules().Timers.Find(sim, "revolution:rebellion_cooldown", TimerHolder.OfCity(city.Id)));
+        sim.State.Turn = 29;
+        Assert.Null(sim.Rules().Timers.Find(sim, "revolution:rebellion_cooldown", TimerHolder.OfCity(city.Id)));
+        Assert.Equal(0, Service(sim).DescribeCityStability(sim, city.Id).CooldownTurns);
     }
 
     [Fact]
@@ -566,7 +574,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var sim = P7ModFixture.Scenario(mods.Revolution);
         var city = P7ModFixture.City(sim);
         var state = State(sim, city, 1200);
-        state.RebellionCooldownUntilTurn = sim.State.Turn + 5;
+        sim.Rules().Timers.Start(sim, new GameTimer { Kind = "revolution:rebellion_cooldown", Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = sim.State.Turn + 5 });
 
         // Above 1000 threshold, but cooldown is active -> capped at Mutiny
         var desc = Service(sim).DescribeCityStability(sim, city.Id);

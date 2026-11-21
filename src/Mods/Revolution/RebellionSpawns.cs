@@ -16,7 +16,7 @@ internal static class RebellionSpawns
         {
             int released = Math.Min(state.InstabilityIndex, rules.RebellionRelease);
             state.Suppress(released);
-            state.RebellionCooldownUntilTurn = sim.State.Turn + 1 + GamePace.Scale(sim, rules.CooldownTurns);
+            RevolutionService.StartCooldown(sim, city, rules);
             sim.Events.Publish(new CityRebellionTriggered(city.Id, city.Owner, -1, [], released));
             return;
         }
@@ -27,8 +27,9 @@ internal static class RebellionSpawns
         foreach (var tile in tiles) units.Add(sim.Rules().Units.Create(sim, rebel, rules.RebelUnit, sim.State.Grid.HexOf(tile)).Id);
         // Pressure above the threshold is discarded, so a rebellion always leaves the city below it.
         int before = state.InstabilityIndex;
-        state.TriggerRebellion(sim.State.Turn, rules.RebellionThreshold, rules.RebellionRelease, GamePace.Scale(sim, rules.CooldownTurns));
-        RevolutionService.StartUnrest(sim, city, rules, extend: false);
+        state.TriggerRebellion(rules.RebellionThreshold, rules.RebellionRelease);
+        RevolutionService.StartCooldown(sim, city, rules);
+        RevolutionService.StartUnrest(sim, city, rules);
         int releasedUnits = before - state.InstabilityIndex;
         sim.Events.Publish(new CityRebellionTriggered(city.Id, city.Owner, rebel, units.AsReadOnly(), releasedUnits));
     }

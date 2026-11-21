@@ -61,10 +61,10 @@ public interface IEventService
     string? ValidateChoice(Simulation sim, int player, int eventId, string option);
     /// <summary>Apply a validated option and publish EventResolved.</summary>
     void Choose(Simulation sim, int player, int eventId, string option, bool automatic = false);
-    /// <summary>The kept effects of a player's resolved events, in id order: timed effects in the base game's store
-    /// (<see cref="GameRules.TimedEffects"/>) whose source is the chosen <see cref="EventOptionDef"/>. Remove one with
-    /// <see cref="ITimedEffects.Remove"/>.</summary>
-    IReadOnlyList<TimedEffect> ActiveEffects(Simulation sim, int player);
+    /// <summary>The kept effects of a player's resolved events, in start order: timers of kind
+    /// <c>events:option_effect</c> in the base game's store (<see cref="GameRules.Timers"/>) whose key is the chosen
+    /// <see cref="EventOptionDef"/>. Cancel one with <see cref="ITimers.Cancel"/>.</summary>
+    IReadOnlyList<GameTimer> ActiveEffects(Simulation sim, int player);
 }
 
 /// <summary>Resolve one pending event.</summary>

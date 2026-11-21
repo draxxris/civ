@@ -93,8 +93,11 @@ or above `RebellionThreshold` and its cooldown has passed.
 - Pressure above the threshold is discarded: the index is clamped to the threshold and
   reduced by `RebellionRelease`, so a rebellion always leaves the city below the
   threshold.
-- `RebellionCooldownUntilTurn` and `UnrestUntilTurn` use `GamePace.Scale`. Unrest adds
-  `UnrestUnhappiness` to city happiness while it lasts.
+- The rebellion cooldown (`revolution:rebellion_cooldown`) and the unrest
+  (`revolution:unrest`) are timers on the city (Timers in DESIGN.md) that start the turn after
+  and last `GamePace.Scale` of their configured turns; both end if the city changes hands.
+  Unrest adds `UnrestUnhappiness` to city happiness while it lasts, and a later rebellion or
+  incited revolt prolongs it, never shortens it.
 
 ## Secession
 
@@ -142,9 +145,8 @@ already in disorder cannot be incited.
 
 ## State
 
-`RevolutionCityState` holds `InstabilityIndex`, `LastUpdatedTurn`,
-`RebellionCooldownUntilTurn` and `RevoltTurns`; unrest is a timed effect in the base
-game's store. A conquest or a secession resets the component, so the loser's instability
+`RevolutionCityState` holds `InstabilityIndex`, `LastUpdatedTurn` and `RevoltTurns`; the
+rebellion cooldown and unrest are timers in the base game's store. A conquest or a secession resets the component, so the loser's instability
 never reaches the winner and a new nation's capital starts calm.
 
 ## AI

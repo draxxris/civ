@@ -169,10 +169,14 @@ internal sealed class EspionageService : IEspionageService
         return result;
     }
 
+    /// <summary>The timer kind of a team's protection against one rival team: held by the pair of teams, the cost
+    /// percentage in its value. Starting it again replaces it.</summary>
+    internal const string CounterEspionageKind = "espionage:counter_espionage";
+
     public CounterEspionageEffect? CounterEspionage(Simulation sim, int defendingTeam, int rivalTeam)
     {
-        var effect = Read(sim, defendingTeam).CounterEspionage.GetValueOrDefault(rivalTeam);
-        return effect is not null && sim.State.Turn < effect.ExpiresTurn ? effect : null;
+        var timer = sim.Rules().Timers.Find(sim, CounterEspionageKind, TimerHolder.OfTeams(defendingTeam, rivalTeam));
+        return timer is null ? null : new CounterEspionageEffect(timer.ExpiresTurn, timer.Value);
     }
 
     internal static long CostModifier(Simulation sim, int attacker, int defender)

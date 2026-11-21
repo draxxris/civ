@@ -66,8 +66,7 @@ internal sealed class SpyMissionRules(EspionageService service)
     };
 
     private static bool InRevolt(Simulation sim, City city) =>
-        GovernmentStatus.IsDisorder(sim, city)
-        || (city.Extensions.Get<EspionageCityState>(sim.Content) is { RevoltUntilTurn: > 0 } state && sim.State.Turn < state.RevoltUntilTurn);
+        GovernmentStatus.IsDisorder(sim, city) || sim.Rules().Timers.IsActive(sim, RevoltKind, TimerHolder.OfCity(city.Id));
 
     private static string? ValidateStolenTech(Simulation sim, int player, City city, string? tech)
     {
@@ -126,9 +125,13 @@ internal sealed class SpyMissionRules(EspionageService service)
                 SabotageProduction(city, rules.SabotagePercent);
                 break;
             case EspionageMissionKind.CounterEspionage:
-                EspionageService.Edit(sim, sim.TeamOf(player).Id).CounterEspionage[sim.TeamOf(city.Owner).Id] =
-                    new(checked(sim.State.Turn + GamePace.Scale(sim, rules.CounterEspionageTurns)),
-                        checked(rules.CounterEspionagePercent + rules.CounterEspionagePerInterception * SpyInterception(sim, spy)));
+                sim.Rules().Timers.Start(sim, new GameTimer
+                {
+                    Kind = EspionageService.CounterEspionageKind,
+                    Holder = TimerHolder.OfTeams(sim.TeamOf(player).Id, sim.TeamOf(city.Owner).Id),
+                    ExpiresTurn = sim.Rules().Timers.Expiry(sim, rules.CounterEspionageTurns),
+                    Value = checked(rules.CounterEspionagePercent + rules.CounterEspionagePerInterception * SpyInterception(sim, spy)),
+                });
                 break;
             case EspionageMissionKind.StealTech:
                 sim.Rules().Research.AddProgress(sim, player, tech!, amount);
@@ -137,18 +140,17 @@ internal sealed class SpyMissionRules(EspionageService service)
                 // Tell the Revolution mod first: it refuses cities that are already in disorder, and this mission
                 // is about to make this one disordered.
                 sim.Service<IRevolutionService>()?.Incite(sim, city.Id);
-                var state = CityState(sim, city);
-                state.RevoltUntilTurn = checked(sim.State.Turn + GamePace.Scale(sim, rules.InciteRevoltTurns));
-                var cityRules = city.Extensions.Get<CityRuleState>(sim.Content) ?? new();
-                city.Extensions.Set(sim.Content, cityRules);
-                cityRules.Disorder = true;
+                sim.Rules().Timers.Start(sim, new GameTimer
+                {
+                    Kind = RevoltKind, Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = sim.Rules().Timers.Expiry(sim, rules.InciteRevoltTurns),
+                });
                 break;
             case EspionageMissionKind.FomentUnhappiness:
                 // The unrest is the city's, so it ends if the city changes hands; fomenting again restarts it.
-                sim.Rules().TimedEffects.Set(sim, new TimedEffect
+                sim.Rules().Timers.Start(sim, new GameTimer
                 {
-                    Source = FomentUnhappinessSource, City = city.Id,
-                    ExpiresTurn = checked(sim.State.Turn + GamePace.Scale(sim, rules.FomentUnhappinessTurns)),
+                    Kind = FomentUnhappinessKind, Holder = TimerHolder.OfCity(city.Id),
+                    ExpiresTurn = sim.Rules().Timers.Expiry(sim, rules.FomentUnhappinessTurns),
                     Effects = [new() { Scope = ModifierScope.City, Key = "cities:unhappiness", Amount = rules.FomentUnhappiness }],
                 });
                 break;
@@ -177,13 +179,12 @@ internal sealed class SpyMissionRules(EspionageService service)
         city.ProductionQueue[0] = order with { Progress = order.Progress - EspionageService.Percent(order.Progress, percent) };
     }
 
-    /// <summary>The ledger source of a spy's fomented unhappiness, a timed effect on the city.</summary>
-    internal const string FomentUnhappinessSource = "espionage:foment_unhappiness";
+    /// <summary>The timer kind, and the ledger source, of a spy's fomented unhappiness: a timer on the city.</summary>
+    internal const string FomentUnhappinessKind = "espionage:foment_unhappiness";
 
-    private static EspionageCityState CityState(Simulation sim, City city)
-    {
-        var state = city.Extensions.Get<EspionageCityState>(sim.Content) ?? new(); city.Extensions.Set(sim.Content, state); return state;
-    }
+    /// <summary>The timer kind of the disorder a spy imposes on a city: it runs through the last turn of its duration
+    /// and ends at that turn's end, in the owner's turn.</summary>
+    internal const string RevoltKind = "espionage:revolt";
 }
 
 /// <summary>One kind of spy mission. It costs espionage points against the city's team whether it works or not; a

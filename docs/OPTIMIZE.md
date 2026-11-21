@@ -1031,6 +1031,27 @@ machine was busy, read 1,935 ms and 128,923 ms for the first two rows and is not
 Every row falls inside the spread between two runs of one build; the attachment lookups
 cost nothing measurable.
 
+### Measurement: General Timers (No Regression)
+
+The timed-effects store became the Foundation's general timer store, and the rebellion
+cooldown, counter-espionage and spy revolts moved onto it. Seeds 1 (four players, 120
+turns) of `mise run ai:play` before and after differ only in module versions and in the
+moved state components; the three timers that were live in the compared state carry the
+same holder, expiry turn and modifiers. `mise run benchmark`, single samples, on a busy
+machine (load average about 8). "Before" is the tree at `e317abf`, taken first, while the
+machine was hotter; "after" is the final tree.
+
+| Workload                                            |       Before |        After |
+| :-------------------------------------------------- | -----------: | -----------: |
+| Fifty-city turn (turn 2)                            |     2,031 ms |       939 ms |
+| Eight-player preparation (99 turns, save/load)      |    56,007 ms |    50,653 ms |
+| Eight-player AI decisions at turn 100               |       253 ms |       275 ms |
+| World generation, seed 1                            |          n/a |       311 ms |
+
+The latest recorded idle figure for the fifty-city turn is 921 to 1,105 ms (previous
+section). The machine's load, not the change, set the "before" column; timer queries
+are a pass over a handful of timers and a turn with nothing to expire allocates nothing.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary

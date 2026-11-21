@@ -373,9 +373,10 @@ public sealed class ClientIntelligenceEventsTests
         points.Points[1] = 100;
         Assert.True(ScreenProbe.Press(session, EspionageId, $"city:{target.Id}"));
         Assert.False(Locked(ScreenProbe.Body(session, EspionageId), "research"));
-        var defense = new EspionageTeamState();
-        defense.CounterEspionage[0] = new(sim.State.Turn + 1, 200);
-        sim.TeamOf(1).Extensions.Set(sim.Content, defense);
+        sim.Rules().Timers.Start(sim, new GameTimer
+        {
+            Kind = "espionage:counter_espionage", Holder = TimerHolder.OfTeams(1, 0), ExpiresTurn = sim.State.Turn + 1, Value = 200,
+        });
         var guarded = ScreenProbe.Body(session, EspionageId);
         Assert.EndsWith("inactive", ScreenProbe.Paragraph(guarded, "protection:ours"));
         Assert.Contains("1 turns remaining", ScreenProbe.Paragraph(guarded, "protection:theirs"));

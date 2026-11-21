@@ -35,24 +35,17 @@ public sealed class EspionageTeamState
     public SortedDictionary<int, long> Points { get; set; } = new();
     /// <summary>Points allocated against a rival. Mission costs are not credited here, so spending lowers investment.</summary>
     public SortedDictionary<int, long> Spent { get; set; } = new();
-    public SortedDictionary<int, CounterEspionageEffect> CounterEspionage { get; set; } = new();
 }
 
-/// <summary>Protection owned by this team against one rival. Inactive at ExpiresTurn; CostPercent is a multiplier, not an addition.</summary>
+/// <summary>Protection owned by this team against one rival: a timer of kind <c>espionage:counter_espionage</c> held by
+/// the pair of teams, whose <see cref="GameTimer.Value"/> is the cost percentage. Inactive at ExpiresTurn;
+/// CostPercent is a multiplier, not an addition.</summary>
 public sealed record CounterEspionageEffect(int ExpiresTurn, int CostPercent);
 
 public sealed class EspionagePlayerState
 {
     public SortedDictionary<int, int> Weights { get; set; } = new();
     public long RemainderHundredths { get; set; }
-}
-
-/// <summary>Per-city spy deadlines as absolute turns. Zero means "no active effect". Fomented unhappiness is a timed
-/// effect in the base game's store (<see cref="GameRules.TimedEffects"/>), not a deadline here.</summary>
-public sealed class EspionageCityState
-{
-    /// <summary>Disorder imposed by a spy lasts until this turn. No other system writes it.</summary>
-    public int RevoltUntilTurn { get; set; }
 }
 
 /// <summary>Threshold and unlock state for one passive tier, computed once per rival.</summary>

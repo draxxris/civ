@@ -35,12 +35,12 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         var rules = Rules(sim);
         var ledger = InstabilityLedger(sim, city, rules);
         var status = Status(state.InstabilityIndex, rules);
-        if (state.IsRebellionOnCooldown(sim.State.Turn) && status == CityStabilityStatus.Rebellion)
+        if (status == CityStabilityStatus.Rebellion && CooldownTimer(sim, city) is not null)
             status = CityStabilityStatus.Mutiny;
         return new(cityId, state.InstabilityIndex, status,
             checked((int)ledger.Total("revolution:change")),
-            state.CooldownTurnsRemaining(sim.State.Turn),
-            UnrestEffect(sim, city)?.TurnsRemaining(sim.State.Turn) ?? 0, SuppressionGold(sim, state.InstabilityIndex), ledger)
+            CooldownTimer(sim, city)?.TurnsRemaining(sim.State.Turn) ?? 0,
+            UnrestTimer(sim, city)?.TurnsRemaining(sim.State.Turn) ?? 0, SuppressionGold(sim, state.InstabilityIndex), ledger)
             { SecessionTurns = RevoltSecession.TurnsLeft(sim, city, state, rules) };
     }
 
@@ -170,25 +170,38 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         var rules = Rules(sim);
         var state = Edit(sim, city);
         state.Incite(rules.InciteInstability);
-        StartUnrest(sim, city, rules, extend: true);
+        StartUnrest(sim, city, rules);
         return true;
     }
 
-    /// <summary>The ledger source of the unrest a rebellion or an incited revolt leaves, a timed effect on the city.</summary>
-    internal const string UnrestSource = "revolution:unrest";
+    /// <summary>The timer kind of the cooldown after a rebellion, during which the city cannot rebel again: a timer on
+    /// the city with no modifiers, which ends if the city changes hands.</summary>
+    internal const string CooldownKind = "revolution:rebellion_cooldown";
 
-    internal static TimedEffect? UnrestEffect(Simulation sim, City city) =>
-        sim.Rules().TimedEffects.Find(sim, UnrestSource, city: city.Id);
+    internal static GameTimer? CooldownTimer(Simulation sim, City city) =>
+        sim.Rules().Timers.Find(sim, CooldownKind, TimerHolder.OfCity(city.Id));
 
-    /// <summary>Unrest for the configured turns after this one. An incited revolt only lengthens unrest already under
-    /// way (<paramref name="extend"/>); a rebellion restarts it. It ends if the city changes hands.</summary>
-    internal static void StartUnrest(Simulation sim, City city, RevolutionRulesDef rules, bool extend)
+    /// <summary>No rebellion for the configured turns after this one.</summary>
+    internal static void StartCooldown(Simulation sim, City city, RevolutionRulesDef rules)
     {
-        int expires = sim.State.Turn + 1 + GamePace.Scale(sim, rules.UnrestTurns);
-        if (extend && UnrestEffect(sim, city) is { } current) expires = Math.Max(expires, current.ExpiresTurn);
-        sim.Rules().TimedEffects.Set(sim, new TimedEffect
+        var timers = sim.Rules().Timers;
+        timers.Start(sim, new GameTimer { Kind = CooldownKind, Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = timers.Expiry(sim, rules.CooldownTurns, lead: 1) });
+    }
+
+    /// <summary>The timer kind, and the ledger source, of the unrest a rebellion or an incited revolt leaves: a timer on
+    /// the city that ends if the city changes hands. A new one never shortens one still running.</summary>
+    internal const string UnrestKind = "revolution:unrest";
+
+    internal static GameTimer? UnrestTimer(Simulation sim, City city) =>
+        sim.Rules().Timers.Find(sim, UnrestKind, TimerHolder.OfCity(city.Id));
+
+    /// <summary>Unrest for the configured turns after this one, for a rebellion or an incited revolt alike.</summary>
+    internal static void StartUnrest(Simulation sim, City city, RevolutionRulesDef rules)
+    {
+        var timers = sim.Rules().Timers;
+        timers.Start(sim, new GameTimer
         {
-            Source = UnrestSource, City = city.Id, ExpiresTurn = expires,
+            Kind = UnrestKind, Holder = TimerHolder.OfCity(city.Id), ExpiresTurn = timers.Expiry(sim, rules.UnrestTurns, lead: 1),
             Effects = [new() { Scope = ModifierScope.City, Key = "cities:happiness", Amount = rules.UnrestUnhappiness }],
         });
     }
@@ -206,7 +219,7 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         if (!PlayerRules.IsNation(sim, city.Owner)) return;
         var state = Read(sim, city);
         var rules = Rules(sim);
-        if (state.InstabilityIndex < rules.RebellionThreshold || state.IsRebellionOnCooldown(sim.State.Turn)) return;
+        if (state.InstabilityIndex < rules.RebellionThreshold || CooldownTimer(sim, city) is not null) return;
         RebellionSpawns.Trigger(sim, city, rules);
     }
 
