@@ -23,7 +23,7 @@ internal sealed class SpyWishes : IProductionWishes
     public IEnumerable<ProductionWish> Wishes(AiContext ctx, City city)
     {
         if (!new EspionagePlanner(ctx).WantsSpy()) yield break;
-        foreach (var unit in ctx.Sim.Content.Get<UnitDef>().All.Where(u => u.Spy))
+        foreach (var unit in ctx.Sim.Content.Get<UnitDef>().All.Where(u => EspionageService.UnitRules(ctx.Sim.Content, u.Id).Spy))
             yield return new("cities:unit", unit.Id, SpyScore + 1000L / Math.Max(1, unit.Cost));
     }
 }
@@ -41,15 +41,15 @@ internal sealed class EspionagePlanner(AiContext ctx)
         if (Espionage is not { } espionage || ctx.Cities.Count == 0) return;
         int? focus = FocusTeam();
         if ((ctx.Turn + ctx.PlayerId) % ReviewInterval == 0) Weights(espionage, focus);
-        foreach (var spy in ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0 && u.MovesLeft > 0 && !ctx.HasActed(u) && ctx.Def(u).Spy)
+        foreach (var spy in ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0 && u.MovesLeft > 0 && !ctx.HasActed(u) && EspionageService.UnitRules(ctx.Sim.Content, u.Type).Spy)
             .OrderBy(u => u.Id).ToList())
             Act(spy, focus);
     }
 
     /// <summary>Spies wanted: one per <see cref="CitiesPerSpy"/> cities once a rival is known.</summary>
     public bool WantsSpy() => Espionage is not null && FocusTeam() is not null
-        && ctx.Units.Count(u => ctx.Def(u).Spy) + ctx.Cities.Sum(c => c.ProductionQueue.Count(o => o.Kind == "cities:unit"
-            && ctx.Sim.Content.Get<UnitDef>(o.ContentId).Spy)) < Math.Max(1, ctx.Cities.Count / CitiesPerSpy);
+        && ctx.Units.Count(u => EspionageService.UnitRules(ctx.Sim.Content, u.Type).Spy) + ctx.Cities.Sum(c => c.ProductionQueue.Count(o => o.Kind == "cities:unit"
+            && EspionageService.UnitRules(ctx.Sim.Content, o.ContentId).Spy)) < Math.Max(1, ctx.Cities.Count / CitiesPerSpy);
 
     private IEnumerable<City> KnownRivalCities() => ctx.Sim.State.Cities.Where(c => ctx.Sim.TeamOf(c.Owner).Id != ctx.Team.Id
         && !PlayerRules.IsBarbarian(ctx.Sim, c.Owner) && ctx.Sim.State.PlotAt(c.Position).Revealed.Contains(ctx.Team.Id)

@@ -11,7 +11,9 @@ public sealed class EspionageMod : IPreparableMod
     private static readonly ModJsonFile<EspionageRulesDef> Rules = new("data/espionage-rules.json");
     /// <summary>What a caught spy leaves in the memory of the city's owner.</summary>
     private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules, Memories];
+    /// <summary>Which units are spies and which defend against them, attached to the base units.</summary>
+    private static readonly ModJsonFile<UnitEspionageDef[]> Units = new("data/unit-espionage.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules, Memories, Units];
 
     public void Register(IModContext context)
     {
@@ -19,6 +21,7 @@ public sealed class EspionageMod : IPreparableMod
         Validate(rules);
         context.Content<EspionageRulesDef>().Register(rules);
         MemoryKinds.Load(context, Memories);
+        ContentRegistration.Load(context, Units);
         var service = new EspionageService();
         context.RegisterService<IEspionageService>("espionage", service);
         context.RegisterStateComponent<EspionageTeamState>("team_state");

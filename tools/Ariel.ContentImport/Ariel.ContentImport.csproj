@@ -15,6 +15,7 @@
     <ProjectReference Include="../../src/Mods/Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
     <ProjectReference Include="../../src/Mods/Trade/Api/Ariel.Mods.Trade.Api.csproj" />
     <ProjectReference Include="../../src/Mods/GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
+    <ProjectReference Include="../../src/Mods/Espionage/Api/Ariel.Mods.Espionage.Api.csproj" />
     <EmbeddedResource Include="SchemaMapping.json" />
     <EmbeddedResource Include="RuleConstantMapping.json" />
   </ItemGroup>

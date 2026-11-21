@@ -222,6 +222,7 @@ definition without a row reads as the defaults:
   `corporationSpreads`), `data/handicap-corporations.json` (`HandicapCorporationsDef`:
   `corporationMaintenancePercent`) and `data/world-size-corporations.json`
   (`WorldSizeCorporationsDef`: `corporationMaintenancePercent`).
+- Espionage: `data/unit-espionage.json` (`UnitEspionageDef`: `spy`, `counterSpy`).
 
 To add a civic, register a `CivicDef` whose `option` is an existing `CivicOptionDef` or
 one of the mod's own. New players start a new option on its `defaultCivic`, or else on

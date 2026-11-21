@@ -90,7 +90,6 @@ public sealed class UnitDef : GameContentDef
     public bool BribeBarbarian { get; init; } = false;
     public bool CanMoveAllTerrain { get; init; } = false;
     public bool CanMoveImpassable { get; init; } = false;
-    public bool CounterSpy { get; init; } = false;
     public bool AirBomb1 { get; init; } = false;
     public bool AirBomb2 { get; init; } = false;
     public bool AirBomb3 { get; init; } = false;
@@ -129,7 +128,6 @@ public sealed class UnitDef : GameContentDef
     public bool QuickCombat { get; init; } = false;
     public bool RivalTerritory { get; init; } = false;
     public bool Sabotage { get; init; } = false;
-    public bool Spy { get; init; } = false;
     public bool RequiresStateReligion { get; init; } = false;
     public bool StealPlans { get; init; } = false;
     public bool Suicide { get; init; } = false;

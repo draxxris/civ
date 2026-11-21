@@ -460,7 +460,8 @@ percents in `BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeop
 `EraGreatPeopleDef`. Religion keeps faith spread, state religion yields and shrines in
 `BuildingReligionDef` and `UnitReligionDef`, and Corporations keeps executives' spreads
 and the per-handicap and per-world-size maintenance percents in `UnitCorporationsDef`,
-`HandicapCorporationsDef` and `WorldSizeCorporationsDef`; GreatPeople, which skips shrines when a great
+`HandicapCorporationsDef` and `WorldSizeCorporationsDef`, and Espionage marks spies and
+counter-spies in `UnitEspionageDef`; GreatPeople, which skips shrines when a great
 person builds, reads `BuildingReligionDef` through the Religion API it already references. A rule constant only a mod reads is a row about the base game's single
 `RuleConstantsDef` (`trade:rule_constants` about `foundation:rule_constants`, type
 `RuleConstantsTradeDef`), and a setting that varies by game speed, handicap, era or world size

@@ -3818,12 +3818,6 @@
         "default": 0
       },
       {
-        "source": "bCounterSpy",
-        "property": "CounterSpy",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bDCMAirBomb1",
         "property": "AirBomb1",
         "kind": "bool",
@@ -4048,12 +4042,6 @@
       {
         "source": "bSabotage",
         "property": "Sabotage",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bSpy",
-        "property": "Spy",
         "kind": "bool",
         "default": 0
       },
@@ -7177,6 +7165,26 @@
         "source": "iCorporationMaintenancePercent",
         "property": "CorporationMaintenancePercent",
         "kind": "int",
+        "default": 0
+      }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitEspionageDef",
+    "mod": "espionage",
+    "fields": [
+      {
+        "source": "bCounterSpy",
+        "property": "CounterSpy",
+        "kind": "bool",
+        "default": 0
+      },
+      {
+        "source": "bSpy",
+        "property": "Spy",
+        "kind": "bool",
         "default": 0
       }
     ],
