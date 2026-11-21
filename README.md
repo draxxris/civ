@@ -9,8 +9,8 @@ Mods in `src/Mods`:
 
 - Main mods, shipped and loaded by default: GreatPeople, Trade, RangedCombat (bombard and
   ranged support fire), AirCombat (air missions and interception), Barbarians (the hostile
-  faction's spawns and raids) and Religion (faiths, state religion, missionaries and
-  inquisitions).
+  faction's spawns and raids), Religion (faiths, state religion, missionaries and
+  inquisitions) and GlobalWarming (pollution that melts, dries and floods plots).
 - Optional mods, enabled in the mod manager: Votes (world councils), ProjectsVictory,
   Corporations, Espionage, Events, ScriptedWonders, Revolution, and the alternative
   research mod CardResearch. The browsable tech tree is part of the base Research module.

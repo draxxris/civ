@@ -7,7 +7,7 @@
        ArielAlternativeMods replace part of a base module (CardResearch replaces how research is chosen), so a host
        that turns the optional features on by default, such as the sync check, still leaves them out. -->
   <PropertyGroup>
-    <ArielMainMods>GreatPeople;Trade;RangedCombat;AirCombat;Barbarians;Religion</ArielMainMods>
+    <ArielMainMods>GreatPeople;Trade;RangedCombat;AirCombat;Barbarians;Religion;GlobalWarming</ArielMainMods>
     <ArielOptionalFeatureMods>Votes;ProjectsVictory;Corporations;Espionage;Events;ScriptedWonders;Revolution</ArielOptionalFeatureMods>
     <ArielAlternativeMods>CardResearch</ArielAlternativeMods>
     <ArielOptionalMods>$(ArielOptionalFeatureMods);$(ArielAlternativeMods)</ArielOptionalMods>

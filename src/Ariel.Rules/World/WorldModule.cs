@@ -50,13 +50,13 @@ public sealed class WorldModule : IPreparableMod
         context.RegisterService<Ariel.Game.IStartingPositionService>("starts", new StartingPositions(water));
         context.RegisterService<Ariel.Game.IVisibilityService>("visibility", visibility);
         context.RegisterService<Ariel.Game.IWorkerBuildService>("workers", workers);
+        context.RegisterService<Ariel.Game.ITerrainChanges>("terrain_changes", new TerrainChanges());
         context.RegisterService<Ariel.Content.IRequirementEvaluator>("bonus_requirements", new BonusEvaluator());
         context.RegisterStateComponent<WorkerOrder>("worker_order");
         context.RegisterCommand<Ariel.Game.StartBuildCommand>("start_build");
         context.RegisterCommand<Ariel.Game.CancelBuildCommand>("cancel_build");
         context.TurnSystems.Register(workers);
         context.TurnSystems.Register(new ImprovementTurnSystem());
-        context.TurnSystems.Register(new GlobalWarmingSystem(yields));
         context.TurnSystems.Register(visibility);
         context.Subscribe<Ariel.Game.CityFounded>("city_sight", (sim, e) =>
         {
@@ -67,7 +67,7 @@ public sealed class WorldModule : IPreparableMod
         context.Subscribe<Ariel.Game.TechDiscovered>("resource_reveal", ResourceTurnRules.RevealResources);
         // Refresh at the mutation, not only at turn end: later map events can be out of sight.
         context.Subscribe<Ariel.Game.FeatureChanged>("feature_sight", (sim, _) => visibility.Recompute(sim));
-        context.Subscribe<Ariel.Game.GlobalWarmingOccurred>("terrain_sight", (sim, _) => visibility.Recompute(sim));
+        context.Subscribe<Ariel.Game.TerrainChanged>("terrain_sight", (sim, _) => visibility.Recompute(sim));
         ContentRegistration.Evaluator<FeatureDef>(context, "feature");
         ContentRegistration.Evaluator<TerrainDef>(context, "terrain");
         ContentRegistration.Evaluator<ImprovementDef>(context, "improvement");

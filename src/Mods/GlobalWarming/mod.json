@@ -1,0 +1,8 @@
+{
+  "id": "global_warming",
+  "name": "Global Warming",
+  "version": "1.0.0",
+  "assembly": "Ariel.Mods.GlobalWarming.dll",
+  "dependencies": ["world"],
+  "references": ["cities", "foundation", "world"]
+}
