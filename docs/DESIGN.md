@@ -431,6 +431,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
+| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders) | such a building is refused with "Nothing founds what this building would found", so no great person can construct it either |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IVictoryCondition` | `VictoryConditions` (list) | the victory check, for each enabled `VictoryDef` by the condition its `Rule` names | Victory (conquest, domination, cultural, time), ProjectsVictory (the space race), Votes (the diplomatic victory) | a victory naming an unregistered condition fails the load, so the victory is simply absent |
 | `ITimerKind` | (registry, read by `ITimers`) | the Foundation timer store (Timers), for each timer by the kind it names | Events, Espionage, Revolution | starting a timer of an unregistered kind throws |
@@ -1383,7 +1384,9 @@ Religion mechanics:
   technology. Completing it founds the religion: the completing city becomes the holy
   city, and its owner gets the religion's free missionaries. Discovering the technology
   founds nothing by itself. Once the religion is founded, no one can build its wonder,
-  and barbarians never can. `BuildingDef.FoundsReligion` marks a founding wonder.
+  and barbarians never can. `BuildingDef.FoundsReligion` marks a founding wonder. The mod
+  is the wonder's `IBuildingFounder` (`ReligionFounder`): Cities refuses barbarians and
+  asks it whether the religion is founded already, and hands it the completed wonder.
 - **Foreign trade spread**: International trade routes connect cities across open
   borders and revealed road/water networks. Natural spread evaluates connected foreign
   trade partners, spreading state religions to foreign cities when allowed by standard

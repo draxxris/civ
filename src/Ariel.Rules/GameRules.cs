@@ -137,6 +137,9 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<ICapitalWeight> CapitalWeights { get; private set; } = [];
     /// <summary>Every source of empire-wide free buildings besides constructed ones, in registration order.</summary>
     public IReadOnlyList<IFreeBuildingGrants> FreeBuildingGrants { get; private set; } = [];
+    /// <summary>Every mod's rules for buildings that found something (a religion's wonder, a corporation's
+    /// headquarters), in registration order.</summary>
+    public IReadOnlyList<IBuildingFounder> Founders { get; private set; } = [];
     /// <summary>Everything that keeps units off plots they could otherwise enter, in registration order.</summary>
     public IReadOnlyList<IMovementBarrier> MovementBarriers { get; private set; } = [];
     /// <inheritdoc/>
@@ -156,6 +159,7 @@ public sealed class GameRules : IRuleset
         CivicRestrictions = services.Get<ICivicRestrictions>();
         FreeBuildingGrants = services.Get<IFreeBuildingGrants>();
         MovementBarriers = services.Get<IMovementBarrier>();
+        Founders = services.Get<IBuildingFounder>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();

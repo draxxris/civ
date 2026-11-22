@@ -446,8 +446,9 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
 
         Assert.Equal(builder.Id, religion.HolyCity(sim, Buddhism));
         Assert.Equal(1, Assert.Single(sim.Events.Published.OfType<ReligionFounded>()).Player);
-        Assert.Equal("Religion is already founded",
-            sim.Rules().CityReligions!.RefuseBuilding(sim, City(sim, 0), sim.Content.Get<S.BuildingDef>(GameFactory.FoundingWonder(sim, Buddhism))));
+        var rival = City(sim, 0);
+        Assert.Contains(Service<ICityProductionService>(sim).Validate(sim, rival.Id, "cities:building", GameFactory.FoundingWonder(sim, Buddhism)).Failures,
+            f => f.Explanation == "Religion is already founded");
     }
     [Fact]
     public void Barbarians_cannot_build_a_founding_wonder()
@@ -455,8 +456,9 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var sim = Scenario();
         var city = City(sim, 60, owner: 1);
         GameFactory.MakeBarbarian(sim, 1);
-        var wonder = sim.Content.Get<S.BuildingDef>(GameFactory.FoundingWonder(sim, Buddhism));
-        Assert.Equal("Barbarians cannot found a religion", sim.Rules().CityReligions!.RefuseBuilding(sim, city, wonder));
+        sim.TeamOf(1).Techs.Add(sim.Content.Get<ReligionDef>(Buddhism).FoundingTech!);
+        Assert.Contains(Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", GameFactory.FoundingWonder(sim, Buddhism)).Failures,
+            f => f.Explanation == "Barbarians cannot found anything");
     }
     [Fact]
     public void Every_religion_has_one_founding_wonder_gated_by_its_founding_tech()

@@ -76,6 +76,7 @@ public sealed class CitiesModule : IPreparableMod
         context.TurnSystems.Register(new CityPhase("completion", TurnPhase.CityCompletion, production.Complete));
         context.TurnSystems.Register(new CityCultureDecayPhase());
         context.Subscribe<TechDiscovered>("era_progression", EraProgression.Discovered);
+        context.Subscribe<BuildingCompleted>("founding", BuildingFounding.Completed);
         context.Subscribe<FeatureProduction>("feature_production", (sim, grant) =>
         {
             if (grant.City is { } id && sim.State.FindCity(id) is { } city && city.Owner == grant.Player)

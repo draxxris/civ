@@ -296,6 +296,22 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     }
 
     [Fact]
+    public void A_headquarters_nothing_founds_is_not_constructed_by_the_great_person_that_lists_it()
+    {
+        // The imported headquarters names a corporation, and no loaded feature founds corporations, so building it would
+        // found nothing: production refuses it, and so a great artist that lists it cannot construct it either.
+        var sim = Scenario(); var city = sim.State.Cities[0];
+        var headquarters = sim.Content.Get<S.BuildingDef>("cities:corporation_7");
+        Assert.True(sim.Content.Get<S.UnitDef>("military:artist").ConstructibleBuildings.GetValueOrDefault(headquarters.Id));
+        foreach (var tech in ContentReferences.Leaves(headquarters.Requirements!).Where(l => l.Kind == "tech")) sim.TeamOf(0).Techs.Add(tech.Id);
+        Assert.Contains(Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", headquarters.Id).Failures,
+            f => f.Explanation == "Nothing founds what this building would found");
+        var person = Unit(sim, "military:artist");
+        Assert.False(sim.TryApply(Mission(person, GreatPersonMissions.Construct, headquarters.Id), out _));
+        Assert.DoesNotContain(headquarters.Id, city.Buildings);
+    }
+
+    [Fact]
     public void Merchant_crosses_closed_peaceful_borders_and_earns_distance_trade_profit()
     {
         var sim = Scenario(); sim.State.Cities[0].Buildings.Add("cities:palace");

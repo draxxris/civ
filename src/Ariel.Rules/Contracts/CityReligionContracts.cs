@@ -26,8 +26,9 @@ public interface ICityReligions
     /// <summary>Whether the player has a state religion and it is present in the city.</summary>
     bool HasStateReligion(Simulation sim, int player, int city);
     /// <summary>Why the religion rules forbid the city to build this building now, or null. The building's religion
-    /// fields (<see cref="BuildingDef.ReligionType"/>, <see cref="BuildingDef.FoundsReligion"/> and the state religion
-    /// flags) are what the rules read.</summary>
+    /// fields (<see cref="BuildingDef.ReligionType"/> and the state religion flags) are what the rules read; a founding
+    /// wonder (<see cref="BuildingDef.FoundsReligion"/>) is the religion's <see cref="IBuildingFounder"/>'s to
+    /// refuse.</summary>
     string? RefuseBuilding(Simulation sim, City city, BuildingDef building);
     /// <summary>Why the religion rules forbid the city to train this unit now, or null.</summary>
     string? RefuseUnit(Simulation sim, City city, UnitDef unit);

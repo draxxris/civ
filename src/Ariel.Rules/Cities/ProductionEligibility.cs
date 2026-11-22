@@ -34,6 +34,7 @@ internal static class ProductionEligibility
         Location(sim, city, b, failures);
         WonderCapacity(sim, city, b, failures);
         Religion(sim, city, b, failures);
+        if (BuildingFounding.Refuse(sim, city, b) is { } founding) Fail(failures, founding);
         Upgrade(sim, city, b, failures);
         if (b.BonusType is { } bonus && Available(sim, city, bonus) <= 0)
             Fail(failures, "Requires connected resource: " + bonus);

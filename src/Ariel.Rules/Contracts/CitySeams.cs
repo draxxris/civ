@@ -47,3 +47,22 @@ public interface IProductionCompletion
     string Kind { get; }
     void Complete(Simulation sim, int city, string content);
 }
+
+/// <summary>The rules behind buildings that found something when a city completes them: a religion's founding wonder
+/// (<see cref="Content.Schema.BuildingDef.FoundsReligion"/>), a corporation's headquarters
+/// (<see cref="Content.Schema.BuildingDef.FoundsCorporation"/>). Founding is two steps: the building's own requirements
+/// (its technology) make it available, and completing it founds what it names in that city. Cities asks every
+/// registered founder (<see cref="GameRules.Founders"/>). A building that names something to found is refused when no
+/// founder claims it, so a feature that is not loaded founds nothing, and always for barbarians; completing a claimed
+/// building hands it to its founder. Queries never change state or use the RNG.</summary>
+public interface IBuildingFounder
+{
+    /// <summary>Whether this founder founds something by the building.</summary>
+    bool Claims(Content.ContentDb content, Content.Schema.BuildingDef building);
+    /// <summary>Why the city may not found what the claimed building founds now (it is founded already, the city lacks
+    /// what it needs), or null.</summary>
+    string? Refuse(Simulation sim, City city, Content.Schema.BuildingDef building);
+    /// <summary>The city has completed the claimed building: found what it names there. A founding that can no longer
+    /// happen (another city founded it first) does nothing.</summary>
+    void Found(Simulation sim, City city, Content.Schema.BuildingDef building);
+}

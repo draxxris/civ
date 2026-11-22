@@ -44,7 +44,7 @@ public sealed class ReligionMod : IPreparableMod
         context.RegisterService<IMission>("inquisition", new InquisitionMission(service));
         context.RegisterService<IMission>("spread", new SpreadReligionMission());
         context.RegisterService<IMission>("shrine", new ShrineMission(service));
-        context.Subscribe<BuildingCompleted>("founding_wonder", ReligionFoundingRules.Completed);
+        context.RegisterService<IBuildingFounder>("founding_wonder", new ReligionFounder());
         context.Subscribe<CityRazed>("razed_holy_city", HolyCityRazing.Razed);
         context.TurnSystems.Register(new ReligionTurns(service));
         context.RegisterService<ICapitalWeight>("capital_weight", new FaithCapitalWeight(service));
