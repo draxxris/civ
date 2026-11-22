@@ -86,8 +86,8 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
         // The Corporations mod contributes its planner to the AI; it lives beside the service it plays.
         var planner = sim.Service<ICorporationService>()!.GetType().Assembly.GetType("Ariel.Mods.Corporations.CorporationPlanner")!;
         var worth = planner.GetMethod("Worth")!;
-        var rich = new CorporationDef { Id = "test:rich", CommerceProduced = new(4, 0, 0, 0) };
-        var costly = new CorporationDef { Id = "test:costly", CommerceProduced = new(1, 0, 0, 0), MaintenanceHundredths = 400 };
+        var rich = new CorporationDef { Id = "test:rich", PrereqBonuses = ["world:corn"], CommerceProducedHundredths = new(400, 0, 0, 0) };
+        var costly = new CorporationDef { Id = "test:costly", PrereqBonuses = ["world:corn"], CommerceProducedHundredths = new(100, 0, 0, 0), MaintenanceHundredths = 400 };
         Assert.Equal(20L, (long)worth.Invoke(null, [rich])!);
         Assert.True((long)worth.Invoke(null, [costly])! < 0);
     }
@@ -146,7 +146,7 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
     [Fact]
     public void A_computer_player_builds_a_corporation_headquarters_and_founds_it()
     {
-        const string cereal = "corporations:cereal_mills";
+        const string cereal = "corporations:1";
         // A big, productive city on forested plains with its garrison and worker: nothing more urgent competes.
         var sim = Simulation.CreateScenario(Content.Value, GameFactory.Settings(71), new(12, 8, true),
             Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:plains", Feature = "world:forest" }).ToArray(), game =>
@@ -168,7 +168,7 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
         }
         foreach (var type in new[] { "military:warrior", "military:warrior", "military:worker" }) Spawn(type);
         // The corporation's technology and a corn plot under the city: founding is available, nothing else is new.
-        sim.TeamOf(0).Techs.Add(sim.Content.Get<CorporationDef>(cereal).FoundingTech!);
+        sim.TeamOf(0).Techs.UnionWith(GameFactory.FoundingTechs(sim, cereal));
         sim.State.PlotAt(city.Position).Bonus = "world:corn";
         var corn = sim.Content.Get<TechDef>().All.Where(t => t.Id == sim.Content.Get<BonusDef>("world:corn").RevealTech
             || t.Id == sim.Content.Get<BonusDef>("world:corn").TradeTech);

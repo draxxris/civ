@@ -152,6 +152,34 @@ public sealed class ExtractionSmokeTests
         Assert.All(victories, v => Assert.True(v.Deferred));
     }
 
+    [SourceFact]
+    public void Every_source_corporation_and_guild_gets_its_rules_and_a_buildable_founding_headquarters()
+    {
+        var result = ContentEmission.Compile(Registry.Value);
+        var definitions = result.Definitions.Select(d => d.Definition).ToArray();
+        var corporations = definitions.OfType<Ariel.Mods.Corporations.CorporationDef>().ToArray();
+        // 36 source records: 21 corporations and 15 guilds, each with the rules of its identity.
+        Assert.Equal(definitions.OfType<Ariel.Content.Schema.CorporationIdentityDef>().Select(i => i.Id).Order(StringComparer.Ordinal),
+            corporations.Select(c => c.Identity).Order(StringComparer.Ordinal));
+        Assert.Equal(36, corporations.Length);
+        Assert.Equal(15, corporations.Count(c => c.Kind == Ariel.Mods.Corporations.CorporationKind.Guild));
+        Assert.Equal("Sid's Sushi Co", corporations.Single(c => c.Identity == "foundation:2").Name);
+        var cereal = corporations.Single(c => c.Id == "corporations:1");
+        Assert.Equal(75, cereal.YieldProducedHundredths.Food);
+        Assert.Equal(50, cereal.SpreadCost);
+        Assert.Equal(4, cereal.HeadquartersCommerce.Gold);
+
+        // The founding buildings keep the source's guild hall cost; the headquarters it left to a great person are priced
+        // by era, and each such price is a data issue.
+        var buildings = definitions.OfType<Ariel.Content.Schema.BuildingDef>().Where(b => b.FoundsCorporation is not null).ToArray();
+        Assert.Equal(36, buildings.Length);
+        Assert.All(buildings, b => Assert.True(b.Cost > 0, b.Id));
+        Assert.Equal(300, buildings.Single(b => b.Id == "cities:corporation_masonguild").Cost);
+        Assert.Equal(700, buildings.Single(b => b.Id == "cities:corporation_1").Cost);
+        Assert.Equal(1300, buildings.Single(b => b.Id == "cities:corporation_7").Cost);
+        Assert.Equal(21, result.Issues.Count(i => i.Field == "iCost"));
+    }
+
     private static ContentRoots Roots(string directory) =>
         new(System.IO.Path.Combine(directory, "rules"), System.IO.Path.Combine(directory, "mods"));
 

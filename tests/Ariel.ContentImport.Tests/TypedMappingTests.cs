@@ -97,12 +97,13 @@ public sealed class TypedMappingTests
     [Fact]
     public void A_unit_that_needs_a_corporation_headquarters_needs_to_be_trained_in_that_corporations_headquarters()
     {
-        // The imported headquarters cannot be built (Ariel founds with the Corporations mod's own), so an executive
-        // that named it could never be trained; it names the corporation's headquarters city instead.
+        // The executive is trained in the corporation's headquarters city: the city that completed the headquarters, or
+        // the one that captured it, which a building requirement could not follow.
         var mapper = Mapper(Record("CorporationInfo", "CORPORATION_1"),
             Record("BuildingClassInfo", "BUILDINGCLASS_CORPORATION_1", DataNode.Leaf("DefaultBuilding", "BUILDING_CORPORATION_1")),
             Record("BuildingInfo", "BUILDING_CORPORATION_1", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_CORPORATION_1"),
-                DataNode.Leaf("FoundsCorporation", "CORPORATION_1"), DataNode.Leaf("iCost", "200")),
+                DataNode.Leaf("FoundsCorporation", "CORPORATION_1"), DataNode.Leaf("SpecialBuildingType", "SPECIALBUILDING_CORPORATION_HQ"),
+                DataNode.Leaf("iCost", "200")),
             Record("BuildingClassInfo", "BUILDINGCLASS_PLAIN", DataNode.Leaf("DefaultBuilding", "BUILDING_PLAIN")),
             Record("BuildingInfo", "BUILDING_PLAIN", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_PLAIN")),
             Record("UnitClassInfo", "UNITCLASS_EXECUTIVE_1", DataNode.Leaf("DefaultUnit", "UNIT_EXECUTIVE_1")),

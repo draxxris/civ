@@ -6,7 +6,7 @@ namespace Ariel.Mods.Corporations;
 
 /// <summary>The computer player's spreading of corporations, run inside the standard AI's turn after religion and
 /// before the great people planner (<c>great_people:planner</c>, at <see cref="AiPlannerOrder.Religion"/> + 200).
-/// Founding is production: the city planner builds a headquarters, valued by <see cref="HeadquartersValuer"/>, and
+/// Founding is production: the city planner builds a headquarters or guild hall, valued by <see cref="HeadquartersValuer"/>, and
 /// trains executives for foreign spread, wished for by <see cref="ExecutiveWishes"/>.</summary>
 internal sealed class CorporationAiPlanner(CorporationService service) : IAiPlanner
 {
@@ -37,10 +37,17 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
     }
 
     /// <summary>Everything one branch and its share of headquarters income produce, in the same points the city
-    /// planner uses, minus the maintenance of one resource copy.</summary>
-    public static long Worth(CorporationDef c) => PlannerPoints.Yields(c.YieldProduced)
-        + PlannerPoints.Commerce(c.CommerceProduced) + PlannerPoints.Commerce(c.HeadquartersCommerce)
-        - c.MaintenanceHundredths / 20;
+    /// planner uses, minus the maintenance of one resource copy: a branch with one copy of a resource it consumes, or
+    /// with none for a corporation that consumes none. The per-copy output stays in hundredths until the end, so a
+    /// fraction of a point still counts.</summary>
+    public static long Worth(CorporationDef c)
+    {
+        long copies = c.PrereqBonuses.Length > 0 ? 1 : 0;
+        long perCopy = (PlannerPoints.Yields(c.YieldProducedHundredths) + PlannerPoints.Commerce(c.CommerceProducedHundredths)
+            - c.MaintenanceHundredths * PlannerPoints.Gold) * copies;
+        return perCopy / 100 + PlannerPoints.Yields(c.YieldChanges) + PlannerPoints.Commerce(c.CommerceChanges)
+            + PlannerPoints.Commerce(c.HeadquartersCommerce);
+    }
 
     /// <summary>Each awake executive goes to the nearest city it can open a branch in: a foreign one, or failing that
     /// one of the empire's own, and spreads there when the turn's budget and the treasury allow.</summary>
@@ -197,17 +204,18 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
             .Any(o => o.Kind == "cities:unit" && CorporationService.Spreads(ctx.Sim, o.ContentId, corporation));
 }
 
-/// <summary>A founding headquarters has no effects of its own; this value stands for the corporation it founds: the
-/// headquarters income, the first branch and the right to spread it. As with a religion's founding wonder, production
-/// only offers it where founding can happen (its technology known, a consumed resource connected, nothing founded).
-/// A corporation worth more adds up to as much again.</summary>
-internal sealed class HeadquartersValuer(CorporationFounder founder) : IAiValuer<BuildingSubject>
+/// <summary>A founding building (a headquarters, or a guild's guild hall) stands for the corporation it founds: the
+/// headquarters income, the first branch and the right to spread it, on top of what the building itself gives. As
+/// with a religion's founding wonder, production only offers it where founding can happen (its requirements met, a
+/// consumed resource connected when the corporation consumes any, nothing founded). A corporation worth more adds up
+/// to as much again.</summary>
+internal sealed class HeadquartersValuer : IAiValuer<BuildingSubject>
 {
     internal const int FoundingValue = 80;
     public string Id => "corporations:headquarters_valuer";
 
     public int Adjust(AiContext ctx, in BuildingSubject subject) =>
-        founder.Corporation(subject.Building) is { } id
-            ? FoundingValue + (int)Math.Clamp(CorporationPlanner.Worth(ctx.Sim.Content.Get<CorporationDef>(id)), 0, FoundingValue)
+        CorporationFounder.Corporation(ctx.Sim.Content, subject.Building) is { } corporation
+            ? FoundingValue + (int)Math.Clamp(CorporationPlanner.Worth(corporation), 0, FoundingValue)
             : 0;
 }

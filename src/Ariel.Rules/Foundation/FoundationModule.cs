@@ -35,6 +35,10 @@ public sealed class FoundationModule : IPreparableMod
     }
     private static string CorporationName(Ariel.Content.ContentDb content, string identity) =>
         content.TryGet<CorporationIdentityDef>(identity, out var corporation) && corporation.Name.Length > 0 ? corporation.Name : identity;
+    /// <summary>What the mod that runs corporations calls the corporation's seat (a guild's is its guild hall), or
+    /// "headquarters" without one.</summary>
+    private static string HeadquartersName(Ariel.Content.ContentDb content, string identity) =>
+        content.Services.Get<ICityCorporations>().Select(c => c.HeadquartersName(content, identity)).FirstOrDefault(n => n is not null) ?? "headquarters";
     private static void ValidateHexTuning(IModContext context)
     {
         var tuning = HexOverrides.Read(context.Data).Single();
@@ -96,7 +100,7 @@ public sealed class FoundationModule : IPreparableMod
             (leaf, content) => leaf.Param switch
             {
                 null or 0 => "a branch of " + CorporationName(content, leaf.Id),
-                2 => "the headquarters of " + CorporationName(content, leaf.Id),
+                2 => $"the {HeadquartersName(content, leaf.Id)} of {CorporationName(content, leaf.Id)}",
                 _ => null,
             });
         // A victory requirement is that victory being on in this game (CvGame::isVictoryValid). A victory whose

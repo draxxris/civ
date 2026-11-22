@@ -1,5 +1,131 @@
 [
   {
+    "record": "cities:corporation_1",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_2",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_3",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_4",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_5",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_6",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_7",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_adventure_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_burgerworld_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_empcloth_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_ewtrade_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_fashion_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_mallwart_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_mapster_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_milehigh_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_mobby_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_moonbean_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_red_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_safari_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_ultsoldier_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 700, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
+    "record": "cities:corporation_wonka_hq",
+    "field": "iCost",
+    "sourceValue": "-1",
+    "resolution": "Set to 1300, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."
+  },
+  {
     "record": "military:bear",
     "field": "bUnitToCity",
     "sourceValue": "DONT_ESCORT_SUBDUED_LAND_ANIMAL",

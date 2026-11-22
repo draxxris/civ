@@ -11,7 +11,7 @@ direct unsupported fields.
 - CivicOptionInfo: none.
 - CivilizationInfo: `ArtDefineTag` (60), `ArtStyleType` (60), `DefaultPlayerColor` (60).
 - CommerceInfo: none.
-- CorporationInfo: `HeadquarterCommerces` (36), `Sound` (36), `iMaintenance` (36).
+- CorporationInfo: `Sound` (72), `iSpreadFactor` (72), `iSpread` (70).
 - CultureLevelInfo: none.
 - DomainInfo: none.
 - EraInfo: `AudioUnitDefeatScript` (8), `AudioUnitVictoryScript` (8), `CitySoundscapes`

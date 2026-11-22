@@ -8,16 +8,16 @@ namespace Ariel.Mods.Corporations;
 
 public sealed class CorporationsMod : IPreparableMod
 {
+    /// <summary>The corporations and guilds, imported. Each is founded by the base building whose
+    /// <c>FoundsCorporation</c> names its identity.</summary>
     private static readonly ModJsonFile<CorporationDef[]> Corporations = new("data/corporation.json");
-    /// <summary>One headquarters per corporation; completing it founds the corporation in that city.</summary>
-    private static readonly ModJsonFile<BuildingDef[]> Headquarters = new("data/founding-headquarters.json");
     private static readonly ModJsonFile<CivicCorporationsDef[]> Civics = new("data/civic-corporations.json");
     private static readonly ModJsonFile<ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
     /// <summary>What units, handicaps and world sizes mean to corporations, attached to the base rows.</summary>
     private static readonly ModJsonFile<UnitCorporationsDef[]> Units = new("data/unit-corporations.json");
     private static readonly ModJsonFile<HandicapCorporationsDef[]> Handicaps = new("data/handicap-corporations.json");
     private static readonly ModJsonFile<WorldSizeCorporationsDef[]> WorldSizes = new("data/world-size-corporations.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Headquarters, Civics, ModifierKeys, Units, Handicaps, WorldSizes];
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Civics, ModifierKeys, Units, Handicaps, WorldSizes];
 
     public void Register(IModContext context)
     {
@@ -28,10 +28,9 @@ public sealed class CorporationsMod : IPreparableMod
         Ariel.Rules.ContentRegistration.Load(context, WorldSizes);
         var definitions = Corporations.Read(context.Data);
         foreach (var definition in definitions) context.Content<CorporationDef>().Register(definition);
-        var headquarters = Headquarters.Read(context.Data);
-        foreach (var building in headquarters) context.Content<BuildingDef>().Register(building);
-        // The schema covers reference resolution and sign-free fields; these invariants are rules-level.
-        var founds = CorporationContentValidation.Validate(definitions, headquarters);
+        // The schema covers reference resolution and sign-free fields; these invariants are rules-level. The founding
+        // buildings and executives belong to other modules and are checked once content freezes.
+        CorporationContentValidation.Validate(definitions);
         var service = new CorporationService();
         context.RegisterService<ICorporationService>("corporations", service);
         context.RegisterService<IGameScreen>("screen", new CorporationsScreen());
@@ -43,10 +42,10 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterStateComponent<CorporationCityState>("city_state");
         context.RegisterStateComponent<CorporationGameState>("game_state");
         context.RegisterStateComponent<CorporationPlayerState>("player_state");
-        var founder = new CorporationFounder(service, founds);
-        context.RegisterService<IBuildingFounder>("headquarters", founder);
-        context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>("headquarters_valuer", new HeadquartersValuer(founder));
+        context.RegisterService<IBuildingFounder>("headquarters", new CorporationFounder(service));
+        context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>("headquarters_valuer", new HeadquartersValuer());
         context.RegisterService<IMission>("spread", new SpreadCorporationMission(service));
+        context.RegisterService<IContentCheck>("founding_buildings", new FoundingBuildingCheck());
         context.RegisterService<IContentCheck>("executives", new ExecutiveTrainingCheck());
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new CorporationAiPlanner(service));
         context.RegisterService<Ariel.Ai.IProductionWishes>("executives", new ExecutiveWishes(service));
@@ -85,9 +84,9 @@ internal sealed class CorporationEffects(ICorporationService service) : IModifie
         {
             if (!service.IsActive(sim, city.Id, corporation)) continue;
             var def = sim.Content.Get<CorporationDef>(corporation);
-            long copies = service.ConsumedBonusCount(sim, city.Id, corporation);
-            sink.AddYield(def.Id, def.YieldProduced * copies);
-            sink.AddCommerce(def.Id, def.CommerceProduced * copies);
+            var (yields, commerce) = CorporationService.BranchOutput(def, service.ConsumedBonusCount(sim, city.Id, corporation));
+            sink.AddYield(def.Id, yields);
+            sink.AddCommerce(def.Id, commerce);
             if (service.Headquarters(sim, corporation) == city.Id)
             {
                 int branches = sim.State.Cities.Count(c => service.IsActive(sim, c.Id, corporation));

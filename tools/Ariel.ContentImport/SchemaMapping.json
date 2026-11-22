@@ -5187,6 +5187,22 @@
     "requirements": []
   },
   {
+    "sourceClass": "CorporationInfo",
+    "definition": "CorporationDef",
+    "mod": "corporations",
+    "fields": [
+      { "source": "PrereqBonuses", "property": "PrereqBonuses", "kind": "refs", "target": "BonusInfo" },
+      { "source": "YieldsProduced", "property": "YieldProducedHundredths", "kind": "yield" },
+      { "source": "CommercesProduced", "property": "CommerceProducedHundredths", "kind": "commerce" },
+      { "source": "YieldChanges", "property": "YieldChanges", "kind": "yield" },
+      { "source": "CommerceChanges", "property": "CommerceChanges", "kind": "commerce" },
+      { "source": "HeadquarterCommerces", "property": "HeadquartersCommerce", "kind": "commerce" },
+      { "source": "iSpreadCost", "property": "SpreadCost", "kind": "int" },
+      { "source": "iMaintenance", "property": "MaintenanceHundredths", "kind": "int" }
+    ],
+    "requirements": []
+  },
+  {
     "sourceClass": "VictoryInfo",
     "definition": "VictoryIdentityDef",
     "mod": "foundation",

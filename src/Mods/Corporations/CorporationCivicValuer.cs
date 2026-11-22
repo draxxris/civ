@@ -38,8 +38,8 @@ internal sealed class CorporationCivicValuer(ICorporationService corporations) :
             {
                 if (!banned && !(foreignBanned && Foreign(ctx, corporation))) continue;
                 var def = sim.Content.Get<CorporationDef>(corporation);
-                long copies = corporations.ConsumedBonusCount(sim, city.Id, corporation);
-                points -= (PlannerPoints.Yields(def.YieldProduced) + PlannerPoints.Commerce(def.CommerceProduced)) * copies;
+                var (yields, commerce) = CorporationService.BranchOutput(def, corporations.ConsumedBonusCount(sim, city.Id, corporation));
+                points -= PlannerPoints.Yields(yields) + PlannerPoints.Commerce(commerce);
             }
             // Maintenance is in hundredths of gold. A ban ends it with the branches; a cut is a gain.
             long maintenance = corporations.MaintenanceHundredths(sim, city.Id);

@@ -138,16 +138,10 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         var requirements = new PrerequisiteMapper(this).Map(record, mapping.Requirements, mapped);
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
         NoteAmbiguousReligion(record, requirements);
-        // Ariel founds a corporation by building the headquarters the Corporations mod defines for it, so an imported
-        // headquarters that founds one (the source's guild halls carry a cost) must not be purchasable: no founder
-        // claims it, so it would be a second headquarters nothing in the rules reacts to.
         if (record.Class == "BuildingInfo" && values.GetValueOrDefault("foundsCorporation") is string founded && founded.Length > 0
-            && values.GetValueOrDefault("cost") is int cost && cost >= 0)
-        {
-            values["cost"] = -1;
-            Issues.Add(new(ids[(record.Class, record.Type)], "iCost", cost.ToString(CultureInfo.InvariantCulture),
-                "Set to -1: Ariel founds corporations by building the Corporations mod's headquarters, not the imported one."));
-        }
+            && values.GetValueOrDefault("cost") is int cost && cost < 0)
+            values["cost"] = HeadquartersCost(record, values.GetValueOrDefault("era") as string, cost);
+        if (mapping.DefinitionType == typeof(Ariel.Mods.Corporations.CorporationDef)) values["kind"] = CorporationKind(record);
         if ((string)values["id"]! != ids[(record.Class, record.Type)]) values["identity"] = ids[(record.Class, record.Type)];
         FoldClass(record, values, mapped);
         if (record.Class == "CivicOptionInfo") values["defaultCivic"] = CivicDefault(record);
@@ -157,6 +151,37 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         paths.UnionWith(mapped);
         var json = JsonSerializer.Serialize(values, Json);
         return (GameContentDef)JsonSerializer.Deserialize(json, mapping.DefinitionType, Json)!;
+    }
+
+    /// <summary>The production cost of a founding headquarters the source leaves to a great person (cost -1). Ariel
+    /// founds every corporation and guild by building its headquarters or guild hall in a city, and great people do
+    /// not found them. The source prices its guild halls at 300, the median cost of a medieval national wonder, so a
+    /// headquarters costs the median national wonder of its era, measured over the imported buildings with a player
+    /// limit of one.</summary>
+    private int HeadquartersCost(EffectiveRecord record, string? era, int sourceCost)
+    {
+        int cost = era switch
+        {
+            "foundation:era_industrial" => 700,
+            "foundation:era_modern" => 1300,
+            _ => throw new InvalidDataException($"{record.Type}: a founding headquarters of era '{era}' has no cost; add one to HeadquartersCost"),
+        };
+        Issues.Add(new(ids[(record.Class, record.Type)], "iCost", sourceCost.ToString(CultureInfo.InvariantCulture),
+            $"Set to {cost}, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."));
+        return cost;
+    }
+
+    /// <summary>A guild or a corporation, by the special building type of the headquarters that founds it.</summary>
+    private Ariel.Mods.Corporations.CorporationKind CorporationKind(EffectiveRecord corporation)
+    {
+        var headquarters = records.Values.Where(r => r.Class == "BuildingInfo" && r.Node.Value("FoundsCorporation") == corporation.Type)
+            .Select(r => r.Node.Value("SpecialBuildingType")).Distinct(StringComparer.Ordinal).ToArray();
+        return headquarters switch
+        {
+            ["SPECIALBUILDING_GUILD_HQ"] => Ariel.Mods.Corporations.CorporationKind.Guild,
+            ["SPECIALBUILDING_CORPORATION_HQ"] => Ariel.Mods.Corporations.CorporationKind.Corporation,
+            _ => throw new InvalidDataException($"{corporation.Type}: founding headquarters special types [{string.Join(", ", headquarters)}] name neither a guild nor a corporation"),
+        };
     }
 
     /// <summary>AND stores at most one presence religion per building, and the state-religion rule reads the first

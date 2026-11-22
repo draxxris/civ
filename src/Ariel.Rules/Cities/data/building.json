@@ -31109,7 +31109,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_1",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -31326,7 +31326,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_2",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -31548,7 +31548,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_3",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -31765,7 +31765,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_4",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -31982,7 +31982,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_5",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -32199,7 +32199,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_6",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -32416,7 +32416,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_7",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -32878,7 +32878,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_adventure_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -33099,7 +33099,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_apotheguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -33333,7 +33333,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_artistguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -33567,7 +33567,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_bakerguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -33801,7 +33801,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_blacksmguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -34035,7 +34035,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_burgerworld_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -34501,7 +34501,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_butcherguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -34735,7 +34735,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_carpenterguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -34969,7 +34969,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_clerksguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -35203,7 +35203,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_drapersguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -35437,7 +35437,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_empcloth_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -35654,7 +35654,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_equestguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -35888,7 +35888,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_ewtrade_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -36356,7 +36356,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_fashion_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -36573,7 +36573,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_fishmonguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -36807,7 +36807,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_glassguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -37041,7 +37041,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_goldsmguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -37275,7 +37275,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_grocerguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -37509,7 +37509,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_mallwart_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -37987,7 +37987,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_mapster_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -38204,7 +38204,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_masonguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -38438,7 +38438,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 300,
     "defaultBuilding": "cities:corporation_mercerguild",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -38918,7 +38918,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_milehigh_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -39135,7 +39135,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_mobby_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -39601,7 +39601,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_moonbean_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -40059,7 +40059,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_red_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -40766,7 +40766,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_safari_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -40987,7 +40987,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 700,
     "defaultBuilding": "cities:corporation_ultsoldier_hq",
     "defensePercent": 0,
     "dirtyPower": false,
@@ -41445,7 +41445,7 @@
       "gold": 0,
       "research": 0
     },
-    "cost": -1,
+    "cost": 1300,
     "defaultBuilding": "cities:corporation_wonka_hq",
     "defensePercent": 0,
     "dirtyPower": false,

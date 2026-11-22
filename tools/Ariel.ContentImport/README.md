@@ -243,12 +243,20 @@ presence first, then checks reference types after all mods register.
 Religion emits 13 playable `ReligionDef` records with founding technologies,
 missionaries, commerce vectors, and related buildings. The importer removes the obsolete
 generated Foundation religion identity sidecar. Religion references now use `religion:*`
-ids. Foundation reserves corporation and victory identities for future rules. Their
-definitions have `Deferred = true` and no gameplay effects. Their evaluators fail
-closed. Prerequisites retain these identities instead of silently disappearing. A
-prerequisite on a building that founds a corporation (an executive's headquarters)
-becomes a `corporation` leaf with parameter 2, the corporation's headquarters city,
-because the imported headquarters is never buildable. Four
+ids. Corporations likewise emits 36 playable `CorporationDef` records (21 corporations
+and 15 guilds, told apart by the special building type of their headquarters) beside the
+Foundation corporation identities the rest of the content names. Foundation reserves
+victory identities for future rules. Their definitions have `Deferred = true` and no
+gameplay effects. Their evaluators fail closed. Prerequisites retain these identities
+instead of silently disappearing. A prerequisite on a building that founds a corporation
+(an executive's headquarters) becomes a `corporation` leaf with parameter 2, the
+corporation's headquarters city, which a city that captures it takes over. The imported
+headquarters and guild halls are the founding buildings. The guild halls keep the
+source's cost of 300; the source leaves the 21 corporate headquarters to a great person
+(cost -1), so the importer prices them at the median national wonder of their era (700
+industrial, 1300 modern) and lists each as an `iCost` data issue. A text value that is
+a renamed key, such as `CHANGED_TXT_KEY_CORPORATION_2`, resolves through the text table
+as other keys do. Four
 native unit-AI roles absent from the XML inventory receive explicit military identities.
 The native enum and `registerUnitAIs` in the reference DLL define these roles. Four
 stale optional source references become null. Required unresolved references fail

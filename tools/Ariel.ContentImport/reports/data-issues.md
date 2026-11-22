@@ -1,6 +1,6 @@
 # Data review notes
 
-The generated `data-issues.json` contains 38 record-level diagnostics.
+The generated `data-issues.json` contains 59 record-level diagnostics.
 
 ## Stale optional references
 
@@ -48,9 +48,19 @@ exists.
 ## Deferred mechanics
 
 Religion now emits 13 playable definitions instead of deferred Foundation identities.
-Foundation still reserves 36 corporation and ten victory identities. Their effects
-remain unsupported. Their prerequisite evaluators fail closed until future rule mods
-implement these mechanics.
+Corporations emits 36 playable definitions, 21 corporations and 15 guilds, for the 36
+Foundation corporation identities. Foundation still reserves ten victory identities.
+Their effects remain unsupported. Their prerequisite evaluators fail closed until
+future rule mods implement these mechanics.
+
+## Headquarters costs
+
+The source founds its 21 corporations with a great person, so their headquarters cost
+-1. Ariel founds every corporation and guild by building its headquarters or guild hall
+in a city, so the importer prices these 21 headquarters at the median cost of a national
+wonder of their era: 700 for an industrial headquarters and 1300 for a modern one. The
+source's 15 guild halls keep their own cost of 300, which is the medieval median. Each
+priced headquarters is an `iCost` diagnostic.
 
 The era filter removes every reference dependent, including text links and future
 upgrades. It can remove an early building that refers to later replacement content. The

@@ -14,7 +14,7 @@ namespace Ariel.Mods.Tests;
 /// as the religion planner does with missionaries.</summary>
 public sealed class CorporationAiTests(ITestOutputHelper output)
 {
-    private const string Cereal = "corporations:cereal_mills", Executive = "military:executive_1";
+    private const string Cereal = "corporations:1", Executive = "military:executive_1";
 
     /// <summary>Player 0 holds the Cereal Mills headquarters in its second city and a branch-less first city; player 1,
     /// at peace and met, has a city with corn whose surroundings it owns. Every plot is revealed to both teams.</summary>
@@ -29,8 +29,7 @@ public sealed class CorporationAiTests(ITestOutputHelper output)
         // maintenance, federal reserves' ten gold each pay the rest and new branches, and taxes take all commerce.
         own.Buildings.Add("cities:palace"); own.Buildings.Add("cities:federal_reserve"); hq.Buildings.Add("cities:federal_reserve");
         P6RulesScenario.Apply(sim, new SetCommerceRatesCommand { Player = 0, Rates = new(100, 0, 0, 0) });
-        var def = sim.Content.Get<CorporationDef>(Cereal);
-        sim.TeamOf(0).Techs.Add(def.FoundingTech!);
+        GameFactory.GrantFoundingTechs(sim, hq, Cereal);
         GameFactory.FoundCorporation(sim, hq, Cereal);
         Assert.Equal(hq.Id, sim.Service<ICorporationService>()!.Headquarters(sim, Cereal));
         if (openBorders)

@@ -66,8 +66,8 @@ internal sealed class PrerequisiteMapper(ContentMapper mapper)
     private Requirement.Leaf Leaf(EffectiveRecord record, string symbol, RequirementMapping mapping, int? count)
     {
         // Needing a corporation's headquarters building means being that corporation's headquarters (an executive is
-        // trained there). The imported headquarters cannot be built, as Ariel founds a corporation with the
-        // Corporations mod's own headquarters, so name the corporation and let its rules say where it is based.
+        // trained there). Name the corporation and let its rules say where it is based: the city that completed the
+        // headquarters founded it, and a city that captured that city has taken its place.
         if (mapping.Kind == "building" && mapper.FoundedCorporation(symbol) is { } corporation)
             return new("corporation", corporation, count, HeadquartersParam);
         return new(mapping.Kind, mapper.RequiredReference(mapping.Target, symbol, record, mapping.Source), count, mapping.Scope);

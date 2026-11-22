@@ -1,35 +1,61 @@
+using System.Runtime.CompilerServices;
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
 
 namespace Ariel.Mods.Corporations;
 
-/// <summary>A corporation is founded by completing its headquarters, one building per corporation in the mod's
-/// hand-written <c>data/founding-headquarters.json</c> (<see cref="BuildingDef.FoundsCorporation"/> names the
-/// corporation's identity). The building's requirement is the corporation's technology and its world limit is one;
-/// this founder adds what founding needs in the city (no founded copy, civics that allow it, a connected resource the
-/// corporation consumes, no competing headquarters) and founds it there on completion. The imported headquarters rows
-/// of the base game name the same identities but are not claimed, so Cities refuses them.</summary>
-internal sealed class CorporationFounder(CorporationService service, IReadOnlyDictionary<string, string> headquarters) : IBuildingFounder
+/// <summary>A corporation or guild is founded by completing its founding building: the base building whose
+/// <see cref="BuildingDef.FoundsCorporation"/> names the corporation's identity, its headquarters or (for a guild) its
+/// guild hall. The building's own requirements say when it can be built (its technology, and for a guild a number of
+/// buildings of its trade) and its world limit is one; this founder adds what founding needs in the city (no founded
+/// copy, civics that allow it, a connected resource when the corporation consumes any, no competing headquarters)
+/// and founds it there on completion.</summary>
+internal sealed class CorporationFounder(CorporationService service) : IBuildingFounder
 {
-    /// <summary>The Corporations mod's founder in this content, or null without the mod.</summary>
-    internal static CorporationFounder? Of(ContentDb content) =>
-        content.Services.Get<IBuildingFounder>().OfType<CorporationFounder>().SingleOrDefault();
-
-    /// <summary>The headquarters that founds a corporation, or null.</summary>
+    /// <summary>The building that founds the corporation (by rules id), or null when no building names it.</summary>
     internal static BuildingDef? Headquarters(ContentDb content, string corporation) =>
-        Of(content)?.HeadquartersOf(corporation) is { } id ? content.Get<BuildingDef>(id) : null;
+        CorporationIndex.Of(content).FoundingBuildings.GetValueOrDefault(corporation);
 
-    private string? HeadquartersOf(string corporation) => headquarters.FirstOrDefault(p => p.Value == corporation).Key;
+    /// <summary>The corporation a building founds, or null when it founds none of this mod's corporations.</summary>
+    internal static CorporationDef? Corporation(ContentDb content, BuildingDef building) =>
+        CorporationIndex.Of(content).ByIdentity.GetValueOrDefault(building.FoundsCorporation ?? "");
 
-    /// <summary>The corporation a claimed headquarters founds.</summary>
-    internal string? Corporation(BuildingDef building) => headquarters.GetValueOrDefault(building.Id);
-
-    public bool Claims(ContentDb content, BuildingDef building) => headquarters.ContainsKey(building.Id);
+    public bool Claims(ContentDb content, BuildingDef building) => Corporation(content, building) is not null;
 
     public string? Refuse(Simulation sim, City city, BuildingDef building) =>
-        service.RefuseFounding(sim, city, sim.Content.Get<CorporationDef>(headquarters[building.Id]));
+        service.RefuseFounding(sim, city, Corporation(sim.Content, building)!);
 
     public void Found(Simulation sim, City city, BuildingDef building) =>
-        service.Found(sim, city, sim.Content.Get<CorporationDef>(headquarters[building.Id]));
+        service.Found(sim, city, Corporation(sim.Content, building)!);
+}
+
+/// <summary>The corporations by identity and the building that founds each, built once per frozen content. Every
+/// question the rules, the AI and the client ask about which building founds what reads it, so they cannot disagree.
+/// <see cref="CorporationContentValidation.FoundingBuildings"/> refuses content where a corporation has no founding
+/// building or more than one, so <see cref="FoundingBuildings"/> names exactly one per corporation in loaded content.</summary>
+internal sealed class CorporationIndex
+{
+    private static readonly ConditionalWeakTable<ContentDb, CorporationIndex> Cache = new();
+
+    /// <summary>Each corporation by its identity id.</summary>
+    public IReadOnlyDictionary<string, CorporationDef> ByIdentity { get; }
+    /// <summary>The founding building of each corporation, by the corporation's rules id; the first by id when content
+    /// names more than one (validation reports that).</summary>
+    public IReadOnlyDictionary<string, BuildingDef> FoundingBuildings { get; }
+
+    private CorporationIndex(ContentDb content)
+    {
+        var byIdentity = new Dictionary<string, CorporationDef>(StringComparer.Ordinal);
+        foreach (var corporation in content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal))
+            byIdentity.TryAdd(corporation.Identity, corporation);
+        ByIdentity = byIdentity;
+        var buildings = new Dictionary<string, BuildingDef>(StringComparer.Ordinal);
+        foreach (var building in content.Get<BuildingDef>().All.OrderBy(b => b.Id, StringComparer.Ordinal))
+            if (building.FoundsCorporation is { } identity && byIdentity.TryGetValue(identity, out var corporation))
+                buildings.TryAdd(corporation.Id, building);
+        FoundingBuildings = buildings;
+    }
+
+    public static CorporationIndex Of(ContentDb content) => Cache.GetValue(content, c => new CorporationIndex(c));
 }

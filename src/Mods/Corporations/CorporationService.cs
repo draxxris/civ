@@ -25,17 +25,16 @@ internal sealed class CorporationService : ICorporationService
     }
     /// <summary>Corporations with a branch in the city; empty for a stale id, like the sibling queries.</summary>
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
-    public bool HasIdentity(Simulation sim, int city, string identity) => Present(sim, city)
-        .Any(corporation => sim.Content.TryGet<CorporationDef>(corporation, out var def) && def.Identity == identity);
-    /// <summary>The founding record is the headquarters: it names the city that completed the headquarters building, and
+    public bool HasIdentity(Simulation sim, int city, string identity) =>
+        CorporationIndex.Of(sim.Content).ByIdentity.GetValueOrDefault(identity) is { } def && Present(sim, city).Contains(def.Id);
+    /// <summary>The founding record is the headquarters: it names the city that completed the founding building, and
     /// a captured headquarters keeps it, as the headquarters income does.</summary>
-    public bool IsHeadquartersOf(Simulation sim, int city, string identity)
-    {
-        foreach (var (corporation, record) in Read(sim).Founded)
-            if (record.Headquarters == city && sim.Content.TryGet<CorporationDef>(corporation, out var def) && def.Identity == identity)
-                return true;
-        return false;
-    }
+    public bool IsHeadquartersOf(Simulation sim, int city, string identity) =>
+        CorporationIndex.Of(sim.Content).ByIdentity.GetValueOrDefault(identity) is { } def
+        && Read(sim).Founded.TryGetValue(def.Id, out var record) && record.Headquarters == city;
+    /// <summary>"guild hall" for a guild, "headquarters" for a corporation (<see cref="CorporationDef.Kind"/>).</summary>
+    public string? HeadquartersName(ContentDb content, string identity) =>
+        CorporationIndex.Of(content).ByIdentity.GetValueOrDefault(identity) is { } def ? CorporationKinds.Seat(def.Kind) : null;
     /// <summary>One founding answer for the rules, the effects and the UI: a live headquarters city.</summary>
     private static CorporationFounding? Founding(Simulation sim, string corporation) =>
         Read(sim).Founded.TryGetValue(corporation, out var record) && sim.State.FindCity(record.Headquarters) is not null ? record : null;
@@ -96,6 +95,15 @@ internal sealed class CorporationService : ICorporationService
         long ratio = sim.State.PlayerById(player).Extensions.TryGet<EconomyPlayerState>(sim.Content)?.AccruedCostRatioTimes10000 ?? 10000;
         return (int)((ratio - 10000) / 100);
     }
+    /// <summary>The yield and commerce one active branch adds to its city with this many consumed resource copies, in
+    /// whole points: the per-copy output, summed in hundredths and truncated, plus the branch's flat changes.</summary>
+    internal static (YieldVector Yield, CommerceVector Commerce) BranchOutput(CorporationDef def, long copies)
+    {
+        var y = def.YieldProducedHundredths * copies;
+        var c = def.CommerceProducedHundredths * copies;
+        return (new YieldVector(y.Food / 100, y.Production / 100, y.Commerce / 100) + def.YieldChanges,
+            new CommerceVector(c.Gold / 100, c.Research / 100, c.Culture / 100, c.Espionage / 100) + def.CommerceChanges);
+    }
     /// <summary>Whether a unit is an executive of a corporation.</summary>
     internal static bool Spreads(Simulation sim, Unit unit, CorporationDef def) => Spreads(sim, unit.Type, def);
     /// <summary>Whether units of the type are executives of a corporation.</summary>
@@ -105,14 +113,14 @@ internal sealed class CorporationService : ICorporationService
     internal static bool IsExecutive(Simulation sim, string unitType) =>
         (sim.Content.Attachment<UnitCorporationsDef>(unitType) ?? UnitCorporationsDef.None).CorporationSpreads.Any(p => p.Value > 0);
 
-    /// <summary>Why the city may not found the corporation by completing its headquarters now, or null. The
-    /// corporation's technology is the headquarters' own requirement, and Cities refuses barbarians first.</summary>
+    /// <summary>Why the city may not found the corporation by completing its founding building now, or null. The
+    /// building's own requirements (its technology, and for a guild the buildings of its trade) are checked by
+    /// Cities, which also refuses barbarians first.</summary>
     internal string? RefuseFounding(Simulation sim, City city, CorporationDef def)
     {
         if (IsFounded(sim, def.Id)) return "Corporation is already founded";
         if (Blocked(sim, city, sim.TeamOf(city.Owner).Id)) return "Civics prohibit corporations";
-        if (ConsumedBonusCount(sim, city.Id, def.Id) <= 0) return "Requires a connected corporation resource";
-        return HeadquartersConflict(sim, city.Id, def);
+        return RefuseSite(sim, city, def);
     }
     /// <summary>Found the corporation with its headquarters and first branch in the city. One already founded, by a city
     /// that completed its headquarters first or by a scenario, stays as it is.</summary>
@@ -151,10 +159,11 @@ internal sealed class CorporationService : ICorporationService
         if (Founding(sim, def.Id) is not { } record) return "Corporation is not founded";
         return ValidateBranch(sim, player, city, def.Id, record) ?? RefuseSite(sim, city, def);
     }
-    /// <summary>The checks on the city's resources and headquarters, last because the connectivity query is the dearest.</summary>
+    /// <summary>The checks on the city's resources and headquarters, last because the connectivity query is the dearest.
+    /// A corporation that consumes no resource needs none.</summary>
     private string? RefuseSite(Simulation sim, City city, CorporationDef def)
     {
-        if (ConsumedBonusCount(sim, city.Id, def.Id) <= 0) return "Requires a connected corporation resource";
+        if (def.PrereqBonuses.Length > 0 && ConsumedBonusCount(sim, city.Id, def.Id) <= 0) return "Requires a connected corporation resource";
         return HeadquartersConflict(sim, city.Id, def);
     }
     private string? ValidateBranch(Simulation sim, int player, City city, string corporation, CorporationFounding record)

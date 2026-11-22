@@ -23,8 +23,9 @@ internal sealed class CorporationsScreen : IGameScreen
         {
             int? hq = service.Headquarters(sim, def.Id);
             int branches = sim.State.Cities.Count(c => service.Present(sim, c.Id).Contains(def.Id));
-            string state = hq is int city ? $"headquarters {sim.State.FindCity(city)?.Name ?? "?"}, {branches} cities"
-                : "not founded" + (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building ? $" (build {building.Name})" : "");
+            string seat = CorporationKinds.Seat(def.Kind);
+            string state = hq is int city ? $"{seat} {sim.State.FindCity(city)?.Name ?? "?"}, {branches} cities"
+                : "not founded" + (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building ? $" (build its {seat}, {building.Name})" : "");
             list.Add(new ListItem(def.Id, def.Name, state, def.Id));
         }
         var items = new List<ViewElement> { new Section("corporations", null, list) };
@@ -54,7 +55,7 @@ internal sealed class CorporationsCityPanel : ICityPanel
         return [new Row("present", present.Select(id =>
         {
             bool hq = service.Headquarters(sim, id) == city.Id;
-            string text = Labels.Name<CorporationDef>(sim.Content, id) + (hq ? " ★ headquarters" : "") + (service.IsActive(sim, city.Id, id) ? "" : " (inactive)");
+            string text = Labels.Name<CorporationDef>(sim.Content, id) + (hq ? " ★ " + CorporationKinds.Seat(sim.Content.Get<CorporationDef>(id).Kind) : "") + (service.IsActive(sim, city.Id, id) ? "" : " (inactive)");
             return (ViewElement)new Paragraph(id, text, hq ? Tone.Accent : Tone.Dim, TextSize.Body, id);
         }).ToList())];
     }
@@ -75,7 +76,7 @@ internal sealed class CorporationNotices : INotificationSource
             CorporationSpread s when context.OwnsCity(s.City) =>
                 new("corporation", $"{Name(s.Corporation)} spread to {context.CityName(s.City)}", s.City),
             CorporationDissolved d when d.Player == context.Player =>
-                new("corporation", $"{Name(d.Corporation)} was dissolved with its headquarters"),
+                new("corporation", $"{Name(d.Corporation)} was dissolved with its {CorporationKinds.Seat(context.Sim.Content.Get<CorporationDef>(d.Corporation).Kind)}"),
             CorporationDisplaced d when context.OwnsCity(d.City) =>
                 new("corporation", $"{Name(d.Corporation)} was displaced by {Name(d.By)}", d.City),
             _ => null,
@@ -83,14 +84,22 @@ internal sealed class CorporationNotices : INotificationSource
     }
 }
 
-/// <summary>Corporations in the encyclopedia, each with the headquarters that founds it, under the technology that
-/// makes the headquarters available.</summary>
+/// <summary>Corporations and guilds in the encyclopedia, each with the headquarters or guild hall that founds it, under
+/// the technology that makes that building available.</summary>
 internal sealed class CorporationPedia : IPediaSource
 {
     public string Id => "corporations:pedia";
     public string Category => "Corporations";
 
-    public IEnumerable<PediaItem> Items(ContentDb content) => content.Get<CorporationDef>().All.Select(d => new PediaItem(d,
-        Notes: CorporationFounder.Headquarters(content, d.Id) is { } building ? [$"Founded by building {building.Name}"] : null,
-        UnlockedBy: d.FoundingTech));
+    public IEnumerable<PediaItem> Items(ContentDb content) => content.Get<CorporationDef>().All.Select(d =>
+    {
+        var building = CorporationFounder.Headquarters(content, d.Id);
+        return new PediaItem(d,
+            Notes: building is null ? null : [$"{CorporationKinds.SeatTitle(d.Kind)}: founded by building {building.Name}"],
+            UnlockedBy: building is null ? null : FoundingTech(building));
+    });
+
+    /// <summary>The first technology the founding building requires, which is where the encyclopedia files it.</summary>
+    private static string? FoundingTech(Ariel.Content.Schema.BuildingDef building) =>
+        ContentReferences.Leaves(building.Requirements ?? new Requirement.All([])).FirstOrDefault(l => l.Kind == "tech")?.Id;
 }

@@ -71,12 +71,11 @@ internal static class P6RulesScenario
 
 public sealed class CorporationRulesTests
 {
-    private const string Cereal = "corporations:cereal_mills", Ethanol = "corporations:standard_ethanol";
+    private const string Cereal = "corporations:1", Ethanol = "corporations:3", Masons = "corporations:masonguild";
     private static ICorporationService Corps(Simulation sim) => P6RulesScenario.Service<ICorporationService>(sim);
     private static void Found(Simulation sim, City city, string corporation = Cereal)
     {
-        var def = sim.Content.Get<Ariel.Mods.Corporations.CorporationDef>(corporation);
-        sim.TeamOf(city.Owner).Techs.Add(def.FoundingTech!);
+        GameFactory.GrantFoundingTechs(sim, city, corporation);
         P6RulesScenario.Resource(sim, city, "world:corn");
         Assert.True(Production(sim).Validate(sim, city.Id, "cities:building", GameFactory.Headquarters(sim, corporation)).Success);
         GameFactory.FoundCorporation(sim, city, corporation);
@@ -93,24 +92,66 @@ public sealed class CorporationRulesTests
         city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = Production(sim).Calculate(sim, city.Id, "cities:building", building).Cost };
     }
     [Fact]
-    public void Every_corporation_has_one_headquarters_gated_by_its_founding_tech()
+    public void The_source_corporations_and_guilds_are_all_defined_each_with_one_imported_founding_building()
     {
         var sim = P6RulesScenario.Create();
-        foreach (var corporation in sim.Content.Get<CorporationDef>().All)
+        var corporations = sim.Content.Get<CorporationDef>().All;
+        // Every corporation identity the base game names has its rules: 21 corporations and 15 guilds.
+        Assert.Equal(sim.Content.Get<Ariel.Content.Schema.CorporationIdentityDef>().All.Select(i => i.Id).Order(),
+            corporations.Select(c => c.Identity).Order());
+        Assert.Equal(21, corporations.Count(c => c.Kind == CorporationKind.Corporation));
+        Assert.Equal(15, corporations.Count(c => c.Kind == CorporationKind.Guild));
+        foreach (var corporation in corporations)
         {
+            // The founding building is the imported headquarters or guild hall: world-unique, priced, and gated by a
+            // technology (a guild's also by the buildings of its trade).
             var building = sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, corporation.Id));
+            Assert.StartsWith("cities:corporation_", building.Id);
             Assert.Equal(1, building.Limits.World);
-            Assert.True(building.Cost > 0);
-            Assert.Contains(new Requirement.Leaf("tech", corporation.FoundingTech!), ContentReferences.Leaves(building.Requirements!));
+            Assert.True(building.Cost > 0, building.Id);
+            Assert.NotEmpty(GameFactory.FoundingTechs(sim, corporation.Id));
+            if (corporation.Kind == CorporationKind.Guild)
+                Assert.Contains(ContentReferences.Leaves(building.Requirements!), l => l.Kind == "building-class");
         }
+        // The source's prices: guild halls 300; headquarters, which it left to a great person, by era.
+        Assert.Equal(300, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, Masons)).Cost);
+        Assert.Equal(700, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, Cereal)).Cost);
+        Assert.Equal(1300, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, "corporations:7")).Cost);
+    }
+
+    /// <summary>Each corporation and guild in a game of its own (two in one game could compete for a resource): its
+    /// founding building's requirements met in a city, then built through the real production phases.</summary>
+    public static TheoryData<string> AllCorporations()
+    {
+        var sim = P6RulesScenario.Create();
+        var data = new TheoryData<string>();
+        foreach (var corporation in sim.Content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal)) data.Add(corporation.Id);
+        return data;
+    }
+    [Theory]
+    [MemberData(nameof(AllCorporations))]
+    public void Every_corporation_and_guild_is_founded_by_building_its_headquarters(string corporation)
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        string building = GameFactory.Headquarters(sim, corporation);
+        Assert.Contains(Refusals(sim, city, building), r => r.StartsWith("Required tech:", StringComparison.Ordinal));
+        GameFactory.SatisfyFounding(sim, city, corporation);
+        Assert.Empty(Refusals(sim, city, building));
+        QueueFinished(sim, city, building);
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+        Assert.Contains(building, city.Buildings);
+        Assert.Equal(city.Id, Corps(sim).Headquarters(sim, corporation));
+        Assert.Equal([corporation], Corps(sim).Present(sim, city.Id));
+        Assert.Contains("Corporation is already founded", Refusals(sim, sim.State.Cities[1], building));
     }
     [Fact]
     public void The_headquarters_is_unavailable_before_the_technology_and_needs_a_connected_resource()
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
         string headquarters = GameFactory.Headquarters(sim, Cereal);
-        Assert.Contains("Required tech: research:refrigeration", Refusals(sim, city, headquarters));
-        sim.TeamOf(0).Techs.Add("research:refrigeration");
+        Assert.Contains("Required tech: research:organic_chemistry", Refusals(sim, city, headquarters));
+        sim.TeamOf(0).Techs.Add("research:organic_chemistry");
         Assert.Equal(["Requires a connected corporation resource"], Refusals(sim, city, headquarters));
         P6RulesScenario.Resource(sim, city, "world:corn");
         Assert.Empty(Refusals(sim, city, headquarters));
@@ -124,7 +165,7 @@ public sealed class CorporationRulesTests
         string headquarters = GameFactory.Headquarters(sim, Cereal);
         foreach (var (player, at) in new[] { (0, city), (1, rival) })
         {
-            sim.TeamOf(player).Techs.Add("research:refrigeration");
+            sim.TeamOf(player).Techs.Add("research:organic_chemistry");
             P6RulesScenario.Resource(sim, at, "world:corn");
             QueueFinished(sim, at, headquarters);
         }
@@ -153,7 +194,7 @@ public sealed class CorporationRulesTests
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2];
         GameFactory.MakeBarbarian(sim, 1);
-        sim.TeamOf(1).Techs.Add("research:refrigeration");
+        sim.TeamOf(1).Techs.Add("research:organic_chemistry");
         P6RulesScenario.Resource(sim, city, "world:corn");
         Assert.Contains("Barbarians cannot found anything", Refusals(sim, city, GameFactory.Headquarters(sim, Cereal)));
     }
@@ -168,10 +209,12 @@ public sealed class CorporationRulesTests
         Assert.Equal(0, Adjust("government:planned"));
         Assert.Equal(0, Adjust("government:corporatist"));
         Found(sim, hq);
-        // A ban loses the branch's food and saves its maintenance, in planner points.
+        // A ban loses the branch's food (whole points: three quarters of a food per copy, one copy) and saves its
+        // maintenance, in planner points.
         long maintenance = P6RulesScenario.Service<ICorporationService>(sim).MaintenanceHundredths(sim, hq.Id);
         var cereal = sim.Content.Get<CorporationDef>(Cereal);
-        Assert.Equal(-Ariel.Ai.PlannerPoints.Yields(cereal.YieldProduced) + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, Adjust("government:planned"));
+        long food = cereal.YieldProducedHundredths.Food * Corps(sim).ConsumedBonusCount(sim, hq.Id, Cereal) / 100;
+        Assert.Equal(-food * Ariel.Ai.PlannerPoints.Food + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, Adjust("government:planned"));
         Assert.True(Adjust("government:corporatist") > 0, "a civic that cuts maintenance gains");
         Assert.Equal(0, Adjust("government:nationalist")); // bans only foreign corporations; this one is the player's own
         Assert.Equal(0, Adjust("government:chiefdom"));
@@ -183,41 +226,108 @@ public sealed class CorporationRulesTests
         Found(sim, hq); P6RulesScenario.Resource(sim, domestic, "world:corn"); P6RulesScenario.Resource(sim, foreign, "world:corn");
         long initial = sim.State.PlayerById(0).Treasury;
         var spread = new SpreadCorporationCommand { Player = 0, City = domestic.Id, Corporation = Cereal };
-        sim.State.PlayerById(0).Treasury = 99;
+        long cost = sim.Content.Get<CorporationDef>(Cereal).SpreadCost;
+        Assert.Equal(50, cost);
+        sim.State.PlayerById(0).Treasury = cost - 1;
         Assert.Contains("gold", P6RulesScenario.Reject(sim, spread)); sim.State.PlayerById(0).Treasury = initial;
         P6RulesScenario.Apply(sim, spread);
         Assert.Contains("executive", P6RulesScenario.Reject(sim, new SpreadCorporationCommand { Player = 0, City = foreign.Id, Corporation = Cereal }));
         var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
-        Assert.Null(sim.State.FindUnit(executive.Id)); Assert.Equal(initial - 200, sim.State.PlayerById(0).Treasury);
+        Assert.Null(sim.State.FindUnit(executive.Id)); Assert.Equal(initial - 2 * cost, sim.State.PlayerById(0).Treasury);
         var effects = ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq));
         Assert.Equal(12, effects.Ledger.Lines.Where(l => l.Source == Cereal + ":headquarters" && l.Key == "commerce.flat.gold").Sum(l => l.Amount));
-        Assert.Equal(1, P6RulesScenario.Service<ICityYieldService>(sim).Calculate(sim, domestic.Id).Ledger.Lines.Single(l => l.Source == Cereal && l.Key == "yield.flat.food").Amount);
+        Assert.True(Corps(sim).IsActive(sim, domestic.Id, Cereal));
     }
     [Fact]
-    public void Imported_headquarters_buildings_are_not_constructible()
+    public void A_guild_is_founded_by_its_guild_hall_after_the_buildings_of_its_trade_and_spreads_like_a_corporation()
     {
-        // A corporation is founded by its own headquarters (founding-headquarters.json). The imported rows that name the
-        // same identities have no cost and no founder behind them, even with every technology and resource at hand.
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0]; var branch = sim.State.Cities[1]; var rival = sim.State.Cities[2];
+        string hall = GameFactory.Headquarters(sim, Masons);
+        Assert.Equal("cities:corporation_masonguild", hall);
+        // The technology alone is not enough: the guild hall also wants the buildings of its trade across the empire.
+        GameFactory.GrantFoundingTechs(sim, city, Masons);
+        P6RulesScenario.Resource(sim, city, "world:stone");
+        Assert.Contains(Refusals(sim, city, hall), r => r.Contains("empire buildings of class: cities:treadmill_crane", StringComparison.Ordinal));
+        GameFactory.SatisfyFounding(sim, city, Masons);
+        Assert.Empty(Refusals(sim, city, hall));
+        QueueFinished(sim, city, hall);
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+        Assert.Equal(city.Id, Corps(sim).Headquarters(sim, Masons));
+        var founded = Assert.Single(sim.Events.Published.OfType<CorporationFounded>());
+        Assert.Equal(Masons, founded.Corporation);
+
+        // One founder only, world-wide.
+        GameFactory.SatisfyFounding(sim, rival, Masons);
+        Assert.Contains("Corporation is already founded", Refusals(sim, rival, hall));
+
+        // A branch, paid for at home, consumes stone as a corporation's branch consumes its resource.
+        P6RulesScenario.Resource(sim, branch, "world:stone");
+        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Masons });
+        Assert.Contains(Masons, Corps(sim).Present(sim, branch.Id));
+        var masons = sim.Content.Get<CorporationDef>(Masons);
+        var effects = ModifierSink.Collect(new(sim, ModifierScope.City, 0, branch)).Ledger.Lines.Where(l => l.Source == Masons).ToList();
+        // One stone: a whole production per copy and the branch's own production.
+        Assert.Equal(masons.YieldProducedHundredths.Production / 100 + masons.YieldChanges.Production,
+            effects.Where(l => l.Key == "yield.flat.production").Sum(l => l.Amount));
+
+        // The guild's own executive trains in its guild hall; the crafts master, which spreads five guilds, trains
+        // where the crafts guild hall stands, and both open branches abroad.
+        const string Executive = "military:executive_masonguild";
+        Assert.Empty(UnitRefusals(sim, city, Executive));
+        Assert.Equal(["Requires the guild hall of Masons Guild"], UnitRefusals(sim, branch, Executive));
+        P6RulesScenario.Resource(sim, rival, "world:stone");
+        var master = P6RulesScenario.AddUnit(sim, 0, rival, "military:bgmaster");
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = master.Id, Mission = CorporationMissions.Spread, Subject = Masons });
+        Assert.Contains(Masons, Corps(sim).Present(sim, rival.Id));
+        sim.TeamOf(0).Techs.Add("research:juris_prudence");
+        var crafts = sim.State.Cities.First(c => c.Owner == 0 && c.Buildings.Contains("cities:cguildhall"));
+        Assert.Empty(UnitRefusals(sim, crafts, "military:bgmaster"));
+    }
+
+    [Fact]
+    public void A_great_person_that_lists_a_headquarters_does_not_construct_it_where_production_may_build_it()
+    {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
-        sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<Ariel.Content.Schema.TechDef>().All.Select(t => t.Id));
-        P6RulesScenario.Resource(sim, city, "world:corn");
-        var imported = sim.Content.Get<Ariel.Content.Schema.BuildingDef>().All
-            .Where(b => b.FoundsCorporation is not null && !b.Id.StartsWith("corporations:", StringComparison.Ordinal)).ToArray();
-        Assert.NotEmpty(imported);
-        Assert.All(imported, b =>
+        string headquarters = GameFactory.Headquarters(sim, Cereal);
+        Assert.True(sim.Content.Get<Ariel.Content.Schema.UnitDef>("military:merchant").ConstructibleBuildings.GetValueOrDefault(headquarters));
+        GameFactory.SatisfyFounding(sim, city, Cereal);
+        Assert.Empty(Refusals(sim, city, headquarters));
+        var merchant = P6RulesScenario.AddUnit(sim, 0, city, "military:merchant");
+        sim.Rules().Units.Initialize(sim, merchant.Id);
+        Assert.False(sim.TryApply(new PerformMissionCommand
         {
-            Assert.Contains(ProductionFailures.BuildingCost, Refusals(sim, city, b.Id));
-            Assert.Contains("Nothing founds what this building would found", Refusals(sim, city, b.Id));
-        });
-        Assert.Empty(Refusals(sim, city, GameFactory.Headquarters(sim, Cereal)));
+            Player = 0, Unit = merchant.Id, Mission = Ariel.Mods.GreatPeople.GreatPersonMissions.Construct, Subject = headquarters,
+        }, out _));
+        Assert.DoesNotContain(headquarters, city.Buildings);
+        Assert.False(Corps(sim).IsFounded(sim, Cereal));
+    }
+
+    [Fact]
+    public void A_guild_that_consumes_no_resource_is_founded_and_spread_without_one()
+    {
+        const string Carpenters = "corporations:carpenterguild";
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0]; var branch = sim.State.Cities[1];
+        var carpenters = sim.Content.Get<CorporationDef>(Carpenters);
+        Assert.Empty(carpenters.PrereqBonuses);
+        GameFactory.SatisfyFounding(sim, city, Carpenters);
+        Assert.Null(sim.State.PlotAt(city.Position).Bonus);
+        Assert.Empty(Refusals(sim, city, GameFactory.Headquarters(sim, Carpenters)));
+        GameFactory.FoundCorporation(sim, city, Carpenters);
+        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Carpenters });
+        // Its branches give their flat production and gold whatever the city holds.
+        var lines = ModifierSink.Collect(new(sim, ModifierScope.City, 0, branch)).Ledger.Lines.Where(l => l.Source == Carpenters).ToList();
+        Assert.Equal(carpenters.YieldChanges.Production, lines.Where(l => l.Key == "yield.flat.production").Sum(l => l.Amount));
+        Assert.Equal(carpenters.CommerceChanges.Gold, lines.Where(l => l.Key == "commerce.flat.gold").Sum(l => l.Amount));
+        Assert.True(carpenters.YieldChanges.Production > 0);
     }
     [Fact]
     public void An_executive_trained_in_the_headquarters_it_was_built_for_spreads_into_a_foreign_city()
     {
         var sim = P6RulesScenario.Create(); var branch = sim.State.Cities[0]; var hq = sim.State.Cities[1]; var foreign = sim.State.Cities[2];
         const string Executive = "military:executive_1";
-        sim.TeamOf(0).Techs.Add("research:refrigeration");
+        sim.TeamOf(0).Techs.Add("research:organic_chemistry");
         foreach (var city in sim.State.Cities) P6RulesScenario.Resource(sim, city, "world:corn");
         Assert.Contains(HeadquartersRefusal, UnitRefusals(sim, hq, Executive));
         Assert.Contains(BranchRefusal, UnitRefusals(sim, hq, Executive));
@@ -254,17 +364,52 @@ public sealed class CorporationRulesTests
     [Fact]
     public void An_executive_whose_training_needs_a_building_no_city_can_build_fails_the_load()
     {
-        // The shape the executives had once the imported headquarters stopped being buildable: no city could train one.
+        // The shape the executives had while the imported headquarters were not buildable: no city could train one.
         var error = Assert.Throws<InvalidDataException>(() => P6RulesScenario.With(new UntrainableExecutiveMod()));
         Assert.Contains("military:executive_1: spreads foundation:1 but can never be trained: it needs building 'cities:corporation_1'", error.Message);
+        Assert.Contains("cities:corporation_1: founds foundation:1 but has a negative cost, so no city can build it", error.Message);
     }
     private sealed class UntrainableExecutiveMod : IMod
     {
-        public void Register(IModContext context) => context.Content<Ariel.Content.Schema.UnitDef>().Override(new()
+        public void Register(IModContext context)
         {
-            Id = "military:executive_1", Name = "Executive", DefaultUnit = "military:executive_1", Cost = 100,
-            Requirements = new Requirement.All([new Requirement.Leaf("building", "cities:corporation_1"), new Requirement.Leaf("corporation", "foundation:1")]),
-        });
+            // The headquarters as the source left it, for a great person only.
+            context.Content<Ariel.Content.Schema.BuildingDef>().Override(new()
+            {
+                Id = "cities:corporation_1", Name = "Cereal Mills", DefaultBuilding = "cities:corporation_1", Cost = -1, FoundsCorporation = "foundation:1",
+            });
+            context.Content<Ariel.Content.Schema.UnitDef>().Override(new()
+            {
+                Id = "military:executive_1", Name = "Executive", DefaultUnit = "military:executive_1", Cost = 100,
+                Requirements = new Requirement.All([new Requirement.Leaf("building", "cities:corporation_1"), new Requirement.Leaf("corporation", "foundation:1")]),
+            });
+        }
+    }
+    [Fact]
+    public void A_corporation_identity_with_no_rules_fails_the_load_where_a_building_or_unit_names_it()
+    {
+        // An identity only the base game knows would leave its headquarters and executives inert, as 29 were before
+        // the corporation rules were imported.
+        var error = Assert.Throws<InvalidDataException>(() => P6RulesScenario.With(new OrphanCorporationMod()));
+        Assert.Contains("probe:orphan_hq: founds 'probe:orphan', which no corporation of this mod has as its identity", error.Message);
+        Assert.Contains("military:warrior: spreads 'probe:orphan', which no corporation of this mod has as its identity", error.Message);
+    }
+    private sealed class OrphanCorporationMod : IMod
+    {
+        public void Register(IModContext context)
+        {
+            context.Content<Ariel.Content.Schema.CorporationIdentityDef>().Register(new() { Id = "probe:orphan", Name = "Orphan" });
+            context.Content<Ariel.Content.Schema.BuildingDef>().Register(new()
+            {
+                Id = "probe:orphan_hq", Name = "Orphan Headquarters", DefaultBuilding = "probe:orphan_hq", Cost = 100,
+                FoundsCorporation = "probe:orphan",
+            });
+            context.Content<UnitCorporationsDef>().Register(new()
+            {
+                Id = "probe:orphan_spread", Target = "military:warrior",
+                CorporationSpreads = System.Collections.Immutable.ImmutableDictionary<string, int>.Empty.Add("probe:orphan", 40),
+            });
+        }
     }
     private static IReadOnlyList<string> UnitRefusals(Simulation sim, City city, string unit) =>
         Production(sim).Validate(sim, city.Id, "cities:unit", unit).Failures.Select(f => f.Explanation).ToList();
@@ -282,6 +427,9 @@ public sealed class CorporationRulesTests
         // A parameter the leaf does not define keeps the generic reason.
         Assert.Equal("Required corporation: foundation:1", Explain(1));
         Assert.Equal("the headquarters of Cereal Mills", requirements.Describe(new("corporation", "foundation:1", Param: 2), sim.Content));
+        // A guild's seat is its guild hall, by the guild's kind; its branches read as a corporation's do.
+        Assert.Equal("the guild hall of Masons Guild", requirements.Describe(new("corporation", "foundation:masonguild", Param: 2), sim.Content));
+        Assert.Equal("a branch of Masons Guild", requirements.Describe(new("corporation", "foundation:masonguild"), sim.Content));
 
         // The pedia lists the same phrases among an executive's prerequisites.
         var entry = new Ariel.Client.GameSession(sim).Pedia.Find("military:executive_1")!;
@@ -331,7 +479,9 @@ public sealed class CorporationRulesTests
         var tile = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(hq.Position)).First();
         var second = sim.State.Plots[tile.Value]; second.Owner = 0; second.Bonus = "world:corn"; second.Improvement = "world:improvement_improvement_farm"; second.Route = "world:road";
         Assert.Equal(2, Corps(sim).ConsumedBonusCount(sim, hq.Id, Cereal));
-        Assert.Equal(2, ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq)).Ledger.Lines.Single(l => l.Source == Cereal && l.Key == "yield.flat.food").Amount);
+        // Three quarters of a food per copy: two copies make one and a half, of which the city gets the whole one.
+        Assert.Equal(75, sim.Content.Get<CorporationDef>(Cereal).YieldProducedHundredths.Food);
+        Assert.Equal(1, ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq)).Ledger.Lines.Single(l => l.Source == Cereal && l.Key == "yield.flat.food").Amount);
         Assert.Equal(750, Corps(sim).MaintenanceHundredths(sim, hq.Id)); // (400 headquarters + 200 resources) * 100/80.
         sim.State.PlayerById(0).Civics["test"] = "government:guilds";
         Assert.Equal(-105, ModifierSink.Collect(new(sim, ModifierScope.Player, 0)).Ledger.Total("corporations:maintenance_percent"));
