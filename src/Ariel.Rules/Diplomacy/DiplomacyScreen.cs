@@ -259,7 +259,7 @@ internal sealed record DealDraft(IReadOnlyList<DiplomaticTradeItem> Giving, IRea
         // At war only gold and technology can go with the peace: resources and embargoes need trade between the two.
         if (!war && Capital(sim, from) is { } capital)
             foreach (var bonus in sim.Content.Get<BonusDef>().All.OrderBy(b => b.Name, StringComparer.Ordinal))
-                if (ResourceAccess.Count(sim, from, capital.Id, bonus.Id) > 0) yield return new(from, TradeItemKind.Resource, bonus.Id);
+                if (ResourceAccess.TradeCount(sim, from, capital.Id, bonus.Id) > 0) yield return new(from, TradeItemKind.Resource, bonus.Id);
         var giver = sim.TeamOf(from);
         var taker = sim.TeamOf(to);
         foreach (var tech in giver.Techs.Where(t => !taker.Techs.Contains(t)).Order(StringComparer.Ordinal))

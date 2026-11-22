@@ -1,5 +1,6 @@
 [
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -59,6 +60,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -120,6 +122,7 @@
     }
   },
   {
+    "bonusProduced": "world:diesel",
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -164,7 +167,6 @@
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
-      "BonusProduced",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -181,6 +183,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -242,6 +245,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -304,6 +308,7 @@
     }
   },
   {
+    "bonusProduced": "world:aluminum",
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -346,7 +351,6 @@
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
-      "BonusProduced",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -363,6 +367,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -423,6 +428,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -485,6 +491,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -547,6 +554,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 4,
       "espionage": 0,
@@ -609,6 +617,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -676,6 +685,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -741,6 +751,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -802,6 +813,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -869,6 +881,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -931,6 +944,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -993,6 +1007,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 2,
       "espionage": 0,
@@ -1061,6 +1076,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1122,6 +1138,7 @@
     }
   },
   {
+    "bonusProduced": "world:horse",
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1171,7 +1188,6 @@
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
-      "BonusProduced",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1188,6 +1204,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1249,6 +1266,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1310,6 +1328,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1378,6 +1397,7 @@
     }
   },
   {
+    "bonusProduced": "world:glass",
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1427,7 +1447,6 @@
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
-      "BonusProduced",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1444,6 +1463,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1511,6 +1531,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1579,6 +1600,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1640,6 +1662,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1698,6 +1721,7 @@
     }
   },
   {
+    "bonusProduced": "world:marble",
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1746,7 +1770,6 @@
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
-      "BonusProduced",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1763,6 +1786,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 1,
       "espionage": 0,
@@ -1831,6 +1855,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1893,6 +1918,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1954,6 +1980,7 @@
     }
   },
   {
+    "bonusProduced": "world:cannabis",
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -1998,7 +2025,6 @@
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
-      "BonusProduced",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -2015,6 +2041,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -2074,6 +2101,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -2135,6 +2163,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,
@@ -2194,6 +2223,7 @@
     }
   },
   {
+    "bonusProduced": null,
     "commerceChanges": {
       "culture": 0,
       "espionage": 0,

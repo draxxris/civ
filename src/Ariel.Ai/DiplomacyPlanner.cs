@@ -258,11 +258,11 @@ internal sealed class DiplomacyPlanner(AiContext ctx)
             + ctx.Adjustment(new ResourceSubject(def, held, Plot: null));
     }
 
-    /// <summary>Copies the empire can use at its capital, imports included.</summary>
+    /// <summary>Copies the empire holds for trade at its capital, imports included.</summary>
     private long Held(string bonus) => Held(ctx.PlayerId, bonus);
 
     private long Held(int player, string bonus) => Capital(player) is { } city
-        ? ResourceAccess.Count(ctx.Sim, player, city.Id, bonus) : 0;
+        ? ResourceAccess.TradeCount(ctx.Sim, player, city.Id, bonus) : 0;
 
     private City? Capital(int player) => ctx.Sim.State.Cities.Where(c => c.Owner == player)
         .OrderByDescending(c => c.Buildings.Any(b => ctx.Sim.Content.Get<BuildingDef>(b).Capital)).ThenBy(c => c.Id).FirstOrDefault();

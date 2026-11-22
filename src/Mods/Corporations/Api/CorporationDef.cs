@@ -44,6 +44,11 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     /// headquarters city.</summary>
     [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
     public ImmutableArray<string> CompetingCorporations { get; init; } = [];
+    /// <summary>The resource a branch produces for its own city: one copy per consumed copy (one when it consumes none),
+    /// once the city's team can trade that resource and while it is not obsolete. The copies serve the city like
+    /// connected ones (happiness, health, buildings, units, other corporations) but cannot be traded.</summary>
+    [ContentReference(typeof(BonusDef))]
+    public string? BonusProduced { get; init; }
     /// <summary>Happiness every active branch gives its city, whole points; negative is unhappiness.</summary>
     public int Happiness { get; init; }
     /// <summary>Health every active branch gives its city, whole points; negative is unhealthiness.</summary>
@@ -75,6 +80,7 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     /// <summary>What an active branch does to its city beyond its yields and commerce, for the encyclopedia.</summary>
     public IEnumerable<string> Describe(ContentDb content)
     {
+        if (BonusProduced is { } bonus) yield return $"Produces {Name(content, bonus)} in each city with a branch, one per resource consumed";
         if (Happiness != 0) yield return $"{Ariel.Presentation.Labels.Signed(Happiness)} happiness in each city with a branch";
         if (Health != 0) yield return $"{Ariel.Presentation.Labels.Signed(Health)} health in each city with a branch";
         if (MilitaryProductionPercent != 0) yield return $"{Ariel.Presentation.Labels.Signed(MilitaryProductionPercent)}% military unit production in each city with a branch";

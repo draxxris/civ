@@ -233,6 +233,55 @@ public sealed class CorporationSourceRulesTests
         Assert.True(failed && succeeded, "the fixed seed rolls both outcomes within 64 attempts");
     }
 
+    [Fact]
+    public void A_branch_produces_its_resource_for_its_city_only()
+    {
+        const string MoonBean = "corporations:moonbean", Cannabis = "world:cannabis";
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0]; var other = sim.State.Cities[1];
+        Assert.Equal(Cannabis, sim.Content.Get<CorporationDef>(MoonBean).BonusProduced);
+        P6RulesScenario.Resource(sim, city, "world:sugar");
+        Plant(sim, city, MoonBean);
+        // Not before the team can trade the produced resource.
+        sim.TeamOf(0).Techs.Remove("research:calendar");
+        Assert.Equal(0, ResourceAccess.Count(sim, 0, city.Id, Cannabis));
+        sim.TeamOf(0).Techs.Add("research:calendar");
+
+        // One copy per consumed copy: one sugar, one cannabis, which the city uses as a connected copy...
+        Assert.Equal(1, ResourceAccess.Count(sim, 0, city.Id, Cannabis));
+        var happy = P6RulesScenario.Service<ICityWellbeingService>(sim).Calculate(sim, city.Id).Ledger.Lines;
+        Assert.Contains(happy, l => l.Source == Cannabis && l.Key == "cities:happiness_good");
+        // ...but it is not on the trade network: not another city's, not tradeable.
+        Assert.Equal(0, ResourceAccess.TradeCount(sim, 0, city.Id, Cannabis));
+        Assert.Equal(0, ResourceAccess.Count(sim, 0, other.Id, Cannabis));
+        // A suspended branch produces nothing.
+        sim.State.PlayerById(0).Civics["test"] = "government:planned";
+        Assert.Equal(0, ResourceAccess.Count(sim, 0, city.Id, Cannabis));
+        sim.State.PlayerById(0).Civics.Clear();
+        Assert.Contains("Produces Hemp in each city with a branch, one per resource consumed",
+            new Ariel.Client.GameSession(sim).Pedia.Find(MoonBean)!.Effects);
+    }
+
+    [Fact]
+    public void A_produced_resource_feeds_another_branch_that_consumes_it()
+    {
+        const string Tours = "corporations:adventure", Equestrians = "corporations:equestguild";
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        var tours = sim.Content.Get<CorporationDef>(Tours); var equestrians = sim.Content.Get<CorporationDef>(Equestrians);
+        Assert.Contains("world:horse", tours.PrereqBonuses);
+        Assert.False(CorporationsCompete(tours, equestrians));
+        P6RulesScenario.Resource(sim, city, "world:wheat");
+        sim.TeamOf(0).Techs.Add("research:animal_husbandry");
+        Plant(sim, city, Tours);
+        Assert.Equal(0, Corps(sim).ConsumedBonusCount(sim, city.Id, Tours));
+        // The Equestrians turn the wheat into a horse, which Adventure Tours consumes.
+        Plant(sim, sim.State.Cities[1], Equestrians, city);
+        Assert.Equal(1, ResourceAccess.Count(sim, 0, city.Id, "world:horse"));
+        Assert.Equal(1, Corps(sim).ConsumedBonusCount(sim, city.Id, Tours));
+    }
+
+    private static bool CorporationsCompete(CorporationDef a, CorporationDef b) =>
+        a.CompetingCorporations.Contains(b.Identity) || b.CompetingCorporations.Contains(a.Identity) || a.PrereqBonuses.Intersect(b.PrereqBonuses).Any();
+
     private static IReadOnlyList<string> Refusals(Simulation sim, City city, string building) =>
         P6RulesScenario.Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", building).Failures.Select(f => f.Explanation).ToList();
 }

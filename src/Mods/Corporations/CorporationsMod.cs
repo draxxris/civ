@@ -39,6 +39,7 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterService<IPediaSource>("pedia", new CorporationPedia());
         context.RegisterService<ICityCorporations>("city_corporations", service);
         context.RegisterService<IModifierSource>("effects", new CorporationEffects(service));
+        context.RegisterService<ICityResourceSupply>("produced_resources", new CorporationResourceSupply(service));
         context.RegisterStateComponent<CorporationCityState>("city_state");
         context.RegisterStateComponent<CorporationGameState>("game_state");
         context.RegisterStateComponent<CorporationPlayerState>("player_state");

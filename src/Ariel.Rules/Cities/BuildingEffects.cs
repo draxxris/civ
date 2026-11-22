@@ -58,7 +58,9 @@ internal sealed class BuildingEffects : IModifierSource
         if (count == -1) count = sim.Content.TryGet<S.WorldSizeDef>(sim.Settings.WorldSize ?? "", out var world) ? world.NumFreeBuildingBonuses : 0;
         return Math.Max(0, count) + Math.Max(0, building.ExtraFreeBonuses.GetValueOrDefault(bonus));
     }
-    /// <summary>Connected copies after exchanges with other players. Only resources the owner exchanges need a second lookup.</summary>
+    /// <summary>Connected copies after exchanges with other players, plus what the city's own rules supply it
+    /// (<see cref="ResourceAccess.Supplied"/>), so this agrees with <see cref="ResourceAccess.Counts"/>. Only resources
+    /// the owner exchanges need a second lookup.</summary>
     private static IReadOnlyDictionary<string, int> Available(Simulation sim, City city) =>
         CityReadScope.Run(sim, scope => CityReadScope.Memo(scope.Available, city, () => AvailableUncached(sim, city)));
     private static IReadOnlyDictionary<string, int> AvailableUncached(Simulation sim, City city)
@@ -67,13 +69,16 @@ internal sealed class BuildingEffects : IModifierSource
         var physical = network.ConnectedCounts(sim, city.Owner, city.Id);
         var exchanges = sim.Rules().Diplomacy;
         var traded = exchanges.ExchangedResources(sim, city.Owner);
-        if (traded.Count == 0) return physical;
+        var supplied = ResourceAccess.Supplied(sim, city.Owner, city.Id);
+        if (traded.Count == 0 && supplied.Count == 0) return physical;
         var result = new SortedDictionary<string, int>(StringComparer.Ordinal);
-        foreach (var bonus in physical.Keys.Concat(traded).Distinct(StringComparer.Ordinal))
+        if (traded.Count == 0) foreach (var pair in physical) result[pair.Key] = pair.Value;
+        else foreach (var bonus in physical.Keys.Concat(traded).Distinct(StringComparer.Ordinal))
         {
             int count = (int)exchanges.AvailableResourceCount(sim, city.Owner, city.Id, bonus);
             if (count > 0) result[bonus] = count;
         }
+        foreach (var (bonus, copies) in supplied) result[bonus] = result.GetValueOrDefault(bonus) + (int)copies;
         return result;
     }
     private static void Local(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
