@@ -208,6 +208,8 @@ public sealed class GameRules : IRuleset
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();
         CombatLeaders = services.Get<ICombatLeaders>().SingleOrDefault();
+        var problems = services.Get<IContentCheck>().SelectMany(check => check.Problems(content)).ToArray();
+        if (problems.Length > 0) throw new InvalidDataException("Content check failed:\n" + string.Join("\n", problems));
     }
 
     /// <inheritdoc/>

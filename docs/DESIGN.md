@@ -432,6 +432,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
 | `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders), Corporations (headquarters) | such a building is refused with "Nothing founds what this building would found", so no great person can construct it either |
+| `IContentCheck` | (list, run once by `GameRules.Bind`) | the load, once content freezes, for invariants that read other mods' rows | Corporations (every executive that spreads one of its corporations can be trained) | nothing is checked |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IVictoryCondition` | `VictoryConditions` (list) | the victory check, for each enabled `VictoryDef` by the condition its `Rule` names | Victory (conquest, domination, cultural, time), ProjectsVictory (the space race), Votes (the diplomatic victory) | a victory naming an unregistered condition fails the load, so the victory is simply absent |
 | `ITimerKind` | (registry, read by `ITimers`) | the Foundation timer store (Timers), for each timer by the kind it names | Events, Espionage, Revolution | starting a timer of an unregistered kind throws |
@@ -1618,7 +1619,9 @@ build it once the corporation is founded. The imported headquarters rows stay in
 nothing claims them, so Cities refuses them, and no live rule needs one: an executive's
 training requirement names its corporation's headquarters (the `corporation` leaf with
 parameter 2), which is the city that completed the mod's headquarters, so executives are
-trained there. Spreading into a foreign city uses an executive's `corporations:spread`
+trained there. A load check (`CorporationContentValidation.Executives`, an
+`IContentCheck`) refuses an executive of one of the mod's corporations that no city could
+ever train. Spreading into a foreign city uses an executive's `corporations:spread`
 mission; an own city can also be paid for without one. Active branches apply corporation yield,
 commerce, headquarters commerce, and resource-based maintenance. Civics can prohibit
 local or foreign corporations. A branch requires an active branch owned by the spreading

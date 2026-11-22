@@ -19,9 +19,11 @@ internal static class P6RulesScenario
         var sources = names.Select(name => ModLoader.FromDirectory(Path.Combine(dir!.FullName, "src", "Mods", name, "bin", configuration, "net10.0"))).ToArray();
         var loaded = new LoadedMods();
         var all = loaded.Sources.Where(s => !sources.Any(n => n.Manifest.Id == s.Manifest.Id)).Concat(sources);
-        if (extra is not null) all = all.Append(new ModSource { Manifest = new() { Id = "probe", Version = "1", References = ["cities"] }, Root = loaded.Root, Instance = extra });
+        if (extra is not null) all = all.Append(new ModSource { Manifest = new() { Id = "probe", Version = "1", References = ["cities", "military", "foundation"] }, Root = loaded.Root, Instance = extra });
         return ModLoader.Build(all);
     }
+    /// <summary>The scenario's content with one more mod, built fresh.</summary>
+    public static ContentDb With(IMod extra) => BuildContent(extra);
     private sealed class HalfMaintenanceMod : IMod
     {
         public void Register(IModContext context) => context.Content<Ariel.Content.Schema.BuildingDef>().Override(new()
@@ -246,6 +248,21 @@ public sealed class CorporationRulesTests
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
         Assert.Contains(Cereal, Corps(sim).Present(sim, foreign.Id));
         Assert.Null(sim.State.FindUnit(executive.Id));
+    }
+    [Fact]
+    public void An_executive_whose_training_needs_a_building_no_city_can_build_fails_the_load()
+    {
+        // The shape the executives had once the imported headquarters stopped being buildable: no city could train one.
+        var error = Assert.Throws<InvalidDataException>(() => P6RulesScenario.With(new UntrainableExecutiveMod()));
+        Assert.Contains("military:executive_1: spreads foundation:1 but can never be trained: it needs building 'cities:corporation_1'", error.Message);
+    }
+    private sealed class UntrainableExecutiveMod : IMod
+    {
+        public void Register(IModContext context) => context.Content<Ariel.Content.Schema.UnitDef>().Override(new()
+        {
+            Id = "military:executive_1", Name = "Executive", DefaultUnit = "military:executive_1", Cost = 100,
+            Requirements = new Requirement.All([new Requirement.Leaf("building", "cities:corporation_1"), new Requirement.Leaf("corporation", "foundation:1")]),
+        });
     }
     private static IReadOnlyList<string> UnitRefusals(Simulation sim, City city, string unit) =>
         Production(sim).Validate(sim, city.Id, "cities:unit", unit).Failures.Select(f => f.Explanation).ToList();

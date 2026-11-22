@@ -8,7 +8,7 @@ namespace Ariel.Mods.Corporations;
 /// silently (an unfoundable corporation, a free branch, two rules for one identity, a headquarters that founds no
 /// corporation or a corporation with no headquarters). Identity existence cannot be checked here because the
 /// Corporations mod registers before Foundation loads the identity records; content reference validation does it after
-/// the freeze.</summary>
+/// the freeze. <see cref="Executives"/> reads other mods' rows and so runs after the freeze too.</summary>
 internal static class CorporationContentValidation
 {
     /// <summary>Checks the corporations and their founding headquarters, and returns which corporation each
@@ -44,4 +44,49 @@ internal static class CorporationContentValidation
         if (errors.Count > 0) throw new InvalidDataException("Corporation content validation failed:\n" + string.Join("\n", errors));
         return founds;
     }
+
+    /// <summary>Every executive that spreads one of this mod's corporations can be trained somewhere: its cost is not
+    /// negative, and some way through its requirements needs nothing that can never exist, which is a building no city
+    /// may construct (a negative cost, or a founding building no loaded founder claims) or a corporation this mod does
+    /// not define. An executive is the only way to spread a corporation into a foreign city, so one that can never be
+    /// trained silently removes foreign spread. Executives of identities no corporation here has spread nothing and are
+    /// not checked. Unit rows belong to Military, which may register after this mod, so this runs on frozen content
+    /// (<see cref="IContentCheck"/>).</summary>
+    public static IEnumerable<string> Executives(ContentDb content)
+    {
+        var identities = content.Get<CorporationDef>().All.Select(d => d.Identity).ToHashSet(StringComparer.Ordinal);
+        var founders = content.Services.Get<Ariel.Game.IBuildingFounder>();
+        foreach (var row in content.Get<UnitCorporationsDef>().All.OrderBy(r => r.Target, StringComparer.Ordinal))
+        {
+            var spreads = row.CorporationSpreads.Where(p => p.Value > 0 && identities.Contains(p.Key)).Select(p => p.Key).Order(StringComparer.Ordinal).ToArray();
+            if (spreads.Length == 0 || !content.TryGet<UnitDef>(row.Target, out var unit)) continue;
+            string spread = string.Join(", ", spreads);
+            if (unit.Cost < 0) yield return $"{unit.Id}: spreads {spread} but has a negative cost, so no city can train it";
+            else if (unit.Requirements is { } requirements && Never(requirements) is { } blocker)
+                yield return $"{unit.Id}: spreads {spread} but can never be trained: it needs {blocker.Kind} '{blocker.Id}', which can never exist";
+        }
+
+        // The leaf that blocks every way through the requirement, or null when some way can be met.
+        Requirement.Leaf? Never(Requirement requirement) => requirement switch
+        {
+            Requirement.All all => all.Items.Select(Never).FirstOrDefault(blocker => blocker is not null),
+            Requirement.Any any => any.Items.Select(Never).ToArray() is var blockers && blockers.Length > 0 && blockers.All(b => b is not null) ? blockers[0] : null,
+            Requirement.Leaf leaf => Exists(leaf) ? null : leaf,
+            // A negated requirement is met by the absence of something, which can always happen.
+            _ => null,
+        };
+        bool Exists(Requirement.Leaf leaf) => leaf.Kind switch
+        {
+            "building" => content.TryGet<BuildingDef>(leaf.Id, out var building) && building.Cost >= 0
+                && (building.FoundsCorporation is null && building.FoundsReligion is null || founders.Any(f => f.Claims(content, building))),
+            "corporation" => identities.Contains(leaf.Id),
+            _ => true,
+        };
+    }
+}
+
+/// <summary>Runs <see cref="CorporationContentValidation.Executives"/> once content freezes.</summary>
+internal sealed class ExecutiveTrainingCheck : Ariel.Game.IContentCheck
+{
+    public IEnumerable<string> Problems(ContentDb content) => CorporationContentValidation.Executives(content);
 }

@@ -118,7 +118,10 @@ founded by exactly one headquarters building in the Corporations mod's
 identity, it requires the founding technology, and its world limit is one. Content
 validation refuses a corporation without one headquarters, a headquarters that names no
 corporation, and one that does not require the founding technology. Imported buildings
-that name a corporation are not claimed and cannot be built. Yield and commerce vectors (`YieldProduced`,
+that name a corporation are not claimed and cannot be built. Once content freezes, a
+second check refuses an executive that spreads one of the mod's corporations but that no
+city could train (a negative cost, or every way through its requirements needs a building
+nothing can build or a corporation the mod does not define). Yield and commerce vectors (`YieldProduced`,
 `CommerceProduced`) use whole points. Headquarters commerce (`HeadquartersCommerce`) is
 evaluated separately from branch commerce. `SpreadCost` uses whole gold.
 `MaintenanceHundredths` uses hundredths of gold per consumed resource copy.
