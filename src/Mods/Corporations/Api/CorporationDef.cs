@@ -38,6 +38,12 @@ public sealed class CorporationDef : GameContentDef
     public CommerceVector CommerceChanges { get; init; }
     /// <summary>Commerce the headquarters city earns for every active branch, whole points.</summary>
     public CommerceVector HeadquartersCommerce { get; init; }
+    /// <summary>Corporations, by identity, that compete with this one although they share no consumed resource (the
+    /// guilds of one Guild Hall group). Competition is mutual, either list or a shared resource is enough: opening a
+    /// branch evicts a competitor's branch from the city, and nobody opens one, or founds one, in a competitor's
+    /// headquarters city.</summary>
+    [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
+    public ImmutableArray<string> CompetingCorporations { get; init; } = [];
     public int SpreadCost { get; init; }
     /// <summary>Maintenance per consumed resource copy, hundredths of gold.</summary>
     public int MaintenanceHundredths { get; init; }

@@ -94,10 +94,18 @@ internal sealed class CorporationPedia : IPediaSource
     public IEnumerable<PediaItem> Items(ContentDb content) => content.Get<CorporationDef>().All.Select(d =>
     {
         var building = CorporationFounder.Headquarters(content, d.Id);
-        return new PediaItem(d,
-            Notes: building is null ? null : [$"{d.SeatTitle()}: founded by building {building.Name}"],
-            UnlockedBy: building is null ? null : FoundingTech(building));
+        var notes = Notes(content, d, building).ToList();
+        return new PediaItem(d, Notes: notes.Count == 0 ? null : notes, UnlockedBy: building is null ? null : FoundingTech(building));
     });
+
+    /// <summary>The rules of a corporation the player reads in its entry, beyond its output.</summary>
+    internal static IEnumerable<string> Notes(ContentDb content, CorporationDef d, Ariel.Content.Schema.BuildingDef? building)
+    {
+        if (building is not null) yield return $"{d.SeatTitle()}: founded by building {building.Name}";
+        var rivals = content.Get<CorporationDef>().All.Where(o => CorporationService.Competes(d, o))
+            .Select(o => o.Name).Order(StringComparer.Ordinal).ToArray();
+        if (rivals.Length > 0) yield return "Competes with " + string.Join(", ", rivals) + ": a branch of one evicts the other";
+    }
 
     /// <summary>The first technology the founding building requires, which is where the encyclopedia files it.</summary>
     private static string? FoundingTech(Ariel.Content.Schema.BuildingDef building) =>

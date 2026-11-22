@@ -246,6 +246,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "effectMapCommerce" => Indexed(record, node, field, n => Commerce(n.Children[1])).SelectMany(p => VectorEffects(field, p.Key, p.Value)).ToArray(),
         "mapInt" => Indexed(record, node, field, n => Integer(n.Children[1].Text)),
         "mapBool" => Indexed(record, node, field, n => Boolean(n.Children[1].Text)),
+        // The keys of a (reference, flag) pair list whose flag is set: a false pair says nothing.
+        "flaggedRefs" => Indexed(record, node, field, n => Boolean(n.Children[1].Text)).Where(p => p.Value).Select(p => p.Key).ToArray(),
         "mapRef" => Indexed(record, node, field, n => Reference(field.ValueTarget!, n.Children[1].Text, record, field.Source)),
         "mapYield" => Indexed(record, node, field, n => Yield(n.Children[1])),
         "mapCommerce" => Indexed(record, node, field, n => Commerce(n.Children[1])),

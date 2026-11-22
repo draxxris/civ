@@ -193,7 +193,12 @@ internal sealed class CorporationService : ICorporationService
         Add(sim, city, def);
         sim.Events.Publish(new CorporationSpread(corporation, city.Id, player));
     }
-    private static bool Competes(Simulation sim, string corporation, CorporationDef incoming) => corporation != incoming.Id && sim.Content.Get<CorporationDef>(corporation).PrereqBonuses.Intersect(incoming.PrereqBonuses, StringComparer.Ordinal).Any();
+    private static bool Competes(Simulation sim, string corporation, CorporationDef incoming) => Competes(sim.Content.Get<CorporationDef>(corporation), incoming);
+    /// <summary>Whether two corporations compete, as the source defines it: either names the other in its
+    /// <see cref="CorporationDef.CompetingCorporations"/>, or they consume a common resource.</summary>
+    internal static bool Competes(CorporationDef a, CorporationDef b) => a.Id != b.Id
+        && (a.CompetingCorporations.Contains(b.Identity, StringComparer.Ordinal) || b.CompetingCorporations.Contains(a.Identity, StringComparer.Ordinal)
+            || a.PrereqBonuses.Intersect(b.PrereqBonuses, StringComparer.Ordinal).Any());
     private string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
     private static void Add(Simulation sim, City city, CorporationDef def)
     {
