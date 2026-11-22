@@ -363,6 +363,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         return null;
     }
 
+    private static readonly Regex PrefixedTextKey = new(@"^[A-Z0-9]+_TXT_KEY_[A-Z0-9_]+$", RegexOptions.CultureInvariant);
+
     public string Text(string value)
     {
         if (value.StartsWith("TXT_KEY_", StringComparison.Ordinal))
@@ -371,6 +373,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             if (text is null) return Humanize(value[8..]);
             value = text;
         }
+        // A key the source renamed in place, such as CHANGED_TXT_KEY_CORPORATION_2, is still a key of the text table.
+        else if (PrefixedTextKey.IsMatch(value) && lookupText(value) is { } renamed) value = renamed;
         return Branding.Output(Regex.Replace(value, @"\{link:([^}]+)\}(.*?)\{/link\}", match =>
         {
             var body = match.Groups[2].Value;
