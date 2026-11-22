@@ -10,7 +10,8 @@ namespace Ariel.Mods.Corporations;
 /// branches already open in the player's own cities, so a civic means nothing to corporations before any is founded.
 /// <list type="bullet">
 /// <item>A civic that bans corporations costs what the branches produce (their yields and commerce, in
-/// <see cref="PlannerPoints"/>) and saves their maintenance; one that bans foreign corporations costs what the branches
+/// <see cref="PlannerPoints"/>, and their happiness, health, military production and produced resource as
+/// <see cref="CorporationPlanner.Extras"/> weighs them) and saves their maintenance; one that bans foreign corporations costs what the branches
 /// of other teams' corporations produce.</item>
 /// <item>A change to maintenance gains or costs that share of the branches' maintenance, as gold.</item>
 /// </list></summary>
@@ -38,8 +39,9 @@ internal sealed class CorporationCivicValuer(ICorporationService corporations) :
             {
                 if (!banned && !(foreignBanned && Foreign(ctx, corporation))) continue;
                 var def = sim.Content.Get<CorporationDef>(corporation);
-                var (yields, commerce) = CorporationService.BranchOutput(def, corporations.ConsumedBonusCount(sim, city.Id, corporation));
-                points -= PlannerPoints.Yields(yields) + PlannerPoints.Commerce(commerce);
+                long copies = corporations.ConsumedBonusCount(sim, city.Id, corporation);
+                var (yields, commerce) = CorporationService.BranchOutput(def, copies);
+                points -= PlannerPoints.Yields(yields) + PlannerPoints.Commerce(commerce) + CorporationPlanner.Extras(sim.Content, def, copies);
             }
             // Maintenance is in hundredths of gold. A ban ends it with the branches; a cut is a gain.
             long maintenance = corporations.MaintenanceHundredths(sim, city.Id);

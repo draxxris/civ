@@ -279,6 +279,41 @@ public sealed class CorporationSourceRulesTests
         Assert.Equal(1, Corps(sim).ConsumedBonusCount(sim, city.Id, Tours));
     }
 
+    [Fact]
+    public void The_civic_valuer_weighs_a_banned_branchs_happiness_and_health()
+    {
+        const string Wonka = "corporations:wonka";
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        Plant(sim, city, Wonka);
+        var wonka = sim.Content.Get<CorporationDef>(Wonka);
+        // No consumed resource: the branch yields nothing, so happiness and health are all a ban takes away.
+        Assert.Equal(0, Corps(sim).ConsumedBonusCount(sim, city.Id, Wonka));
+        Assert.Equal(new YieldVector(), wonka.YieldChanges); Assert.Equal(new CommerceVector(), wonka.CommerceChanges);
+        var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "corporations:civic_valuer");
+        int adjust = valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0),
+            new Ariel.Ai.CivicSubject(sim.Content.Get<Ariel.Content.Schema.CivicDef>("government:planned")));
+        long maintenance = Corps(sim).MaintenanceHundredths(sim, city.Id);
+        Assert.Equal(-(3 * 8 - 1 * 6) + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, adjust);
+    }
+
+    /// <summary>The source corporation fields with non-default data that no rule reads, each with its reason. The importer
+    /// lists such fields in a row's <c>unsupported</c>; every other field it maps is read by a rule above.</summary>
+    internal static readonly IReadOnlyDictionary<string, string> UnreadSourceFields = new Dictionary<string, string>
+    {
+        ["Sound"] = "presentation: the founding and spread sound; the client plays no corporation sounds yet",
+        ["iTGAIndex"] = "presentation: the source's font-atlas glyph index; Ariel has no font atlas",
+        ["iSpread"] = "the realistic-corporations option's automatic spread, decay and founding, which is not built",
+    };
+
+    [Fact]
+    public void Every_source_corporation_field_with_data_is_read_by_a_rule_or_listed_with_a_reason()
+    {
+        var sim = P6RulesScenario.Create();
+        foreach (var def in sim.Content.Get<CorporationDef>().All)
+            foreach (var field in def.Unsupported)
+                Assert.True(UnreadSourceFields.ContainsKey(field), $"{def.Id}: source field {field} has data that no rule reads");
+    }
+
     private static bool CorporationsCompete(CorporationDef a, CorporationDef b) =>
         a.CompetingCorporations.Contains(b.Identity) || b.CompetingCorporations.Contains(a.Identity) || a.PrereqBonuses.Intersect(b.PrereqBonuses).Any();
 
