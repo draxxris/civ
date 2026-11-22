@@ -8,6 +8,14 @@ directories. Foundation registers setup policies, baseline calendars, and tuning
 feature mods register gameplay services and systems. The mechanics status and
 development roadmap are in [ROADMAP.md](ROADMAP.md).
 
+The committed `data/*.json` files are the hand-maintained source of truth. The content
+importer first produced them from the source extraction, but they have since been edited
+by hand and no longer match a fresh import. "Imported" in this document describes where a
+record came from, not a file that is regenerated. The importer is a reference extractor
+that writes to the untracked `.import-staging/` directory; `mise run import:diff` compares
+that output with the committed data so changes can be brought in piece-meal (see
+[the importer README](../tools/Ariel.ContentImport/README.md)).
+
 ## Definitions
 
 - Foundation: `YieldDef`, `CommerceDef`, `EraDef`, `GameSpeedDef`, `HandicapDef`,
@@ -408,7 +416,7 @@ strips every transitive dependent. This pruning includes obsolescence, upgrades,
 maps, and text links, in addition to eligibility prerequisites. The filter is
 deliberately conservative: an earlier-era building is pruned if its replacement or
 prerequisite belongs to a later era. The importer writes empty arrays for fully removed
-families, preventing stale sidecars from previous imports.
+families into its staging output, so a staged run has a file for every family.
 
 Native hunting, subdue, butchering, and resource-spawn outcomes (`OutcomeInfo`, a unit's
 `KillOutcomes` and `Actions`) are not imported: no rule runs them. Their source paths are

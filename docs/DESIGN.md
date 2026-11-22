@@ -807,7 +807,8 @@ fog snapshots carry the lift they derived when captured. The save schema is `4`;
 identities unless the caller explicitly forces loading. Hand-authored geometry tuning
 lives in `src/Ariel.Rules/Foundation/data/hex-overrides.json` and enters the content hash. The
 importer writes only its declared definition families and rejects that reserved
-filename.
+filename. The committed `data/` sidecars are hand-maintained; the importer writes to the
+untracked `.import-staging/` and `mise run import:diff` compares it with them.
 
 ## City services
 
@@ -2612,7 +2613,8 @@ Runtime environment variables use the `ARIEL_` prefix:
 - `ARIEL_MODS`: optional additional mod search root.
 - `ARIEL_TRACE_STARTUP`: enables startup phase timings.
 - `ARIEL_CONTENT_SOURCE`: specifies the root of the
-  source extraction for extractor test suites.
+  source extraction for extractor test suites and the default `--source` of
+  `mise run import:stage`.
 
 `StateHasher` hashes canonical state JSON and RNG words with FNV-1a. Canonical JSON
 sorts object properties ordinally, preserves array order and rejects non-integer

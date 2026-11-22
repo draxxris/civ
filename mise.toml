@@ -144,9 +144,13 @@ run = "uv run --script tools/art/fall_ledge.py"
 description = "Report the height and cliff rules a save file or a debug scene breaks: mise run validate -- <file> [--save|--scene] [--map id] [--size id]"
 run = "dotnet run --project tools/Ariel.Validate/Ariel.Validate.csproj --"
 
-[tasks."import:content"]
-description = "Regenerate the typed content sidecars from a local source extraction: mise run import:content -- --source DIR --reports DIR [--out-rules DIR] [--out-mods DIR] [--max-era ERA] (see tools/Ariel.ContentImport/README.md)"
+[tasks."import:stage"]
+description = "Run the content importer into the untracked .import-staging/ directory, never into src/: mise run import:stage -- --source DIR [--max-era ERA] (--source defaults to ARIEL_CONTENT_SOURCE; see tools/Ariel.ContentImport/README.md)"
 run = "dotnet run --project tools/Ariel.ContentImport/Ariel.ContentImport.csproj --"
+
+[tasks."import:diff"]
+description = "Compare the staged import with the committed data, record by record: mise run import:diff -- [Module ...] [--values] (run import:stage first)"
+run = "dotnet run --project tools/Ariel.ContentImport/Ariel.ContentImport.csproj -- diff"
 
 [tasks.benchmark]
 description = "Run operational benchmarks without timing thresholds"
