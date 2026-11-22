@@ -59,7 +59,13 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     /// across its empire before a branch opens there: a guild's branches need its group's Guild Hall.</summary>
     [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> PrereqBuildingClasses { get; init; } = ImmutableDictionary<string, int>.Empty;
+    /// <summary>Base gold to open a branch. What a spread actually costs is <see cref="ICorporationService.SpreadCost"/>:
+    /// scaled by inflation, by the foreign spread percent in another team's city, and by each active competitor's
+    /// <see cref="SpreadFactorPercent"/>.</summary>
     public int SpreadCost { get; init; }
+    /// <summary>Percent this corporation's active branch adds to the spread cost of a competitor opening in its city
+    /// (200 for every source corporation: a takeover costs three times as much).</summary>
+    public int SpreadFactorPercent { get; init; }
     /// <summary>Maintenance per consumed resource copy, hundredths of gold.</summary>
     public int MaintenanceHundredths { get; init; }
 

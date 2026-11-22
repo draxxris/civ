@@ -35,6 +35,10 @@ public interface ICorporationService : ICityCorporations
     bool IsActive(Simulation sim, int city, string corporation);
     long ConsumedBonusCount(Simulation sim, int city, string corporation);
     long MaintenanceHundredths(Simulation sim, int city);
+    /// <summary>Gold the player pays to open a branch of the corporation in the city, as the source prices it: the base
+    /// cost with inflation, times the foreign spread percent in another team's city, times (100 + factor)% for each
+    /// active competing branch there. Executives and paid spreads both pay it.</summary>
+    long SpreadCost(Simulation sim, int player, int city, string corporation);
     /// <summary>Why a player cannot pay to open a branch in one of its own cities without an executive, or null.</summary>
     string? ValidateSpread(Simulation sim, int player, int city, string corporation);
     /// <summary>Open a branch in an own city for the spread cost. An executive spreads through the

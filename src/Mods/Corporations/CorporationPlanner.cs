@@ -78,7 +78,7 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
         bool here = ctx.Alive(unit) && unit.Position == city.Position;
         if (!moved && !here) return false;
         // An executive that arrived waits there for gold or the next turn's budget rather than wandering off.
-        if (here && unit.MovesLeft > 0 && CanSpend(corporation)
+        if (here && unit.MovesLeft > 0 && CanSpend(corporation, city)
             && ctx.Issue(new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = CorporationMissions.Spread, Subject = corporation.Id }))
             Spent();
         // A unit that moved has spent its turn even when it did not arrive, so it is not planned again this pass.
@@ -95,18 +95,18 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
                 // One branch per turn for the whole empire. A rejected attempt changes nothing, so an unaffordable
                 // corporation must not end the pass: keep looking at the cheaper ones.
                 if (_spread >= SpreadsPerTurn) return;
-                if (!CanSpend(corporation)) continue;
+                if (!CanSpend(corporation, city)) continue;
                 if (ctx.Issue(new SpreadCorporationCommand { Player = ctx.PlayerId, City = city.Id, Corporation = corporation.Id }))
                     Spent();
             }
         }
     }
 
-    private bool CanSpend(CorporationDef corporation)
+    private bool CanSpend(CorporationDef corporation, City city)
     {
         if (_spread >= SpreadsPerTurn) return false;
         _netGold ??= NetGold(ctx);
-        return Affordable(ctx, corporation, _netGold.Value);
+        return Affordable(ctx, service.SpreadCost(ctx.Sim, ctx.PlayerId, city, corporation), _netGold.Value);
     }
 
     /// <summary>One economy calculation per pass: only our own spending moves the projection, and it is dropped
@@ -119,10 +119,10 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
 
     internal static long NetGold(AiContext ctx) => ctx.Service<IPlayerEconomyService>().Calculate(ctx.Sim, ctx.PlayerId).NetGold;
 
-    /// <summary>Whether the player should pay for a branch now: the spread cost leaves twice the gold reserve, and
-    /// income is not negative.</summary>
-    internal static bool Affordable(AiContext ctx, CorporationDef corporation, long netGold) =>
-        ctx.Self.Treasury - corporation.SpreadCost >= 2 * ctx.GoldReserve && netGold >= 0;
+    /// <summary>Whether the player should pay a spread cost now (<see cref="CorporationService.SpreadCost"/>, the
+    /// same price the spread charges): it leaves twice the gold reserve, and income is not negative.</summary>
+    internal static bool Affordable(AiContext ctx, long cost, long netGold) =>
+        ctx.Self.Treasury - cost >= 2 * ctx.GoldReserve && netGold >= 0;
 }
 
 /// <summary>The cities the computer player's executives aim at, shared by the planner that sends them and the wishes
@@ -189,9 +189,11 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
         foreach (var corporation in corporations)
         {
             if (Busy(ctx, corporation)) continue;
+            // The base cost is a lower bound of every price, so it rules out a poor treasury before the dear target search.
             netGold ??= CorporationPlanner.NetGold(ctx);
-            if (!CorporationPlanner.Affordable(ctx, corporation, netGold.Value)) continue;
-            if (!ExecutiveTargets.Foreign(ctx, service, corporation, city.Position).Any()) continue;
+            if (!CorporationPlanner.Affordable(ctx, corporation.SpreadCost, netGold.Value)) continue;
+            if (ExecutiveTargets.Foreign(ctx, service, corporation, city.Position).FirstOrDefault() is not { } target) continue;
+            if (!CorporationPlanner.Affordable(ctx, service.SpreadCost(ctx.Sim, ctx.PlayerId, target, corporation), netGold.Value)) continue;
             foreach (var unit in ctx.Sim.Content.Get<UnitDef>().All.Where(u => CorporationService.Spreads(ctx.Sim, u.Id, corporation)))
                 yield return new("cities:unit", unit.Id, Score(corporation, unit));
         }

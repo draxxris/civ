@@ -41,11 +41,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
-      "iSpread",
-      "iSpreadFactor"
+      "iSpread"
     ],
     "yieldChanges": {
       "commerce": 0,
@@ -101,11 +101,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -161,12 +161,12 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "BonusProduced",
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -223,11 +223,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -285,11 +285,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -343,12 +343,12 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "BonusProduced",
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -404,11 +404,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -466,11 +466,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -528,11 +528,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -590,11 +590,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -657,11 +657,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -722,11 +722,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -783,11 +783,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -850,11 +850,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -912,11 +912,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -974,11 +974,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1042,11 +1042,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1103,11 +1103,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1168,12 +1168,12 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "BonusProduced",
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1230,11 +1230,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1291,11 +1291,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1359,11 +1359,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1424,12 +1424,12 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "BonusProduced",
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1492,11 +1492,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1560,11 +1560,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1621,11 +1621,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1680,10 +1680,10 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1743,12 +1743,12 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "BonusProduced",
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1812,11 +1812,11 @@
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1874,11 +1874,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1935,11 +1935,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1995,12 +1995,12 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "BonusProduced",
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -2055,11 +2055,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -2116,11 +2116,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -2175,11 +2175,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -2236,11 +2236,11 @@
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
+    "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
       "Sound",
       "iSpread",
-      "iSpreadFactor",
       "iTGAIndex"
     ],
     "yieldChanges": {

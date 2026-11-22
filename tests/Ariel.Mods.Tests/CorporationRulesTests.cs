@@ -234,7 +234,9 @@ public sealed class CorporationRulesTests
         Assert.Contains("executive", P6RulesScenario.Reject(sim, new SpreadCorporationCommand { Player = 0, City = foreign.Id, Corporation = Cereal }));
         var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
-        Assert.Null(sim.State.FindUnit(executive.Id)); Assert.Equal(initial - 2 * cost, sim.State.PlayerById(0).Treasury);
+        Assert.Null(sim.State.FindUnit(executive.Id));
+        // The foreign city costs twice the base (the foreign spread percent).
+        Assert.Equal(initial - cost - 2 * cost, sim.State.PlayerById(0).Treasury);
         var effects = ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq));
         Assert.Equal(12, effects.Ledger.Lines.Where(l => l.Source == Cereal + ":headquarters" && l.Key == "commerce.flat.gold").Sum(l => l.Amount));
         Assert.True(Corps(sim).IsActive(sim, domestic.Id, Cereal));

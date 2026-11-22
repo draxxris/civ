@@ -5204,6 +5204,7 @@
       { "source": "iHealth", "property": "Health", "kind": "int" },
       { "source": "iMilitaryProductionModifier", "property": "MilitaryProductionPercent", "kind": "int" },
       { "source": "ObsoleteTech", "property": "ObsoleteTech", "kind": "ref", "target": "TechInfo" },
+      { "source": "iSpreadFactor", "property": "SpreadFactorPercent", "kind": "int" },
       {
         "source": "PrereqBuildingClasses",
         "property": "PrereqBuildingClasses",

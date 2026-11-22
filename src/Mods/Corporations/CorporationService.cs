@@ -193,7 +193,7 @@ internal sealed class CorporationService : ICorporationService
         var city = sim.State.FindCity(cityId);
         if (city is null) return "Unknown city";
         // Cheap checks first: the branch scan and the connectivity queries are wasted on a player who cannot pay.
-        if (sim.State.PlayerById(player).Treasury < def.SpreadCost) return "Insufficient gold";
+        if (sim.State.PlayerById(player).Treasury < SpreadCost(sim, player, city, def)) return "Insufficient gold";
         if (ValidateBranch(sim, player, city, corporation, record) is { } branchError) return branchError;
         if (executive is null && city.Owner != player) return "Foreign spread requires an executive";
         if (executive is not null && !Spreads(sim, executive, def)) return "Unit cannot spread this corporation";
@@ -245,12 +245,43 @@ internal sealed class CorporationService : ICorporationService
         sim.Rules().Visibility?.Recompute(sim);
     }
     /// <summary>Charge the spread cost and open the branch; the caller has validated it.</summary>
-    internal void OpenBranch(Simulation sim, int player, City city, string corporation)
+    internal void OpenBranch(Simulation sim, int player, City city, string corporation) => SpendOnBranch(sim, player, city, corporation, true);
+    /// <summary>Charge the spread cost, then open the branch when the attempt succeeded: as in the source an executive's
+    /// gold is spent whether or not its spread takes. The caller has validated it.</summary>
+    internal void SpendOnBranch(Simulation sim, int player, City city, string corporation, bool success)
     {
         var def = sim.Content.Get<CorporationDef>(corporation);
-        sim.State.PlayerById(player).Treasury -= def.SpreadCost;
+        // Priced before the branch opens: a competitor it evicts still counted.
+        sim.State.PlayerById(player).Treasury -= SpreadCost(sim, player, city, def);
+        if (!success) return;
         Add(sim, city, def);
         sim.Events.Publish(new CorporationSpread(corporation, city.Id, player));
+    }
+    public long SpreadCost(Simulation sim, int player, int city, string corporation) =>
+        sim.State.FindCity(city) is { } target && sim.Content.TryGet<CorporationDef>(corporation, out var def) ? SpreadCost(sim, player, target, def) : 0;
+    internal long SpreadCost(Simulation sim, int player, City city, CorporationDef def)
+    {
+        long cost = Math.Max(0L, (long)def.SpreadCost * (100 + InflationPercent(sim, player))) / 100;
+        if (sim.TeamOf(player).Id != sim.TeamOf(city.Owner).Id) cost = cost * RuleConstant(sim, "CORPORATION_FOREIGN_SPREAD_COST_PERCENT", 100) / 100;
+        foreach (var other in Present(sim, city.Id))
+        {
+            var rival = sim.Content.Get<CorporationDef>(other);
+            if (Competes(def, rival) && IsActive(sim, city.Id, other)) cost = cost * (100 + rival.SpreadFactorPercent) / 100;
+        }
+        return cost;
+    }
+    private static int RuleConstant(Simulation sim, string key, int fallback) =>
+        int.TryParse(sim.Content.Get<RuleConstantsDef>().All.Single().Raw.GetValueOrDefault(key), out int value) ? value : fallback;
+    /// <summary>Percent chance an executive's spread takes, as the source rolls it: the unit's spread value for the
+    /// corporation, halved in another team's city, then raised toward 100 by the share of corporations the city does not
+    /// yet have. Read-only and draws nothing; the mission service rolls it.</summary>
+    internal int SpreadChance(Simulation sim, Unit executive, City city, CorporationDef def)
+    {
+        int chance = (sim.Content.Attachment<UnitCorporationsDef>(executive.Type) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Identity);
+        if (sim.TeamOf(executive.Owner).Id != sim.TeamOf(city.Owner).Id) chance /= 2;
+        int corporations = Math.Max(1, sim.Content.Get<CorporationDef>().Count);
+        chance += (corporations - Present(sim, city.Id).Count) * (100 - chance) / corporations;
+        return Math.Clamp(chance, 0, 100);
     }
     private static bool Competes(Simulation sim, string corporation, CorporationDef incoming) => Competes(sim.Content.Get<CorporationDef>(corporation), incoming);
     /// <summary>Whether two corporations compete, as the source defines it: either names the other in its

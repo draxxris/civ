@@ -159,6 +159,80 @@ public sealed class CorporationSourceRulesTests
         Assert.Contains(Masons, Corps(sim).Present(sim, foreign.Id));
     }
 
+    private const string Cereal = "corporations:1", Ethanol = "corporations:3";
+
+    [Fact]
+    public void Spread_cost_carries_the_foreign_percent_and_each_active_competitors_factor()
+    {
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var own = sim.State.Cities[1]; var rivalHq = sim.State.Cities[2];
+        var foreign = P6RulesScenario.AddCity(sim, 1, 70);
+        Plant(sim, hq, Cereal); Plant(sim, rivalHq, Ethanol, foreign);
+        foreach (var city in new[] { own, foreign }) P6RulesScenario.Resource(sim, city, "world:corn");
+        var cereal = sim.Content.Get<CorporationDef>(Cereal);
+        Assert.Equal((50, 200), (cereal.SpreadCost, sim.Content.Get<CorporationDef>(Ethanol).SpreadFactorPercent));
+        Assert.Equal(50, Corps(sim).SpreadCost(sim, 0, own.Id, Cereal));
+        // Another team's city: the foreign percent (200); with an active rival there, three times that again.
+        Assert.Equal(50 * 2 * 3, Corps(sim).SpreadCost(sim, 0, foreign.Id, Cereal));
+        // A suspended rival adds nothing.
+        sim.State.PlayerById(1).Civics["test"] = "government:planned";
+        Assert.Equal(50 * 2, Corps(sim).SpreadCost(sim, 0, foreign.Id, Cereal));
+        sim.State.PlayerById(1).Civics.Clear();
+
+        // The paid spread charges the same price, and the executive's terms show it.
+        long before = sim.State.PlayerById(0).Treasury;
+        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = own.Id, Corporation = Cereal });
+        Assert.Equal(before - 50, sim.State.PlayerById(0).Treasury);
+        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
+        var terms = P6RulesScenario.Service<IMissionService>(sim).Terms(sim, 0, executive.Id, CorporationMissions.Spread, Cereal)!;
+        Assert.StartsWith($"{50 * 2 * 3} gold", terms.Note);
+    }
+
+    [Fact]
+    public void An_executive_spreads_with_the_source_chance_and_pays_whether_or_not_it_takes()
+    {
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var own = sim.State.Cities[1]; var foreign = sim.State.Cities[2];
+        Plant(sim, hq, Cereal);
+        foreach (var city in new[] { own, foreign }) P6RulesScenario.Resource(sim, city, "world:corn");
+        var missions = P6RulesScenario.Service<IMissionService>(sim);
+        int total = sim.Content.Get<CorporationDef>().Count;
+        int? Chance(City city, out Unit unit)
+        {
+            unit = P6RulesScenario.AddUnit(sim, 0, city, "military:executive_1");
+            return missions.Terms(sim, 0, unit.Id, CorporationMissions.Spread, Cereal)!.Chance;
+        }
+        // The executive's 40, raised by the share of corporations the city lacks: certain in an empty own city.
+        Assert.Equal(40 + total * 60 / total, Chance(own, out var first));
+        sim.State.RemoveUnit(first.Id);
+        // In another team's city crowded with every other corporation: halved, then raised by one share in 36.
+        var crowded = foreign.Extensions.Get<CorporationCityState>(sim.Content) ?? new();
+        foreign.Extensions.Set(sim.Content, crowded);
+        void Crowd()
+        {
+            crowded.Corporations.Clear();
+            foreach (var other in sim.Content.Get<CorporationDef>().All.Where(c => c.Id != Cereal)) crowded.Corporations.Add(other.Id);
+        }
+        Crowd();
+        int expected = 20 + (total - (total - 1)) * 80 / total;
+        bool failed = false, succeeded = false;
+        for (int attempt = 0; attempt < 64 && !(failed && succeeded); attempt++)
+        {
+            Assert.Equal(expected, Chance(foreign, out var unit));
+            Assert.Contains($"{expected}% chance", missions.Terms(sim, 0, unit.Id, CorporationMissions.Spread, Cereal)!.Summary);
+            // The roll is the simulation's next draw; terms and validation draw nothing.
+            var (s0, s1, s2, s3) = sim.Rng.State;
+            bool takes = DeterministicRng.Restore(s0, s1, s2, s3).Next(100) < expected;
+            long gold = sim.State.PlayerById(0).Treasury, cost = Corps(sim).SpreadCost(sim, 0, foreign.Id, Cereal);
+            P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = unit.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
+            Assert.Equal(takes, Corps(sim).Present(sim, foreign.Id).Contains(Cereal));
+            Assert.Equal(gold - cost, sim.State.PlayerById(0).Treasury);
+            Assert.Null(sim.State.FindUnit(unit.Id));
+            Assert.Contains(sim.Events.Published.OfType<MissionResolved>(), e => e.Unit == unit.Id && e.Success == takes);
+            if (takes) succeeded = true; else failed = true;
+            Crowd();
+        }
+        Assert.True(failed && succeeded, "the fixed seed rolls both outcomes within 64 attempts");
+    }
+
     private static IReadOnlyList<string> Refusals(Simulation sim, City city, string building) =>
         P6RulesScenario.Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", building).Failures.Select(f => f.Explanation).ToList();
 }
