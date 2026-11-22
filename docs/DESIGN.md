@@ -433,6 +433,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
 | `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders), Corporations (the imported headquarters and guild halls) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
 | `IContentCheck` | (list, run once by `GameRules.Bind`) | the load, once content freezes, for invariants that read other mods' rows | Corporations (one founding building per corporation, no building or unit naming an undefined corporation, every executive trainable) | nothing is checked |
+| `ICityResourceSupply` | (list, read by `ResourceAccess.Supplied`) | `ResourceAccess.Counts` and Cities' city bonus set, for every city use of a resource (never for trade: `ResourceAccess.TradeCounts`) | Corporations (a branch's produced resource) | a city has only its network and deal copies |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IVictoryCondition` | `VictoryConditions` (list) | the victory check, for each enabled `VictoryDef` by the condition its `Rule` names | Victory (conquest, domination, cultural, time), ProjectsVictory (the space race), Votes (the diplomatic victory) | a victory naming an unregistered condition fails the load, so the victory is simply absent |
 | `ITimerKind` | (registry, read by `ITimers`) | the Foundation timer store (Timers), for each timer by the kind it names | Events, Espionage, Revolution | starting a timer of an unregistered kind throws |
@@ -1649,11 +1650,45 @@ time in a headquarters it holds and spends it abroad (see the AI planner order b
 its own cities it pays for. An active branch adds the corporation's output per consumed
 resource copy (in hundredths, summed and truncated per city), its flat yield and commerce
 changes (which are the whole output of the four guilds that consume no resource), the
-headquarters commerce per branch, and resource-based maintenance. Two corporations that
-consume a common resource compete as before; the source's explicit competing lists, its
-happiness, health, produced resources, military production, obsolete technologies and
-branch building prerequisites remain unsupported. Civics can prohibit local or foreign
-corporations. A branch requires an active branch owned by the spreading player.
+headquarters commerce per branch, and resource-based maintenance. It also gives its city
+the corporation's `Happiness` and `Health` (`cities:happiness`, the general
+`cities:health`) and its `MilitaryProductionPercent` (`cities:military_production_percent`,
+Ultimate Soldiers' +15%). Civics can prohibit local or foreign corporations. A branch
+requires an active branch owned by the spreading player.
+
+Two corporations compete when either names the other in `CompetingCorporations` (the
+guilds of one Guild Hall group) or they consume a common resource
+(`CorporationService.Competes`): a new branch evicts its rivals' branches from the city
+(`CorporationDisplaced`), and nobody opens a branch of, or founds, a rival in a
+competitor's headquarters city. A guild branch also needs `PrereqBuildingClasses`, its
+group's Guild Hall, somewhere in the city owner's empire (counted as the source does,
+unscaled by world size). A corporation is obsolete for a team that knows its
+`ObsoleteTech` (Corporation, for every guild): its branches there stop working at once,
+and the team can neither found it nor spread it nor receive it. When the team learns the
+technology its branches close (`CorporationObsolete`), and a headquarters in the team
+loses its founding building and dissolves the corporation as a razed one does. The source
+instead keeps other teams' branches working without a headquarters and never allows
+re-founding; Ariel's branches need a live headquarters, so the corporation dissolves and
+a team without the technology may found it again.
+
+A spread costs `ICorporationService.SpreadCost`: the base `SpreadCost` with inflation,
+times `CORPORATION_FOREIGN_SPREAD_COST_PERCENT` (200) in another team's city, times
+(100 + `SpreadFactorPercent`)% for each active competitor there (200 for every source
+corporation, so a takeover costs three times as much). An executive's spread is a gamble,
+as in the source: its chance is the unit's `CorporationSpreads` value, halved in another
+team's city, plus the share of corporations the city lacks of what remains to 100; the
+mission terms show it, the mission service rolls it once on the simulation RNG, and the
+gold and the executive are spent either way. A paid spread in an own city does not roll.
+
+A corporation with `BonusProduced` (Diesel, Aluminum, Hemp, Marble, Horse, Glass) gives
+the city of each active branch one copy of that resource per consumed copy (one when it
+consumes none), once the team knows the resource's trade technology and while it is not
+obsolete. It does so through the base seam `ICityResourceSupply`: `ResourceAccess.Counts`
+adds supplied copies for every city use (happiness, health, building and unit
+prerequisites, other corporations, so the Equestrians' horse feeds Adventure Tours), and
+`ResourceAccess.TradeCounts` leaves them out for trade, since they are not on the network.
+The source's realistic-corporations automatic spread, decay and founding (`iSpread`) are
+not built; the field stays unread for that reason.
 
 Espionage allocates whole points from saved commerce output across met rival teams by
 player-set weights. An unset weight is zero, and unspent points stay held and visible.
@@ -2010,7 +2045,12 @@ Specialized planners handle empire governance and military campaigns:
   founded corporations and guilds to the empire's own cities while income allows.
   Founding goes through the city planner: the mod's `HeadquartersValuer` rates a
   buildable headquarters or Master Guild by a founding bonus plus the corporation's net
-  worth.
+  worth. Worth counts a branch's yields, commerce and maintenance, and (`Extras`) its
+  happiness and health at the civic planner's weights (8 and 6), its military production
+  percent as production of a ten-production city, and its produced resource's happiness
+  and health; spreads are only paid when the treasury covers the city's real
+  `SpreadCost`, and an obsolete corporation is not spread. `CorporationCivicValuer`
+  weighs a ban by the same terms.
 - **Espionage (`EspionagePlanner`, contributed by the Espionage mod)**: Points the
   espionage weights at an enemy, else the nearest known rival, walks spies to its
   cities and runs the best affordable mission; `SpyWishes` asks cities for spies.
@@ -2354,8 +2394,9 @@ contracts are in `Contracts/RelationContracts.cs`; `GameRules.Relations` is
   Diplomacy module for a defensive pact: the war planner never attacks an ally.
 - Exchanges. The Diplomacy module (`GameRules.Diplomacy`) answers what running deals
   between players add: the copies of a resource a city can use (`ResourceAccess`,
-  `BuildingEffects`) and the gold per turn the economy books as `economy:deal_income` and
-  `economy:deal_expenses`. Without a deal a city uses its connected copies and no gold
+  `BuildingEffects`; trade questions use `ResourceAccess.TradeCounts`, which leaves out
+  copies a city supplies itself) and the gold per turn the economy books as
+  `economy:deal_income` and `economy:deal_expenses`. Without a deal a city uses its connected copies and no gold
   changes hands.
 
 ### Memory

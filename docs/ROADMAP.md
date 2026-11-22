@@ -291,8 +291,10 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   founded by its Master Guild), founding by building the imported headquarters or
   Master Guild, branch spread (via gold, executives or guild masters), headquarters protection,
   branch revenue (per resource copy and flat), resource consumption, and maintenance.
-  Not yet run: the source's explicit competing corporations, branch happiness and
-  health, produced resources, military production and guild obsolescence.
+  Competing corporations, branch happiness, health and military production, produced
+  resources, guild obsolescence, Guild Hall prerequisites, and the source's spread cost
+  and executive spread chance also run. Not yet run: the realistic-corporations option's
+  automatic spread, decay and founding (`iSpread`).
 - **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios,
   passive visibility/investigation unlocks, full rival intelligence screen
   (demographics, city yields/buildings, production queues, treasury reserves) with
