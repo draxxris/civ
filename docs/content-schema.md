@@ -41,8 +41,8 @@ development roadmap are in [ROADMAP.md](ROADMAP.md).
   `BuildingVotesDef` attached to the buildings that seat a council (its `voteSource`,
   and `forceTeamVoteEligible` when the owner's team always stands). They live in the
   mod's published API (`Ariel.Mods.Votes`, assembly `Ariel.Mods.Votes.Api`).
-- Corporations: `CorporationDef` for founding, required resources, branch output,
-  headquarters output, spread cost, and maintenance. It lives in the mod's published
+- Corporations: `CorporationDef` for corporations and guilds: their kind, required
+  resources, branch output, headquarters output, spread cost, and maintenance. It lives in the mod's published
   API (`Ariel.Mods.Corporations`, assembly `Ariel.Mods.Corporations.Api`).
 - Events: `EventTriggerDef` and `EventOptionDef` for eligibility, chance, repeat
   behavior, outcomes, and timed effects. They live in the mod's published API
@@ -111,20 +111,25 @@ first time victory by id weighs every player's score, enabled or not.
 
 ### Corporation fields
 
-`CorporationDef` links an `Identity` reference, optional founding technology
-(`FoundingTech`) and prerequisite resources (`PrereqBonuses`). Each corporation is
-founded by exactly one headquarters building in the Corporations mod's
-`data/founding-headquarters.json`: its `FoundsCorporation` names the corporation's
-identity, it requires the founding technology, and its world limit is one. Content
-validation refuses a corporation without one headquarters, a headquarters that names no
-corporation, and one that does not require the founding technology. Imported buildings
-that name a corporation are not claimed and cannot be built. Once content freezes, a
-second check refuses an executive that spreads one of the mod's corporations but that no
-city could train (a negative cost, or every way through its requirements needs a building
-nothing can build or a corporation the mod does not define). Yield and commerce vectors (`YieldProduced`,
-`CommerceProduced`) use whole points. Headquarters commerce (`HeadquartersCommerce`) is
-evaluated separately from branch commerce. `SpreadCost` uses whole gold.
-`MaintenanceHundredths` uses hundredths of gold per consumed resource copy.
+`CorporationDef` (imported, `data/corporation.json`, 36 rows: 21 corporations and 15
+guilds) links an `Identity` reference, its `Kind` (`corporation` or `guild`, from the
+special building type of the source headquarters) and prerequisite resources
+(`PrereqBonuses`, empty for the four guilds that consume none). Each corporation is
+founded by exactly one base building whose `FoundsCorporation` names its identity, the
+imported headquarters or, for a guild, the Master Guild the player reads as its guild
+hall (`Kind` names it in every text). That building's own requirements gate founding
+(its technology; for a guild also buildings of its trade across the empire) and its
+world limit is one. Once content freezes, the mod refuses a corporation without exactly
+one founding building, a founding building with a negative cost or no technology, any
+building or unit row that names an identity no `CorporationDef` has, and an executive
+that spreads one of the mod's corporations but that no city could train (a negative
+cost, or every way through its requirements needs a building nothing can build or a
+corporation the mod does not define). Per-copy output (`YieldProducedHundredths`,
+`CommerceProducedHundredths`) uses hundredths of a point per consumed resource copy,
+summed and truncated per city. Flat branch output (`YieldChanges`, `CommerceChanges`)
+and headquarters commerce per branch (`HeadquartersCommerce`) use whole points.
+`SpreadCost` uses whole gold. `MaintenanceHundredths` uses hundredths of gold per
+consumed resource copy.
 
 ### Event fields
 

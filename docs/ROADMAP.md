@@ -287,8 +287,12 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   defensive pacts among members, forced peace, sanctions, forced war, and the
   diplomatic victory vote; members may defy a resolution and lose full membership.
   Free trade lets members trade without open borders; it carries no commerce bonus.
-- **Corporations**: founding by building a headquarters, branch spread (via gold or executives),
-  headquarters protection, branch revenue, resource consumption, and maintenance.
+- **Corporations**: all 36 source corporations (21 corporations and 15 guilds, a guild
+  founded by its guild hall), founding by building the imported headquarters or guild
+  hall, branch spread (via gold, executives or guild masters), headquarters protection,
+  branch revenue (per resource copy and flat), resource consumption, and maintenance.
+  Not yet run: the source's explicit competing corporations, branch happiness and
+  health, produced resources, military production and guild obsolescence.
 - **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios,
   passive visibility/investigation unlocks, full rival intelligence screen
   (demographics, city yields/buildings, production queues, treasury reserves) with
