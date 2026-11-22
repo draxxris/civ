@@ -418,7 +418,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 
 | Seam | `GameRules` | Asked by | Answered by | Without an answer |
 | --- | --- | --- | --- | --- |
-| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf (a branch in the city, or with parameter 2 the city being the corporation's headquarters, where executives are trained), and what the leaf calls that headquarters ("guild hall" for a guild) | Corporations | no corporations and no headquarters; the leaf fails and reads "headquarters" |
+| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf (a branch in the city, or with parameter 2 the city being the corporation's headquarters, where executives are trained), and how it names that seat (`SeatPhrase`: "the headquarters of Cereal Mills", "the Masons Master Guild") | Corporations | no corporations and no headquarters; the leaf fails and reads "the headquarters of" the corporation |
 | `IAirOperations` | `AirOperations` | production eligibility (aircraft), the intercept activity | AirCombat | aircraft are refused with "Air operations are unavailable"; no unit can stand on intercept |
 | `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
 | `IDealAppraiser` | `DealAppraiser` | the Diplomacy screen, to predict a computer leader's answer to a deal | the computer player (`ai`) | no prediction is shown |
@@ -1619,11 +1619,14 @@ executives and follow-up buildings were inert.
 A corporation is founded in two steps. Its founding building becomes available, and
 completing it in a city founds the corporation there. The founding building is the
 imported building whose `BuildingDef.FoundsCorporation` names the identity: a
-headquarters for a corporation, the Master Guild for a guild, which the player reads as
-its guild hall. Its own requirements say when: a technology, and for a guild also a
-number of buildings of its trade across the empire and the guild hall of its group
-(Crafts, Servants or Victuallers). Its world limit is one. The source's guild halls cost
-300; the source left the 21 headquarters to a great person (cost -1), so the importer
+headquarters for a corporation, the Master Guild for a guild. "Guild Hall" stays the name
+of the common building (the Crafts, Servants and Victuallers Guild Halls). What a
+corporation calls its founding building is data: `CorporationDef.Seat`, "headquarters" or
+"Master Guild", which the importer sets from the source's special building type and the
+corporations screen, city panel, notices and encyclopedia read. Its own requirements say
+when: a technology, and for a guild also a number of buildings of its trade across the
+empire and the Guild Hall of its group (Crafts, Servants or Victuallers). Its world limit
+is one. The source's Master Guilds cost 300; the source left the 21 headquarters to a great person (cost -1), so the importer
 prices them at the median national wonder of their era, 700 industrial and 1300 modern.
 The mod is their `IBuildingFounder` (`CorporationFounder`): beyond the building's
 requirements, the city needs a connected prerequisite resource when the corporation
@@ -1634,7 +1637,7 @@ production only, as with a religion's founding wonder. An executive's training
 requirement names its corporation's headquarters (the `corporation` leaf with parameter
 2), the city that completed the founding building, so executives are trained there; a
 guild master (`bgmaster`, `ggmaster`, `wgmaster`) spreads the five guilds of its group
-and is trained where its group's guild hall stands. Load checks (`IContentCheck`) refuse
+and is trained where its group's Guild Hall stands. Load checks (`IContentCheck`) refuse
 a corporation without exactly one buildable, technology-gated founding building, a
 building or unit row that names an identity no corporation defines, and an executive no
 city could ever train.
@@ -2005,7 +2008,7 @@ Specialized planners handle empire governance and military campaigns:
 - **Corporations (`CorporationPlanner`, contributed by the Corporations mod)**: Spreads
   founded corporations and guilds to the empire's own cities while income allows.
   Founding goes through the city planner: the mod's `HeadquartersValuer` rates a
-  buildable headquarters or guild hall by a founding bonus plus the corporation's net
+  buildable headquarters or Master Guild by a founding bonus plus the corporation's net
   worth.
 - **Espionage (`EspionagePlanner`, contributed by the Espionage mod)**: Points the
   espionage weights at an enemy, else the nearest known rival, walks spies to its
@@ -2410,8 +2413,8 @@ alternatives discard failed branches. Empty `All` succeeds. Empty `Any` fails.
 Evaluators must not change state. An evaluator that also implements
 `IDescribedRequirementEvaluator` says what a leaf asks for from content alone, as a
 phrase completing "Requires ...", which its parameter may choose: the corporation leaf
-reads "a branch of Cereal Mills" or, with parameter 2, "the headquarters of Cereal
-Mills" ("the guild hall of Masons Guild" for a guild, by the guild's kind). A failed leaf is then explained as "Requires" and that phrase, and the pedia
+reads "a branch of Cereal Mills" or, with parameter 2, the corporation's seat ("the
+headquarters of Cereal Mills", "the Masons Master Guild"). A failed leaf is then explained as "Requires" and that phrase, and the pedia
 lists the phrase among the prerequisites; other kinds keep the generic
 "Required kind: id" reason.
 

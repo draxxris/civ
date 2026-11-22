@@ -141,7 +141,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         if (record.Class == "BuildingInfo" && values.GetValueOrDefault("foundsCorporation") is string founded && founded.Length > 0
             && values.GetValueOrDefault("cost") is int cost && cost < 0)
             values["cost"] = HeadquartersCost(record, values.GetValueOrDefault("era") as string, cost);
-        if (mapping.DefinitionType == typeof(Ariel.Mods.Corporations.CorporationDef)) values["kind"] = CorporationKind(record);
+        if (mapping.DefinitionType == typeof(Ariel.Mods.Corporations.CorporationDef)) values["seat"] = CorporationSeat(record);
         if ((string)values["id"]! != ids[(record.Class, record.Type)]) values["identity"] = ids[(record.Class, record.Type)];
         FoldClass(record, values, mapped);
         if (record.Class == "CivicOptionInfo") values["defaultCivic"] = CivicDefault(record);
@@ -154,8 +154,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     }
 
     /// <summary>The production cost of a founding headquarters the source leaves to a great person (cost -1). Ariel
-    /// founds every corporation and guild by building its headquarters or guild hall in a city, and great people do
-    /// not found them. The source prices its guild halls at 300, the median cost of a medieval national wonder, so a
+    /// founds every corporation and guild by building its headquarters or Master Guild in a city, and great people do
+    /// not found them. The source prices its Master Guilds at 300, the median cost of a medieval national wonder, so a
     /// headquarters costs the median national wonder of its era, measured over the imported buildings with a player
     /// limit of one.</summary>
     private int HeadquartersCost(EffectiveRecord record, string? era, int sourceCost)
@@ -171,15 +171,16 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         return cost;
     }
 
-    /// <summary>A guild or a corporation, by the special building type of the headquarters that founds it.</summary>
-    private Ariel.Mods.Corporations.CorporationKind CorporationKind(EffectiveRecord corporation)
+    /// <summary>What the corporation calls its founding building: a guild's is its Master Guild (not the common Guild
+    /// Hall), a corporation's its headquarters, by the special building type of the building that founds it.</summary>
+    private string CorporationSeat(EffectiveRecord corporation)
     {
         var headquarters = records.Values.Where(r => r.Class == "BuildingInfo" && r.Node.Value("FoundsCorporation") == corporation.Type)
             .Select(r => r.Node.Value("SpecialBuildingType")).Distinct(StringComparer.Ordinal).ToArray();
         return headquarters switch
         {
-            ["SPECIALBUILDING_GUILD_HQ"] => Ariel.Mods.Corporations.CorporationKind.Guild,
-            ["SPECIALBUILDING_CORPORATION_HQ"] => Ariel.Mods.Corporations.CorporationKind.Corporation,
+            ["SPECIALBUILDING_GUILD_HQ"] => "Master Guild",
+            ["SPECIALBUILDING_CORPORATION_HQ"] => "headquarters",
             _ => throw new InvalidDataException($"{corporation.Type}: founding headquarters special types [{string.Join(", ", headquarters)}] name neither a guild nor a corporation"),
         };
     }

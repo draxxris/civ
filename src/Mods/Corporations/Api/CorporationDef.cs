@@ -1,12 +1,11 @@
 using System.Collections.Immutable;
-using System.Text.Json.Serialization;
 using Ariel.Content;
 using Ariel.Content.Schema;
 
 namespace Ariel.Mods.Corporations;
 
 /// <summary>Corporation rules, imported from the source's corporation records: the industrial and modern
-/// corporations and the medieval guilds, which follow the same rules (see <see cref="Kind"/>).
+/// corporations and the medieval guilds, which follow the same rules (see <see cref="Seat"/>).
 /// <para><see cref="Id"/> is the rules id used by services, effects and saves. <see cref="Identity"/> is the
 /// imported corporation id, and it is the id every other content record uses: buildings reference it through
 /// <c>corporation</c> requirement leaves, the founding building through <c>FoundsCorporation</c>, executives through
@@ -19,9 +18,11 @@ public sealed class CorporationDef : GameContentDef
 {
     [ContentReference(typeof(CorporationIdentityDef))]
     public string Identity { get; init; } = "";
-    /// <summary>A corporation or a guild. The rules are the same; the kind names the founding building, a
-    /// headquarters or a guild hall, wherever the player reads about it.</summary>
-    public CorporationKind Kind { get; init; }
+    /// <summary>What this corporation's founding building is called as a kind of building, wherever the player reads
+    /// about it: "headquarters" for a corporation, "Master Guild" for a guild. The rules are the same; only the words
+    /// differ, and the source's special building type of the founding building picks them. The common building named
+    /// Guild Hall is a different building. <see cref="SeatTitle"/> gives the form for a heading.</summary>
+    public string Seat { get; init; } = "headquarters";
     /// <summary>The resources a branch consumes. Each connected copy adds the produced yield and commerce and the
     /// per-copy maintenance. Empty for a corporation that consumes none: it needs no resource to be founded or to open
     /// a branch, and its branches give only <see cref="YieldChanges"/> and <see cref="CommerceChanges"/>.</summary>
@@ -40,24 +41,7 @@ public sealed class CorporationDef : GameContentDef
     public int SpreadCost { get; init; }
     /// <summary>Maintenance per consumed resource copy, hundredths of gold.</summary>
     public int MaintenanceHundredths { get; init; }
-}
 
-/// <summary>Whether a corporation is a modern corporation or a guild, its earlier-era form.</summary>
-[JsonConverter(typeof(CamelCaseEnumConverter<CorporationKind>))]
-public enum CorporationKind
-{
-    /// <summary>Founded by building its headquarters.</summary>
-    Corporation,
-    /// <summary>Founded by building its guild hall.</summary>
-    Guild,
-}
-
-/// <summary>What each kind of corporation calls its founding building, which is also its seat.</summary>
-public static class CorporationKinds
-{
-    /// <summary>The founding building's common name in lower case, for running text: "the guild hall of Masons Guild".</summary>
-    public static string Seat(CorporationKind kind) => kind == CorporationKind.Guild ? "guild hall" : "headquarters";
-
-    /// <summary>The founding building's common name as a title: "Guild Hall", "Headquarters".</summary>
-    public static string SeatTitle(CorporationKind kind) => kind == CorporationKind.Guild ? "Guild Hall" : "Headquarters";
+    /// <summary>The seat's name as a title: "Headquarters", "Master Guild".</summary>
+    public string SeatTitle() => Seat.Length == 0 ? Seat : char.ToUpperInvariant(Seat[0]) + Seat[1..];
 }

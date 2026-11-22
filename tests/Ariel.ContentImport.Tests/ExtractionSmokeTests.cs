@@ -162,14 +162,14 @@ public sealed class ExtractionSmokeTests
         Assert.Equal(definitions.OfType<Ariel.Content.Schema.CorporationIdentityDef>().Select(i => i.Id).Order(StringComparer.Ordinal),
             corporations.Select(c => c.Identity).Order(StringComparer.Ordinal));
         Assert.Equal(36, corporations.Length);
-        Assert.Equal(15, corporations.Count(c => c.Kind == Ariel.Mods.Corporations.CorporationKind.Guild));
+        Assert.Equal(15, corporations.Count(c => c.Seat == "Master Guild"));
         Assert.Equal("Sid's Sushi Co", corporations.Single(c => c.Identity == "foundation:2").Name);
         var cereal = corporations.Single(c => c.Id == "corporations:1");
         Assert.Equal(75, cereal.YieldProducedHundredths.Food);
         Assert.Equal(50, cereal.SpreadCost);
         Assert.Equal(4, cereal.HeadquartersCommerce.Gold);
 
-        // The founding buildings keep the source's guild hall cost; the headquarters it left to a great person are priced
+        // The founding buildings keep the source's Master Guild cost; the headquarters it left to a great person are priced
         // by era, and each such price is a data issue.
         var buildings = definitions.OfType<Ariel.Content.Schema.BuildingDef>().Where(b => b.FoundsCorporation is not null).ToArray();
         Assert.Equal(36, buildings.Length);

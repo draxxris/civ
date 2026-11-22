@@ -48,13 +48,13 @@ public sealed class ClientIntelligenceEventsTests
         return unit;
     }
 
-    /// <summary>Gives the city's owner what founding the first corporation of the kind needs there, and returns its
-    /// founding building.</summary>
-    private static string Founder(GameSession session, City city, out string corporation, CorporationKind kind = CorporationKind.Corporation)
+    /// <summary>Gives the city's owner what founding the first corporation with this seat ("headquarters" or "Master
+    /// Guild") needs there, and returns its founding building.</summary>
+    private static string Founder(GameSession session, City city, out string corporation, string seat = "headquarters")
     {
         var sim = session.Sim;
         var def = sim.Content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal)
-            .First(c => c.Kind == kind && c.PrereqBonuses.Length > 0);
+            .First(c => c.Seat == seat && c.PrereqBonuses.Length > 0);
         corporation = def.Id;
         GameFactory.SatisfyFounding(sim, city, def.Id);
         return GameFactory.Headquarters(sim, def.Id);
@@ -125,20 +125,20 @@ public sealed class ClientIntelligenceEventsTests
     }
 
     [Fact]
-    public void A_guild_is_founded_by_its_guild_hall_on_the_screens_and_in_the_pedia()
+    public void A_guild_is_founded_by_its_master_guild_on_the_screens_and_in_the_pedia()
     {
         var session = Session("Corporations");
         var city = AddCity(session.Sim, 0, 14);
-        var hall = Founder(session, city, out var guild, CorporationKind.Guild);
-        string building = session.Sim.Content.Get<S.BuildingDef>(hall).Name;
-        Assert.Equal($"not founded (build its guild hall, {building})", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), guild)!.Detail);
-        Assert.Contains(session.Pedia.Find(guild)!.Prerequisites, p => p == $"Guild Hall: founded by building {building}");
+        var masterGuild = Founder(session, city, out var guild, "Master Guild");
+        string building = session.Sim.Content.Get<S.BuildingDef>(masterGuild).Name;
+        Assert.Equal($"not founded (build its Master Guild, {building})", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), guild)!.Detail);
+        Assert.Contains(session.Pedia.Find(guild)!.Prerequisites, p => p == $"Master Guild: founded by building {building}");
 
-        Assert.Contains(session.ProductionChoices(city), c => c.Id == hall && c.Available);
+        Assert.Contains(session.ProductionChoices(city), c => c.Id == masterGuild && c.Available);
         GameFactory.FoundCorporation(session.Sim, city, guild);
-        Assert.Equal($"guild hall {city.Name}, 1 cities", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), guild)!.Detail);
+        Assert.Equal($"Master Guild {city.Name}, 1 cities", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), guild)!.Detail);
         var panel = Assert.Single(session.DescribeCity(city)!.Panels.Status, s => s.Id == "corporations:city");
-        Assert.Contains(ViewWalk.All([panel]).OfType<Paragraph>(), p => p.Id == guild && p.Text.Contains("guild hall", StringComparison.Ordinal));
+        Assert.Contains(ViewWalk.All([panel]).OfType<Paragraph>(), p => p.Id == guild && p.Text.EndsWith("★ Master Guild", StringComparison.Ordinal));
     }
 
     [Fact]

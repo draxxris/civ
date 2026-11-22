@@ -7,7 +7,7 @@ namespace Ariel.Mods.Corporations;
 
 /// <summary>A corporation or guild is founded by completing its founding building: the base building whose
 /// <see cref="BuildingDef.FoundsCorporation"/> names the corporation's identity, its headquarters or (for a guild) its
-/// guild hall. The building's own requirements say when it can be built (its technology, and for a guild a number of
+/// Master Guild. The building's own requirements say when it can be built (its technology, and for a guild a number of
 /// buildings of its trade) and its world limit is one; this founder adds what founding needs in the city (no founded
 /// copy, civics that allow it, a connected resource when the corporation consumes any, no competing headquarters)
 /// and founds it there on completion.</summary>

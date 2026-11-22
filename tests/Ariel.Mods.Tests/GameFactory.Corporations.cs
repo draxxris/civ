@@ -9,7 +9,7 @@ namespace Ariel.Mods.Tests;
 /// the shared harness the sync checker compiles.</summary>
 public static partial class GameFactory
 {
-    /// <summary>The building whose completion founds the corporation, its headquarters or guild hall: the base building
+    /// <summary>The building whose completion founds the corporation, its headquarters or Master Guild: the base building
     /// naming its identity, which the Corporations mod's founder claims.</summary>
     public static string Headquarters(Simulation sim, string corporation)
     {
