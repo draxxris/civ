@@ -6,7 +6,7 @@ namespace Ariel.Mods.Corporations;
 
 /// <summary>The computer player's spreading of corporations, run inside the standard AI's turn after religion and
 /// before the great people planner (<c>great_people:planner</c>, at <see cref="AiPlannerOrder.Religion"/> + 200).
-/// Founding is production: the city planner builds a headquarters or guild hall, valued by <see cref="HeadquartersValuer"/>, and
+/// Founding is production: the city planner builds a headquarters or Master Guild, valued by <see cref="HeadquartersValuer"/>, and
 /// trains executives for foreign spread, wished for by <see cref="ExecutiveWishes"/>.</summary>
 internal sealed class CorporationAiPlanner(CorporationService service) : IAiPlanner
 {
@@ -204,7 +204,7 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
             .Any(o => o.Kind == "cities:unit" && CorporationService.Spreads(ctx.Sim, o.ContentId, corporation));
 }
 
-/// <summary>A founding building (a headquarters, or a guild's guild hall) stands for the corporation it founds: the
+/// <summary>A founding building (a headquarters, or a guild's Master Guild) stands for the corporation it founds: the
 /// headquarters income, the first branch and the right to spread it, on top of what the building itself gives. As
 /// with a religion's founding wonder, production only offers it where founding can happen (its requirements met, a
 /// consumed resource connected when the corporation consumes any, nothing founded). A corporation worth more adds up

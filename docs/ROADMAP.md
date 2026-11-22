@@ -288,8 +288,8 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   diplomatic victory vote; members may defy a resolution and lose full membership.
   Free trade lets members trade without open borders; it carries no commerce bonus.
 - **Corporations**: all 36 source corporations (21 corporations and 15 guilds, a guild
-  founded by its guild hall), founding by building the imported headquarters or guild
-  hall, branch spread (via gold, executives or guild masters), headquarters protection,
+  founded by its Master Guild), founding by building the imported headquarters or
+  Master Guild, branch spread (via gold, executives or guild masters), headquarters protection,
   branch revenue (per resource copy and flat), resource consumption, and maintenance.
   Not yet run: the source's explicit competing corporations, branch happiness and
   health, produced resources, military production and guild obsolescence.

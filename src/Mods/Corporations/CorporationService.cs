@@ -32,9 +32,16 @@ internal sealed class CorporationService : ICorporationService
     public bool IsHeadquartersOf(Simulation sim, int city, string identity) =>
         CorporationIndex.Of(sim.Content).ByIdentity.GetValueOrDefault(identity) is { } def
         && Read(sim).Founded.TryGetValue(def.Id, out var record) && record.Headquarters == city;
-    /// <summary>"guild hall" for a guild, "headquarters" for a corporation (<see cref="CorporationDef.Kind"/>).</summary>
-    public string? HeadquartersName(ContentDb content, string identity) =>
-        CorporationIndex.Of(content).ByIdentity.GetValueOrDefault(identity) is { } def ? CorporationKinds.Seat(def.Kind) : null;
+    /// <summary>The seat as running text: "the headquarters of Cereal Mills", "the Masons Master Guild". A founding
+    /// building that already carries the seat's words in its name (the guilds' do) is named as it is, so the phrase does
+    /// not read "the Master Guild of Masons Guild"; otherwise the seat is "of" the corporation.</summary>
+    public string? SeatPhrase(ContentDb content, string identity)
+    {
+        if (CorporationIndex.Of(content).ByIdentity.GetValueOrDefault(identity) is not { } def) return null;
+        string? building = CorporationFounder.Headquarters(content, def.Id)?.Name;
+        return building is not null && building.Contains(def.Seat, StringComparison.OrdinalIgnoreCase)
+            ? "the " + building : $"the {def.Seat} of {def.Name}";
+    }
     /// <summary>One founding answer for the rules, the effects and the UI: a live headquarters city.</summary>
     private static CorporationFounding? Founding(Simulation sim, string corporation) =>
         Read(sim).Founded.TryGetValue(corporation, out var record) && sim.State.FindCity(record.Headquarters) is not null ? record : null;

@@ -49,7 +49,7 @@ that output with the committed data so changes can be brought in piece-meal (see
   `BuildingVotesDef` attached to the buildings that seat a council (its `voteSource`,
   and `forceTeamVoteEligible` when the owner's team always stands). They live in the
   mod's published API (`Ariel.Mods.Votes`, assembly `Ariel.Mods.Votes.Api`).
-- Corporations: `CorporationDef` for corporations and guilds: their kind, required
+- Corporations: `CorporationDef` for corporations and guilds: their seat (the founding building's name), required
   resources, branch output, headquarters output, spread cost, and maintenance. It lives in the mod's published
   API (`Ariel.Mods.Corporations`, assembly `Ariel.Mods.Corporations.Api`).
 - Events: `EventTriggerDef` and `EventOptionDef` for eligibility, chance, repeat
@@ -120,12 +120,14 @@ first time victory by id weighs every player's score, enabled or not.
 ### Corporation fields
 
 `CorporationDef` (imported, `data/corporation.json`, 36 rows: 21 corporations and 15
-guilds) links an `Identity` reference, its `Kind` (`corporation` or `guild`, from the
-special building type of the source headquarters) and prerequisite resources
+guilds) links an `Identity` reference, its `Seat` (what the founding building is called:
+`headquarters` or `Master Guild`, from the special building type of the source
+headquarters) and prerequisite resources
 (`PrereqBonuses`, empty for the four guilds that consume none). Each corporation is
 founded by exactly one base building whose `FoundsCorporation` names its identity, the
-imported headquarters or, for a guild, the Master Guild the player reads as its guild
-hall (`Kind` names it in every text). That building's own requirements gate founding
+imported headquarters or, for a guild, the Master Guild (`Seat` names it in the
+corporations screen, the city panel, notices and the encyclopedia; the Guild Hall is a
+different, common building). That building's own requirements gate founding
 (its technology; for a guild also buildings of its trade across the empire) and its
 world limit is one. Once content freezes, the mod refuses a corporation without exactly
 one founding building, a founding building with a negative cost or no technology, any

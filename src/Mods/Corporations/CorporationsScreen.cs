@@ -23,7 +23,7 @@ internal sealed class CorporationsScreen : IGameScreen
         {
             int? hq = service.Headquarters(sim, def.Id);
             int branches = sim.State.Cities.Count(c => service.Present(sim, c.Id).Contains(def.Id));
-            string seat = CorporationKinds.Seat(def.Kind);
+            string seat = def.Seat;
             string state = hq is int city ? $"{seat} {sim.State.FindCity(city)?.Name ?? "?"}, {branches} cities"
                 : "not founded" + (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building ? $" (build its {seat}, {building.Name})" : "");
             list.Add(new ListItem(def.Id, def.Name, state, def.Id));
@@ -55,7 +55,7 @@ internal sealed class CorporationsCityPanel : ICityPanel
         return [new Row("present", present.Select(id =>
         {
             bool hq = service.Headquarters(sim, id) == city.Id;
-            string text = Labels.Name<CorporationDef>(sim.Content, id) + (hq ? " ★ " + CorporationKinds.Seat(sim.Content.Get<CorporationDef>(id).Kind) : "") + (service.IsActive(sim, city.Id, id) ? "" : " (inactive)");
+            string text = Labels.Name<CorporationDef>(sim.Content, id) + (hq ? " ★ " + sim.Content.Get<CorporationDef>(id).Seat : "") + (service.IsActive(sim, city.Id, id) ? "" : " (inactive)");
             return (ViewElement)new Paragraph(id, text, hq ? Tone.Accent : Tone.Dim, TextSize.Body, id);
         }).ToList())];
     }
@@ -76,7 +76,7 @@ internal sealed class CorporationNotices : INotificationSource
             CorporationSpread s when context.OwnsCity(s.City) =>
                 new("corporation", $"{Name(s.Corporation)} spread to {context.CityName(s.City)}", s.City),
             CorporationDissolved d when d.Player == context.Player =>
-                new("corporation", $"{Name(d.Corporation)} was dissolved with its {CorporationKinds.Seat(context.Sim.Content.Get<CorporationDef>(d.Corporation).Kind)}"),
+                new("corporation", $"{Name(d.Corporation)} was dissolved with its {context.Sim.Content.Get<CorporationDef>(d.Corporation).Seat}"),
             CorporationDisplaced d when context.OwnsCity(d.City) =>
                 new("corporation", $"{Name(d.Corporation)} was displaced by {Name(d.By)}", d.City),
             _ => null,
@@ -84,7 +84,7 @@ internal sealed class CorporationNotices : INotificationSource
     }
 }
 
-/// <summary>Corporations and guilds in the encyclopedia, each with the headquarters or guild hall that founds it, under
+/// <summary>Corporations and guilds in the encyclopedia, each with the headquarters or Master Guild that founds it, under
 /// the technology that makes that building available.</summary>
 internal sealed class CorporationPedia : IPediaSource
 {
@@ -95,7 +95,7 @@ internal sealed class CorporationPedia : IPediaSource
     {
         var building = CorporationFounder.Headquarters(content, d.Id);
         return new PediaItem(d,
-            Notes: building is null ? null : [$"{CorporationKinds.SeatTitle(d.Kind)}: founded by building {building.Name}"],
+            Notes: building is null ? null : [$"{d.SeatTitle()}: founded by building {building.Name}"],
             UnlockedBy: building is null ? null : FoundingTech(building));
     });
 

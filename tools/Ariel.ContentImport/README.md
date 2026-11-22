@@ -279,7 +279,7 @@ gameplay effects. Their evaluators fail closed. Prerequisites retain these ident
 instead of silently disappearing. A prerequisite on a building that founds a corporation
 (an executive's headquarters) becomes a `corporation` leaf with parameter 2, the
 corporation's headquarters city, which a city that captures it takes over. The imported
-headquarters and guild halls are the founding buildings. The guild halls keep the
+headquarters and Master Guilds are the founding buildings. The Master Guilds keep the
 source's cost of 300; the source leaves the 21 corporate headquarters to a great person
 (cost -1), so the importer prices them at the median national wonder of their era (700
 industrial, 1300 modern) and lists each as an `iCost` data issue. A text value that is

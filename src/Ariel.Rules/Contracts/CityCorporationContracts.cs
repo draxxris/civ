@@ -11,8 +11,8 @@ public interface ICityCorporations
     /// <summary>Whether the city is the headquarters of the corporation with this identity id: the city that completed
     /// its headquarters and founded it, or the one that has since taken that city's place by capture.</summary>
     bool IsHeadquartersOf(Simulation sim, int city, string identity);
-    /// <summary>What the corporation with this identity calls the building that founds it and is its seat, in lower
-    /// case for running text ("headquarters", or "guild hall" for a guild), or null when no corporation has the
-    /// identity. Content alone answers it, so requirement descriptions and the encyclopedia can ask.</summary>
-    string? HeadquartersName(Content.ContentDb content, string identity);
+    /// <summary>What a requirement calls the building that founds the corporation with this identity and is its seat, as
+    /// running text ("the headquarters of Cereal Mills", "the Masons Master Guild"), or null when no corporation has the
+    /// identity. Content alone answers it, so requirement descriptions can ask.</summary>
+    string? SeatPhrase(Content.ContentDb content, string identity);
 }
