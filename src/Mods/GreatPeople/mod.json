@@ -1,7 +1,7 @@
 {
   "id": "great_people",
   "name": "Great People",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "assembly": "Ariel.Mods.GreatPeople.dll",
   "api": "Ariel.Mods.GreatPeople.Api.dll",
   "dependencies": ["cities"],

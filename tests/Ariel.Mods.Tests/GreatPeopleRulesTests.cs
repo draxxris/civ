@@ -296,10 +296,11 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     }
 
     [Fact]
-    public void A_headquarters_nothing_founds_is_not_constructed_by_the_great_person_that_lists_it()
+    public void A_headquarters_is_not_constructed_by_the_great_person_that_lists_it()
     {
-        // The imported headquarters names a corporation, and no loaded feature founds corporations, so building it would
-        // found nothing: production refuses it, and so a great artist that lists it cannot construct it either.
+        // A corporation is founded only by building its headquarters in a city, so a great artist that lists one never
+        // constructs it. Here no loaded feature founds corporations, so production refuses it too; with the
+        // Corporations mod production accepts it and the great person still may not (CorporationRulesTests).
         var sim = Scenario(); var city = sim.State.Cities[0];
         var headquarters = sim.Content.Get<S.BuildingDef>("cities:corporation_7");
         Assert.True(sim.Content.Get<S.UnitDef>("military:artist").ConstructibleBuildings.GetValueOrDefault(headquarters.Id));
