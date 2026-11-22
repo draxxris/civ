@@ -1627,7 +1627,11 @@ Options can change treasury, research, city stores, happiness, health, and plot 
 The lasting changes are timers (Timers) whose key is the option and whose
 holder is the event's player, city and plot. A timed option counts its duration from the
 turn it is answered and still applies on its expiry turn. Unresolved events use a default
-option. AI players resolve events automatically.
+option. AI players resolve events automatically. An option's `Outcome` text tells the player
+what the choice did: once an option is pressed, the events screen shows a result page built
+from this turn's `EventResolved` events for the local player, and the resolution notice ends
+with the same text. Neither waits for the player, so unattended and AI turns never stop on
+it, and another player's or an AI's choice is never shown.
 
 ScriptedWonders adds completion, periodic, combat, and modifier effects to selected
 buildings, and answers the base game's empire free buildings (`IFreeBuildingGrants`) and
@@ -1731,7 +1735,7 @@ The shipped feature mods describe all of their interface this way, and so do the
 Diplomacy base module (screen with the deal composer, attitude labels) and the Victory base
 module (the victory screen with the score table, the victory pedia and the victory notice): Corporations
 (screen, city panel, pedia, notices), Espionage (screen, notices), ProjectsVictory (project pedia, notices),
-Events (screen while an event waits, pedia, notices), Revolution (stability panel with
+Events (screen while an event waits, with the result of this turn's choices, pedia, notices), Revolution (stability panel with
 suppression, unrest summary, notices), GreatPeople (city figures, settled great people,
 golden age summary), Trade (routes panel) and ScriptedWonders (wonder panel, notices).
 The test mod `tests/TestMods/Bulletin` adds one of each contract and nothing else.

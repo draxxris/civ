@@ -133,7 +133,8 @@ culture uses hundredths of a point (`CityCultureHundredthsDelta`). Negative gold
 indicates a cost. `DurationTurns` makes happiness, health, and plot effects temporary,
 counted from the turn the event is answered and still applying on the turn that count
 reaches; zero means permanent. The lasting effects are kept as timers in the base
-game's store (see "Timers" in DESIGN.md). `Outcome` provides post-choice feedback text.
+game's store (see "Timers" in DESIGN.md). `Outcome` is what the choice did, in words: the events screen shows it as the
+result once the option is chosen, and the resolution notice ends with it.
 
 ### Civic fields, effects and attachments
 

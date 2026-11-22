@@ -412,6 +412,81 @@ public sealed class ClientIntelligenceEventsTests
         Assert.False(session.Screens.Press(option.Action));
     }
 
+    /// <summary>The Events mod and a probe event that only a rich player can get, certain to happen on the first turn,
+    /// with one option that tells its outcome and one that does not.</summary>
+    private static readonly Lazy<ContentDb> OutcomeContent = new(() =>
+    {
+        var loaded = new LoadedMods();
+        var probe = new ModSource
+        {
+            Manifest = new() { Id = "outcome_probe", Version = "1", References = ["events"] }, Root = loaded.Root, Instance = new OutcomeProbe(),
+        };
+        return ModLoader.Build(loaded.Sources.Append(Optional("Events")).Append(probe));
+    });
+    private const string Told = "outcome_probe:windfall_keep", Untold = "outcome_probe:windfall_share";
+
+    private sealed class OutcomeProbe : IMod
+    {
+        public void Register(IModContext context)
+        {
+            context.Content<EventTriggerDef>().Register(new() { Id = "outcome_probe:windfall", Name = "Windfall", ChancePercent = 100, MinTreasury = 5000 });
+            context.Content<EventOptionDef>().Register(new()
+            {
+                Id = Told, Name = "Keep it", Trigger = "outcome_probe:windfall", IsDefault = true, GoldDelta = 10, Outcome = "The treasury grows.",
+            });
+            context.Content<EventOptionDef>().Register(new() { Id = Untold, Name = "Share it", Trigger = "outcome_probe:windfall" });
+        }
+    }
+
+    /// <summary>Player 0 and player 1 watch one game; only player 0 is rich enough for the windfall, which is waiting.</summary>
+    private static (GameSession Mine, GameSession Theirs, PendingEvent Pending) OutcomeGame()
+    {
+        var sim = GameFactory.Scenario(OutcomeContent.Value);
+        GameFactory.NeutralPolitics(sim);
+        foreach (var player in sim.State.Players) player.Treasury = player.Id == 0 ? 10000 : 0;
+        var mine = new GameSession(sim, 0);
+        var theirs = new GameSession(sim, 1);
+        sim.Content.TurnSystems.Get("events:turn").Run(sim);
+        var pending = Assert.Single(sim.Content.Services.Get<IEventService>().Single().Pending(sim, 0));
+        Assert.Equal("outcome_probe:windfall", pending.Trigger);
+        return (mine, theirs, pending);
+    }
+
+    [Fact]
+    public void Choosing_an_option_with_an_outcome_shows_it_to_the_choosing_player_only()
+    {
+        var (mine, theirs, pending) = OutcomeGame();
+        Assert.Null(ViewWalk.Find<Section>(ScreenProbe.Body(mine, EventsId), $"outcome:{pending.Id}"));
+        Assert.True(ScreenProbe.Press(mine, EventsId, Told));
+
+        // The open screen turns into the result page: the event is gone and what the choice did is in its place.
+        var result = ScreenProbe.Body(mine, EventsId);
+        Assert.Null(ViewWalk.Find<Section>(result, $"event:{pending.Id}"));
+        var outcome = ScreenProbe.Section(result, $"outcome:{pending.Id}");
+        Assert.Equal("Windfall: Keep it", ScreenProbe.Paragraph(outcome, "name"));
+        Assert.Equal("The treasury grows.", ScreenProbe.Paragraph(outcome, "outcome"));
+        Assert.Null(ScreenProbe.Paragraph(result, "none"));
+        Assert.Contains(mine.Notifications, n => n.Kind == "event" && n.Text == "Windfall resolved: The treasury grows.");
+
+        // Another player watching the same game sees neither the result nor the notice.
+        theirs.Pump();
+        var other = ScreenProbe.Body(theirs, EventsId);
+        Assert.Null(ViewWalk.Find<Section>(other, $"outcome:{pending.Id}"));
+        Assert.Equal("No events are waiting.", ScreenProbe.Paragraph(other, "none"));
+        Assert.DoesNotContain(theirs.Notifications, n => n.Kind == "event");
+    }
+
+    [Fact]
+    public void Choosing_an_option_without_an_outcome_shows_no_result()
+    {
+        var (mine, _, pending) = OutcomeGame();
+        Assert.True(ScreenProbe.Press(mine, EventsId, Untold));
+        var result = ScreenProbe.Body(mine, EventsId);
+        Assert.Null(ViewWalk.Find<Section>(result, $"outcome:{pending.Id}"));
+        Assert.Equal("No events are waiting.", ScreenProbe.Paragraph(result, "none"));
+        Assert.Contains(mine.Notifications, n => n.Kind == "event" && n.Text == "Windfall resolved");
+    }
+
     [Fact]
     public void Pedia_indexes_corporations_projects_victories_and_events()
     {

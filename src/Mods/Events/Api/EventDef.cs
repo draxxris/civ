@@ -65,6 +65,7 @@ public sealed class EventOptionDef : GameContentDef
     public int PlotCommerceDelta { get; init; }
     /// <summary>Turns that happiness, health and plot changes last. Zero means permanent.</summary>
     public int DurationTurns { get; init; }
-    /// <summary>Shown to the player after the choice.</summary>
+    /// <summary>What the choice did, in words: the events screen shows it as the result once the option is chosen, and
+    /// the resolution notice ends with it. Empty says nothing more than that the event was resolved.</summary>
     public string Outcome { get; init; } = "";
 }
