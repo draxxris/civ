@@ -1622,7 +1622,9 @@ parameter 2), which is the city that completed the mod's headquarters, so execut
 trained there. A load check (`CorporationContentValidation.Executives`, an
 `IContentCheck`) refuses an executive of one of the mod's corporations that no city could
 ever train. Spreading into a foreign city uses an executive's `corporations:spread`
-mission; an own city can also be paid for without one. Active branches apply corporation yield,
+mission; an own city can also be paid for without one. The computer player trains one
+executive at a time in a headquarters it holds and spends it abroad (see the AI planner
+order below); its own cities it pays for. Active branches apply corporation yield,
 commerce, headquarters commerce, and resource-based maintenance. Civics can prohibit
 local or foreign corporations. A branch requires an active branch owned by the spreading
 player.
@@ -1791,7 +1793,9 @@ runs `votes:planner` at `Diplomacy + 50` (after `ai:diplomacy`), the Religion mo
 1400 slot (spending weights, spy moves and missions) with `espionage:planner`, and the
 Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
 `revolution:planner`. The Corporations mod runs `corporations:planner` at
-`Religion + 100` (pays for branches in its own cities; it does not train or move executives) and the GreatPeople mod runs
+`Religion + 100` (walks executives to foreign cities, as the religion planner walks
+missionaries once its own cities have the faith, and pays for branches in its own cities,
+one branch a turn either way and none while income is negative) and the GreatPeople mod runs
 `great_people:planner` at `Religion + 200`, so corporations spread before
 the great people planner looks at the empire's units, and both act before cities choose
 production (where a headquarters, which founds a corporation, competes). That ordering lives in those two numbers; a mod that must run
@@ -1856,7 +1860,11 @@ scores its value in planner points times 1000 over its cost plus 60; an attacker
 short army 80 to about 300; naval and siege units in a war 170 to 390; the AirCombat mod's
 aircraft in a war 360; an inquisitor
 500 plus 1000 over its cost. The Espionage mod's `espionage:spies` wishes for spies at 150
-plus 1000 over their cost, one per six cities once a rival is known. A wish source keeps
+plus 1000 over their cost, one per six cities once a rival is known. The Corporations
+mod's `corporations:executives` asks a headquarters the player holds for one executive at
+a time, rated like a building whose yield is one more branch's headquarters income (about
+125), and only while the player can afford a branch and a foreign city it may enter, on
+the same landmass within ten tiles, could take one. A wish source keeps
 no mutable fields, never issues a command and never draws from the RNG.
 
 ### Valuers

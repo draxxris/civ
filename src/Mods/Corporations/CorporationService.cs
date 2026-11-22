@@ -97,8 +97,13 @@ internal sealed class CorporationService : ICorporationService
         return (int)((ratio - 10000) / 100);
     }
     /// <summary>Whether a unit is an executive of a corporation.</summary>
-    internal static bool Spreads(Simulation sim, Unit unit, CorporationDef def) =>
-        (sim.Content.Attachment<UnitCorporationsDef>(unit.Type) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Identity) > 0;
+    internal static bool Spreads(Simulation sim, Unit unit, CorporationDef def) => Spreads(sim, unit.Type, def);
+    /// <summary>Whether units of the type are executives of a corporation.</summary>
+    internal static bool Spreads(Simulation sim, string unitType, CorporationDef def) =>
+        (sim.Content.Attachment<UnitCorporationsDef>(unitType) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Identity) > 0;
+    /// <summary>Whether units of the type are executives of any corporation.</summary>
+    internal static bool IsExecutive(Simulation sim, string unitType) =>
+        (sim.Content.Attachment<UnitCorporationsDef>(unitType) ?? UnitCorporationsDef.None).CorporationSpreads.Any(p => p.Value > 0);
 
     /// <summary>Why the city may not found the corporation by completing its headquarters now, or null. The
     /// corporation's technology is the headquarters' own requirement, and Cities refuses barbarians first.</summary>
@@ -136,8 +141,21 @@ internal sealed class CorporationService : ICorporationService
         if (ValidateBranch(sim, player, city, corporation, record) is { } branchError) return branchError;
         if (executive is null && city.Owner != player) return "Foreign spread requires an executive";
         if (executive is not null && !Spreads(sim, executive, def)) return "Unit cannot spread this corporation";
-        if (ConsumedBonusCount(sim, cityId, corporation) <= 0) return "Requires a connected corporation resource";
-        return HeadquartersConflict(sim, cityId, def);
+        return RefuseSite(sim, city, def);
+    }
+    /// <summary>Why the player could not open a branch of the corporation in the city even with the gold and, for a
+    /// foreign city, an executive standing there; null when it could. The computer player asks this before it trains
+    /// an executive or sends one, so it never aims at a city the spread itself would refuse.</summary>
+    internal string? RefuseBranch(Simulation sim, int player, City city, CorporationDef def)
+    {
+        if (Founding(sim, def.Id) is not { } record) return "Corporation is not founded";
+        return ValidateBranch(sim, player, city, def.Id, record) ?? RefuseSite(sim, city, def);
+    }
+    /// <summary>The checks on the city's resources and headquarters, last because the connectivity query is the dearest.</summary>
+    private string? RefuseSite(Simulation sim, City city, CorporationDef def)
+    {
+        if (ConsumedBonusCount(sim, city.Id, def.Id) <= 0) return "Requires a connected corporation resource";
+        return HeadquartersConflict(sim, city.Id, def);
     }
     private string? ValidateBranch(Simulation sim, int player, City city, string corporation, CorporationFounding record)
     {
