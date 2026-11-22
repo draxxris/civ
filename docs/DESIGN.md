@@ -2376,7 +2376,13 @@ unknown kinds and duplicate evaluators, including requirements nested in custom
 definitions. `RequirementContext` supplies the simulation, player and optional city,
 plot or unit. Evaluation returns success and failure explanations. Successful
 alternatives discard failed branches. Empty `All` succeeds. Empty `Any` fails.
-Evaluators must not change state.
+Evaluators must not change state. An evaluator that also implements
+`IDescribedRequirementEvaluator` says what a leaf asks for from content alone, as a
+phrase completing "Requires ...", which its parameter may choose: the corporation leaf
+reads "a branch of Cereal Mills" or, with parameter 2, "the headquarters of Cereal
+Mills". A failed leaf is then explained as "Requires" and that phrase, and the pedia
+lists the phrase among the prerequisites; other kinds keep the generic
+"Required kind: id" reason.
 
 ## Modifiers and ledgers
 

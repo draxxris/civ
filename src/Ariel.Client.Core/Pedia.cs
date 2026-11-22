@@ -77,8 +77,9 @@ public sealed class PediaCatalog
         switch (requirement)
         {
             case Requirement.Leaf leaf:
+                // The leaf's own evaluator says what it asks for, as the city screen's blocked reasons do.
                 into.Add(leaf.Kind == "tech" && content.TryGet<S.TechDef>(leaf.Id, out var tech) ? tech.Name
-                    : $"{Labels.Humanize(leaf.Kind)} {Labels.Humanize(leaf.Id)}");
+                    : content.Requirements.Describe(leaf, content) ?? $"{Labels.Humanize(leaf.Kind)} {Labels.Humanize(leaf.Id)}");
                 break;
             case Requirement.All all: foreach (var item in all.Items) Describe(content, item, into); break;
             case Requirement.Any any:

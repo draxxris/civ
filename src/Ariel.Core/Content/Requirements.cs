@@ -31,6 +31,14 @@ public interface IRequirementEvaluator
     /// <summary>Evaluate without changing state; null means success, otherwise a failure explanation.</summary>
     string? Evaluate(Requirement.Leaf leaf, RequirementContext context);
 }
+/// <summary>An evaluator that can say what one of its leaves asks for, from content alone: a phrase completing
+/// "Requires ...", such as "the headquarters of Cereal Mills". Failure explanations and the pedia's prerequisite list
+/// both read it, so a leaf reads the same wherever it is shown; the leaf's parameter may choose the phrase.</summary>
+public interface IDescribedRequirementEvaluator : IRequirementEvaluator
+{
+    /// <summary>What the leaf asks for, or null when the evaluator has nothing better than its kind and id.</summary>
+    string? Describe(Requirement.Leaf leaf, ContentDb content);
+}
 /// <summary>Requirement result plus unsatisfied leaves (or satisfied leaves forbidden by a Not).</summary>
 public sealed record RequirementResult(bool Success, IReadOnlyList<RequirementFailure> Failures);
 /// <summary>A failed leaf and its explanation.</summary>
@@ -55,6 +63,10 @@ public sealed class RequirementService
             case Requirement.Not not: Validate(not.Item); break;
         }
     }
+    /// <summary>What the leaf asks for, from its evaluator (<see cref="IDescribedRequirementEvaluator"/>), or null when
+    /// its kind has no evaluator or the evaluator gives no phrase.</summary>
+    public string? Describe(Requirement.Leaf leaf, ContentDb content) =>
+        _evaluators.GetValueOrDefault(leaf.Kind) is IDescribedRequirementEvaluator described ? described.Describe(leaf, content) : null;
     private IRequirementEvaluator Evaluator(string kind) => _evaluators.GetValueOrDefault(kind) ?? throw new InvalidDataException($"Unknown requirement leaf kind '{kind}'; load a mod that registers its evaluator");
     /// <summary>Evaluate every relevant branch in data order. Successful alternatives discard their failed branches.</summary>
     public RequirementResult Evaluate(Requirement? requirement, RequirementContext context)

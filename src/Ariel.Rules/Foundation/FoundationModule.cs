@@ -33,6 +33,8 @@ public sealed class FoundationModule : IPreparableMod
         public string? Evaluate(Ariel.Content.Requirement.Leaf leaf, Ariel.Content.RequirementContext context) =>
             context.Sim.IsOptionEnabled(leaf.Id) ? null : $"Required game-option: {leaf.Id}";
     }
+    private static string CorporationName(Ariel.Content.ContentDb content, string identity) =>
+        content.TryGet<CorporationIdentityDef>(identity, out var corporation) && corporation.Name.Length > 0 ? corporation.Name : identity;
     private static void ValidateHexTuning(IModContext context)
     {
         var tuning = HexOverrides.Read(context.Data).Single();
@@ -82,13 +84,20 @@ public sealed class FoundationModule : IPreparableMod
         // A corporation requirement is a branch in the city (no parameter, CvCity.cpp:4039-4046) or, with parameter 2
         // as for a religion's holy city, the city being the corporation's headquarters, which is what an executive is
         // trained in. The mod that runs corporations answers it; without one the leaf fails, which keeps
-        // corporation-gated buildings and units unavailable rather than granting them for free.
+        // corporation-gated buildings and units unavailable rather than granting them for free. The parameter also
+        // chooses what the leaf is said to ask for, by the corporation's name.
         ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation", (leaf, subject) =>
             subject.City is { } city && subject.Sim.Rules().CityCorporations is { } corporations && leaf.Param switch
             {
                 null or 0 => corporations.HasIdentity(subject.Sim, city.Id, leaf.Id),
                 2 => corporations.IsHeadquartersOf(subject.Sim, city.Id, leaf.Id),
                 _ => false,
+            },
+            (leaf, content) => leaf.Param switch
+            {
+                null or 0 => "a branch of " + CorporationName(content, leaf.Id),
+                2 => "the headquarters of " + CorporationName(content, leaf.Id),
+                _ => null,
             });
         // A victory requirement is that victory being on in this game (CvGame::isVictoryValid). A victory whose
         // condition no loaded module registers is not on, so its buildings stay unavailable.

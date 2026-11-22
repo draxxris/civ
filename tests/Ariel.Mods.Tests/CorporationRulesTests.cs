@@ -219,7 +219,8 @@ public sealed class CorporationRulesTests
         const string Executive = "military:executive_1";
         sim.TeamOf(0).Techs.Add("research:refrigeration");
         foreach (var city in sim.State.Cities) P6RulesScenario.Resource(sim, city, "world:corn");
-        Assert.Contains("Required corporation: foundation:1", UnitRefusals(sim, hq, Executive));
+        Assert.Contains(HeadquartersRefusal, UnitRefusals(sim, hq, Executive));
+        Assert.Contains(BranchRefusal, UnitRefusals(sim, hq, Executive));
 
         // Found the corporation by building its headquarters, as production finishes it.
         QueueFinished(sim, hq, GameFactory.Headquarters(sim, Cereal));
@@ -230,11 +231,12 @@ public sealed class CorporationRulesTests
         // The headquarters city trains the executive; a city with only a branch does not, as in the reference rules.
         P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Cereal });
         Assert.Empty(UnitRefusals(sim, hq, Executive));
-        Assert.Contains("Required corporation: foundation:1", UnitRefusals(sim, branch, Executive));
-        // The city screen offers it there, and only there.
+        // The branch is there, so only the headquarters is missing, and the reason says so.
+        Assert.Equal([HeadquartersRefusal], UnitRefusals(sim, branch, Executive));
+        // The city screen offers it there, and only there, and shows the branch city why.
         var session = new Ariel.Client.GameSession(sim);
         Assert.True(Assert.Single(session.ProductionChoices(hq, "cities:unit"), c => c.Id == Executive).Available);
-        Assert.DoesNotContain(session.ProductionChoices(branch, "cities:unit"), c => c.Id == Executive && c.Available);
+        Assert.Equal([HeadquartersRefusal], Assert.Single(session.ProductionChoices(branch, "cities:unit"), c => c.Id == Executive).Blockers);
 
         P6RulesScenario.Apply(sim, new SetCityProductionCommand { Player = 0, CityId = hq.Id, Kind = "cities:unit", ContentId = Executive });
         hq.ProductionQueue[0] = hq.ProductionQueue[0] with { Progress = Production(sim).Calculate(sim, hq.Id, "cities:unit", Executive).Cost };
@@ -266,6 +268,26 @@ public sealed class CorporationRulesTests
     }
     private static IReadOnlyList<string> UnitRefusals(Simulation sim, City city, string unit) =>
         Production(sim).Validate(sim, city.Id, "cities:unit", unit).Failures.Select(f => f.Explanation).ToList();
+    private const string HeadquartersRefusal = "Requires the headquarters of Cereal Mills", BranchRefusal = "Requires a branch of Cereal Mills";
+    [Fact]
+    public void A_corporation_leaf_explains_itself_by_its_parameter_and_the_corporations_name()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        var requirements = sim.Content.Requirements;
+        string? Explain(int? param) => requirements.Evaluate(new Requirement.Leaf("corporation", "foundation:1", Param: param),
+            new RequirementContext(sim, 0, city)).Failures.Single().Explanation;
+        Assert.Equal(BranchRefusal, Explain(null));
+        Assert.Equal(BranchRefusal, Explain(0));
+        Assert.Equal(HeadquartersRefusal, Explain(2));
+        // A parameter the leaf does not define keeps the generic reason.
+        Assert.Equal("Required corporation: foundation:1", Explain(1));
+        Assert.Equal("the headquarters of Cereal Mills", requirements.Describe(new("corporation", "foundation:1", Param: 2), sim.Content));
+
+        // The pedia lists the same phrases among an executive's prerequisites.
+        var entry = new Ariel.Client.GameSession(sim).Pedia.Find("military:executive_1")!;
+        Assert.Contains("the headquarters of Cereal Mills", entry.Prerequisites);
+        Assert.Contains("a branch of Cereal Mills", entry.Prerequisites);
+    }
     [Fact]
     public void Queries_answer_a_stale_city_id_instead_of_throwing()
     {
@@ -280,7 +302,7 @@ public sealed class CorporationRulesTests
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0];
         var production = P6RulesScenario.Service<ICityProductionService>(sim);
         static bool CorporationFailure(RequirementResult result) =>
-            result.Failures.Any(f => f.Explanation.Contains("corporation", StringComparison.OrdinalIgnoreCase));
+            result.Failures.Any(f => f.Leaf?.Kind == "corporation");
         Assert.True(CorporationFailure(production.Validate(sim, hq.Id, "cities:building", "cities:cereal_mills_factory")));
         Found(sim, hq);
         Assert.False(CorporationFailure(production.Validate(sim, hq.Id, "cities:building", "cities:cereal_mills_factory")));
