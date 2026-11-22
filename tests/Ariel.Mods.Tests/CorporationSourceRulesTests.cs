@@ -43,6 +43,58 @@ public sealed class CorporationSourceRulesTests
         Assert.Contains(entry.Prerequisites, n => n.StartsWith("Competes with ", StringComparison.Ordinal) && n.Contains("Masons Guild", StringComparison.Ordinal));
     }
 
+    /// <summary>Found the corporation in <paramref name="headquarters"/> and open its branch in each city, by state, for
+    /// a rule that only reads what a branch does once it is there.</summary>
+    internal static void Plant(Simulation sim, City headquarters, string corporation, params City[] branches)
+    {
+        var game = sim.State.Extensions.Get<CorporationGameState>(sim.Content) ?? new();
+        game.Founded[corporation] = new(headquarters.Id, sim.TeamOf(headquarters.Owner).Id, sim.State.Turn);
+        sim.State.Extensions.Set(sim.Content, game);
+        foreach (var city in branches.Prepend(headquarters))
+        {
+            var state = city.Extensions.Get<CorporationCityState>(sim.Content) ?? new();
+            state.Corporations.Add(corporation);
+            city.Extensions.Set(sim.Content, state);
+        }
+    }
+
+    [Fact]
+    public void A_branch_brings_its_happiness_and_health_into_the_city_ledger()
+    {
+        const string Wonka = "corporations:wonka";
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        var wonka = sim.Content.Get<CorporationDef>(Wonka);
+        Assert.Equal((3, -1), (wonka.Happiness, wonka.Health));
+        var wellbeing = P6RulesScenario.Service<ICityWellbeingService>(sim);
+        Assert.DoesNotContain(wellbeing.Calculate(sim, city.Id).Ledger.Lines, l => l.Source == Wonka);
+        Plant(sim, city, Wonka);
+        var lines = wellbeing.Calculate(sim, city.Id).Ledger.Lines.Where(l => l.Source == Wonka).ToList();
+        Assert.Contains(lines, l => l.Key == "cities:happiness_good" && l.Amount == 3);
+        Assert.Contains(lines, l => l.Key == "cities:health_bad" && l.Amount == 1);
+        // Civics that suspend the branch suspend its happiness and health with its output.
+        sim.State.PlayerById(0).Civics["test"] = "government:planned";
+        Assert.DoesNotContain(wellbeing.Calculate(sim, city.Id).Ledger.Lines, l => l.Source == Wonka);
+        // The encyclopedia says what a branch does.
+        sim.State.PlayerById(0).Civics.Clear();
+        var effects = new Ariel.Client.GameSession(sim).Pedia.Find(Wonka)!.Effects;
+        Assert.Contains("+3 happiness in each city with a branch", effects);
+        Assert.Contains("-1 health in each city with a branch", effects);
+    }
+
+    [Fact]
+    public void A_branch_raises_military_unit_production_by_its_percent_and_nothing_else()
+    {
+        const string Soldiers = "corporations:ultsoldier";
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        Assert.Equal(15, sim.Content.Get<CorporationDef>(Soldiers).MilitaryProductionPercent);
+        var production = P6RulesScenario.Service<ICityProductionService>(sim);
+        int Modifier(string unit) => production.Calculate(sim, city.Id, "cities:unit", unit).ModifierPercent;
+        int warrior = Modifier("military:warrior"), worker = Modifier("military:worker");
+        Plant(sim, city, Soldiers);
+        Assert.Equal(warrior + 15, Modifier("military:warrior"));
+        Assert.Equal(worker, Modifier("military:worker"));
+    }
+
     private static IReadOnlyList<string> Refusals(Simulation sim, City city, string building) =>
         P6RulesScenario.Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", building).Failures.Select(f => f.Explanation).ToList();
 }

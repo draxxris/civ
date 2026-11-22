@@ -14,7 +14,7 @@ namespace Ariel.Mods.Corporations;
 /// <para>The corporation is founded by completing the base building whose <c>FoundsCorporation</c> names its
 /// identity: that building's own requirements (its technology, and for a guild the buildings of its trade) say when
 /// it can be founded.</para></summary>
-public sealed class CorporationDef : GameContentDef
+public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedContent
 {
     [ContentReference(typeof(CorporationIdentityDef))]
     public string Identity { get; init; } = "";
@@ -44,10 +44,24 @@ public sealed class CorporationDef : GameContentDef
     /// headquarters city.</summary>
     [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
     public ImmutableArray<string> CompetingCorporations { get; init; } = [];
+    /// <summary>Happiness every active branch gives its city, whole points; negative is unhappiness.</summary>
+    public int Happiness { get; init; }
+    /// <summary>Health every active branch gives its city, whole points; negative is unhealthiness.</summary>
+    public int Health { get; init; }
+    /// <summary>Percent change to the production of military units in a city with an active branch.</summary>
+    public int MilitaryProductionPercent { get; init; }
     public int SpreadCost { get; init; }
     /// <summary>Maintenance per consumed resource copy, hundredths of gold.</summary>
     public int MaintenanceHundredths { get; init; }
 
     /// <summary>The seat's name as a title: "Headquarters", "Master Guild".</summary>
     public string SeatTitle() => Seat.Length == 0 ? Seat : char.ToUpperInvariant(Seat[0]) + Seat[1..];
+
+    /// <summary>What an active branch does to its city beyond its yields and commerce, for the encyclopedia.</summary>
+    public IEnumerable<string> Describe(ContentDb content)
+    {
+        if (Happiness != 0) yield return $"{Ariel.Presentation.Labels.Signed(Happiness)} happiness in each city with a branch";
+        if (Health != 0) yield return $"{Ariel.Presentation.Labels.Signed(Health)} health in each city with a branch";
+        if (MilitaryProductionPercent != 0) yield return $"{Ariel.Presentation.Labels.Signed(MilitaryProductionPercent)}% military unit production in each city with a branch";
+    }
 }

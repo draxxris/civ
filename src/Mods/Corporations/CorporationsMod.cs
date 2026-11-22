@@ -87,6 +87,11 @@ internal sealed class CorporationEffects(ICorporationService service) : IModifie
             var (yields, commerce) = CorporationService.BranchOutput(def, service.ConsumedBonusCount(sim, city.Id, corporation));
             sink.AddYield(def.Id, yields);
             sink.AddCommerce(def.Id, commerce);
+            // The source's branch happiness and health, and its military production modifier. The keys are Cities'
+            // (a branch is neither a building nor a resource, so its health is the general kind).
+            sink.Add(def.Id, "cities:happiness", def.Happiness);
+            sink.Add(def.Id, "cities:health", def.Health);
+            sink.Add(def.Id, "cities:military_production_percent", def.MilitaryProductionPercent);
             if (service.Headquarters(sim, corporation) == city.Id)
             {
                 int branches = sim.State.Cities.Count(c => service.IsActive(sim, c.Id, corporation));
