@@ -53,7 +53,11 @@ internal sealed class CorporationService : ICorporationService
     private static bool Blocked(Simulation sim, City city, int headquartersTeam) => Civics(sim, city.Owner).Any(c => c.NoCorporations || (c.NoForeignCorporations && sim.TeamOf(city.Owner).Id != headquartersTeam));
     public bool IsActive(Simulation sim, int city, string corporation) => sim.State.FindCity(city) is { } target
         && Founding(sim, corporation) is { } record && Present(sim, city).Contains(corporation)
-        && !Blocked(sim, target, HeadquartersTeam(sim, record));
+        && !Blocked(sim, target, HeadquartersTeam(sim, record)) && !Obsolete(sim, target.Owner, sim.Content.Get<CorporationDef>(corporation));
+    /// <summary>Whether the player's team knows the corporation's <see cref="CorporationDef.ObsoleteTech"/>.</summary>
+    internal static bool Obsolete(Simulation sim, int player, CorporationDef def) => def.ObsoleteTech is { } tech && sim.KnowsTech(player, tech);
+    private static string ObsoleteReason(Simulation sim, CorporationDef def, string whose) =>
+        $"{def.Name} is obsolete for {whose}: {sim.Content.Find(def.ObsoleteTech!)?.Name ?? def.ObsoleteTech} is known";
     public long ConsumedBonusCount(Simulation sim, int city, string corporation)
     {
         if (sim.State.FindCity(city) is not { } cityObj) return 0;
@@ -126,6 +130,7 @@ internal sealed class CorporationService : ICorporationService
     internal string? RefuseFounding(Simulation sim, City city, CorporationDef def)
     {
         if (IsFounded(sim, def.Id)) return "Corporation is already founded";
+        if (Obsolete(sim, city.Owner, def)) return ObsoleteReason(sim, def, "your team");
         if (Blocked(sim, city, sim.TeamOf(city.Owner).Id)) return "Civics prohibit corporations";
         return RefuseSite(sim, city, def);
     }
@@ -139,6 +144,42 @@ internal sealed class CorporationService : ICorporationService
         state.Founded[def.Id] = new(city.Id, sim.TeamOf(city.Owner).Id, sim.State.Turn);
         Add(sim, city, def);
         sim.Events.Publish(new CorporationFounded(def.Id, city.Id, city.Owner));
+    }
+    /// <summary>A razed headquarters dissolves its corporations.</summary>
+    internal void DissolveHeadquartersOf(Simulation sim, int city, int player)
+    {
+        if (Read(sim).Founded.Count == 0) return;
+        foreach (var corporation in Read(sim).Founded.Where(pair => pair.Value.Headquarters == city).Select(pair => pair.Key).ToArray())
+            Dissolve(sim, corporation, city, player);
+    }
+    /// <summary>Dissolve the corporation: its branches leave every city and it may be founded again.</summary>
+    private static void Dissolve(Simulation sim, string corporation, int city, int player)
+    {
+        foreach (var other in sim.State.Cities)
+            other.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.Remove(corporation);
+        Edit(sim).Founded.Remove(corporation);
+        sim.Events.Publish(new CorporationDissolved(corporation, city, player));
+    }
+    /// <summary>A team learned a technology that makes corporations obsolete (<see cref="CorporationDef.ObsoleteTech"/>):
+    /// their branches close in the team's cities, and a headquarters there loses its founding building and dissolves the
+    /// corporation, as in the source. A team without the technology may found it again.</summary>
+    internal void Obsolete(Simulation sim, int team, string tech)
+    {
+        foreach (var def in sim.Content.Get<CorporationDef>().All.Where(d => d.ObsoleteTech == tech).OrderBy(d => d.Id, StringComparer.Ordinal))
+        {
+            foreach (var city in sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == team).OrderBy(c => c.Id).ToArray())
+            {
+                if (!Present(sim, city.Id).Contains(def.Id)) continue;
+                if (Founding(sim, def.Id)?.Headquarters == city.Id)
+                {
+                    if (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building) city.Buildings.Remove(building.Id);
+                    Dissolve(sim, def.Id, city.Id, city.Owner);
+                    continue;
+                }
+                city.Extensions.Get<CorporationCityState>(sim.Content)!.Corporations.Remove(def.Id);
+                sim.Events.Publish(new CorporationObsolete(def.Id, city.Id));
+            }
+        }
     }
     public string? ValidateSpread(Simulation sim, int player, int cityId, string corporation) =>
         ValidateSpread(sim, player, cityId, corporation, null);
@@ -176,8 +217,26 @@ internal sealed class CorporationService : ICorporationService
     private string? ValidateBranch(Simulation sim, int player, City city, string corporation, CorporationFounding record)
     {
         if (Present(sim, city.Id).Contains(corporation)) return "Corporation is already present";
+        var def = sim.Content.Get<CorporationDef>(corporation);
+        if (Obsolete(sim, player, def)) return ObsoleteReason(sim, def, "your team");
+        if (Obsolete(sim, city.Owner, def)) return ObsoleteReason(sim, def, "this city's owner");
         if (Blocked(sim, city, HeadquartersTeam(sim, record))) return "Civics prohibit this corporation";
+        if (MissingBuildingClass(sim, city.Owner, def) is { } missing) return missing;
         return sim.State.Cities.Any(c => c.Owner == player && IsActive(sim, c.Id, corporation)) ? null : "Requires an active owned branch";
+    }
+    /// <summary>Why the city owner's empire lacks the buildings a branch needs (<see cref="CorporationDef.PrereqBuildingClasses"/>),
+    /// or null. As in the source the count is the owner's whole empire, unscaled by world size.</summary>
+    private static string? MissingBuildingClass(Simulation sim, int owner, CorporationDef def)
+    {
+        if (def.PrereqBuildingClasses.Count == 0) return null;
+        var buildings = sim.Rules().CityBuildings;
+        foreach (var (building, needed) in def.PrereqBuildingClasses.OrderBy(p => p.Key, StringComparer.Ordinal))
+        {
+            int count = sim.State.Cities.Where(c => c.Owner == owner)
+                .Sum(c => buildings.EffectiveBuildings(sim, c.Id).Count(b => sim.Content.Get<BuildingDef>(b).DefaultBuilding == building));
+            if (count < needed) return $"Requires {needed} {sim.Content.Find(building)?.Name ?? building} in the city owner's empire";
+        }
+        return null;
     }
     public void Spread(Simulation sim, int player, int city, string corporation)
     {

@@ -19,6 +19,8 @@ public sealed record CorporationFounded(string Corporation, int City, int Player
 public sealed record CorporationSpread(string Corporation, int City, int Player) : DomainEvent;
 public sealed record CorporationDissolved(string Corporation, int City, int Player) : DomainEvent;
 /// <summary>A competing branch was evicted by <paramref name="By"/> without compensation, as in the reference rules.</summary>
+/// <summary>A branch closed because the city's team learned the corporation's obsolete technology.</summary>
+public sealed record CorporationObsolete(string Corporation, int City) : DomainEvent;
 public sealed record CorporationDisplaced(string Corporation, string By, int City) : DomainEvent;
 
 /// <summary>Read-only previews and validated corporation mutations. It also answers the base game's questions about

@@ -95,6 +95,70 @@ public sealed class CorporationSourceRulesTests
         Assert.Equal(worker, Modifier("military:worker"));
     }
 
+    private static void Learn(Simulation sim, int team, string tech)
+    {
+        sim.State.Teams.Single(t => t.Id == team).Techs.Add(tech);
+        sim.Events.Publish(new TechDiscovered(team, tech));
+    }
+
+    [Fact]
+    public void A_guild_goes_obsolete_with_its_technology_for_the_team_that_learns_it()
+    {
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var branch = sim.State.Cities[1]; var foreign = sim.State.Cities[2];
+        var masons = sim.Content.Get<CorporationDef>(Masons);
+        Assert.Equal("research:corporation", masons.ObsoleteTech);
+        string hall = GameFactory.Headquarters(sim, Masons);
+        hq.Buildings.Add(hall);
+        Plant(sim, hq, Masons, branch, foreign);
+        Assert.True(Corps(sim).IsActive(sim, foreign.Id, Masons));
+
+        // Knowing the technology suspends the guild in that team's cities at once, before any cleanup.
+        sim.TeamOf(1).Techs.Add("research:corporation");
+        Assert.False(Corps(sim).IsActive(sim, foreign.Id, Masons));
+        Assert.DoesNotContain(ModifierSink.Collect(new(sim, ModifierScope.City, 1, foreign)).Ledger.Lines, l => l.Source == Masons);
+        sim.TeamOf(1).Techs.Remove("research:corporation");
+
+        // Learning it closes the team's branches; the other team's branch stays and works.
+        Learn(sim, sim.TeamOf(1).Id, "research:corporation");
+        Assert.DoesNotContain(Masons, Corps(sim).Present(sim, foreign.Id));
+        Assert.Contains(sim.Events.Published.OfType<CorporationObsolete>(), e => e.Corporation == Masons && e.City == foreign.Id);
+        Assert.True(Corps(sim).IsActive(sim, branch.Id, Masons));
+        // Nothing opens in, or is spread by, a team that knows it.
+        var master = P6RulesScenario.AddUnit(sim, 0, foreign, "military:bgmaster");
+        Assert.Contains("obsolete for this city's owner",
+            P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 0, Unit = master.Id, Mission = CorporationMissions.Spread, Subject = Masons }));
+
+        // When the headquarters' team learns it, the Master Guild comes down and the guild dissolves; a team that does not
+        // know the technology may found it again, but one that does may not.
+        Learn(sim, sim.TeamOf(0).Id, "research:corporation");
+        Assert.False(Corps(sim).IsFounded(sim, Masons));
+        Assert.DoesNotContain(hall, hq.Buildings);
+        Assert.Empty(Corps(sim).Present(sim, branch.Id));
+        Assert.Contains(sim.Events.Published.OfType<CorporationDissolved>(), e => e.Corporation == Masons && e.City == hq.Id);
+        GameFactory.SatisfyFounding(sim, hq, Masons);
+        Assert.Contains(Refusals(sim, hq, hall), r => r.Contains("obsolete for your team", StringComparison.Ordinal));
+        Assert.Contains("Obsolete with Corporation", new Ariel.Client.GameSession(sim).Pedia.Find(Masons)!.Effects);
+    }
+
+    [Fact]
+    public void A_guild_branch_needs_its_group_hall_in_the_owners_empire()
+    {
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var foreign = sim.State.Cities[2];
+        Assert.Equal(1, sim.Content.Get<CorporationDef>(Masons).PrereqBuildingClasses["cities:cguildhall"]);
+        Plant(sim, hq, Masons);
+        P6RulesScenario.Resource(sim, foreign, "world:stone");
+        var master = P6RulesScenario.AddUnit(sim, 0, foreign, "military:bgmaster");
+        var spread = new PerformMissionCommand { Player = 0, Unit = master.Id, Mission = CorporationMissions.Spread, Subject = Masons };
+        // The spreader's halls do not count: the city's owner needs one.
+        sim.State.Cities[1].Buildings.Add("cities:cguildhall");
+        Assert.Equal("Requires 1 Crafts Guild Hall in the city owner's empire", P6RulesScenario.Reject(sim, spread));
+        // Anywhere in the owner's empire will do.
+        var other = P6RulesScenario.AddCity(sim, 1, 70);
+        other.Buildings.Add("cities:cguildhall");
+        P6RulesScenario.Apply(sim, spread);
+        Assert.Contains(Masons, Corps(sim).Present(sim, foreign.Id));
+    }
+
     private static IReadOnlyList<string> Refusals(Simulation sim, City city, string building) =>
         P6RulesScenario.Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", building).Failures.Select(f => f.Explanation).ToList();
 }

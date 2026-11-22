@@ -278,6 +278,7 @@ public sealed class CorporationRulesTests
         Assert.Empty(UnitRefusals(sim, city, Executive));
         Assert.Equal(["Requires the Masons Master Guild"], UnitRefusals(sim, branch, Executive));
         P6RulesScenario.Resource(sim, rival, "world:stone");
+        rival.Buildings.Add("cities:cguildhall"); // A guild branch needs its group's hall in the owner's empire.
         var master = P6RulesScenario.AddUnit(sim, 0, rival, "military:bgmaster");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = master.Id, Mission = CorporationMissions.Spread, Subject = Masons });
         Assert.Contains(Masons, Corps(sim).Present(sim, rival.Id));

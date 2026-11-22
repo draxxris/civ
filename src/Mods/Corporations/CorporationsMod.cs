@@ -53,24 +53,8 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
         context.RegisterService<ICapitalWeight>("capital_weight", new BranchCapitalWeight(service));
-        context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => Dissolve(sim, razed.City, razed.Player));
-    }
-
-    /// <summary>A razed headquarters dissolves the corporation: its branches leave every city and it may be founded again.</summary>
-    private static void Dissolve(Simulation sim, int city, int player)
-    {
-        var state = sim.State.Extensions.Get<CorporationGameState>(sim.Content);
-        if (state is null) return;
-        foreach (var corporation in state.Founded.Where(pair => pair.Value.Headquarters == city).Select(pair => pair.Key).ToArray())
-        {
-            foreach (var other in sim.State.Cities)
-            {
-                var branches = other.Extensions.Get<CorporationCityState>(sim.Content);
-                branches?.Corporations.Remove(corporation);
-            }
-            state.Founded.Remove(corporation);
-            sim.Events.Publish(new CorporationDissolved(corporation, city, player));
-        }
+        context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => service.DissolveHeadquartersOf(sim, razed.City, razed.Player));
+        context.Subscribe<TechDiscovered>("corporations:obsolete", (sim, e) => service.Obsolete(sim, e.Team, e.Tech));
     }
 }
 internal sealed class CorporationEffects(ICorporationService service) : IModifierSource

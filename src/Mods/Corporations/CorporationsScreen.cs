@@ -26,6 +26,7 @@ internal sealed class CorporationsScreen : IGameScreen
             string seat = def.Seat;
             string state = hq is int city ? $"{seat} {sim.State.FindCity(city)?.Name ?? "?"}, {branches} cities"
                 : "not founded" + (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building ? $" (build its {seat}, {building.Name})" : "");
+            if (CorporationService.Obsolete(sim, context.Player, def)) state += "; obsolete for you";
             list.Add(new ListItem(def.Id, def.Name, state, def.Id));
         }
         var items = new List<ViewElement> { new Section("corporations", null, list) };
@@ -61,7 +62,7 @@ internal sealed class CorporationsCityPanel : ICityPanel
     }
 }
 
-/// <summary>Founding, spread, dissolution and displacement of corporations that touch the player.</summary>
+/// <summary>Founding, spread, dissolution, displacement and obsolescence of corporations that touch the player.</summary>
 internal sealed class CorporationNotices : INotificationSource
 {
     public string Id => "corporations:notices";
@@ -79,6 +80,8 @@ internal sealed class CorporationNotices : INotificationSource
                 new("corporation", $"{Name(d.Corporation)} was dissolved with its {context.Sim.Content.Get<CorporationDef>(d.Corporation).Seat}"),
             CorporationDisplaced d when context.OwnsCity(d.City) =>
                 new("corporation", $"{Name(d.Corporation)} was displaced by {Name(d.By)}", d.City),
+            CorporationObsolete o when context.OwnsCity(o.City) =>
+                new("corporation", $"{Name(o.Corporation)} closed in {context.CityName(o.City)}: it is obsolete", o.City),
             _ => null,
         };
     }

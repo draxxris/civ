@@ -50,6 +50,15 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     public int Health { get; init; }
     /// <summary>Percent change to the production of military units in a city with an active branch.</summary>
     public int MilitaryProductionPercent { get; init; }
+    /// <summary>The technology that ends the corporation for a team that knows it (Corporation, for every guild): its
+    /// branches in that team's cities close and stop working, a headquarters there dissolves the corporation, and the
+    /// team can neither found it nor open or receive a branch.</summary>
+    [ContentReference(typeof(TechDef))]
+    public string? ObsoleteTech { get; init; }
+    /// <summary>Buildings, by class (the class's default building), and how many of each the owner of a city must hold
+    /// across its empire before a branch opens there: a guild's branches need its group's Guild Hall.</summary>
+    [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
+    public ImmutableDictionary<string, int> PrereqBuildingClasses { get; init; } = ImmutableDictionary<string, int>.Empty;
     public int SpreadCost { get; init; }
     /// <summary>Maintenance per consumed resource copy, hundredths of gold.</summary>
     public int MaintenanceHundredths { get; init; }
@@ -63,5 +72,10 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
         if (Happiness != 0) yield return $"{Ariel.Presentation.Labels.Signed(Happiness)} happiness in each city with a branch";
         if (Health != 0) yield return $"{Ariel.Presentation.Labels.Signed(Health)} health in each city with a branch";
         if (MilitaryProductionPercent != 0) yield return $"{Ariel.Presentation.Labels.Signed(MilitaryProductionPercent)}% military unit production in each city with a branch";
+        foreach (var (building, count) in PrereqBuildingClasses.OrderBy(p => p.Key, StringComparer.Ordinal))
+            yield return $"A branch needs {count} {Name(content, building)} in the city owner's empire";
+        if (ObsoleteTech is { } tech) yield return $"Obsolete with {Name(content, tech)}";
     }
+
+    private static string Name(ContentDb content, string id) => content.Find(id)?.Name is { Length: > 0 } name ? name : id;
 }
