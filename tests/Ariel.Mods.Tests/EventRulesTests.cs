@@ -7,17 +7,12 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Mods.Tests;
 
-/// <summary>Loads src/Mods/Events directly from its own build output.</summary>
+/// <summary>Loads the Events mod from the copy staged beside this test assembly, which is built in the same
+/// configuration as the API assembly the tests compile against.</summary>
 public sealed class EventRulesTests
 {
     private static readonly Lazy<ModSource> Mine = new(() =>
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "Ariel.slnx"))) dir = dir.Parent;
-        var root = Path.Combine(dir!.FullName, "src", "Mods", "Events", "bin");
-        var built = Directory.GetFiles(root, "mod.json", SearchOption.AllDirectories).OrderByDescending(File.GetLastWriteTimeUtc).First();
-        return ModLoader.FromDirectory(Path.GetDirectoryName(built)!);
-    });
+        ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Events")));
     private static readonly Lazy<ContentDb> Content = new(() =>
         ModLoader.Build(new LoadedMods().Sources.Append(Mine.Value)));
     private static readonly Lazy<ContentDb> EmpireContent = new(() =>
