@@ -7,17 +7,17 @@ namespace Ariel.Mods.Corporations;
 /// <summary>Corporation rules. Output uses whole points; maintenance uses hundredths of gold per resource copy.
 /// <para><see cref="Id"/> is the rules id used by services, effects and saves. <see cref="Identity"/> is the
 /// imported corporation id, and it is the id every other content record uses: buildings reference it through
-/// <c>corporation</c> requirement leaves, headquarters buildings through <c>FoundsCorporation</c>, executives through
+/// <c>corporation</c> requirement leaves, the founding headquarters through <c>FoundsCorporation</c>, executives through
 /// <see cref="UnitCorporationsDef.CorporationSpreads"/>. Anything outside the corporation rules therefore keys on the identity, never on
 /// <see cref="Id"/>; the rules mod is the only place that reads both.</para></summary>
 public sealed class CorporationDef : GameContentDef
 {
     [ContentReference(typeof(CorporationIdentityDef))]
     public string Identity { get; init; } = "";
+    /// <summary>The technology that makes the corporation's founding headquarters available; the headquarters
+    /// requires it.</summary>
     [ContentReference(typeof(TechDef))]
     public string? FoundingTech { get; init; }
-    [ContentReference(typeof(UnitDef))]
-    public string RequiredGreatPersonClass { get; init; } = "";
     [ContentReference(typeof(BonusDef), ReferencePart.Values)]
     public ImmutableArray<string> PrereqBonuses { get; init; } = [];
     public YieldVector YieldProduced { get; init; }

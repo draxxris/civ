@@ -48,8 +48,7 @@ public sealed class ClientIntelligenceEventsTests
         return unit;
     }
 
-    private static string GreatPersonOf(Simulation sim, string corporation) => sim.Content.Get<CorporationDef>(corporation).RequiredGreatPersonClass;
-
+    /// <summary>Gives the city's owner what founding a corporation needs there, and returns its headquarters.</summary>
     private static string Founder(GameSession session, City city, out string corporation)
     {
         var sim = session.Sim;
@@ -61,7 +60,7 @@ public sealed class ClientIntelligenceEventsTests
         sim.State.PlotAt(city.Position).Bonus = bonus.Id;
         if (bonus.RevealTech is { } reveal) sim.TeamOf(city.Owner).Techs.Add(reveal);
         if (bonus.TradeTech is { } trade) sim.TeamOf(city.Owner).Techs.Add(trade);
-        return def.RequiredGreatPersonClass;
+        return GameFactory.Headquarters(sim, def.Id);
     }
 
     private const string EspionageId = "espionage:screen";
@@ -98,16 +97,20 @@ public sealed class ClientIntelligenceEventsTests
     {
         var session = Session("Corporations");
         var city = AddCity(session.Sim, 0, 14);
-        var great = Founder(session, city, out var corporation);
+        var headquarters = Founder(session, city, out var corporation);
         string name = session.Sim.Content.Get<CorporationDef>(corporation).Name;
+        string building = session.Sim.Content.Get<S.BuildingDef>(headquarters).Name;
         Assert.NotNull(ScreenProbe.Button(session, CorporationsId));
-        Assert.Equal("not founded", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), corporation)!.Detail);
+        Assert.Equal($"not founded (build {building})", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), corporation)!.Detail);
         Assert.DoesNotContain(session.DescribeCity(city)!.Panels.Status, s => s.Id == "corporations:city");
+        Assert.Contains(session.Pedia.Find(corporation)!.Prerequisites, p => p == $"Founded by building {building}");
 
-        var unit = AddUnit(session.Sim, city, great);
-        Assert.Contains(session.UnitActions(unit, session.DefOf(unit)), a => a.Id == "corporations:found:" + corporation);
-        session.SelectUnit(unit.Id);
-        session.RunAction("corporations:found:" + corporation);
+        // The headquarters is ordinary production in the city; completing it founds the corporation there.
+        Assert.Contains(session.ProductionChoices(city), c => c.Id == headquarters && c.Available);
+        Assert.True(session.Enqueue(city, "cities:building", headquarters, append: true));
+        GameFactory.FoundCorporation(session.Sim, city, corporation);
+        // A second headquarters is refused now; the session reads what happened with the refusal.
+        Assert.False(session.Enqueue(city, "cities:building", headquarters, append: true));
 
         var body = ScreenProbe.Body(session, CorporationsId);
         Assert.Equal($"headquarters {city.Name}, 1 cities", ViewWalk.Find<ListItem>(body, corporation)!.Detail);

@@ -23,7 +23,8 @@ internal sealed class CorporationsScreen : IGameScreen
         {
             int? hq = service.Headquarters(sim, def.Id);
             int branches = sim.State.Cities.Count(c => service.Present(sim, c.Id).Contains(def.Id));
-            string state = hq is int city ? $"headquarters {sim.State.FindCity(city)?.Name ?? "?"}, {branches} cities" : "not founded";
+            string state = hq is int city ? $"headquarters {sim.State.FindCity(city)?.Name ?? "?"}, {branches} cities"
+                : "not founded" + (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building ? $" (build {building.Name})" : "");
             list.Add(new ListItem(def.Id, def.Name, state, def.Id));
         }
         var items = new List<ViewElement> { new Section("corporations", null, list) };
@@ -82,12 +83,14 @@ internal sealed class CorporationNotices : INotificationSource
     }
 }
 
-/// <summary>Corporations in the encyclopedia, each under the technology that lets a great person found it.</summary>
+/// <summary>Corporations in the encyclopedia, each with the headquarters that founds it, under the technology that
+/// makes the headquarters available.</summary>
 internal sealed class CorporationPedia : IPediaSource
 {
     public string Id => "corporations:pedia";
     public string Category => "Corporations";
 
     public IEnumerable<PediaItem> Items(ContentDb content) => content.Get<CorporationDef>().All.Select(d => new PediaItem(d,
-        Notes: d.FoundingTech is { } tech ? [$"Founded with {Labels.Name<Content.Schema.TechDef>(content, tech)}"] : null, UnlockedBy: d.FoundingTech));
+        Notes: CorporationFounder.Headquarters(content, d.Id) is { } building ? [$"Founded by building {building.Name}"] : null,
+        UnlockedBy: d.FoundingTech));
 }

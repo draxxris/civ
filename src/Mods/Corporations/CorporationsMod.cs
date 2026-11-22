@@ -9,13 +9,15 @@ namespace Ariel.Mods.Corporations;
 public sealed class CorporationsMod : IPreparableMod
 {
     private static readonly ModJsonFile<CorporationDef[]> Corporations = new("data/corporation.json");
+    /// <summary>One headquarters per corporation; completing it founds the corporation in that city.</summary>
+    private static readonly ModJsonFile<BuildingDef[]> Headquarters = new("data/founding-headquarters.json");
     private static readonly ModJsonFile<CivicCorporationsDef[]> Civics = new("data/civic-corporations.json");
     private static readonly ModJsonFile<ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
     /// <summary>What units, handicaps and world sizes mean to corporations, attached to the base rows.</summary>
     private static readonly ModJsonFile<UnitCorporationsDef[]> Units = new("data/unit-corporations.json");
     private static readonly ModJsonFile<HandicapCorporationsDef[]> Handicaps = new("data/handicap-corporations.json");
     private static readonly ModJsonFile<WorldSizeCorporationsDef[]> WorldSizes = new("data/world-size-corporations.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Civics, ModifierKeys, Units, Handicaps, WorldSizes];
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Headquarters, Civics, ModifierKeys, Units, Handicaps, WorldSizes];
 
     public void Register(IModContext context)
     {
@@ -26,8 +28,10 @@ public sealed class CorporationsMod : IPreparableMod
         Ariel.Rules.ContentRegistration.Load(context, WorldSizes);
         var definitions = Corporations.Read(context.Data);
         foreach (var definition in definitions) context.Content<CorporationDef>().Register(definition);
+        var headquarters = Headquarters.Read(context.Data);
+        foreach (var building in headquarters) context.Content<BuildingDef>().Register(building);
         // The schema covers reference resolution and sign-free fields; these invariants are rules-level.
-        CorporationContentValidation.Validate(definitions);
+        var founds = CorporationContentValidation.Validate(definitions, headquarters);
         var service = new CorporationService();
         context.RegisterService<ICorporationService>("corporations", service);
         context.RegisterService<IGameScreen>("screen", new CorporationsScreen());
@@ -39,7 +43,9 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterStateComponent<CorporationCityState>("city_state");
         context.RegisterStateComponent<CorporationGameState>("game_state");
         context.RegisterStateComponent<CorporationPlayerState>("player_state");
-        context.RegisterService<IMission>("found", new FoundCorporationMission(service));
+        var founder = new CorporationFounder(service, founds);
+        context.RegisterService<IBuildingFounder>("headquarters", founder);
+        context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>("headquarters_valuer", new HeadquartersValuer(founder));
         context.RegisterService<IMission>("spread", new SpreadCorporationMission(service));
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new CorporationAiPlanner());
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>("civic_valuer", new CorporationCivicValuer(service));

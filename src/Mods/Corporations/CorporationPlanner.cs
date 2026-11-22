@@ -3,9 +3,9 @@ using Ariel.Game;
 
 namespace Ariel.Mods.Corporations;
 
-/// <summary>The computer player's use of corporations, run inside the standard AI's turn after religion and before
-/// the great people planner (<c>great_people:planner</c>, at <see cref="AiPlannerOrder.Religion"/> + 200), so a great
-/// person able to found a corporation does that first.</summary>
+/// <summary>The computer player's spreading of corporations, run inside the standard AI's turn after religion and
+/// before the great people planner (<c>great_people:planner</c>, at <see cref="AiPlannerOrder.Religion"/> + 200).
+/// Founding is production: the city planner builds a headquarters, valued by <see cref="HeadquartersValuer"/>.</summary>
 internal sealed class CorporationAiPlanner : IAiPlanner
 {
     public string Id => "corporations:planner";
@@ -13,66 +13,24 @@ internal sealed class CorporationAiPlanner : IAiPlanner
     public void Plan(AiContext ctx) => new CorporationPlanner(ctx).Plan();
 }
 
-/// <summary>Founds corporations with the right great person and spreads founded ones to the empire's own cities for
-/// gold. Spreading stops while income is negative, because every branch adds maintenance.</summary>
+/// <summary>Spreads founded corporations to the empire's own cities for gold. Spreading stops while income is negative,
+/// because every branch adds maintenance.</summary>
 internal sealed class CorporationPlanner(AiContext ctx)
 {
     internal const int SpreadsPerTurn = 1;
     private ICorporationService? Corporations => ctx.Sim.Service<ICorporationService>();
-    private readonly Dictionary<(int City, string Corporation), long> _consumed = [];
 
     public void Plan()
     {
         if (Corporations is not { } corporations || ctx.Cities.Count == 0) return;
-        _consumed.Clear();
-        Found(corporations);
         Spread(corporations);
     }
-
-    private IEnumerable<CorporationDef> Unfounded(ICorporationService corporations) => ctx.Sim.Content.Get<CorporationDef>().All
-        .Where(c => !corporations.IsFounded(ctx.Sim, c.Id) && (c.FoundingTech is not { } tech || ctx.Team.Techs.Contains(tech)))
-        .OrderByDescending(Worth).ThenBy(c => c.Id, StringComparer.Ordinal);
 
     /// <summary>Everything one branch and its share of headquarters income produce, in the same points the city
     /// planner uses, minus the maintenance of one resource copy.</summary>
     public static long Worth(CorporationDef c) => PlannerPoints.Yields(c.YieldProduced)
         + PlannerPoints.Commerce(c.CommerceProduced) + PlannerPoints.Commerce(c.HeadquartersCommerce)
         - c.MaintenanceHundredths / 20;
-
-    private void Found(ICorporationService corporations)
-    {
-        var open = Unfounded(corporations).ToList();
-        if (open.Count == 0) return;
-        foreach (var unit in ctx.Units.Where(u => ctx.Alive(u) && u.Health > 0 && u.MovesLeft > 0 && !ctx.HasActed(u)).OrderBy(u => u.Id).ToList())
-        {
-            var def = ctx.Def(unit);
-            var fits = open.Where(c => c.RequiredGreatPersonClass == def.DefaultUnit).ToList();
-            if (fits.Count == 0) continue;
-            if (FoundHere(unit, fits))
-            {
-                ctx.MarkActed(unit);
-                // Drop what is now founded; re-scanning and re-sorting every corporation for each great person is waste.
-                open.RemoveAll(c => corporations.IsFounded(ctx.Sim, c.Id));
-                continue;
-            }
-            // Walk to the nearest own city with a resource the best fitting corporation consumes.
-            var site = ctx.Cities.Where(c => fits.Any(corp => Consumed(corporations, c.Id, corp.Id) > 0))
-                .OrderBy(c => ctx.Grid.Distance(unit.Position, c.Position)).ThenBy(c => c.Id).FirstOrDefault();
-            if (site is null || site.Position == unit.Position) continue;
-            if (ctx.MoveToward(unit, site.Position))
-            {
-                ctx.MarkActed(unit);
-                if (ctx.Alive(unit) && unit.Position == site.Position && unit.MovesLeft > 0) FoundHere(unit, fits);
-            }
-        }
-    }
-
-    private bool FoundHere(Unit unit, IEnumerable<CorporationDef> corporations)
-    {
-        foreach (var corporation in corporations)
-            if (ctx.Issue(new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = CorporationMissions.Found, Subject = corporation.Id })) return true;
-        return false;
-    }
 
     private void Spread(ICorporationService corporations)
     {
@@ -97,14 +55,6 @@ internal sealed class CorporationPlanner(AiContext ctx)
         }
     }
 
-    private long Consumed(ICorporationService corporations, int city, string corporation)
-    {
-        if (_consumed.TryGetValue((city, corporation), out long count)) return count;
-        count = corporations.ConsumedBonusCount(ctx.Sim, city, corporation);
-        _consumed[(city, corporation)] = count;
-        return count;
-    }
-
     /// <summary>One economy calculation per pass: only our own spending moves the projection, and it is dropped
     /// whenever a branch is actually paid for.</summary>
     private bool Affordable(CorporationDef corporation, ref long? netGold)
@@ -112,4 +62,19 @@ internal sealed class CorporationPlanner(AiContext ctx)
         netGold ??= ctx.Service<IPlayerEconomyService>().Calculate(ctx.Sim, ctx.PlayerId).NetGold;
         return ctx.Self.Treasury - corporation.SpreadCost >= 2 * ctx.GoldReserve && netGold >= 0;
     }
+}
+
+/// <summary>A founding headquarters has no effects of its own; this value stands for the corporation it founds: the
+/// headquarters income, the first branch and the right to spread it. As with a religion's founding wonder, production
+/// only offers it where founding can happen (its technology known, a consumed resource connected, nothing founded).
+/// A corporation worth more adds up to as much again.</summary>
+internal sealed class HeadquartersValuer(CorporationFounder founder) : IAiValuer<BuildingSubject>
+{
+    internal const int FoundingValue = 80;
+    public string Id => "corporations:headquarters_valuer";
+
+    public int Adjust(AiContext ctx, in BuildingSubject subject) =>
+        founder.Corporation(subject.Building) is { } id
+            ? FoundingValue + (int)Math.Clamp(CorporationPlanner.Worth(ctx.Sim.Content.Get<CorporationDef>(id)), 0, FoundingValue)
+            : 0;
 }

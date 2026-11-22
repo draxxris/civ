@@ -87,32 +87,29 @@ internal sealed class CorporationService : ICorporationService
         long ratio = sim.State.PlayerById(player).Extensions.TryGet<EconomyPlayerState>(sim.Content)?.AccruedCostRatioTimes10000 ?? 10000;
         return (int)((ratio - 10000) / 100);
     }
-    /// <summary>Whether a unit is the kind of great person that founds a corporation.</summary>
-    internal static bool Founds(Simulation sim, Unit unit, CorporationDef def) =>
-        sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).DefaultUnit == def.RequiredGreatPersonClass;
     /// <summary>Whether a unit is an executive of a corporation.</summary>
     internal static bool Spreads(Simulation sim, Unit unit, CorporationDef def) =>
         (sim.Content.Attachment<UnitCorporationsDef>(unit.Type) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Identity) > 0;
 
-    internal string? ValidateFound(Simulation sim, MissionOrder order)
+    /// <summary>Why the city may not found the corporation by completing its headquarters now, or null. The
+    /// corporation's technology is the headquarters' own requirement, and Cities refuses barbarians first.</summary>
+    internal string? RefuseFounding(Simulation sim, City city, CorporationDef def)
     {
-        if (!sim.Content.TryGet<CorporationDef>(order.Subject, out var def)) return "Unknown corporation";
-        if (!Founds(sim, order.Unit, def)) return "Requires the correct Great Person class";
-        var city = order.City;
-        if (city.Owner != order.Player) return "Great Person must be in your city";
         if (IsFounded(sim, def.Id)) return "Corporation is already founded";
-        if (def.FoundingTech is { } tech && !sim.KnowsTech(order.Player, tech)) return "Requires technology: " + tech;
-        if (Blocked(sim, city, sim.TeamOf(order.Player).Id)) return "Civics prohibit corporations";
+        if (Blocked(sim, city, sim.TeamOf(city.Owner).Id)) return "Civics prohibit corporations";
         if (ConsumedBonusCount(sim, city.Id, def.Id) <= 0) return "Requires a connected corporation resource";
         return HeadquartersConflict(sim, city.Id, def);
     }
-    internal void Found(Simulation sim, MissionOrder order)
+    /// <summary>Found the corporation with its headquarters and first branch in the city. One already founded, by a city
+    /// that completed its headquarters first or by a scenario, stays as it is.</summary>
+    internal void Found(Simulation sim, City city, CorporationDef def)
     {
+        if (IsFounded(sim, def.Id)) return;
         var state = Edit(sim);
         // A stale record whose headquarters city no longer exists is replaced rather than rejected by IsFounded.
-        state.Founded[order.Subject] = new(order.City.Id, sim.TeamOf(order.Player).Id, sim.State.Turn);
-        Add(sim, order.City, sim.Content.Get<CorporationDef>(order.Subject));
-        sim.Events.Publish(new CorporationFounded(order.Subject, order.City.Id, order.Player));
+        state.Founded[def.Id] = new(city.Id, sim.TeamOf(city.Owner).Id, sim.State.Turn);
+        Add(sim, city, def);
+        sim.Events.Publish(new CorporationFounded(def.Id, city.Id, city.Owner));
     }
     public string? ValidateSpread(Simulation sim, int player, int cityId, string corporation) =>
         ValidateSpread(sim, player, cityId, corporation, null);

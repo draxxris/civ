@@ -339,7 +339,7 @@ requires the owning namespace. Overrides can replace earlier content.
   unit stands in or null, and `MissionResolved.City` is then -1; `MissionOrder.City` is
   the checked city of a mission that needs one. One command, `PerformMissionCommand`,
   carries them all. Religion (`religion:spread`, `religion:inquisition`,
-  `religion:shrine`), the Corporations mod (`corporations:found`, `corporations:spread`),
+  `religion:shrine`), the Corporations mod (`corporations:spread`),
   the Espionage mod (one `espionage:*` kind per spy mission) and the GreatPeople mod (one
   `great_people:*` kind per great person action) are built on it. A mission collects its
   own price and publishes its own event for what it changed. Planners still choose
@@ -431,7 +431,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
-| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders) | such a building is refused with "Nothing founds what this building would found", so no great person can construct it either |
+| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders), Corporations (headquarters) | such a building is refused with "Nothing founds what this building would found", so no great person can construct it either |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
 | `IVictoryCondition` | `VictoryConditions` (list) | the victory check, for each enabled `VictoryDef` by the condition its `Rule` names | Victory (conquest, domination, cultural, time), ProjectsVictory (the space race), Votes (the diplomatic victory) | a victory naming an unregistered condition fails the load, so the victory is simply absent |
 | `ITimerKind` | (registry, read by `ITimers`) | the Foundation timer store (Timers), for each timer by the kind it names | Events, Espionage, Revolution | starting a timer of an unregistered kind throws |
@@ -1607,8 +1607,16 @@ abstain. The computer player votes and proposes through `votes:planner`. Not run
 nuclear ban (the game has no nuclear weapons), handing over cities, the councils' free
 specialists and religion yields, and the unhappiness defiance causes.
 
-Corporations use founding and spread commands. A Great Person founds a corporation in a
-city with a connected prerequisite resource. Active branches apply corporation yield,
+Corporations are founded in two steps. The corporation's technology makes its
+headquarters available, and completing the headquarters in a city founds the corporation
+there. The headquarters are the mod's own buildings (`data/founding-headquarters.json`,
+one per corporation, `BuildingDef.FoundsCorporation` naming its identity, a world limit
+of one, requiring the founding technology). The mod is their `IBuildingFounder`
+(`CorporationFounder`): beyond the technology, the city needs a connected prerequisite
+resource, civics that allow corporations and no competing headquarters, and nobody can
+build it once the corporation is founded. The imported headquarters rows stay inert:
+nothing claims them, so Cities refuses them. Spreading uses the `corporations:spread`
+mission. Active branches apply corporation yield,
 commerce, headquarters commerce, and resource-based maintenance. Civics can prohibit
 local or foreign corporations. A branch requires an active branch owned by the spreading
 player.
@@ -1777,10 +1785,10 @@ runs `votes:planner` at `Diplomacy + 50` (after `ai:diplomacy`), the Religion mo
 1400 slot (spending weights, spy moves and missions) with `espionage:planner`, and the
 Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
 `revolution:planner`. The Corporations mod runs `corporations:planner` at
-`Religion + 100` (found and spread corporations) and the GreatPeople mod runs
-`great_people:planner` at `Religion + 200`, so a great person that can found a
-corporation does that before the great people planner spends it, and both act before
-cities choose production. That ordering lives in those two numbers; a mod that must run
+`Religion + 100` (spread corporations) and the GreatPeople mod runs
+`great_people:planner` at `Religion + 200`, so an executive spreads a corporation before
+the great people planner looks at the empire's units, and both act before cities choose
+production (where a headquarters, which founds a corporation, competes). That ordering lives in those two numbers; a mod that must run
 before or after another contributed planner says so in its own value.
 
 How a mod adds AI behaviour:
@@ -1958,9 +1966,10 @@ Specialized planners handle empire governance and military campaigns:
   Dynamically scores Great Person actions: evaluates empire-wide value of Golden Ages
   (scaled by population and revolution instability) versus immediate technology
   bulbing, special building construction, or trade missions.
-- **Corporations (`CorporationPlanner`, contributed by the Corporations mod)**: Founds
-  corporations with the fitting great person and spreads founded ones to the empire's
-  own cities while income allows.
+- **Corporations (`CorporationPlanner`, contributed by the Corporations mod)**: Spreads
+  founded corporations to the empire's own cities while income allows. Founding goes
+  through the city planner: the mod's `HeadquartersValuer` rates a buildable
+  headquarters by a founding bonus plus the corporation's net worth.
 - **Espionage (`EspionagePlanner`, contributed by the Espionage mod)**: Points the
   espionage weights at an enemy, else the nearest known rival, walks spies to its
   cities and runs the best affordable mission; `SpyWishes` asks cities for spies.

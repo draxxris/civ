@@ -76,28 +76,84 @@ public sealed class CorporationRulesTests
         var def = sim.Content.Get<Ariel.Mods.Corporations.CorporationDef>(corporation);
         sim.TeamOf(city.Owner).Techs.Add(def.FoundingTech!);
         P6RulesScenario.Resource(sim, city, "world:corn");
-        var gp = P6RulesScenario.AddUnit(sim, city.Owner, city, def.RequiredGreatPersonClass);
-        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = city.Owner, Unit = gp.Id, Mission = CorporationMissions.Found, Subject = corporation });
+        Assert.True(Production(sim).Validate(sim, city.Id, "cities:building", GameFactory.Headquarters(sim, corporation)).Success);
+        GameFactory.FoundCorporation(sim, city, corporation);
+    }
+    private static ICityProductionService Production(Simulation sim) => P6RulesScenario.Service<ICityProductionService>(sim);
+    private static IReadOnlyList<string> Refusals(Simulation sim, City city, string building) =>
+        Production(sim).Validate(sim, city.Id, "cities:building", building).Failures.Select(f => f.Explanation).ToList();
+    private static void RunCityPhase(Simulation sim, string phase, int player) =>
+        ((IPlayerTurnSystem)sim.Content.TurnSystems.Get("cities:" + phase)).Run(sim, player);
+    /// <summary>Queue the building in the city with its whole cost already paid, as an order about to finish.</summary>
+    private static void QueueFinished(Simulation sim, City city, string building)
+    {
+        P6RulesScenario.Apply(sim, new SetCityProductionCommand { Player = city.Owner, CityId = city.Id, Kind = "cities:building", ContentId = building });
+        city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = Production(sim).Calculate(sim, city.Id, "cities:building", building).Cost };
     }
     [Fact]
-    public void Founding_requires_the_correct_unit_technology_and_connected_resource_and_is_unique()
+    public void Every_corporation_has_one_headquarters_gated_by_its_founding_tech()
+    {
+        var sim = P6RulesScenario.Create();
+        foreach (var corporation in sim.Content.Get<CorporationDef>().All)
+        {
+            var building = sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, corporation.Id));
+            Assert.Equal(1, building.Limits.World);
+            Assert.True(building.Cost > 0);
+            Assert.Contains(new Requirement.Leaf("tech", corporation.FoundingTech!), ContentReferences.Leaves(building.Requirements!));
+        }
+    }
+    [Fact]
+    public void The_headquarters_is_unavailable_before_the_technology_and_needs_a_connected_resource()
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
-        var wrong = P6RulesScenario.AddUnit(sim, 0, city, "military:scientist");
-        Assert.Contains("Great Person class", P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 0, Unit = wrong.Id, Mission = CorporationMissions.Found, Subject = Cereal }));
-        var gp = P6RulesScenario.AddUnit(sim, 0, city, "military:merchant");
-        var command = new PerformMissionCommand { Player = 0, Unit = gp.Id, Mission = CorporationMissions.Found, Subject = Cereal };
-        Assert.Contains("technology", P6RulesScenario.Reject(sim, command));
+        string headquarters = GameFactory.Headquarters(sim, Cereal);
+        Assert.Contains("Required tech: research:refrigeration", Refusals(sim, city, headquarters));
         sim.TeamOf(0).Techs.Add("research:refrigeration");
-        Assert.Contains("resource", P6RulesScenario.Reject(sim, command));
+        Assert.Equal(["Requires a connected corporation resource"], Refusals(sim, city, headquarters));
         P6RulesScenario.Resource(sim, city, "world:corn");
-        P6RulesScenario.Apply(sim, command);
-        Assert.Null(sim.State.FindUnit(gp.Id)); Assert.Equal(city.Id, Corps(sim).Headquarters(sim, Cereal));
-        Assert.Contains(Cereal, Corps(sim).Present(sim, city.Id));
-        var rival = sim.State.Cities[2]; sim.TeamOf(1).Techs.Add("research:refrigeration"); P6RulesScenario.Resource(sim, rival, "world:corn");
-        var rivalGp = P6RulesScenario.AddUnit(sim, 1, rival, "military:merchant");
-        Assert.Contains("already founded", P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 1, Unit = rivalGp.Id, Mission = CorporationMissions.Found, Subject = Cereal }));
+        Assert.Empty(Refusals(sim, city, headquarters));
+        // Knowing the technology founds nothing by itself.
+        Assert.False(Corps(sim).IsFounded(sim, Cereal));
+    }
+    [Fact]
+    public void Completing_the_headquarters_founds_the_corporation_there_and_a_second_founder_is_refused()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[1]; var rival = sim.State.Cities[2];
+        string headquarters = GameFactory.Headquarters(sim, Cereal);
+        foreach (var (player, at) in new[] { (0, city), (1, rival) })
+        {
+            sim.TeamOf(player).Techs.Add("research:refrigeration");
+            P6RulesScenario.Resource(sim, at, "world:corn");
+            QueueFinished(sim, at, headquarters);
+        }
+
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+
+        Assert.Contains(headquarters, city.Buildings);
+        Assert.Equal(city.Id, Corps(sim).Headquarters(sim, Cereal));
+        Assert.Equal([Cereal], Corps(sim).Present(sim, city.Id));
+        Assert.Empty(Corps(sim).Present(sim, sim.State.Cities[0].Id));
+        var founded = Assert.Single(sim.Events.Published.OfType<CorporationFounded>());
+        Assert.Equal((Cereal, city.Id, 0), (founded.Corporation, founded.City, founded.Player));
+
+        // The rival's copy can no longer be built: its order drops at completion and nothing is founded twice.
+        Assert.Contains("Corporation is already founded", Refusals(sim, rival, headquarters));
+        RunCityPhase(sim, "production", 1);
+        RunCityPhase(sim, "completion", 1);
+        Assert.DoesNotContain(rival.ProductionQueue, o => o.ContentId == headquarters);
+        Assert.DoesNotContain(headquarters, rival.Buildings);
         Assert.Single(sim.Events.Published.OfType<CorporationFounded>());
+        Assert.Equal(city.Id, Corps(sim).Headquarters(sim, Cereal));
+    }
+    [Fact]
+    public void Barbarians_cannot_found_a_corporation()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2];
+        GameFactory.MakeBarbarian(sim, 1);
+        sim.TeamOf(1).Techs.Add("research:refrigeration");
+        P6RulesScenario.Resource(sim, city, "world:corn");
+        Assert.Contains("Barbarians cannot found anything", Refusals(sim, city, GameFactory.Headquarters(sim, Cereal)));
     }
     [Fact]
     public void The_civic_valuer_weighs_corporation_rules_by_the_branches_in_the_players_cities()
@@ -137,14 +193,22 @@ public sealed class CorporationRulesTests
         Assert.Equal(1, P6RulesScenario.Service<ICityYieldService>(sim).Calculate(sim, domestic.Id).Ledger.Lines.Single(l => l.Source == Cereal && l.Key == "yield.flat.food").Amount);
     }
     [Fact]
-    public void Headquarters_buildings_are_not_constructible()
+    public void Imported_headquarters_buildings_are_not_constructible()
     {
-        // Founding is a great-person action, so a purchasable headquarters would be a building with no rules behind it.
+        // A corporation is founded by its own headquarters (founding-headquarters.json). The imported rows that name the
+        // same identities have no cost and no founder behind them, even with every technology and resource at hand.
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
-        var production = P6RulesScenario.Service<ICityProductionService>(sim);
-        var headquarters = sim.Content.Get<Ariel.Content.Schema.BuildingDef>().All.Where(b => b.FoundsCorporation is not null).ToArray();
-        Assert.NotEmpty(headquarters);
-        Assert.All(headquarters, b => Assert.False(production.Validate(sim, city.Id, "cities:building", b.Id).Success));
+        sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<Ariel.Content.Schema.TechDef>().All.Select(t => t.Id));
+        P6RulesScenario.Resource(sim, city, "world:corn");
+        var imported = sim.Content.Get<Ariel.Content.Schema.BuildingDef>().All
+            .Where(b => b.FoundsCorporation is not null && !b.Id.StartsWith("corporations:", StringComparison.Ordinal)).ToArray();
+        Assert.NotEmpty(imported);
+        Assert.All(imported, b =>
+        {
+            Assert.Contains(ProductionFailures.BuildingCost, Refusals(sim, city, b.Id));
+            Assert.Contains("Nothing founds what this building would found", Refusals(sim, city, b.Id));
+        });
+        Assert.Empty(Refusals(sim, city, GameFactory.Headquarters(sim, Cereal)));
     }
     [Fact]
     public void Queries_answer_a_stale_city_id_instead_of_throwing()

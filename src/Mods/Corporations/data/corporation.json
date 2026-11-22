@@ -4,7 +4,6 @@
     "name": "Cereal Mills",
     "identity": "foundation:1",
     "foundingTech": "research:refrigeration",
-    "requiredGreatPersonClass": "military:merchant",
     "prereqBonuses": [
       "world:wheat",
       "world:corn",
@@ -35,7 +34,6 @@
     "name": "Sid's Sushi Co.",
     "identity": "foundation:2",
     "foundingTech": "research:medicine",
-    "requiredGreatPersonClass": "military:merchant",
     "prereqBonuses": [
       "world:fish",
       "world:clam",
@@ -67,7 +65,6 @@
     "name": "Standard Ethanol",
     "identity": "foundation:3",
     "foundingTech": "research:combustion",
-    "requiredGreatPersonClass": "military:scientist",
     "prereqBonuses": [
       "world:corn",
       "world:rice",
@@ -98,7 +95,6 @@
     "name": "Creative Constructions",
     "identity": "foundation:4",
     "foundingTech": "research:combustion",
-    "requiredGreatPersonClass": "military:engineer",
     "prereqBonuses": [
       "world:iron",
       "world:copper",
@@ -130,7 +126,6 @@
     "name": "Mining Inc.",
     "identity": "foundation:5",
     "foundingTech": "research:corporation",
-    "requiredGreatPersonClass": "military:engineer",
     "prereqBonuses": [
       "world:iron",
       "world:copper",
@@ -163,7 +158,6 @@
     "name": "Civilized Jewelers",
     "identity": "foundation:7",
     "foundingTech": "research:corporation",
-    "requiredGreatPersonClass": "military:artist",
     "prereqBonuses": [
       "world:gold",
       "world:silver",
@@ -194,7 +188,6 @@
     "name": "Aluminum Co.",
     "identity": "foundation:6",
     "foundingTech": "research:assembly_line",
-    "requiredGreatPersonClass": "military:scientist",
     "prereqBonuses": [
       "world:coal"
     ],

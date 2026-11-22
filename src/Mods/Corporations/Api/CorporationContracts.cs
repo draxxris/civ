@@ -42,8 +42,6 @@ public interface ICorporationService : ICityCorporations
 /// <summary>The missions the Corporations mod registers. The subject of each is a corporation id.</summary>
 public static class CorporationMissions
 {
-    /// <summary>A great person founds a corporation, with its headquarters in the city.</summary>
-    public const string Found = "corporations:found";
     /// <summary>An executive opens a branch in the city, own or foreign.</summary>
     public const string Spread = "corporations:spread";
 }

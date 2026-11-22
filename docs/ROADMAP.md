@@ -287,7 +287,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   defensive pacts among members, forced peace, sanctions, forced war, and the
   diplomatic victory vote; members may defy a resolution and lose full membership.
   Free trade lets members trade without open borders; it carries no commerce bonus.
-- **Corporations**: Great Person founding, branch spread (via gold or executives),
+- **Corporations**: founding by building a headquarters, branch spread (via gold or executives),
   headquarters protection, branch revenue, resource consumption, and maintenance.
 - **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios,
   passive visibility/investigation unlocks, full rival intelligence screen

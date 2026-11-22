@@ -112,8 +112,13 @@ first time victory by id weighs every player's score, enabled or not.
 ### Corporation fields
 
 `CorporationDef` links an `Identity` reference, optional founding technology
-(`FoundingTech`), required Great Person unit class (`RequiredGreatPersonClass`), and
-prerequisite resources (`PrereqBonuses`). Yield and commerce vectors (`YieldProduced`,
+(`FoundingTech`) and prerequisite resources (`PrereqBonuses`). Each corporation is
+founded by exactly one headquarters building in the Corporations mod's
+`data/founding-headquarters.json`: its `FoundsCorporation` names the corporation's
+identity, it requires the founding technology, and its world limit is one. Content
+validation refuses a corporation without one headquarters, a headquarters that names no
+corporation, and one that does not require the founding technology. Imported buildings
+that name a corporation are not claimed and cannot be built. Yield and commerce vectors (`YieldProduced`,
 `CommerceProduced`) use whole points. Headquarters commerce (`HeadquartersCommerce`) is
 evaluated separately from branch commerce. `SpreadCost` uses whole gold.
 `MaintenanceHundredths` uses hundredths of gold per consumed resource copy.

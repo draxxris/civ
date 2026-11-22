@@ -5,6 +5,8 @@ using Xunit;
 using Xunit.Abstractions;
 using static Ariel.Mods.Tests.AiBindings;
 using TechDef = Ariel.Content.Schema.TechDef;
+using BonusDef = Ariel.Content.Schema.BonusDef;
+using BuildingDef = Ariel.Content.Schema.BuildingDef;
 using Ariel.Mods.Corporations;
 using Ariel.Mods.Espionage;
 
@@ -140,6 +142,64 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
     private static object NewDiplomacyPlanner(Simulation sim, object ctx) => Activator.CreateInstance(DiplomacyPlannerType(sim),
         System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic,
         binder: null, [ctx], culture: null)!;
+
+    [Fact]
+    public void A_computer_player_builds_a_corporation_headquarters_and_founds_it()
+    {
+        const string cereal = "corporations:cereal_mills";
+        // A big, productive city on forested plains with its garrison and worker: nothing more urgent competes.
+        var sim = Simulation.CreateScenario(Content.Value, GameFactory.Settings(71), new(12, 8, true),
+            Enumerable.Range(0, 96).Select(_ => new Plot { Terrain = "world:plains", Feature = "world:forest" }).ToArray(), game =>
+            {
+                game.State.Turn = 100;
+                GameFactory.NeutralPolitics(game);
+                foreach (var team in game.State.Teams) team.Techs.Clear();
+                foreach (var plot in game.State.Plots) { plot.Owner = 0; plot.Revealed.Add(game.TeamOf(0).Id); }
+            });
+        AddCity(sim, 0, 4, 4);
+        var city = sim.State.Cities[0];
+        city.Population = 12;
+        city.Worked.Clear();
+        city.Worked.AddRange(sim.Rules().CityWork.WorkArea(sim, city.Id).Where(t => sim.State.CityAt(sim.State.Grid.HexOf(t)) is null).Take(city.Population));
+        void Spawn(string type)
+        {
+            var unit = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Type = type, Position = city.Position };
+            sim.State.AddUnit(unit); sim.Content.Services.Get<IUnitService>().Single().Initialize(sim, unit.Id);
+        }
+        foreach (var type in new[] { "military:warrior", "military:warrior", "military:worker" }) Spawn(type);
+        // The corporation's technology and a corn plot under the city: founding is available, nothing else is new.
+        sim.TeamOf(0).Techs.Add(sim.Content.Get<CorporationDef>(cereal).FoundingTech!);
+        sim.State.PlotAt(city.Position).Bonus = "world:corn";
+        var corn = sim.Content.Get<TechDef>().All.Where(t => t.Id == sim.Content.Get<BonusDef>("world:corn").RevealTech
+            || t.Id == sim.Content.Get<BonusDef>("world:corn").TradeTech);
+        foreach (var tech in corn) sim.TeamOf(0).Techs.Add(tech.Id);
+        string headquarters = GameFactory.Headquarters(sim, cereal);
+
+        var check = sim.Content.Services.Get<ICityProductionService>().Single().Validate(sim, city.Id, "cities:building", headquarters);
+        Assert.True(check.Success, string.Join("; ", check.Failures.Select(f => f.Explanation)));
+        // Cheap buildings rate higher per hammer, so the planner reaches the headquarters once they stand. Each round,
+        // what it chose is granted as though built and the planner runs again.
+        var chosen = new List<string>();
+        for (int round = 0; round < 40; round++)
+        {
+            city.ProductionQueue.Clear();
+            var ctx = NewAi(sim, "AiContext", sim, 0);
+            Call(NewAi(sim, "CityPlanner", ctx, NewAi(sim, "SitePlanner", ctx), NewAi(sim, "ArmyPlan", ctx)), "Plan");
+            var head = city.ProductionQueue[0];
+            chosen.Add(head.ContentId);
+            if (head.ContentId == headquarters) break;
+            if (head.Kind == "cities:building") city.Buildings.Add(head.ContentId);
+            else Spawn(head.ContentId);
+        }
+        output.WriteLine("Chosen in turn: " + string.Join(", ", chosen));
+        Assert.True(chosen[^1] == headquarters,"the computer player queues the headquarters: " + string.Join(", ", chosen));
+
+        // Pay for it, as the turns of production would, and let it finish.
+        city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = sim.Content.Get<BuildingDef>(headquarters).Cost * 10 };
+        sim.AdvanceTurn();
+        Assert.Equal(city.Id, sim.Service<ICorporationService>()!.Headquarters(sim, cereal));
+        Assert.Contains(headquarters, city.Buildings);
+    }
 
     /// <summary>Three civilizations that have met, with gold trading unlocked and a city each: player 1 at five tiles
     /// from player 0's city, player 2 at nine.</summary>

@@ -138,14 +138,15 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         var requirements = new PrerequisiteMapper(this).Map(record, mapping.Requirements, mapped);
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
         NoteAmbiguousReligion(record, requirements);
-        // Ariel founds corporations through great people, so an imported headquarters that founds one (AND's guild
-        // halls) must not be purchasable: it would be a building nothing in the rules reacts to.
+        // Ariel founds a corporation by building the headquarters the Corporations mod defines for it, so an imported
+        // headquarters that founds one (the source's guild halls carry a cost) must not be purchasable: no founder
+        // claims it, so it would be a second headquarters nothing in the rules reacts to.
         if (record.Class == "BuildingInfo" && values.GetValueOrDefault("foundsCorporation") is string founded && founded.Length > 0
             && values.GetValueOrDefault("cost") is int cost && cost >= 0)
         {
             values["cost"] = -1;
             Issues.Add(new(ids[(record.Class, record.Type)], "iCost", cost.ToString(CultureInfo.InvariantCulture),
-                "Set to -1: Ariel founds corporations through great people, not by constructing the headquarters."));
+                "Set to -1: Ariel founds corporations by building the Corporations mod's headquarters, not the imported one."));
         }
         if ((string)values["id"]! != ids[(record.Class, record.Type)]) values["identity"] = ids[(record.Class, record.Type)];
         FoldClass(record, values, mapped);
