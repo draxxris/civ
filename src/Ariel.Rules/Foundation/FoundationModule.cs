@@ -79,12 +79,17 @@ public sealed class FoundationModule : IPreparableMod
         ContentRegistration.Evaluator<ConditionDef>(context, "condition");
         context.RegisterService<Ariel.Content.IRequirementEvaluator>("game-option_requirements", new GameOptionRequirements());
 
-        // A corporation requirement is a branch in the city (CvCity.cpp:4039-4046). The mod that runs corporations
-        // answers it; without one the leaf fails, which keeps corporation-gated buildings unbuildable rather than
-        // granting them for free.
+        // A corporation requirement is a branch in the city (no parameter, CvCity.cpp:4039-4046) or, with parameter 2
+        // as for a religion's holy city, the city being the corporation's headquarters, which is what an executive is
+        // trained in. The mod that runs corporations answers it; without one the leaf fails, which keeps
+        // corporation-gated buildings and units unavailable rather than granting them for free.
         ContentRegistration.Evaluator<CorporationIdentityDef>(context, "corporation", (leaf, subject) =>
-            subject.City is { } city && subject.Sim.Rules().CityCorporations
-                is { } corporations && corporations.HasIdentity(subject.Sim, city.Id, leaf.Id));
+            subject.City is { } city && subject.Sim.Rules().CityCorporations is { } corporations && leaf.Param switch
+            {
+                null or 0 => corporations.HasIdentity(subject.Sim, city.Id, leaf.Id),
+                2 => corporations.IsHeadquartersOf(subject.Sim, city.Id, leaf.Id),
+                _ => false,
+            });
         // A victory requirement is that victory being on in this game (CvGame::isVictoryValid). A victory whose
         // condition no loaded module registers is not on, so its buildings stay unavailable.
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory", (leaf, subject) =>

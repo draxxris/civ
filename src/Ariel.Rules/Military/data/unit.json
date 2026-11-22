@@ -16871,8 +16871,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_1",
-              "kind": "building"
+              "id": "foundation:1",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -17014,8 +17015,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_2",
-              "kind": "building"
+              "id": "foundation:2",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -17157,8 +17159,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_3",
-              "kind": "building"
+              "id": "foundation:3",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -17300,8 +17303,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_4",
-              "kind": "building"
+              "id": "foundation:4",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -17443,8 +17447,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_5",
-              "kind": "building"
+              "id": "foundation:5",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -17586,8 +17591,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_6",
-              "kind": "building"
+              "id": "foundation:6",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -17729,8 +17735,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_7",
-              "kind": "building"
+              "id": "foundation:7",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -17872,8 +17879,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_adventure_hq",
-              "kind": "building"
+              "id": "foundation:adventure",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -18015,8 +18023,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_apotheguild",
-              "kind": "building"
+              "id": "foundation:apotheguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -18160,8 +18169,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_artistguild",
-              "kind": "building"
+              "id": "foundation:artistguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -18305,8 +18315,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_bakerguild",
-              "kind": "building"
+              "id": "foundation:bakerguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -18450,8 +18461,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_blacksmguild",
-              "kind": "building"
+              "id": "foundation:blacksmguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -18595,8 +18607,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_burgerworld_hq",
-              "kind": "building"
+              "id": "foundation:burgerworld",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -18738,8 +18751,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_butcherguild",
-              "kind": "building"
+              "id": "foundation:butcherguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -18883,8 +18897,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_carpenterguild",
-              "kind": "building"
+              "id": "foundation:carpenterguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -19028,8 +19043,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_clerksguild",
-              "kind": "building"
+              "id": "foundation:clerksguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -19173,8 +19189,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_drapersguild",
-              "kind": "building"
+              "id": "foundation:drapersguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -19318,8 +19335,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_empcloth_hq",
-              "kind": "building"
+              "id": "foundation:empcloth",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -19461,8 +19479,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_equestguild",
-              "kind": "building"
+              "id": "foundation:equestguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -19606,8 +19625,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_ewtrade_hq",
-              "kind": "building"
+              "id": "foundation:ewtrade",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -19749,8 +19769,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_fashion_hq",
-              "kind": "building"
+              "id": "foundation:fashion",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -19892,8 +19913,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_fishmonguild",
-              "kind": "building"
+              "id": "foundation:fishmonguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -20037,8 +20059,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_glassguild",
-              "kind": "building"
+              "id": "foundation:glassguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -20182,8 +20205,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_goldsmguild",
-              "kind": "building"
+              "id": "foundation:goldsmguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -20327,8 +20351,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_grocerguild",
-              "kind": "building"
+              "id": "foundation:grocerguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -20472,8 +20497,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_mallwart_hq",
-              "kind": "building"
+              "id": "foundation:mallwart",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -20615,8 +20641,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_mapster_hq",
-              "kind": "building"
+              "id": "foundation:mapster",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -20758,8 +20785,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_masonguild",
-              "kind": "building"
+              "id": "foundation:masonguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -20903,8 +20931,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_mercerguild",
-              "kind": "building"
+              "id": "foundation:mercerguild",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -21048,8 +21077,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_milehigh_hq",
-              "kind": "building"
+              "id": "foundation:milehigh",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -21191,8 +21221,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_mobby_hq",
-              "kind": "building"
+              "id": "foundation:mobby",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -21334,8 +21365,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_red_hq",
-              "kind": "building"
+              "id": "foundation:red",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -21477,8 +21509,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_safari_hq",
-              "kind": "building"
+              "id": "foundation:safari",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -21620,8 +21653,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_ultsoldier_hq",
-              "kind": "building"
+              "id": "foundation:ultsoldier",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -21763,8 +21797,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_wonka_hq",
-              "kind": "building"
+              "id": "foundation:wonka",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },
@@ -38257,8 +38292,9 @@
         {
           "all": [
             {
-              "id": "cities:corporation_moonbean_hq",
-              "kind": "building"
+              "id": "foundation:moonbean",
+              "kind": "corporation",
+              "param": 2
             }
           ]
         },

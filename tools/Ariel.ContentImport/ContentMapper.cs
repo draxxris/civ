@@ -348,6 +348,12 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         return Missing(record, field, value);
     }
 
+    /// <summary>The corporation a source building founds, as an Ariel id, or null when it is no headquarters (or no
+    /// building of that name exists, which <see cref="RequiredReference"/> then reports).</summary>
+    public string? FoundedCorporation(string building) =>
+        records.TryGetValue(("BuildingInfo", building.Trim()), out var headquarters) && headquarters.Node.Value("FoundsCorporation") is var founded
+            && Present(founded) ? RequiredReference("CorporationInfo", founded!, headquarters, "FoundsCorporation") : null;
+
     public string RequiredReference(string family, string value, EffectiveRecord record, string field) =>
         Reference(family, value, record, field) ?? throw new InvalidDataException($"Required source reference is unresolved: {record.Type}/{field} -> {family}/{value}");
 

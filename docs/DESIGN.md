@@ -418,7 +418,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 
 | Seam | `GameRules` | Asked by | Answered by | Without an answer |
 | --- | --- | --- | --- | --- |
-| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf | Corporations | no corporations; the leaf fails |
+| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf (a branch in the city, or with parameter 2 the city being the corporation's headquarters, where executives are trained) | Corporations | no corporations and no headquarters; the leaf fails |
 | `IAirOperations` | `AirOperations` | production eligibility (aircraft), the intercept activity | AirCombat | aircraft are refused with "Air operations are unavailable"; no unit can stand on intercept |
 | `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
 | `IDealAppraiser` | `DealAppraiser` | the Diplomacy screen, to predict a computer leader's answer to a deal | the computer player (`ai`) | no prediction is shown |
@@ -1615,8 +1615,11 @@ of one, requiring the founding technology). The mod is their `IBuildingFounder`
 (`CorporationFounder`): beyond the technology, the city needs a connected prerequisite
 resource, civics that allow corporations and no competing headquarters, and nobody can
 build it once the corporation is founded. The imported headquarters rows stay inert:
-nothing claims them, so Cities refuses them. Spreading uses the `corporations:spread`
-mission. Active branches apply corporation yield,
+nothing claims them, so Cities refuses them, and no live rule needs one: an executive's
+training requirement names its corporation's headquarters (the `corporation` leaf with
+parameter 2), which is the city that completed the mod's headquarters, so executives are
+trained there. Spreading into a foreign city uses an executive's `corporations:spread`
+mission; an own city can also be paid for without one. Active branches apply corporation yield,
 commerce, headquarters commerce, and resource-based maintenance. Civics can prohibit
 local or foreign corporations. A branch requires an active branch owned by the spreading
 player.
@@ -1785,8 +1788,8 @@ runs `votes:planner` at `Diplomacy + 50` (after `ai:diplomacy`), the Religion mo
 1400 slot (spending weights, spy moves and missions) with `espionage:planner`, and the
 Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
 `revolution:planner`. The Corporations mod runs `corporations:planner` at
-`Religion + 100` (spread corporations) and the GreatPeople mod runs
-`great_people:planner` at `Religion + 200`, so an executive spreads a corporation before
+`Religion + 100` (pays for branches in its own cities; it does not train or move executives) and the GreatPeople mod runs
+`great_people:planner` at `Religion + 200`, so corporations spread before
 the great people planner looks at the empire's units, and both act before cities choose
 production (where a headquarters, which founds a corporation, competes). That ordering lives in those two numbers; a mod that must run
 before or after another contributed planner says so in its own value.

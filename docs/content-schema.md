@@ -304,7 +304,11 @@ rules scale this target count by `WorldSizeDef.BuildingClassPrereqModifier`. Res
 (`bonus`) parameter 0 (or omitted) checks connected resources via the trade network;
 parameter 2 means a vicinity resource (within the city's workable radius). Religion
 parameter 0 (or omitted) means city presence; parameters 1 and 2 mean state religion and
-holy city. Unit building prerequisites can contain technology or era alternatives
+holy city. Corporation parameter 0 (or omitted) means a branch in the city; parameter 2
+means the city is the corporation's headquarters. The importer writes a requirement for an
+imported headquarters building (one with `FoundsCorporation`) as that headquarters leaf,
+since the imported headquarters cannot be built: executives are trained in the city that
+founded their corporation. Unit building prerequisites can contain technology or era alternatives
 (`TechOverride`, `EraOverride`) that bypass the building requirement.
 
 Location and count predicates refer to foundation conditions. A building with both coast
@@ -364,7 +368,8 @@ Each mod owns evaluators for its leaf kinds:
 - World evaluates `bonus` connected resource counts through `IResourceNetwork`,
   delegating vicinity resource checks (`Param == 2`) to `ICityRequirementService` in
   Cities.
-- Foundation evaluates `game-option`, `corporation` identity, `victory` identity, and
+- Foundation evaluates `game-option`, `corporation` identity (branch or headquarters),
+  `victory` identity, and
   `religion` identity (presence, state religion, and holy city), asking the
   `ICityReligions` seam the Religion mod answers; without the mod the leaf fails.
 

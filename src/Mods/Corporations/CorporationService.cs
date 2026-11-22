@@ -27,6 +27,15 @@ internal sealed class CorporationService : ICorporationService
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
     public bool HasIdentity(Simulation sim, int city, string identity) => Present(sim, city)
         .Any(corporation => sim.Content.TryGet<CorporationDef>(corporation, out var def) && def.Identity == identity);
+    /// <summary>The founding record is the headquarters: it names the city that completed the headquarters building, and
+    /// a captured headquarters keeps it, as the headquarters income does.</summary>
+    public bool IsHeadquartersOf(Simulation sim, int city, string identity)
+    {
+        foreach (var (corporation, record) in Read(sim).Founded)
+            if (record.Headquarters == city && sim.Content.TryGet<CorporationDef>(corporation, out var def) && def.Identity == identity)
+                return true;
+        return false;
+    }
     /// <summary>One founding answer for the rules, the effects and the UI: a live headquarters city.</summary>
     private static CorporationFounding? Founding(Simulation sim, string corporation) =>
         Read(sim).Founded.TryGetValue(corporation, out var record) && sim.State.FindCity(record.Headquarters) is not null ? record : null;

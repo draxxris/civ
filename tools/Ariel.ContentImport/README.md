@@ -245,7 +245,10 @@ missionaries, commerce vectors, and related buildings. The importer removes the 
 generated Foundation religion identity sidecar. Religion references now use `religion:*`
 ids. Foundation reserves corporation and victory identities for future rules. Their
 definitions have `Deferred = true` and no gameplay effects. Their evaluators fail
-closed. Prerequisites retain these identities instead of silently disappearing. Four
+closed. Prerequisites retain these identities instead of silently disappearing. A
+prerequisite on a building that founds a corporation (an executive's headquarters)
+becomes a `corporation` leaf with parameter 2, the corporation's headquarters city,
+because the imported headquarters is never buildable. Four
 native unit-AI roles absent from the XML inventory receive explicit military identities.
 The native enum and `registerUnitAIs` in the reference DLL define these roles. Four
 stale optional source references become null. Required unresolved references fail

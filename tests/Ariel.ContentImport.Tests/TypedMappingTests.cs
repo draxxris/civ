@@ -95,6 +95,31 @@ public sealed class TypedMappingTests
     }
 
     [Fact]
+    public void A_unit_that_needs_a_corporation_headquarters_needs_to_be_trained_in_that_corporations_headquarters()
+    {
+        // The imported headquarters cannot be built (Ariel founds with the Corporations mod's own), so an executive
+        // that named it could never be trained; it names the corporation's headquarters city instead.
+        var mapper = Mapper(Record("CorporationInfo", "CORPORATION_1"),
+            Record("BuildingClassInfo", "BUILDINGCLASS_CORPORATION_1", DataNode.Leaf("DefaultBuilding", "BUILDING_CORPORATION_1")),
+            Record("BuildingInfo", "BUILDING_CORPORATION_1", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_CORPORATION_1"),
+                DataNode.Leaf("FoundsCorporation", "CORPORATION_1"), DataNode.Leaf("iCost", "200")),
+            Record("BuildingClassInfo", "BUILDINGCLASS_PLAIN", DataNode.Leaf("DefaultBuilding", "BUILDING_PLAIN")),
+            Record("BuildingInfo", "BUILDING_PLAIN", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_PLAIN")),
+            Record("UnitClassInfo", "UNITCLASS_EXECUTIVE_1", DataNode.Leaf("DefaultUnit", "UNIT_EXECUTIVE_1")),
+            Record("UnitInfo", "UNIT_EXECUTIVE_1", DataNode.Leaf("Class", "UNITCLASS_EXECUTIVE_1"),
+                DataNode.Leaf("PrereqBuilding", "BUILDING_CORPORATION_1"), DataNode.Leaf("PrereqCorporation", "CORPORATION_1")),
+            Record("UnitClassInfo", "UNITCLASS_PLAIN", DataNode.Leaf("DefaultUnit", "UNIT_PLAIN")),
+            Record("UnitInfo", "UNIT_PLAIN", DataNode.Leaf("Class", "UNITCLASS_PLAIN"), DataNode.Leaf("PrereqBuilding", "BUILDING_PLAIN")));
+        var units = mapper.Map().Select(d => d.Definition).OfType<Schema.UnitDef>().ToDictionary(u => u.Id);
+        var executive = ContentReferences.Leaves(units["military:executive_1"].Requirements!).ToArray();
+        Assert.Contains(new Requirement.Leaf("corporation", "foundation:1", null, 2), executive);
+        Assert.Contains(new Requirement.Leaf("corporation", "foundation:1"), executive);
+        Assert.DoesNotContain(executive, l => l.Kind == "building");
+        // A building that founds nothing stays a building requirement.
+        Assert.Equal([new Requirement.Leaf("building", "cities:plain")], ContentReferences.Leaves(units["military:plain"].Requirements!));
+    }
+
+    [Fact]
     public void Mandatory_unknown_references_fail_instead_of_granting_unrestricted_content()
     {
         var mapper = Mapper(Record("TechInfo", "TECH_EXAMPLE", DataNode.Branch("AndPreReqs", [DataNode.Leaf("PrereqTech", "TECH_MISSING")])));

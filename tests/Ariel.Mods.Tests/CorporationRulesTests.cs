@@ -211,6 +211,45 @@ public sealed class CorporationRulesTests
         Assert.Empty(Refusals(sim, city, GameFactory.Headquarters(sim, Cereal)));
     }
     [Fact]
+    public void An_executive_trained_in_the_headquarters_it_was_built_for_spreads_into_a_foreign_city()
+    {
+        var sim = P6RulesScenario.Create(); var branch = sim.State.Cities[0]; var hq = sim.State.Cities[1]; var foreign = sim.State.Cities[2];
+        const string Executive = "military:executive_1";
+        sim.TeamOf(0).Techs.Add("research:refrigeration");
+        foreach (var city in sim.State.Cities) P6RulesScenario.Resource(sim, city, "world:corn");
+        Assert.Contains("Required corporation: foundation:1", UnitRefusals(sim, hq, Executive));
+
+        // Found the corporation by building its headquarters, as production finishes it.
+        QueueFinished(sim, hq, GameFactory.Headquarters(sim, Cereal));
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+        Assert.Equal(hq.Id, Corps(sim).Headquarters(sim, Cereal));
+
+        // The headquarters city trains the executive; a city with only a branch does not, as in the reference rules.
+        P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Cereal });
+        Assert.Empty(UnitRefusals(sim, hq, Executive));
+        Assert.Contains("Required corporation: foundation:1", UnitRefusals(sim, branch, Executive));
+        // The city screen offers it there, and only there.
+        var session = new Ariel.Client.GameSession(sim);
+        Assert.True(Assert.Single(session.ProductionChoices(hq, "cities:unit"), c => c.Id == Executive).Available);
+        Assert.DoesNotContain(session.ProductionChoices(branch, "cities:unit"), c => c.Id == Executive && c.Available);
+
+        P6RulesScenario.Apply(sim, new SetCityProductionCommand { Player = 0, CityId = hq.Id, Kind = "cities:unit", ContentId = Executive });
+        hq.ProductionQueue[0] = hq.ProductionQueue[0] with { Progress = Production(sim).Calculate(sim, hq.Id, "cities:unit", Executive).Cost };
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+        var executive = Assert.Single(sim.State.Units, u => u.Owner == 0 && u.Type == Executive);
+        Assert.Equal(hq.Position, executive.Position);
+
+        // Walking it there is movement's business; the spread itself is what an executive is for.
+        sim.State.MoveUnit(executive.Id, foreign.Position); executive.MovesLeft = 60;
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
+        Assert.Contains(Cereal, Corps(sim).Present(sim, foreign.Id));
+        Assert.Null(sim.State.FindUnit(executive.Id));
+    }
+    private static IReadOnlyList<string> UnitRefusals(Simulation sim, City city, string unit) =>
+        Production(sim).Validate(sim, city.Id, "cities:unit", unit).Failures.Select(f => f.Explanation).ToList();
+    [Fact]
     public void Queries_answer_a_stale_city_id_instead_of_throwing()
     {
         var sim = P6RulesScenario.Create(); var corporations = Corps(sim);
