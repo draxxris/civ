@@ -123,7 +123,7 @@ internal static class CityData
         }
         return false;
     }
-    internal static long Effect(ModifierSink sink, string key) => sink.Ledger.Total("cities:" + key);
+    internal static long Effect(ModifierSink sink, string key) => sink.Total("cities:" + key);
     internal static IReadOnlyList<S.CultureLevelDef> Levels(Simulation sim, int player = 0, City? city = null) => sim.Content.Get<S.CultureLevelDef>().All
         .Where(l => sim.Content.Requirements.Evaluate(l.Requirements, new RequirementContext(sim, player, city)).Success)
         .OrderBy(l => l.SpeedThresholds[sim.Settings.GameSpeed]).ThenBy(l => l.Id, StringComparer.Ordinal).ToArray();

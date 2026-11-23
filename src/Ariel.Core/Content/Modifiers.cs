@@ -80,8 +80,27 @@ public sealed class ModifierSink
     public CommerceVector FlatCommerce { get; private set; }
     /// <summary>Summed percent commerce effects.</summary>
     public CommerceVector PercentCommerce { get; private set; }
-    /// <summary>Ledger snapshot, including all typed effects and keyed values.</summary>
-    public Ledger Ledger => new(_lines);
+    // Both are derived from the lines and dropped whenever a line is added, so repeated reads of an unchanged sink
+    // share one snapshot. Each is built in full before it is published, so concurrent readers of a sink nobody is
+    // adding to see either nothing or a complete value.
+    private Ledger? _ledger;
+    private Dictionary<string, long>? _totals;
+    /// <summary>Ledger snapshot, including all typed effects and keyed values. Unchanged until the next line is
+    /// added; a snapshot taken earlier never changes.</summary>
+    public Ledger Ledger => _ledger ??= new(_lines);
+    /// <summary>Summed amount for a key, zero when absent; equal to <c>Ledger.Total(key)</c> without building the
+    /// snapshot.</summary>
+    public long Total(string key)
+    {
+        var totals = _totals;
+        if (totals is null)
+        {
+            totals = new Dictionary<string, long>(StringComparer.Ordinal);
+            foreach (var line in _lines) totals[line.Key] = totals.GetValueOrDefault(line.Key) + line.Amount;
+            _totals = totals;
+        }
+        return totals.GetValueOrDefault(key);
+    }
     /// <summary>Add flat or percentage yields (keys yield.flat.food, yield.percent.production, etc.).</summary>
     public void AddYield(string source, YieldVector value, bool percent = false)
     {
@@ -134,7 +153,12 @@ public sealed class ModifierSink
         or "yield.percent.food" or "yield.percent.production" or "yield.percent.commerce"
         or "commerce.flat.gold" or "commerce.flat.research" or "commerce.flat.culture" or "commerce.flat.espionage"
         or "commerce.percent.gold" or "commerce.percent.research" or "commerce.percent.culture" or "commerce.percent.espionage";
-    private void Line(string source, string key, long amount) { if (amount != 0) _lines.Add(new(source, key, amount)); }
+    private void Line(string source, string key, long amount)
+    {
+        if (amount == 0) return;
+        _lines.Add(new(source, key, amount));
+        _ledger = null; _totals = null;
+    }
     /// <summary>Sum all registered sources in their deterministic registration order.</summary>
     public static ModifierSink Collect(ModifierContext context)
     {

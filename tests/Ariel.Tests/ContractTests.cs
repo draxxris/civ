@@ -9,6 +9,22 @@ namespace Ariel.Tests;
 
 public class ContractTests
 {
+    [Fact]
+    public void A_sink_snapshot_never_changes_and_its_totals_follow_every_added_line()
+    {
+        var sink = new ModifierSink();
+        sink.Add("a", "test:x", 2); sink.AddYield("b", new(1, 0, 3));
+        var before = sink.Ledger;
+        Assert.Same(before, sink.Ledger);
+        Assert.Equal(2, sink.Total("test:x")); Assert.Equal(0, sink.Total("test:y"));
+        sink.Add("c", "test:x", 5); sink.Add("c", "test:y", 0);
+        Assert.Equal(7, sink.Total("test:x")); Assert.Equal(3, sink.Total("yield.flat.commerce"));
+        Assert.Equal(2, before.Total("test:x")); Assert.Equal(3, before.Lines.Count);
+        Assert.NotSame(before, sink.Ledger);
+        Assert.Equal(sink.Ledger.Totals.ToArray(), sink.Ledger.Totals.Keys.Select(k => KeyValuePair.Create(k, sink.Total(k))).ToArray());
+        Assert.Equal(4, sink.Ledger.Lines.Count);
+    }
+
     private sealed class TestMod(Action<IModContext> register) : IMod
     {
         public void Register(IModContext ctx) => register(ctx);

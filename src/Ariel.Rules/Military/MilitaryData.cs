@@ -34,7 +34,7 @@ internal static class MilitaryData
     internal static IEnumerable<S.TechDef> Techs(Simulation sim, int player) => sim.TeamOf(player).Techs.Select(sim.Content.Get<S.TechDef>);
     internal static ModifierSink Effects(Simulation sim, Unit unit) => ModifierSink.Collect(new(sim, ModifierScope.Unit, unit.Owner,
         sim.State.CityAt(unit.Position), sim.State.Grid.TileAt(unit.Position), unit, sim.TeamOf(unit.Owner)));
-    internal static int Effect(ModifierSink sink, string key) => checked((int)sink.Ledger.Total("military:" + key));
+    internal static int Effect(ModifierSink sink, string key) => checked((int)sink.Total("military:" + key));
     internal static void Sight(Simulation sim)
     {
         sim.Rules().Visibility.Recompute(sim);
