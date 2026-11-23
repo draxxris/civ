@@ -210,8 +210,8 @@ public sealed class ModifierSink
     /// written since: a source declares what it never reads (<see cref="IStateReader.UnreadDomains"/>), and no source reads a private
     /// domain (<see cref="StateDomain.Private"/>), and a
     /// writer declares what it writes (<see cref="GameCommand.WriteDomains"/>, <see cref="ITurnSystem.WriteDomains"/>).
-    /// An undeclared source is used again only while nothing at all was written. A context with a proposed plot names
-    /// a hypothetical plot by reference, so it is never kept.</para></summary>
+    /// An undeclared source is used again only while nothing at all was written. Only city, player and team
+    /// calculations are kept (<see cref="Kept"/>).</para></summary>
     public static ModifierSink Collect(ModifierContext context)
     {
         var sim = context.Sim;
@@ -221,13 +221,19 @@ public sealed class ModifierSink
         {
             sink = new ModifierSink();
             var sources = sim.Content.Services.Get<IModifierSource>();
-            if (!sim.KeepsAnswers || context.ProposedPlot is not null)
+            if (!sim.KeepsAnswers || !Kept(context))
                 foreach (var source in sources) source.Contribute(context, sink);
             else Contribute(sim, sources, context, sink);
         }
         Memo.Set(sim, context, sink.Copy());
         return sink;
     }
+    /// <summary>Whether a calculation's contributions are kept across writes: city, player and team calculations, which
+    /// every turn system and planner asks again. Unit and plot calculations are not: combat and placement previews ask
+    /// them once each, often of a probe unit or a proposed plot that is never asked again, so keeping them only filled
+    /// and emptied the table.</summary>
+    private static bool Kept(ModifierContext context) => context.ProposedPlot is null
+        && context.Scope is ModifierScope.City or ModifierScope.Player or ModifierScope.Team;
     private static void Contribute(Simulation sim, IReadOnlyList<IModifierSource> sources, ModifierContext context, ModifierSink sink)
     {
         var unread = UnreadMasks(sim.Content, sources);
