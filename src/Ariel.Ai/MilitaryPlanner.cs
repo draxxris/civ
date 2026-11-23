@@ -95,7 +95,11 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
         while (ctx.Alive(unit) && unit.Experience >= service.ExperienceNeeded(ctx.Sim, unit.Id))
         {
             var role = PromotionRoleOf(unit);
-            var best = promotions.Where(p => service.Validate(ctx.Sim, ctx.PlayerId, unit.Id, UnitAction.Promote, p.Id) is null)
+            // A promotion is open only to its combat types, so the rest are not validated: each validation recomputes
+            // the experience the unit needs from its modifiers.
+            string? combat = ctx.Def(unit).CombatType;
+            var best = promotions.Where(p => combat is not null && p.CombatTypes.GetValueOrDefault(combat)
+                    && service.Validate(ctx.Sim, ctx.PlayerId, unit.Id, UnitAction.Promote, p.Id) is null)
                 .OrderByDescending(p => Value(p, role)).ThenBy(p => p.Id, StringComparer.Ordinal).FirstOrDefault();
             if (best is null || !ctx.Issue(new PromoteMilitaryUnitCommand { Player = ctx.PlayerId, Unit = unit.Id, Promotion = best.Id })) return;
         }
