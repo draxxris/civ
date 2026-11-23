@@ -821,7 +821,10 @@ Production calculation additionally takes `(string kind, string content)`.
 `ICityProductionService.Validate` returns structured requirement failures with the same
 arguments. `ICityWorkService` supplies `Radius`, `WorkArea`, assignment validation, and
 authoritative `Assign`. `ICityBuildingService` provides `EffectiveBuildings`,
-`ActiveBuildings`, `IsPowered`, `IsDirtyPower`, and `ProvidesPower`.
+`ActiveBuildings`, `CandidateBuildings` (constructed plus granted, which the active set
+only narrows), `IsPowered`, `IsDirtyPower`, and `ProvidesPower`.
+`CityBuildingRules.MayRun` asks whether any candidate matches, so a rule that adds
+something per matching building can pass over a city without resolving its active set.
 `ICityCaptureService` provides `Capture`, `ValidateRaze`, and `Raze`.
 
 `CityYieldResult.Yields.Commerce` is raw whole commerce. `DirectCommerceHundredths`
@@ -1879,7 +1882,9 @@ How a mod adds AI behaviour:
 `AiContext` is public on purpose and small: the player and its team
 (`Sim`, `PlayerId`, `Self`, `Team`, `Turn`, `Grid`, `Leader`), cached `Cities` and `Units`,
 `CampaignCities` (rival cities the army can reach), `Def`, `Alive`, `Tile`,
-`Service<T>`, `Issue`, `MoveToward`, `Refresh` (after a mutation outside `Issue`), the
+`Service<T>`, `Issue`, `MoveToward`, `Refresh` (after a mutation outside `Issue`),
+`Derived` (a value a valuer gathers once and keeps until the next command or `Refresh`,
+for one weighing many subjects against the same state), the
 acted-unit ledger, `GoldReserve`, how a war is going (`WarScore`, `WantsPeace`),
 `Strength` (military power to compare players by), `CivicValue` (a civic on the civic
 planner's scale) (the treasury the economy

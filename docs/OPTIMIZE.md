@@ -1458,6 +1458,277 @@ some.
 6. **Allocation in general.** The industrial game still allocates 0.7 GiB per turn at 30
    cities, and collector pauses are still 10 to 20% of a turn.
 
+Pass 14 below measured the late game these 100-turn runs could not reach. Item 1 is no
+longer the largest cost there, and items 2 and 3 shrank by an order of magnitude. Pass 14
+gives the new ranking.
+
+### Pass 14: The Late Game, Corporations and Save Continuation
+
+- **Date**: 2026-11-23
+- **Commits**: `f0931c9` (tooling); `6476e52`, `a1f4ba8`, `1420193`, `833dacb`, `8fb21e0`,
+  `927a9f6`, `013cf71`, `e853955`, `35c72a6`, `cb1626d`, `ef252c2`, `5085f9d`, `29cea16`
+  (optimizations)
+
+The owner's hours-long games were six-player AI games with the optional feature mods
+loaded. Pass 13 measured only the first 100 turns. This pass continued the real slow game
+from its saves, measured where late turns go, and removed the largest costs. Each
+optimization leaves the game byte-identical, as described under "Verification".
+
+#### Method and Saves
+
+- Same machine as Pass 13, Release builds, other agents sharing it (load average 1 to 4).
+  The tables lead with processor time, calls and bytes. Wall times of single turns vary
+  by about 10%.
+- `mise run ai:play -- --load SAVE --turns N --profile DIR --save OUT` continues a save
+  with the profiler attached (`f0931c9`). It prints `final turn T hash H` on stderr. The
+  option has no automated test. Every measurement below exercised it, and so did a
+  determinism check that reloads every 2 turns.
+- Content: the default optional set (Votes, ProjectsVictory, Corporations, Espionage,
+  Events, ScriptedWonders, Revolution) on `main` merged with the corporation source-rule
+  branch (`449a89e`). The saves were made on that branch and loaded without forcing: their
+  content hash matches this tree.
+- "Before" is `f0931c9`, the merged tree with only the `--load` tooling, run from a
+  separate worktree. "After" is the final tree.
+
+| Save                    | Turn | Cities | Units | Players | Buildings per city | Deals (all, active) |
+| :---------------------- | ---: | -----: | ----: | ------: | -----------------: | ------------------: |
+| `/tmp/ariel/ai.json`    |  251 |     32 |   147 |      14 |               10.7 |                1, 0 |
+| `/tmp/ariel/ai330.json` |  331 |     35 |   178 |      14 |               19.3 |               23, 6 |
+| `/tmp/ariel/ai450.json` |  451 |     38 |   234 |      14 |               35.6 |              76, 13 |
+
+The game is seed 3, six AI players, small continents world, ancient start. Its 14
+players include barbarians and minor players. The turn-100 reference is a new game with
+the same settings (`--seed 3 --players 6 --turns 100`), not a load of the same game.
+The saves are local files from that game and are not in the repository, so the numbers
+below are reproducible only with copies of them.
+
+**No corporation or guild exists in any of these saves.** The same holds after continuing
+`ai450.json` for 100 more turns to turn 551 on the optimized tree. By then the AIs know 33
+to 108 techs each and have built 26 Artist Guilds, which are ordinary buildings, but no
+Guild Hall, Master Guild or headquarters. A 120-turn modern-era game
+(`--era foundation:era_modern`, 107 to 115 techs) founded none either. The slowdown
+below therefore follows buildings per city (10.7, then 19.3, then 35.6), deals and units.
+Corporations do not cause it. To measure active corporations anyway, a scratch script
+(`/tmp/ariel/p14/inject.py`, not committed) wrote a synthetic save, `ai450corp.json`,
+from `ai450.json`. It founds eight corporations and guilds (Cereal Mills, Creative Constructions, Mining Inc, Civilized
+Jewelers, East West Traders, Mobby Meats, the Bakers and Masons guilds) in the capitals
+of the six major empires and opens 101 branches in their 32 cities, three per city. The
+injection bypasses the site rules (resources, guild halls, headquarters conflicts, two
+headquarters in one city), so its numbers show what such branches cost. They do not show
+what an AI game would found.
+
+#### Baseline: The Late Game Is Not Linear
+
+Per-turn wall time, mean of the continued advances (the first advance, which compiles,
+excluded):
+
+| Turns continued                | Mean wall before | Mean wall after | Systems before / after | AI before / after | Allocated per turn before / after | Collector pauses per turn before / after |
+| :----------------------------- | ---------------: | --------------: | ---------------------: | ----------------: | --------------------------------: | ---------------------------------------: |
+| New game, 2-101 (same settings) |           225 ms |          207 ms |               44 / 41 ms |      159 / 156 ms |                  204 / 161 MiB |                              47 / 44 ms |
+| `ai.json`, 252-271              |         2,172 ms |          902 ms |             560 / 168 ms |      1,600 / 721 ms |              3,170 / 1,105 MiB |                            347 / 210 ms |
+| `ai330.json`, 332-371           |        10,552 ms |        1,537 ms |           2,761 / 318 ms |    7,779 / 1,206 ms |             13,484 / 2,107 MiB |                            982 / 239 ms |
+| `ai450.json`, 452-471           |        46,678 ms |        3,842 ms |          13,689 / 819 ms |   32,976 / 3,010 ms |             48,883 / 4,709 MiB |                          3,599 / 597 ms |
+| `ai450corp.json`, 452-455       |        61,058 ms |        5,023 ms |          11,826 / 792 ms |   49,218 / 4,217 ms |             64,554 / 6,038 MiB |                          4,899 / 803 ms |
+
+Whole runs, as the profiler reports them: 40 turns from turn 331 took 428 s before and 67
+s after, and 20 turns from turn 451 took 957 s before and 82 s after. A turn at turn 330
+cost 32 times a turn at turn 100 before (10.6 s against 0.33 s for advances 92 to 101),
+and a turn at turn 450 cost 144 times as much. City counts barely move (23, then 32, 36
+and 38), so late-game size explains little of it. Two per-call costs grew with buildings
+per city:
+
+1. **Modifier collections.** `modifiers:collect` averaged 64 µs per call in Pass 13's
+   industrial game. Here it averaged 876 µs at turn 331 and 2,462 µs at turn 451. It took
+   1,128 s of processor time in the 20 turns from turn 451. Nearly all of it was rebuilding
+   one city's running buildings (`CityData.Active`), about 154,000 times every four turns
+   at turn 331, because each collection opens and closes its own city read scope.
+   Rebuilding a city's running set cost about 400 µs, nearly all of it the power check.
+   That check reads the connected resources of every city in the area, and with a
+   resource deal running it asked the deal rules once per resource.
+2. **Per-pair scans.** A building set was resolved with a scan of every pair of buildings
+   for replacement. Building effects looked up every building's extra commerce for every
+   building of every other city. Both scans grew with the square of 36 buildings.
+
+Before, the largest entries over 20 turns from turn 451 (processor time over all threads):
+
+| Entry                              | Calls before | Before ms | Before MiB | After ms | After MiB |
+| :--------------------------------- | -----------: | --------: | ---------: | -------: | --------: |
+| `modifiers:collect`                |      457,940 | 1,127,532 |    677,720 |   78,565 |    39,457 |
+| `kernel:ai_turns` (AI waves, wall) |           20 |   683,831 |    281,634 |   62,589 |    27,909 |
+| `ai:cities`                        |          992 |   450,081 |    203,480 |   49,222 |    22,190 |
+| `ai:military`                      |          992 |   400,263 |    213,406 |   23,417 |    12,999 |
+| `great_people:planner`             |          992 |   244,379 |    110,904 |   12,495 |     4,547 |
+| `ai:economy`                       |          992 |   210,445 |    152,454 |   25,691 |    16,951 |
+| `ai:citizens`                      |          992 |   145,717 |     74,060 |   26,531 |     9,594 |
+| `military:units`                   |          280 |   117,087 |     69,487 |    3,201 |     2,750 |
+| `ai:civics`                        |          992 |    74,696 |     25,931 |   19,955 |     3,541 |
+| `SetCityAssignmentsCommand`        |        3,372 |    71,193 |     36,171 |   10,162 |     4,079 |
+
+On the final tree `modifiers:collect` makes 258,437 collections in those 20 turns, about
+half as many as before, mostly because of `5085f9d`.
+
+Turn systems on the turn's own thread, the same 20 turns:
+
+| System                   | Calls | Before ms | Before MiB | After ms | After MiB |
+| :----------------------- | ----: | --------: | ---------: | -------: | --------: |
+| `military:units`         |   280 |   117,087 |     69,487 |    3,201 |     2,750 |
+| `cities:production`      |   280 |    28,632 |     21,151 |    2,555 |     1,787 |
+| `great_people:births`    |   280 |    22,031 |     15,111 |      953 |       638 |
+| `cities:growth`          |   280 |    20,010 |     20,714 |    3,369 |     2,612 |
+| `economy:gold`           |   280 |    14,568 |     12,200 |    1,848 |     1,377 |
+| `cities:assign_work`     |   280 |    12,463 |     10,354 |    1,652 |     1,107 |
+| `global_warming:warming` |    20 |    12,451 |      9,079 |    1,343 |       863 |
+| `religion:city_turns`    |   280 |    11,416 |      6,461 |      921 |       508 |
+| `barbarians:behavior`    |    20 |     8,522 |      3,883 |      306 |       176 |
+| `revolution:instability` |   280 |     6,157 |      5,397 |      998 |       598 |
+
+#### Active Corporations and the Optional Mods
+
+From `ai450corp.json`, 4 turns, before and after (processor time):
+
+| Entry                       |   Calls | Before ms | After ms |
+| :-------------------------- | ------: | --------: | -------: |
+| `modifiers:collect`         | 138,031 |   431,977 |   27,697 |
+| `ai:civics`                 |     235 |   141,526 |    6,140 |
+| `corporations:civic_valuer` |  10,854 |   122,096 |      398 |
+| `corporations:planner`      |     235 |     8,881 |    2,131 |
+| `corporations:executives`   |      74 |     1,611 |      390 |
+
+The final tree makes 79,092 collections there. The before count, 138,031, is from before
+`5085f9d`.
+
+Active branches made a turn about 30% dearer than the same save without them, both before
+(61.1 s against 46.7 s) and after (5.0 s against 3.8 s). Ranked by cost before this pass:
+
+1. **The corporations civic valuer** (122 s in 4 turns). It weighed every city's branches
+   and maintenance again for each civic the planner scored. Each city's maintenance
+   gathered a whole player calculation, and each player calculation rebuilt every city's
+   running buildings for anarchy modifiers.
+2. **Branch effects in city calculations.** `CorporationEffects` took 18.4 s of 48.4 s of
+   collection time in an instrumented run after the first eight optimizations. Per branch city it
+   asked the resource counts once for each active branch (`ConsumedBonusCount`), then again
+   in maintenance, and it gathered the player's maintenance modifier as well
+   (`x:corp_maintenance` 12.4 s, `x:corp_consumed` 6.9 s over 51,102 calls).
+   `IsActive` (51,102 calls, 88 ms) and the headquarters branch count (4,464 calls, 155 ms)
+   cost little.
+3. **`corporations:planner`** (8.9 s before, 2.1 s after). `HeadquartersValuer` (4,159
+   calls, 12 ms in 20 turns) and `ExecutiveWishes` (`corporations:executives`, 1.0 s in
+   20 turns after) are minor.
+
+Over 20 turns of the corporation save on the final tree, every optional mod's entries
+together took 15.0 s of 104 s: `corporations:planner` 9.5 s, `corporations:civic_valuer`
+2.1 s, `revolution:instability` 1.3 s, `corporations:executives` 1.0 s, `espionage:planner`
+0.9 s, `revolution:planner` 0.2 s. `votes:planner`, `espionage:spies`,
+`events:turn`, `scripted_wonders:city_turns`, `espionage:allocation`,
+`revolution:rebellions`, `votes:sessions` and `corporations:maintenance` were each 20 ms
+or less. In the plain save before this pass, `revolution:instability` was the largest
+(6.2 s in 20 turns), and its city ledgers made it so.
+
+#### Optimizations
+
+Each row is measured on the same save and turn count before and after its commit, with a
+byte-identical final save. "330" continues `ai330.json` for 4 turns, "450" continues
+`ai450.json` for 4 turns, "corp" continues `ai450corp.json` for 4 turns, and "550"
+continues the turn-551 save for 4 turns. Times are processor time for the entry named.
+
+| Commit    | Change                                                         | Subject | Measure                       | Before             | After              |
+| :-------- | :------------------------------------------------------------- | :------ | :---------------------------- | -----------------: | -----------------: |
+| `6476e52` | One batched resource query for a city's traded resources       | 330     | `modifiers:collect`; run      | 45.3 s; 47.6 s     | 36.4 s; 39.5 s     |
+| `a1f4ba8` | Power is asked only of a city holding a building that needs it | 330     | `modifiers:collect`; run      | 36.4 s; 39.5 s     | 20.8 s; 22.5 s     |
+| `1420193` | Grants resolve only cities that built a granting building      | 330     | `modifiers:collect`; run      | 20.8 s; 22.5 s     | 18.2 s; 19.2 s     |
+| `833dacb` | A scripted wonder is not resolved in a city without it         | 330     | `modifiers:collect`; run      | 18.2 s; 19.2 s     | 14.6 s; 14.2 s     |
+| `8fb21e0` | The replacement scan visits only buildings that replace        | 330     | set resolution; run           | 6.5 s; 14.2 s      | 5.0 s; 13.8 s      |
+| `927a9f6` | Empty per-building maps are passed over in building effects    | 330     | `modifiers:collect`; MiB      | 13.9 s; 16.9 GiB   | 10.3 s; 8.9 GiB    |
+| `013cf71` | One city-group layout per resource count under exports         | 450     | `modifiers:collect`; run      | 24.3 s; 24.0 s     | 22.5 s; 22.6 s     |
+| `e853955` | Only cities whose buildings reach others are resolved          | 450     | `modifiers:collect`           | 22.5 s             | 20.3 s             |
+| `35c72a6` | Only cities that could run an anarchy building are resolved    | corp    | `modifiers:collect`           | 46.8 s             | 38.0 s             |
+| `cb1626d` | Branch values gathered once per AI segment for all civics      | corp    | `corporations:civic_valuer`   | 4.3 s              | 0.5 s              |
+| `ef252c2` | One resource query per branch city for outputs and maintenance | corp    | `modifiers:collect`; run      | 37.7 s; 31.9 s     | 28.7 s; 26.4 s     |
+| `5085f9d` | Promotions validated only for the unit's combat type           | 450     | collections; `ai:military`    | 105,135; 7.2 s     | 54,028; 5.7 s      |
+| `29cea16` | Hunting odds reckoned once per enemy tile                      | 550     | `ai:military`; run            | 114.1 s; 85.5 s    | 24.5 s; 38.5 s     |
+
+The temporary instrumentation that found these is not committed. It covered time per
+modifier source and scope, the parts of `CityData.Active`, the deal arithmetic, and
+sampled call stacks of collections. One change was measured and dropped: memoizing
+`ConnectedCounts` and city connections in the city read scope saved 1.5 s of 23 s.
+Each city calculation asks every owned city's network only once, so the memo had nothing
+to share, and it would have made World depend on the Cities read scope.
+
+Every change keeps the result by construction. Each one either skips work that adds only
+zero lines, or tests a necessary condition first: the running set only narrows the
+constructed and granted buildings. The rest reuse a value that does not depend on the
+loop variable, within a read that issues nothing. The ScriptedWonders pre-check changes
+only which exception a save with an unknown building id raises.
+
+#### Verification
+
+- Final saves of the full continuations are byte-identical to the `f0931c9` baseline:
+  `ai330.json` + 40 turns (turn 371, hash `2eea532a9f68e438`), `ai450.json` + 20 turns
+  (turn 471, `6eedba278a9d2381`), `ai.json` + 20 turns (turn 271, `e23a15c0e47ebab3`), the
+  new 100-turn game (turn 101, `9bf38cf7bc3e5245`), and `ai450corp.json` + 4 turns (turn
+  455, `24a7278a6d3bddb2`).
+- On the final tree, `ai450corp.json` + 4 turns prints the same hash with
+  `--reload-every 2`, with `--background` and with `DOTNET_PROCESSOR_COUNT=1`. This covers
+  the paths `mise run check:sync` never reaches: active branches, `AiContext.Derived`,
+  deal groups.
+- Repeating a 4-turn continuation reproduces its hash, with or without temporary
+  instrumentation.
+
+#### Results and the 450-Turn Estimate
+
+| Run (profiled, headless)       | Before  | After  |
+| :----------------------------- | ------: | -----: |
+| New game, 100 turns            | 24.4 s  | 21.5 s |
+| `ai.json`, 20 turns from 251   | 50.8 s  | 21.6 s |
+| `ai330.json`, 40 turns from 331 | 428.3 s | 67.1 s |
+| `ai450.json`, 20 turns from 451 | 956.5 s | 82.4 s |
+| `ai450corp.json`, 4 turns       | 287.9 s | 26.2 s |
+
+A turn at turn 450 now costs 14 times a turn at turn 100 (3.8 s against 0.27 s), against
+144 times before. The estimate integrates per-turn wall time between four anchors:
+advances 92 to 101 of the new game, and the mean turns from 251, 331 and 451. It
+interpolates log-linearly, because the cost grew about fivefold per 100 turns before.
+
+| 450-turn six-player game, headless | Turns 1-100 | 100-250 | 250-350 | 350-450 | Total     |
+| :--------------------------------- | ----------: | ------: | ------: | ------: | --------: |
+| Before                             |        24 s |   133 s |   481 s | 2,176 s | about 48 min |
+| After                              |        22 s |    75 s |   116 s |   232 s | about 7.5 min |
+
+Past turn 450 the armies grow: the continued game holds 614 units by turn 551. The before
+curve, extrapolated at fivefold per 100 turns, would cost about 200 s per turn by turn
+550 and several hours for turns 450 to 550. That fits the reported hours. Turns with active
+corporations cost about 30% more than this estimate, and the Godot client adds its own work.
+On the final tree, turns 552 to 555 take 8 to 9 s each (13 s for the first, which
+compiles). Before the last commit they took 17 to 23 s.
+
+#### Still Slow, Ranked
+
+From the final tree, 4 turns from turn 551 (38 cities, 619 units, 38.5 s) and 20 turns
+from turn 451:
+
+1. **AI military planning with large armies.** `ai:military` took 24.5 s of processor time
+   in 4 turns at turn 551. After `29cea16` it still previews combat for every hunter and
+   tile in reach, and against every defender on that tile (`CombatService.BestDefender`).
+   That cost grows with units squared.
+2. **City calculations under resource exports.** `modifiers:collect` still averages 170 to
+   290 µs per call. Its largest part is a city's available resources while its owner
+   exports a resource: the export arithmetic traverses the network of every owned city
+   (`ConnectedCounts`) for each city calculation, about 600 µs per city with deals. One
+   traversal per network per read would need a cache that outlives one calculation.
+3. **The per-city ledger cache (not built).** A ledger cached per city across calculations
+   would need a state revision that every mutation bumps. Core has none: turn systems and
+   commands write state directly, and about 20 modifier sources read inputs beyond the
+   city (units on the tile, deals, other players' civics, timers), while AI forks plan in
+   parallel. Its gain is bounded by `modifiers:collect`: 79 s of processor time, summed over
+   threads, in the 20 turns from 451, against 82 s of wall time. Realistically it would save 30 to 50% of that,
+   and it would mean touching every writer of city, player and team state.
+4. **AI planners' fixed cost.** `ai:cities` (49 s in 20 turns from 451), `ai:citizens`
+   (27 s), `ai:economy` (26 s), `ai:civics` (20 s) and `corporations:planner` (9.5 s with
+   branches) lead. Each is now within a factor of two of the collections it makes.
+5. **Collector pauses.** These are 16% of a late turn after this pass (597 of 3,842 ms at
+   turn 451), against 8% before. Allocation fell tenfold, from 48.9 to 4.7 GiB per turn,
+   but the AI threads still pause together.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -1510,3 +1781,8 @@ passes:
 |                                         |                      | 100-turn 4-player AI game, industrial start (seed 3)       | Managed bytes            |            145.0 GiB |          88.9 GiB |                                **-38.7%** |
 |                                         |                      | 100-turn 8-player AI game, standard world (seed 3)         | Wall time                |               53.2 s |            34.0 s |                                **-36.1%** |
 |                                         |                      | Eight-player preparation (`mise run benchmark`)            | Wall time                |            50,076 ms |         31,712 ms |                                **-36.7%** |
+| **Pass 14: The Late Game**              | `6476e52`..`29cea16` | Six-player AI game, 40 turns from turn 331 (saved game)    | Wall time (profiled)     |              428.3 s |            67.1 s |                                **-84.3%** |
+|                                         |                      | Six-player AI game, 20 turns from turn 451 (saved game)    | Wall time (profiled)     |              956.5 s |            82.4 s |                                **-91.4%** |
+|                                         |                      | Same, per turn at turns 452-471                            | Managed bytes per turn   |           48,883 MiB |         4,709 MiB |                                **-90.4%** |
+|                                         |                      | Turn-451 save with 101 corporation branches, 4 turns       | Wall time (profiled)     |              287.9 s |            26.2 s |                                **-90.9%** |
+|                                         |                      | 450-turn six-player game (estimated from four anchors)     | Wall time                |         about 48 min |     about 7.5 min |                                  **-84%** |
