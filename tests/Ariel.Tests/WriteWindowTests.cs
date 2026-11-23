@@ -162,6 +162,49 @@ public sealed class WriteWindowTests
         }) { Player = 0 }, out _));
     }
 
+    /// <summary>Declares culture, and widens before a rare write to the treasury.</summary>
+    private sealed class CultureThenTreasury : GameCommand
+    {
+        public bool Widen { get; init; }
+        public long Seen { get; private set; }
+        public override IReadOnlyList<string>? WriteDomains => ["probe:culture"];
+        public override string? Validate(Simulation sim) => null;
+        public override void Apply(Simulation sim)
+        {
+            sim.State.PlayerById(Player).Culture++;
+            if (Widen) sim.WidenWriteWindow();
+            sim.State.PlayerById(Player).Treasury += 5;
+            Seen = ModifierSink.Collect(new(sim, ModifierScope.Player, Player)).Total("probe:treasury");
+        }
+    }
+
+    [Fact]
+    public void A_widened_window_counts_as_writing_everything_from_then_on()
+    {
+        var (sim, treasury, _) = Game();
+        sim.VerifyWrites = true;
+        var widened = new CultureThenTreasury { Player = 0, Widen = true };
+        Assert.True(sim.TryApply(new Script(s =>
+        {
+            Player(s);
+            int before = treasury.Calls;
+            Assert.True(s.TryApply(widened, out _));
+            Assert.Equal(before + 1, treasury.Calls); // inside the widened window the treasury is read afresh
+            Assert.Equal(5, widened.Seen);
+            Player(s);
+            Assert.Equal(before + 2, treasury.Calls); // and closing it stamped everything
+        }) { Player = 0 }, out _));
+        Assert.Equal(5, Player(sim).Total("probe:treasury"));
+
+        // Without the widening the same write is outside the declaration, and verification says so.
+        var (strict, _, _) = Game();
+        strict.VerifyWrites = true;
+        var error = Assert.Throws<InvalidOperationException>(() => strict.TryApply(new CultureThenTreasury { Player = 0 }, out _));
+        Assert.Contains("CultureThenTreasury", error.Message);
+        // Outside any window it does nothing.
+        sim.WidenWriteWindow();
+    }
+
     private sealed class UndeclaredWrite : GameCommand
     {
         public override string? Validate(Simulation sim) => null;

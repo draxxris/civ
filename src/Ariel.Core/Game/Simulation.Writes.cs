@@ -142,13 +142,21 @@ public sealed partial class Simulation
 
     /// <summary>The innermost open window may write anything from here on: an event a subscriber handles was
     /// published inside it. False when no window is open, and the caller must open one.</summary>
-    internal bool WidenWriteWindow()
+    internal bool TryWidenWriteWindow()
     {
         if (_windows.Count == 0) return false;
         _windows[^1].Rest = true;
         _openRest = true;
         return true;
     }
+
+    /// <summary>The running command or turn system is about to write outside the state domains it declares: a rare
+    /// write its declaration leaves out, such as a birth, a revolt or a city's culture level changing. From here its
+    /// window counts as writing everything, as an undeclared one does, so readers neither use nor keep remembered
+    /// answers until it closes, and closing it stamps everything. Call it before that write, or at least before
+    /// anything reads after it. Outside any window (a host's own edit) it does nothing: answers are kept only inside
+    /// kernel work.</summary>
+    public void WidenWriteWindow() => TryWidenWriteWindow();
 
     /// <summary>The kernel wrote outside any window (ended turns, the turn order): everything counts as written.</summary>
     internal void NoteKernelWrite() => Stamp(0, rest: true);

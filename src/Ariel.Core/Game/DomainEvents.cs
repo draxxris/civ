@@ -85,7 +85,7 @@ public sealed class DomainEventBus
         // A subscriber may write anything: the open write window widens to everything, and an event published
         // outside any window dispatches inside one of its own, so the subscribers' writes are always stamped.
         bool handled = Handled(message.GetType());
-        bool widened = handled && _sim.WidenWriteWindow();
+        bool widened = handled && _sim.TryWidenWriteWindow();
         _pending.Enqueue(message);
         if (_dispatching) return;
         _dispatching = true;
