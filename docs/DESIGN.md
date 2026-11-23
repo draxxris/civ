@@ -2734,7 +2734,9 @@ declare both sides.
   without naming it. Examples are the AI's saved intent (`ai:intent`), research progress
   (`research:progress`), the government timers (`government:timers`), revolution
   instability (`revolution:instability`) and great-people points
-  (`great_people:progress`).
+  (`great_people:progress`). One exception is allowed: a source may see a private
+  domain through a derived threshold whose writers widen before it changes (see
+  "Thresholds that readers see" below), as revolution's source sees the mutiny tier.
 - **Writers declare what they write.** `GameCommand.WriteDomains` and
   `ITurnSystem.WriteDomains` name the domains a command's `Apply` or a system's `Run`
   writes. Null, the default, means anything.
@@ -2805,8 +2807,9 @@ declare both sides.
   again where it is used and throws on any difference. It also checks every declared
   window, by hashing the state without its declared domains before and after, to have
   written nothing else. Either side of a wrong declaration then fails loudly where a run
-  exercises it. The check costs about three times the normal turn time; a 451 + 4 run
-  takes under a minute.
+  exercises it. Every declared window serializes the state twice, so the cost grows with
+  the number of declared windows: a 451 + 4 run takes about a minute, and new8 (150
+  turns) over 20 minutes.
 - **Declared today.**
   - Writers (commands): `SetCityAssignmentsCommand` (`cities:work`),
     `SetCityProductionCommand` and `MoveCityQueueCommand` (`cities:queue`), and the AI's

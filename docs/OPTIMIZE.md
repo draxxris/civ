@@ -2311,7 +2311,7 @@ ______________________________________________________________________
 ### Pass 18: The Per-Player Turn Chain Declared
 
 - **Date**: 2026-11-23
-- **Commits**: `bbdb6759`, `e3f3b182`
+- **Commits**: `bbdb6759`, `e3f3b182`, then the documentation
 
 This pass takes item 1 of the Pass 17 "Still Slow" list. A city ledger read inside an
 undeclared turn system was computed fresh and not kept, because the system's open
@@ -2417,8 +2417,15 @@ the flood sharing was not built.
 `CorporationEffects` stays undeclared. It reads population and collects a nested player
 ledger, so its audit needs its module's owner. `MoveUnitPathCommand` stays undeclared
 too: the resource flood reads `Revealed`, and a unit-position domain needs that read
-separated first. `global_warming:warming`, a global system, also stays undeclared. It
-is now the largest "open" miss (28 ms per turn at 451).
+separated first.
+
+`global_warming:warming` was declared and then rejected. It was the largest "open" miss
+left (28 ms per turn at 451 under the probe), and it writes nothing on most turns, so it
+was declared as writing nothing and widened before a plot degrades. All nine reference
+hashes matched under `--verify-modifier-cache`. In two alternating pairs at each of 451
+and 552, the system's own time did not move: 52 to 59 ms per turn at 451 and 73 ms at
+552 on both trees. Its cost is the warming arithmetic and the cities' environmental
+unhealth, not ledgers the cache could keep, so the declaration was taken out.
 
 #### Results
 
@@ -2435,6 +2442,13 @@ Final code `e3f3b182`. Base and final ran alternately at load 1 to 2.5:
 | 451 + 8, allocation per turn | 795 MiB | 727 MiB | −9% |
 | Corporations save + 4, wall per turn (one pair) | 714 ms | 681 ms | within noise |
 | New game, 100 turns, wall per turn (two pairs) | 132 / 142 ms | 140 / 145 ms | within noise |
+
+A later set of pairs at load 3 to 6, on a tree that differed only by the rejected
+warming declaration, gave the same picture. At 451 the wall times were 1,112 and
+1,064 ms on the base tree and 1,041 and 1,014 ms on the final one. At 552 they were
+1,468 and 1,554 ms against 1,487 and 1,462 ms. Allocation and `modifiers:collect` moved
+as in the table. Under that load a 451 gain of about 5% cannot be told from noise, and
+it is not claimed.
 
 At 552 the systems that changed most per turn were growth (128 to 104 ms), culture (42
 to 21 ms) and gold (28 to 16 ms). AI time did not move. The early game gains nothing:
@@ -2457,11 +2471,12 @@ All on the final code:
 
 From the final tree at 552, per turn:
 
-1. **AI military.** `ai:military` is about 330 ms per turn and the largest planner.
-   It was not changed in this pass.
+1. **AI military.** `ai:military` is 315 to 370 ms per turn and the largest planner.
+   It was read but not profiled or changed in this pass. A per-phase timing of
+   `MilitaryPlanner.Plan` (promotions, garrisons, hunting, `AttackPlanner.Plan`, the
+   navy) is the next step.
 2. **Ledgers still missed.** `modifiers:collect` is about 420 ms per turn summed over
    threads. The largest misses left:
-   - `global_warming:warming` (open window, undeclared global system);
    - `MoveUnitPathCommand` (stale, needs `Revealed` separated from the flood);
    - `cities:completion` (it widens on most turns, because some city completes an
      order);
@@ -2470,7 +2485,12 @@ From the final tree at 552, per turn:
    write outside the private domains recomputes it.
 4. **Network floods.** One flood per connected group instead of one per city remains a
    candidate. It is worth about 13% of `BuildingEffects`.
-5. The Pass 16 items 2 to 7 are unchanged.
+5. **Global warming.** About 73 ms per turn at 552, in its own arithmetic and the
+   environmental-unhealth reads, not in cached ledgers.
+6. The Pass 16 items 2 to 7 are unchanged.
+
+`mise run benchmark` was not run in this pass. The alternating `ai:play` pairs above
+are the measurement.
 
 ______________________________________________________________________
 
