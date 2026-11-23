@@ -221,26 +221,41 @@ internal sealed class UnitTurnSystem(IUnitService units) : IPlayerTurnSystem
     {
         units.Initialize(sim, unit.Id);
         var state = MilitaryData.Edit(sim, unit);
-        bool active = state.Moved || state.Attacked || unit.MovesLeft < units.MaximumMoves(sim, unit.Id);
+        int maximum = units.MaximumMoves(sim, unit.Id);
+        bool active = state.Moved || state.Attacked || unit.MovesLeft < maximum;
+        // The refreshed moves are asked again only after a write below changes something: until then the state, and so
+        // the answer, is the one just read.
+        bool wrote = false;
         if (state.CreatedTurn != sim.State.Turn)
         {
             // A unit exactly at full health stays there (the rate is never negative and the result is capped), so its
             // heal rate, which reads every friendly unit's ledger nearby, is not asked. Pure reads only are skipped.
             int maxHp = MilitaryData.Constants(sim).MaxHitPoints;
             if (unit.Health != maxHp && (!active || MilitaryData.Effect(MilitaryData.Effects(sim, unit), "always_heal") > 0))
-                unit.Health = Math.Min(maxHp, unit.Health + units.HealRate(sim, unit.Id));
+            {
+                int health = Math.Min(maxHp, unit.Health + units.HealRate(sim, unit.Id));
+                wrote |= health != unit.Health;
+                unit.Health = health;
+            }
             if (!active && state.TransportId is null && state.Activity == UnitActivity.Fortify && CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit)))
-                state.FortifyTurns = Math.Min(MilitaryData.Raw(sim, "MAX_FORTIFY_TURNS", 5), state.FortifyTurns + 1);
+            {
+                int turns = Math.Min(MilitaryData.Raw(sim, "MAX_FORTIFY_TURNS", 5), state.FortifyTurns + 1);
+                wrote |= turns != state.FortifyTurns;
+                state.FortifyTurns = turns;
+            }
         }
-        WakeSentry(sim, unit, state);
-        unit.MovesLeft = units.MaximumMoves(sim, unit.Id); state.Moved = false; state.Attacked = false;
+        wrote |= WakeSentry(sim, unit, state);
+        unit.MovesLeft = wrote ? units.MaximumMoves(sim, unit.Id) : maximum; state.Moved = false; state.Attacked = false;
         state.InterceptedThisTurn = false;
     }
-    private static void WakeSentry(Simulation sim, Unit unit, MilitaryUnitState state)
+    /// <summary>Wake a sentry that sees an enemy; whether it woke.</summary>
+    private static bool WakeSentry(Simulation sim, Unit unit, MilitaryUnitState state)
     {
-        if (state.Activity != UnitActivity.Sentry) return;
+        if (state.Activity != UnitActivity.Sentry) return false;
         int team = sim.TeamOf(unit.Owner).Id;
-        if (sim.State.Units.Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner)
-            && sim.Rules().Visibility.IsUnitVisible(sim, u.Id, team))) state.Activity = UnitActivity.Awake;
+        if (!sim.State.Units.Any(u => MilitaryData.Enemy(sim, unit.Owner, u.Owner)
+            && sim.Rules().Visibility.IsUnitVisible(sim, u.Id, team))) return false;
+        state.Activity = UnitActivity.Awake;
+        return true;
     }
 }
