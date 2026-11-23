@@ -9,22 +9,26 @@ namespace Ariel.Rules.Government;
 
 internal sealed class CivicEffects : IModifierSource
 {
+    private static readonly string[] AllSpecialistKeys = SpecialistKeys("all");
+
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
+        // A city's running buildings are the same for every civic it runs, so they are resolved once per calculation.
+        var buildings = context.Scope == ModifierScope.City && context.City is { } subject ? ActiveBuildings(context.Sim, subject) : null;
         foreach (var civic in context.Sim.State.PlayerById(context.Player).Civics.Values.Order(StringComparer.Ordinal).Select(context.Sim.Content.Get<CivicDef>))
-            Contribute(context, civic, sink);
+            Contribute(context, civic, buildings, sink);
         if (context.Scope == ModifierScope.City && context.City is { } affectedCity)
             CivicAnger(context.Sim, affectedCity, sink);
         if (context.Scope != ModifierScope.Player) return;
         foreach (var city in context.Sim.State.Cities.Where(city => city.Owner == context.Player))
             foreach (var building in ActiveBuildings(context.Sim, city)) sink.Add(building.Id, "government:anarchy_percent", building.AnarchyModifier);
     }
-    private static void Contribute(ModifierContext context, CivicDef civic, ModifierSink sink)
+    private static void Contribute(ModifierContext context, CivicDef civic, IReadOnlyList<BuildingDef>? buildings, ModifierSink sink)
     {
         // The civic's plain modifiers are data; the typed rules below need more than the calculation's subject.
         foreach (var effect in civic.Effects)
             if (effect.Scope == context.Scope) sink.Apply(civic.Id, effect);
-        if (context.Scope == ModifierScope.City && context.City is { } city) City(context.Sim, city, civic, sink);
+        if (context.Scope == ModifierScope.City && context.City is { } city) City(context.Sim, city, civic, buildings!, sink);
         if (context.Scope == ModifierScope.Player) Player(context.Sim, civic, sink);
         if (context.Scope == ModifierScope.Plot && context.Plot is { } tile)
         {
@@ -43,13 +47,12 @@ internal sealed class CivicEffects : IModifierSource
             : sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize).MaxConscriptModifier;
         return civic.MaxConscript * Math.Max(0, 100 + modifier) / 100;
     }
-    private static IEnumerable<BuildingDef> ActiveBuildings(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
-    private static void City(Simulation sim, City city, CivicDef c, ModifierSink sink)
+    private static IReadOnlyList<BuildingDef> ActiveBuildings(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
+    private static void City(Simulation sim, City city, CivicDef c, IReadOnlyList<BuildingDef> buildings, ModifierSink sink)
     {
-        var buildings = ActiveBuildings(sim, city).ToArray();
         Capital(city, c, buildings, sink);
         Wellbeing(sim, city, c, buildings, sink);
-        SpecialistCommerce(c.Id, "all", c.SpecialistExtraCommerces * 100, sink);
+        SpecialistCommerce(c.Id, AllSpecialistKeys, c.SpecialistExtraCommerces * 100, sink);
         foreach (var b in buildings)
         {
             sink.AddCommerce(c.Id, c.BuildingClassCommerceChanges.GetValueOrDefault(b.DefaultBuilding));
@@ -73,14 +76,14 @@ internal sealed class CivicEffects : IModifierSource
             sink.Add(civic.Id, "cities:civic_percent_anger", (long)civic.CivicPercentAnger * count / possible);
         }
     }
-    private static void Capital(City city, CivicDef c, BuildingDef[] buildings, ModifierSink sink)
+    private static void Capital(City city, CivicDef c, IReadOnlyList<BuildingDef> buildings, ModifierSink sink)
     {
         if (!buildings.Any(b => b.Capital)) return;
-        sink.AddYield(c.Id + ":capital", c.CapitalYieldModifiers, true);
-        sink.AddCommerce(c.Id + ":capital", c.CapitalCommerceModifiers, true);
+        if (c.CapitalYieldModifiers != default) sink.AddYield(c.Id + ":capital", c.CapitalYieldModifiers, true);
+        if (c.CapitalCommerceModifiers != default) sink.AddCommerce(c.Id + ":capital", c.CapitalCommerceModifiers, true);
         sink.Add(c.Id, "cities:no_unhappiness", c.NoCapitalUnhappiness ? 1 : 0);
     }
-    private static void Wellbeing(Simulation sim, City city, CivicDef c, BuildingDef[] buildings, ModifierSink sink)
+    private static void Wellbeing(Simulation sim, City city, CivicDef c, IReadOnlyList<BuildingDef> buildings, ModifierSink sink)
     {
         if (c.HappyPerMilitaryUnit != 0)
         {
@@ -107,11 +110,16 @@ internal sealed class CivicEffects : IModifierSource
             .Take(count).Any(x => x.Id == city.Id);
         if (largest) sink.Add(c.Id + ":largest", "cities:happiness", c.LargestCityHappiness);
     }
-    private static void SpecialistCommerce(string source, string specialist, CommerceVector value, ModifierSink sink)
+    private static string[] SpecialistKeys(string specialist) =>
+    [
+        "cities:specialist_gold_hundredths:" + specialist, "cities:specialist_research_hundredths:" + specialist,
+        "cities:specialist_culture_hundredths:" + specialist, "cities:specialist_espionage_hundredths:" + specialist,
+    ];
+    private static void SpecialistCommerce(string source, string[] keys, CommerceVector value, ModifierSink sink)
     {
-        sink.Add(source, "cities:specialist_gold_hundredths:" + specialist, value.Gold);
-        sink.Add(source, "cities:specialist_research_hundredths:" + specialist, value.Research);
-        sink.Add(source, "cities:specialist_culture_hundredths:" + specialist, value.Culture);
-        sink.Add(source, "cities:specialist_espionage_hundredths:" + specialist, value.Espionage);
+        sink.Add(source, keys[0], value.Gold);
+        sink.Add(source, keys[1], value.Research);
+        sink.Add(source, keys[2], value.Culture);
+        sink.Add(source, keys[3], value.Espionage);
     }
 }
