@@ -11825,50 +11825,50 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_1",
-      "mod": "cities",
-      "id": "cities:corporation_1",
+      "mod": "corporations",
+      "id": "corporations:corporation_1",
       "era": "ERA_INDUSTRIAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_2",
-      "mod": "cities",
-      "id": "cities:corporation_2",
+      "mod": "corporations",
+      "id": "corporations:corporation_2",
       "era": "ERA_INDUSTRIAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_3",
-      "mod": "cities",
-      "id": "cities:corporation_3",
+      "mod": "corporations",
+      "id": "corporations:corporation_3",
       "era": "ERA_INDUSTRIAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_4",
-      "mod": "cities",
-      "id": "cities:corporation_4",
+      "mod": "corporations",
+      "id": "corporations:corporation_4",
       "era": "ERA_INDUSTRIAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_5",
-      "mod": "cities",
-      "id": "cities:corporation_5",
+      "mod": "corporations",
+      "id": "corporations:corporation_5",
       "era": "ERA_INDUSTRIAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_6",
-      "mod": "cities",
-      "id": "cities:corporation_6",
+      "mod": "corporations",
+      "id": "corporations:corporation_6",
       "era": "ERA_MODERN"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_7",
-      "mod": "cities",
-      "id": "cities:corporation_7",
+      "mod": "corporations",
+      "id": "corporations:corporation_7",
       "era": "ERA_MODERN"
     },
     {
@@ -11881,43 +11881,43 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_ADVENTURE_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_adventure_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_adventure_hq",
       "era": "ERA_MODERN"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_APOTHEGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_apotheguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_apotheguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_ARTISTGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_artistguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_artistguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_BAKERGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_bakerguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_bakerguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_BLACKSMGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_blacksmguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_blacksmguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_BURGERWORLD_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_burgerworld_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_burgerworld_hq",
       "era": "ERA_MODERN"
     },
     {
@@ -11930,50 +11930,50 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_BUTCHERGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_butcherguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_butcherguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_CARPENTERGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_carpenterguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_carpenterguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_CLERKSGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_clerksguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_clerksguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_DRAPERSGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_drapersguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_drapersguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_EMPCLOTH_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_empcloth_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_empcloth_hq",
       "era": "ERA_MODERN"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_EQUESTGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_equestguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_equestguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_EWTRADE_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_ewtrade_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_ewtrade_hq",
       "era": "ERA_INDUSTRIAL"
     },
     {
@@ -11986,43 +11986,43 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_FASHION_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_fashion_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_fashion_hq",
       "era": "ERA_MODERN"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_FISHMONGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_fishmonguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_fishmonguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_GLASSGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_glassguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_glassguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_GOLDSMGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_goldsmguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_goldsmguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_GROCERGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_grocerguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_grocerguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MALLWART_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_mallwart_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_mallwart_hq",
       "era": "ERA_MODERN"
     },
     {
@@ -12035,22 +12035,22 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MAPSTER_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_mapster_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_mapster_hq",
       "era": "ERA_MODERN"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MASONGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_masonguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_masonguild",
       "era": "ERA_MEDIEVAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MERCERGUILD",
-      "mod": "cities",
-      "id": "cities:corporation_mercerguild",
+      "mod": "corporations",
+      "id": "corporations:corporation_mercerguild",
       "era": "ERA_MEDIEVAL"
     },
     {
@@ -12063,15 +12063,15 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MILEHIGH_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_milehigh_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_milehigh_hq",
       "era": "ERA_MODERN"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MOBBY_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_mobby_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_mobby_hq",
       "era": "ERA_INDUSTRIAL"
     },
     {
@@ -12084,8 +12084,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MOONBEAN_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_moonbean_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_moonbean_hq",
       "era": "ERA_MODERN"
     },
     {
@@ -12098,8 +12098,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_RED_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_red_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_red_hq",
       "era": "ERA_INDUSTRIAL"
     },
     {
@@ -12119,15 +12119,15 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_SAFARI_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_safari_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_safari_hq",
       "era": "ERA_INDUSTRIAL"
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_ULTSOLDIER_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_ultsoldier_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_ultsoldier_hq",
       "era": "ERA_INDUSTRIAL"
     },
     {
@@ -12140,8 +12140,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_WONKA_HQ",
-      "mod": "cities",
-      "id": "cities:corporation_wonka_hq",
+      "mod": "corporations",
+      "id": "corporations:corporation_wonka_hq",
       "era": "ERA_MODERN"
     },
     {
@@ -53741,8 +53741,8 @@
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_BGMASTER",
-      "mod": "military",
-      "id": "military:bgmaster",
+      "mod": "corporations",
+      "id": "corporations:bgmaster",
       "era": "ERA_RENAISSANCE"
     },
     {
@@ -54259,246 +54259,246 @@
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_1",
-      "mod": "military",
-      "id": "military:executive_1",
+      "mod": "corporations",
+      "id": "corporations:executive_1",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_2",
-      "mod": "military",
-      "id": "military:executive_2",
+      "mod": "corporations",
+      "id": "corporations:executive_2",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_3",
-      "mod": "military",
-      "id": "military:executive_3",
+      "mod": "corporations",
+      "id": "corporations:executive_3",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_4",
-      "mod": "military",
-      "id": "military:executive_4",
+      "mod": "corporations",
+      "id": "corporations:executive_4",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_5",
-      "mod": "military",
-      "id": "military:executive_5",
+      "mod": "corporations",
+      "id": "corporations:executive_5",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_6",
-      "mod": "military",
-      "id": "military:executive_6",
+      "mod": "corporations",
+      "id": "corporations:executive_6",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_7",
-      "mod": "military",
-      "id": "military:executive_7",
+      "mod": "corporations",
+      "id": "corporations:executive_7",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_ADVENTURE",
-      "mod": "military",
-      "id": "military:executive_adventure",
+      "mod": "corporations",
+      "id": "corporations:executive_adventure",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_APOTHEGUILD",
-      "mod": "military",
-      "id": "military:executive_apotheguild",
+      "mod": "corporations",
+      "id": "corporations:executive_apotheguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_ARTISTGUILD",
-      "mod": "military",
-      "id": "military:executive_artistguild",
+      "mod": "corporations",
+      "id": "corporations:executive_artistguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_BAKERGUILD",
-      "mod": "military",
-      "id": "military:executive_bakerguild",
+      "mod": "corporations",
+      "id": "corporations:executive_bakerguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_BLACKSMGUILD",
-      "mod": "military",
-      "id": "military:executive_blacksmguild",
+      "mod": "corporations",
+      "id": "corporations:executive_blacksmguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_BURGERWORLD",
-      "mod": "military",
-      "id": "military:executive_burgerworld",
+      "mod": "corporations",
+      "id": "corporations:executive_burgerworld",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_BUTCHERGUILD",
-      "mod": "military",
-      "id": "military:executive_butcherguild",
+      "mod": "corporations",
+      "id": "corporations:executive_butcherguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_CARPENTERGUILD",
-      "mod": "military",
-      "id": "military:executive_carpenterguild",
+      "mod": "corporations",
+      "id": "corporations:executive_carpenterguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_CLERKSGUILD",
-      "mod": "military",
-      "id": "military:executive_clerksguild",
+      "mod": "corporations",
+      "id": "corporations:executive_clerksguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_DRAPERSGUILD",
-      "mod": "military",
-      "id": "military:executive_drapersguild",
+      "mod": "corporations",
+      "id": "corporations:executive_drapersguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_EMPCLOTH",
-      "mod": "military",
-      "id": "military:executive_empcloth",
+      "mod": "corporations",
+      "id": "corporations:executive_empcloth",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_EQUESTGUILD",
-      "mod": "military",
-      "id": "military:executive_equestguild",
+      "mod": "corporations",
+      "id": "corporations:executive_equestguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_EWTRADE",
-      "mod": "military",
-      "id": "military:executive_ewtrade",
+      "mod": "corporations",
+      "id": "corporations:executive_ewtrade",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_FASHION",
-      "mod": "military",
-      "id": "military:executive_fashion",
+      "mod": "corporations",
+      "id": "corporations:executive_fashion",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_FISHMONGUILD",
-      "mod": "military",
-      "id": "military:executive_fishmonguild",
+      "mod": "corporations",
+      "id": "corporations:executive_fishmonguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_GLASSGUILD",
-      "mod": "military",
-      "id": "military:executive_glassguild",
+      "mod": "corporations",
+      "id": "corporations:executive_glassguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_GOLDSMGUILD",
-      "mod": "military",
-      "id": "military:executive_goldsmguild",
+      "mod": "corporations",
+      "id": "corporations:executive_goldsmguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_GROCERGUILD",
-      "mod": "military",
-      "id": "military:executive_grocerguild",
+      "mod": "corporations",
+      "id": "corporations:executive_grocerguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_MALLWART",
-      "mod": "military",
-      "id": "military:executive_mallwart",
+      "mod": "corporations",
+      "id": "corporations:executive_mallwart",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_MAPSTER",
-      "mod": "military",
-      "id": "military:executive_mapster",
+      "mod": "corporations",
+      "id": "corporations:executive_mapster",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_MASONGUILD",
-      "mod": "military",
-      "id": "military:executive_masonguild",
+      "mod": "corporations",
+      "id": "corporations:executive_masonguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_MERCERGUILD",
-      "mod": "military",
-      "id": "military:executive_mercerguild",
+      "mod": "corporations",
+      "id": "corporations:executive_mercerguild",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_MILEHIGH",
-      "mod": "military",
-      "id": "military:executive_milehigh",
+      "mod": "corporations",
+      "id": "corporations:executive_milehigh",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_MOBBY",
-      "mod": "military",
-      "id": "military:executive_mobby",
+      "mod": "corporations",
+      "id": "corporations:executive_mobby",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_RED",
-      "mod": "military",
-      "id": "military:executive_red",
+      "mod": "corporations",
+      "id": "corporations:executive_red",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_SAFARI",
-      "mod": "military",
-      "id": "military:executive_safari",
+      "mod": "corporations",
+      "id": "corporations:executive_safari",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_ULTSOLDIER",
-      "mod": "military",
-      "id": "military:executive_ultsoldier",
+      "mod": "corporations",
+      "id": "corporations:executive_ultsoldier",
       "era": null
     },
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_EXECUTIVE_WONKA",
-      "mod": "military",
-      "id": "military:executive_wonka",
+      "mod": "corporations",
+      "id": "corporations:executive_wonka",
       "era": null
     },
     {
@@ -54686,8 +54686,8 @@
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_GGMASTER",
-      "mod": "military",
-      "id": "military:ggmaster",
+      "mod": "corporations",
+      "id": "corporations:ggmaster",
       "era": "ERA_RENAISSANCE"
     },
     {
@@ -55246,8 +55246,8 @@
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_MOONBEAN_EXECUTIVE",
-      "mod": "military",
-      "id": "military:moonbean_executive",
+      "mod": "corporations",
+      "id": "corporations:moonbean_executive",
       "era": null
     },
     {
@@ -55918,8 +55918,8 @@
     {
       "class": "UnitInfo",
       "sourceType": "UNIT_WGMASTER",
-      "mod": "military",
-      "id": "military:wgmaster",
+      "mod": "corporations",
+      "id": "corporations:wgmaster",
       "era": "ERA_RENAISSANCE"
     },
     {

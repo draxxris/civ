@@ -1,6 +1,6 @@
 {
   "name": "executive_mercerguild",
-  "model": "src/Ariel.Rules/Military/art/models/executive_mercerguild.glb",
+  "model": "src/Mods/Corporations/art/models/executive_mercerguild.glb",
   "texture_path": [
     "art/units/guildmaster/greenguildmaster.dds",
     "art/units/guildmaster/settler_child.dds"

@@ -8,7 +8,12 @@ using Ariel.Content.Schema;
 namespace Ariel.ContentImport;
 
 public sealed record DataIssue(string Record, string Field, string SourceValue, string Resolution);
-public sealed record MappedDefinition(DefinitionMapping Mapping, ContentDef Definition);
+/// <summary>One emitted definition. <see cref="Mod"/> is the mod whose folder it is written to: the mapping's, unless the
+/// record belongs to a mod that owns it outright (<see cref="IdMapping.RecordOwners"/>), which then emits every row about it.</summary>
+public sealed record MappedDefinition(DefinitionMapping Mapping, ContentDef Definition, string? Emitter = null)
+{
+    public string Mod => Emitter ?? Mapping.Mod;
+}
 
 /// <summary>Compiles merged trees into immutable Core definitions. No source table is read at game startup.</summary>
 public sealed partial class ContentMapper
@@ -23,6 +28,11 @@ public sealed partial class ContentMapper
     private readonly Dictionary<(string Class, string Type), EffectiveRecord> records;
     private readonly Dictionary<(string Class, string Type), string> ids;
     private readonly Dictionary<string, IdEntry> symbols;
+    /// <summary>The records a feature mod owns outright (<see cref="IdMapping.RecordOwners"/>), by id, with that mod.</summary>
+    private readonly Dictionary<string, string> claimed;
+    /// <summary>The mod the row being mapped is written for. Only it may name its own claimed records: a row of any other
+    /// mod leaves out a map entry that names one, since that mod cannot depend on the owner.</summary>
+    private string emitter = "";
     // Native roles absent from the documentary XML table. Verified in the source enum and native registration.
     public static readonly string[] NativeUnitAiRoles = ["UNITAI_PILLAGE_COUNTER", "UNITAI_SUBDUED_ANIMAL", "UNITAI_HUNTER", "UNITAI_DIPLOMAT"];
     public List<DataIssue> Issues { get; } = [];
@@ -45,7 +55,18 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         }
         symbols = idEntries.GroupBy(r => r.SourceType, StringComparer.Ordinal).Where(g => g.Count() == 1)
             .ToDictionary(g => g.Key, g => g.Single(), StringComparer.OrdinalIgnoreCase);
+        claimed = effectiveRecords.Select(r => (Record: r, Owner: IdMapping.Claimant(r))).Where(r => r.Owner is not null)
+            .ToDictionary(r => ids[(r.Record.Class, r.Record.Type)], r => r.Owner!, StringComparer.Ordinal);
     }
+
+    /// <summary>The mod that owns this id outright, or null for a record of its class's module.</summary>
+    public string? Claimant(string id) => claimed.GetValueOrDefault(id);
+    /// <summary>Whether the row being mapped may name the record: one a mod owns outright only from that mod's own rows,
+    /// and with <paramref name="owned"/> only those (a mod's attachment that lists just its own records).</summary>
+    private bool Names(string id, bool owned) => claimed.TryGetValue(id, out var owner) ? owner == emitter : !owned;
+    /// <summary>The mod that writes the rows about the record: the one owning it outright, else the mapping's.</summary>
+    private string Emitter(EffectiveRecord record, DefinitionMapping mapping) =>
+        claimed.GetValueOrDefault(ids[(record.Class, record.Type)]) ?? mapping.Mod;
 
     public IReadOnlyList<MappedDefinition> Map()
     {
@@ -58,9 +79,15 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
                 // A field a feature mod's attachment maps is mapped for the record, not unsupported on its primary definition.
                 var attached = new HashSet<string>(StringComparer.Ordinal);
                 foreach (var mapping in attachments)
-                    if (MapAttachment(record, mapping, attached) is { } row) result.Add(new(mapping, row));
+                {
+                    emitter = Emitter(record, mapping);
+                    if (MapAttachment(record, mapping, attached) is { } row) result.Add(new(mapping, row, emitter));
+                }
                 foreach (var mapping in family.Where(m => !m.IsAttachment))
-                    result.Add(new(mapping, MapRecord(record, mapping, attached)));
+                {
+                    emitter = Emitter(record, mapping);
+                    result.Add(new(mapping, MapRecord(record, mapping, attached), emitter));
+                }
             }
         }
         return result;
@@ -73,7 +100,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         var target = ids[(record.Class, record.Type)];
         var identity = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
-            ["id"] = mapping.Mod + ":" + target[(target.IndexOf(':') + 1)..], ["target"] = target,
+            ["id"] = emitter + ":" + target[(target.IndexOf(':') + 1)..], ["target"] = target,
         };
         var values = new Dictionary<string, object?>(identity, StringComparer.Ordinal);
         foreach (var field in mapping.Fields)
@@ -97,7 +124,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     {
         string id = ids[(record.Class, record.Type)];
         int colon = id.IndexOf(':');
-        if (id[..colon] == mapping.Mod) return id;
+        if (id[..colon] == mapping.Mod || claimed.ContainsKey(id)) return id;
         if (mapping.DefinitionType.GetProperty("Identity") is null)
             throw new InvalidDataException($"{mapping.Definition} is emitted by {mapping.Mod} for {id} but has no Identity to name it by");
         return mapping.Mod + id[colon..];
@@ -221,7 +248,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "intList" => node.Children.Select(n => Integer(n.Text)).ToArray(),
         "yield" => Yield(node), "commerce" => Commerce(node),
         "turns" => node.Children.Select(n => new TurnIncrement(Integer(n.Value("iMonthIncrement")), Integer(n.Value("iTurnsPerIncrement")))).ToArray(),
-        "civilization" => CivilizationField(record, node),
+        "civilization" => CivilizationField(record, node, field),
         "improvementBonuses" => Indexed(record, node, field, n => new ImprovementBonus
         {
             MakesValid = Boolean(n.Value("bBonusMakesValid")), Connects = Boolean(n.Value("bBonusTrade")),
@@ -286,9 +313,11 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     }
 
     private SortedDictionary<string, T> Indexed<T>(EffectiveRecord record, DataNode node, FieldMapping field, Func<DataNode, T> value) =>
-        PairMap(record, node, field.Target, value);
+        PairMap(record, node, field.Target, value, field.Owned);
 
-    private SortedDictionary<string, T> PairMap<T>(EffectiveRecord record, DataNode? node, string? target, Func<DataNode, T> value)
+    /// <summary>A (reference, value) pair list keyed by id. An entry whose key the row may not name (<see cref="Names"/>)
+    /// is left out.</summary>
+    private SortedDictionary<string, T> PairMap<T>(EffectiveRecord record, DataNode? node, string? target, Func<DataNode, T> value, bool owned = false)
     {
         var result = new SortedDictionary<string, T>(StringComparer.Ordinal);
         foreach (var entry in node?.Children ?? [])
@@ -297,12 +326,14 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             var key = entry.Children[0].Text;
             if (!Present(key)) continue;
             var id = target is null ? NativeKey(key!) : Reference(target, key, record, node!.Name);
-            if (id is not null) result[id] = value(entry); // Native positional pairs use the last slot assignment.
+            if (id is not null && (target is null || Names(id, owned))) result[id] = value(entry); // Native positional pairs use the last slot assignment.
         }
         return result;
     }
 
-    private object CivilizationField(EffectiveRecord record, DataNode node)
+    /// <summary>A civilization's initial civics, class overrides or starting grants. An override or grant of a unit or
+    /// building the row may not name (<see cref="Names"/>) is left out.</summary>
+    private object CivilizationField(EffectiveRecord record, DataNode node, FieldMapping field)
     {
         if (node.Name == "InitialCivics") return node.Children.Where(n => Present(n.Text))
             .Select(n => RequiredReference("CivicInfo", n.Text!, record, node.Name)).ToArray();
@@ -315,9 +346,13 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         {
             var symbol = entry.Children[0].Text!;
             var key = RequiredReference(classFamily, symbol, record, node.Name);
-            if (overrides) { result[key] = Reference(family, entry.Children[1].Text, record, node.Name); continue; }
+            if (overrides)
+            {
+                if (Names(key, field.Owned)) result[key] = Reference(family, entry.Children[1].Text, record, node.Name);
+                continue;
+            }
             var granted = StartingGrant(record, symbol, key, unit);
-            if (granted is null) continue;
+            if (granted is null || !Names(granted, field.Owned)) continue;
             result[granted] = unit ? (object)Integer(entry.Children[1].Text) : Boolean(entry.Children[1].Text);
         }
         return result;

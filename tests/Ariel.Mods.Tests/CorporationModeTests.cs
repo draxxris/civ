@@ -51,14 +51,14 @@ public sealed class CorporationModeTests
         // A corporation founded on its own trains no executive in its headquarters, and nobody pays for a branch.
         CorporationSourceRulesTests.Plant(sim, city, Cereal);
         const string Refused = "Executives are not used with Realistic Guilds/Corporations: guilds and corporations spread on their own";
-        Assert.Contains(Refused, Refusals(sim, city, "cities:unit", "military:executive_1"));
+        Assert.Contains(Refused, Refusals(sim, city, "cities:unit", "corporations:executive_1"));
         GameFactory.SatisfyFounding(sim, city, Masons); CorporationSourceRulesTests.Plant(sim, city, Masons);
-        Assert.Contains(Refused, Refusals(sim, city, "cities:unit", "military:executive_masonguild"));
+        Assert.Contains(Refused, Refusals(sim, city, "cities:unit", "corporations:executive_masonguild"));
         Assert.DoesNotContain(Refused, Refusals(sim, city, "cities:unit", "military:warrior"));
         P6RulesScenario.Resource(sim, other, "world:corn");
         Assert.Equal("Guilds and corporations spread on their own with Realistic Guilds/Corporations",
             P6RulesScenario.Reject(sim, new SpreadCorporationCommand { Player = 0, City = other.Id, Corporation = Cereal }));
-        var executive = P6RulesScenario.AddUnit(sim, 0, other, "military:executive_1");
+        var executive = P6RulesScenario.AddUnit(sim, 0, other, "corporations:executive_1");
         Assert.Equal("Guilds and corporations spread on their own with Realistic Guilds/Corporations",
             P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal }));
     }

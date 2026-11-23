@@ -22,21 +22,31 @@ public static class ContentEmission
         definitions.AddRange(Constants(registry.Defines));
         definitions.AddRange(mapper.Conditions.Select(name => new MappedDefinition(new("", "ConditionDef", "foundation", [], []),
             new ConditionDef { Id = "foundation:" + name, Name = name.Replace('_', ' ') })));
-        Validate(definitions);
+        Validate(definitions, mapper.Claimant);
         var eraOrder = registry.EraOrder.Select(era => registry.Ids.Single(i => i.Class == "EraInfo" && i.SourceType == era).Id).ToArray();
         var (kept, dropped) = Filter(definitions, maximumEra, eraOrder);
-        Validate(kept);
+        Validate(kept, mapper.Claimant);
         return new(kept, dropped, mapper.Issues.Distinct().OrderBy(i => i.Record, StringComparer.Ordinal).ThenBy(i => i.Field, StringComparer.Ordinal).ToArray(), mapper.MappedPaths);
     }
+
+    /// <summary>Every (mod, definition) family a run writes, one file each, empty after an era filter included: the
+    /// catalog's, Foundation's conditions and rule constants, each mod's row about those, and the families a mod that owns
+    /// records of a base class outright writes for them (that class's own, and any row another mod keeps about them).</summary>
+    public static IReadOnlyList<(string Mod, string Definition)> Families(EmissionResult result) =>
+        SchemaCatalog.Definitions.Select(m => (m.Mod, m.Definition))
+            .Concat([("foundation", "ConditionDef"), ("foundation", "RuleConstantsDef")])
+            .Concat(SchemaCatalog.Constants.Attachments.Select(a => (a.Mod, a.Definition)))
+            .Concat(IdMapping.RecordOwners.SelectMany(o => SchemaCatalog.Definitions.Where(m => m.SourceClass == o.Class && !m.IsAttachment)
+                .Select(m => (o.Mod, m.Definition))))
+            .Concat(result.Definitions.Select(d => (d.Mod, d.Mapping.Definition)))
+            .Distinct().OrderBy(f => f.Item1, StringComparer.Ordinal).ThenBy(f => f.Item2, StringComparer.Ordinal).ToArray();
 
     public static void Write(EmissionResult result, ContentRoots destination, string reports)
     {
         // Prepare every payload and scan decoded strings before touching any mod sidecar.
-        var families = SchemaCatalog.Definitions.Select(m => (m.Mod, m.Definition)).Concat(new[] { (Mod: "foundation", Definition: "ConditionDef"), (Mod: "foundation", Definition: "RuleConstantsDef") })
-            .Concat(SchemaCatalog.Constants.Attachments.Select(a => (a.Mod, a.Definition)));
-        var files = families.OrderBy(f => f.Mod, StringComparer.Ordinal).ThenBy(f => f.Definition, StringComparer.Ordinal)
+        var files = Families(result)
             .Select(f => (f.Mod, File: FileName(f.Definition), Json: Serialize(result.Definitions
-                .Where(d => d.Mapping.Mod == f.Mod && d.Mapping.Definition == f.Definition)
+                .Where(d => d.Mod == f.Mod && d.Mapping.Definition == f.Definition)
                 .OrderBy(d => d.Definition.Id, StringComparer.Ordinal).Select(d => d.Definition).ToArray()))).ToArray();
         // Hand-authored geometry tuning is never part of the generated family list.
         if (files.Any(f => f.File == "hex-overrides.json")) throw new InvalidOperationException("Reserved hand-authored sidecar");
@@ -102,7 +112,9 @@ public static class ContentEmission
         foreach (var definition in definitions)
             if ((definition.Definition as GameContentDef)?.Era is { } era && ranks.TryGetValue(era, out var rank) && rank > maximum)
                 removed[definition.Definition.Id] = "Era " + era + " exceeds " + maximumEra;
-        var references = definitions.ToDictionary(d => d.Definition.Id, d => References(d.Definition).Select(r => r.Id).ToArray(), StringComparer.Ordinal);
+        // By definition, not id: a mod's attachment about a record it owns outright shares the record's id.
+        var references = definitions.ToDictionary<MappedDefinition, MappedDefinition, string[]>(d => d,
+            d => References(d.Definition).Select(r => r.Id).ToArray(), ReferenceEqualityComparer.Instance);
         bool changed;
         do
         {
@@ -110,7 +122,7 @@ public static class ContentEmission
             foreach (var definition in definitions.OrderBy(d => d.Definition.Id, StringComparer.Ordinal))
             {
                 if (removed.ContainsKey(definition.Definition.Id)) continue;
-                var missing = references[definition.Definition.Id].Where(removed.ContainsKey).Order(StringComparer.Ordinal).FirstOrDefault();
+                var missing = references[definition].Where(removed.ContainsKey).Order(StringComparer.Ordinal).FirstOrDefault();
                 if (missing is null) continue;
                 removed[definition.Definition.Id] = "References dropped content " + missing;
                 changed = true;
@@ -122,11 +134,18 @@ public static class ContentEmission
     public static IReadOnlyList<ContentRef> References(ContentDef definition) => ContentReferences.Enumerate(definition,
         ContentLeafKinds.Types.Select(k => new IdentityEvaluator(k.Key, k.Value))).ToArray();
 
-    private static void Validate(IReadOnlyList<MappedDefinition> definitions)
+    /// <summary>Every reference resolves to an emitted definition of its type, and a record a mod owns outright is named
+    /// only by that mod's own rows: no other mod could load without it.</summary>
+    private static void Validate(IReadOnlyList<MappedDefinition> definitions, Func<string, string?> claimant)
     {
-        var targets = definitions.ToDictionary(d => d.Definition.Id, d => d.Definition.GetType(), StringComparer.Ordinal);
+        // Attachments are never reference targets, and one a mod keeps about its own record shares that record's id.
+        var targets = definitions.Where(d => d.Definition is not ContentAttachment)
+            .ToDictionary(d => d.Definition.Id, d => d.Definition.GetType(), StringComparer.Ordinal);
         var errors = definitions.SelectMany(d => References(d.Definition)).Where(r => !targets.TryGetValue(r.Id, out var type) || !r.DefinitionType.IsAssignableFrom(type))
-            .Select(r => r.Path + ": " + r.Id + " is not a registered " + r.DefinitionType.Name).Order(StringComparer.Ordinal).ToArray();
+            .Select(r => r.Path + ": " + r.Id + " is not a registered " + r.DefinitionType.Name)
+            .Concat(definitions.SelectMany(d => References(d.Definition).Where(r => claimant(r.Id) is { } owner && owner != d.Mod)
+                .Select(r => $"{r.Path}: {d.Mod} names {r.Id}, which {claimant(r.Id)} owns")))
+            .Order(StringComparer.Ordinal).ToArray();
         if (errors.Length > 0) throw new InvalidDataException("Imported reference closure failed:\n" + string.Join("\n", errors));
     }
 
@@ -140,9 +159,9 @@ public static class ContentEmission
     private static void WriteReports(EmissionResult result, string directory)
     {
         Directory.CreateDirectory(directory);
-        var classes = result.Definitions.GroupBy(d => (d.Mapping.Mod, d.Mapping.Definition)).OrderBy(g => g.Key.Mod, StringComparer.Ordinal)
+        var classes = result.Definitions.GroupBy(d => (d.Mod, d.Mapping.Definition)).OrderBy(g => g.Key.Mod, StringComparer.Ordinal)
             .ThenBy(g => g.Key.Definition, StringComparer.Ordinal).Select(g => new { mod = g.Key.Mod, definition = g.Key.Definition, count = g.Count() }).ToArray();
-        var mods = result.Definitions.GroupBy(d => d.Mapping.Mod).OrderBy(g => g.Key, StringComparer.Ordinal)
+        var mods = result.Definitions.GroupBy(d => d.Mod).OrderBy(g => g.Key, StringComparer.Ordinal)
             .Select(g => new { id = g.Key, count = g.Count(), references = g.SelectMany(d => References(d.Definition)).Select(r => r.Id.Split(':')[0])
                 .Where(id => id != g.Key).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray() }).ToArray();
         Reports.WriteJson(directory, "emitted-counts", new { total = result.Definitions.Count, mods, classes });

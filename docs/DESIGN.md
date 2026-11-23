@@ -431,7 +431,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
-| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders), Corporations (the imported headquarters and Master Guilds) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
+| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders), Corporations (its own headquarters and Master Guilds) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
 | `IContentCheck` | (list, run once by `GameRules.Bind`) | the load, once content freezes, for invariants that read other mods' rows | Corporations (one founding building per corporation, no building or unit naming an undefined corporation, every executive trainable) | nothing is checked |
 | `ICityResourceSupply` | (list, read by `ResourceAccess.Supplied`) | `ResourceAccess.Counts` and Cities' city bonus set, for every city use of a resource (never for trade: `ResourceAccess.TradeCounts`) | Corporations (a branch's produced resource) | a city has only its network and deal copies |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
@@ -487,8 +487,11 @@ technologies) stay in base. The mods' rows:
   (`BuildingReligionDef`, `UnitReligionDef`, `RuleConstantsReligionDef`). GreatPeople,
   which skips shrines when a great person builds, reads `BuildingReligionDef` through the
   Religion API it already references.
-- Corporations: executives' spreads and the per-handicap and per-world-size maintenance
-  percents (`UnitCorporationsDef`, `HandicapCorporationsDef`, `WorldSizeCorporationsDef`).
+- Corporations: executives' spreads, the per-handicap and per-world-size maintenance
+  percents, and a civilization's overrides of the mod's own executives
+  (`UnitCorporationsDef`, `HandicapCorporationsDef`, `WorldSizeCorporationsDef`,
+  `CivilizationCorporationsDef`). It also registers `BuildingGreatPeopleDef` rows, the Great
+  People mod's type, about its own founding buildings.
 - Espionage: spies and counter-spies (`UnitEspionageDef`).
 - Votes: a seat building's forced candidacy, in the `BuildingVotesDef` row that already
   names its council.
@@ -1635,6 +1638,27 @@ rest of the content uses; a guild differs only in data, its `Kind`. Before the i
 only seven hand-written rows existed, so the other 29 identities' headquarters,
 executives and follow-up buildings were inert.
 
+The mod owns the 36 founding buildings (21 headquarters and 15 Master Guilds,
+`data/building.json`) and the 36 executives (`data/unit.json`) outright, with the ids
+`corporations:<source name>`: `corporations:corporation_1`,
+`corporations:corporation_masonguild`, `corporations:executive_1`,
+`corporations:moonbean_executive`. Their icons and models are in the mod's own `art/`
+folder. Without the mod the base game has no building that founds a corporation and no
+unit that spreads one. Base rows cannot name these records, because a base module cannot
+depend on a feature mod. So the source's great merchants, scientists, engineers, artists
+and generals no longer list the headquarters among their `ConstructibleBuildings` (they
+never built them anyway). The rows other vocabularies keep about the mod's records are
+the mod's own. `data/building-great-people.json` holds the great person each founding
+building's points count towards. It is the Great People mod's attachment type, which this
+mod carries a copy of, so it loads with or without that mod. `data/unit-corporations.json`
+holds the executives' spreads, and `data/civilization-corporations.json` holds the
+barbarians' class overrides of seven executives (`CivilizationCorporationsDef`). The
+mod's `RefuseUnit` applies those overrides with the city's training civilization
+(`CityTraining.Civilization`), as Cities applies a civilization's own overrides. The
+other buildings that need a corporation (franchises, corporate stores) stay in Cities
+and name it by its Foundation identity, so without the mod their `corporation`
+requirement fails.
+
 Guilds and corporations work in one of two modes, chosen by the game option
 `foundation:gameoption_realistic_corporations`, shown as "Realistic Guilds/Corporations"
 and on by default (`CorporationMode.Realistic`). With it on (the realistic mode) they are
@@ -1645,7 +1669,7 @@ era and follows exactly the same rules; only its founding building's name differ
 
 In the manual mode a corporation is founded in two steps. Its founding building becomes
 available, and completing it in a city founds the corporation there. The founding building is the
-imported building whose `BuildingDef.FoundsCorporation` names the identity: a
+mod's building whose `BuildingDef.FoundsCorporation` names the identity: a
 headquarters for a corporation, the Master Guild for a guild. "Guild Hall" stays the name
 of the common building that the Guilds civic allows, which has nothing to do with them. What a
 corporation calls its founding building is data: `CorporationDef.Seat`, "headquarters" or
@@ -1659,8 +1683,7 @@ The mod is their `IBuildingFounder` (`CorporationFounder`): beyond the building'
 requirements, the city needs a connected prerequisite resource when the corporation
 consumes any, civics that allow corporations and no competing headquarters, and nobody
 can build it once the corporation is founded. Great people do not construct a founding
-building, though the source lists headquarters among their buildings: founding is
-production only, as with a religion's founding wonder. An executive's training
+building: founding is production only, as with a religion's founding wonder. An executive's training
 requirement names its corporation's headquarters (the `corporation` leaf with parameter
 2), the city that completed the founding building, so executives are trained there; each
 guild has its own executive, trained in its Master Guild. Load checks (`IContentCheck`) refuse

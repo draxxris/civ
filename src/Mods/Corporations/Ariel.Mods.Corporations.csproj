@@ -7,6 +7,10 @@
     <ProjectReference Include="../../Ariel.Ai/Ariel.Ai.csproj" Private="false" />
     <!-- The API this mod publishes ships beside it in the mod folder; mod.json names it. -->
     <ProjectReference Include="Api/Ariel.Mods.Corporations.Api.csproj" />
+    <!-- The great person each founding building's points count towards is the Great People mod's attachment; this mod
+         registers those rows about its own buildings. Copied into this folder, so the API resolves when that mod is
+         absent. -->
+    <ProjectReference Include="../GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

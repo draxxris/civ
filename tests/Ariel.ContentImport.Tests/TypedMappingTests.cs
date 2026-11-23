@@ -108,16 +108,64 @@ public sealed class TypedMappingTests
             Record("BuildingInfo", "BUILDING_PLAIN", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_PLAIN")),
             Record("UnitClassInfo", "UNITCLASS_EXECUTIVE_1", DataNode.Leaf("DefaultUnit", "UNIT_EXECUTIVE_1")),
             Record("UnitInfo", "UNIT_EXECUTIVE_1", DataNode.Leaf("Class", "UNITCLASS_EXECUTIVE_1"),
-                DataNode.Leaf("PrereqBuilding", "BUILDING_CORPORATION_1"), DataNode.Leaf("PrereqCorporation", "CORPORATION_1")),
+                DataNode.Leaf("PrereqBuilding", "BUILDING_CORPORATION_1"), DataNode.Leaf("PrereqCorporation", "CORPORATION_1"),
+                DataNode.Branch("CorporationSpreads", [DataNode.Branch("CorporationSpread",
+                    [DataNode.Leaf("CorporationType", "CORPORATION_1"), DataNode.Leaf("iCorporationSpread", "40")])])),
             Record("UnitClassInfo", "UNITCLASS_PLAIN", DataNode.Leaf("DefaultUnit", "UNIT_PLAIN")),
             Record("UnitInfo", "UNIT_PLAIN", DataNode.Leaf("Class", "UNITCLASS_PLAIN"), DataNode.Leaf("PrereqBuilding", "BUILDING_PLAIN")));
         var units = mapper.Map().Select(d => d.Definition).OfType<Schema.UnitDef>().ToDictionary(u => u.Id);
-        var executive = ContentReferences.Leaves(units["military:executive_1"].Requirements!).ToArray();
+        var executive = ContentReferences.Leaves(units["corporations:executive_1"].Requirements!).ToArray();
         Assert.Contains(new Requirement.Leaf("corporation", "foundation:1", null, 2), executive);
         Assert.Contains(new Requirement.Leaf("corporation", "foundation:1"), executive);
         Assert.DoesNotContain(executive, l => l.Kind == "building");
         // A building that founds nothing stays a building requirement.
         Assert.Equal([new Requirement.Leaf("building", "cities:plain")], ContentReferences.Leaves(units["military:plain"].Requirements!));
+    }
+
+    [Fact]
+    public void Corporations_owns_its_founding_buildings_and_executives_and_every_row_about_them()
+    {
+        var mapper = Mapper(Record("CorporationInfo", "CORPORATION_1"), Record("EraInfo", "ERA_MODERN"),
+            Record("BuildingClassInfo", "BUILDINGCLASS_CORPORATION_1", DataNode.Leaf("DefaultBuilding", "BUILDING_CORPORATION_1")),
+            Record("BuildingInfo", "BUILDING_CORPORATION_1", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_CORPORATION_1"),
+                DataNode.Leaf("FoundsCorporation", "CORPORATION_1"), DataNode.Leaf("SpecialBuildingType", "SPECIALBUILDING_CORPORATION_HQ"),
+                DataNode.Leaf("GreatPeopleUnitClass", "UNITCLASS_MERCHANT"), DataNode.Leaf("iCost", "-1")) with { Era = "ERA_MODERN" },
+            Record("BuildingClassInfo", "BUILDINGCLASS_PLAIN", DataNode.Leaf("DefaultBuilding", "BUILDING_PLAIN")),
+            Record("BuildingInfo", "BUILDING_PLAIN", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_PLAIN"),
+                DataNode.Leaf("GreatPeopleUnitClass", "UNITCLASS_MERCHANT")),
+            Record("UnitClassInfo", "UNITCLASS_EXECUTIVE_1", DataNode.Leaf("DefaultUnit", "UNIT_EXECUTIVE_1")),
+            Record("UnitInfo", "UNIT_EXECUTIVE_1", DataNode.Leaf("Class", "UNITCLASS_EXECUTIVE_1"),
+                DataNode.Leaf("PrereqBuilding", "BUILDING_CORPORATION_1"), DataNode.Leaf("PrereqCorporation", "CORPORATION_1"),
+                Pair("CorporationSpreads", "CorporationType", "CORPORATION_1", "iCorporationSpread", "40")),
+            Record("UnitClassInfo", "UNITCLASS_MERCHANT", DataNode.Leaf("DefaultUnit", "UNIT_MERCHANT")),
+            Record("UnitInfo", "UNIT_MERCHANT", DataNode.Leaf("Class", "UNITCLASS_MERCHANT"), DataNode.Branch("Buildings",
+                [DataNode.Branch("Building", [DataNode.Leaf("BuildingType", "BUILDING_CORPORATION_1"), DataNode.Leaf("bBuilding", "1")]),
+                 DataNode.Branch("Building", [DataNode.Leaf("BuildingType", "BUILDING_PLAIN"), DataNode.Leaf("bBuilding", "1")])])),
+            Record("CivilizationInfo", "CIVILIZATION_BARBARIAN", DataNode.Branch("Units",
+                [DataNode.Branch("Unit", [DataNode.Leaf("UnitClassType", "UNITCLASS_EXECUTIVE_1"), DataNode.Leaf("UnitType", "NONE")]),
+                 DataNode.Branch("Unit", [DataNode.Leaf("UnitClassType", "UNITCLASS_MERCHANT"), DataNode.Leaf("UnitType", "NONE")])])));
+        var definitions = mapper.Map();
+        MappedDefinition Row<T>(string id) => Assert.Single(definitions, d => d.Definition is T && d.Definition.Id == id);
+
+        // The founding building and the executive are Corporations' own records, written to its folder.
+        Assert.Equal("corporations", Row<Schema.BuildingDef>("corporations:corporation_1").Mod);
+        Assert.Equal("corporations", Row<Schema.UnitDef>("corporations:executive_1").Mod);
+        Assert.Contains(new Requirement.Leaf("corporation", "foundation:1", null, 2),
+            ContentReferences.Leaves(((Schema.UnitDef)Row<Schema.UnitDef>("corporations:executive_1").Definition).Requirements!));
+        // A row another mod keeps about them is Corporations' too; about a base record it stays that mod's.
+        var points = Row<Ariel.Mods.GreatPeople.BuildingGreatPeopleDef>("corporations:corporation_1");
+        Assert.Equal(("corporations", "corporations:corporation_1"), (points.Mod, ((ContentAttachment)points.Definition).Target));
+        Assert.Equal("great_people", Row<Ariel.Mods.GreatPeople.BuildingGreatPeopleDef>("great_people:plain").Mod);
+        Assert.Equal("corporations", Row<Ariel.Mods.Corporations.UnitCorporationsDef>("corporations:executive_1").Mod);
+        // A base row leaves out what names them: Corporations keeps the barbarians' executive override in its own row.
+        var merchant = (Schema.UnitDef)Row<Schema.UnitDef>("military:merchant").Definition;
+        Assert.Equal(["cities:plain"], merchant.ConstructibleBuildings.Keys);
+        var barbarian = (Schema.CivilizationDef)Row<Schema.CivilizationDef>("peoples:barbarian").Definition;
+        Assert.Equal(["military:merchant"], barbarian.UnitOverrides.Keys);
+        var overrides = (Ariel.Mods.Corporations.CivilizationCorporationsDef)Row<Ariel.Mods.Corporations.CivilizationCorporationsDef>("corporations:barbarian").Definition;
+        Assert.Equal("peoples:barbarian", overrides.Target);
+        Assert.Equal(["corporations:executive_1"], overrides.UnitOverrides.Keys);
+        Assert.Null(overrides.UnitOverrides["corporations:executive_1"]);
     }
 
     [Fact]

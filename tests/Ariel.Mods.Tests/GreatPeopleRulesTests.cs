@@ -296,20 +296,17 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
     }
 
     [Fact]
-    public void A_headquarters_is_not_constructed_by_the_great_person_that_lists_it()
+    public void Without_the_Corporations_mod_no_building_unit_or_great_person_knows_a_corporation()
     {
-        // A corporation is founded only by building its headquarters in a city, so a great artist that lists one never
-        // constructs it. Here no loaded feature founds corporations, so production refuses it too; with the
-        // Corporations mod production accepts it and the great person still may not (CorporationRulesTests).
-        var sim = Scenario(); var city = sim.State.Cities[0];
-        var headquarters = sim.Content.Get<S.BuildingDef>("cities:corporation_7");
-        Assert.True(sim.Content.Get<S.UnitDef>("military:artist").ConstructibleBuildings.GetValueOrDefault(headquarters.Id));
-        foreach (var tech in ContentReferences.Leaves(headquarters.Requirements!).Where(l => l.Kind == "tech")) sim.TeamOf(0).Techs.Add(tech.Id);
-        Assert.Contains(Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", headquarters.Id).Failures,
-            f => f.Explanation == "Nothing founds what this building would found");
-        var person = Unit(sim, "military:artist");
-        Assert.False(sim.TryApply(Mission(person, GreatPersonMissions.Construct, headquarters.Id), out _));
-        Assert.DoesNotContain(headquarters.Id, city.Buildings);
+        // The headquarters, Master Guilds and executives are the Corporations mod's own content, so without it nothing
+        // founds or spreads one, and no great person lists a headquarters it could construct.
+        var content = Scenario().Content;
+        Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.FoundsCorporation is not null || b.Id.StartsWith("corporations:", StringComparison.Ordinal));
+        Assert.DoesNotContain(content.Get<S.UnitDef>().All, u => u.Id.StartsWith("corporations:", StringComparison.Ordinal)
+            || ContentReferences.Leaves(u.Requirements ?? new Requirement.All([])).Any(l => l.Kind == "corporation"));
+        Assert.DoesNotContain(content.Get<S.UnitDef>().All.SelectMany(u => u.ConstructibleBuildings.Keys), id => id.StartsWith("corporations:", StringComparison.Ordinal));
+        Assert.DoesNotContain(content.Get<S.CivilizationDef>().All.SelectMany(c => c.UnitOverrides.Keys), id => id.StartsWith("corporations:", StringComparison.Ordinal));
+        Assert.DoesNotContain(content.Get<BuildingGreatPeopleDef>().All, row => row.Target.StartsWith("corporations:", StringComparison.Ordinal));
     }
 
     [Fact]

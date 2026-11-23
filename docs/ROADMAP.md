@@ -297,7 +297,8 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   branch revenue (per resource copy and flat), resource consumption, and maintenance.
   Competing corporations, branch happiness, health and military production, produced
   resources, guild obsolescence, and the source's spread cost
-  and executive spread chance also run.
+  and executive spread chance also run. The headquarters, Master Guilds and executives
+  are the mod's own content, so the base game has none without it.
 - **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios,
   passive visibility/investigation unlocks, full rival intelligence screen
   (demographics, city yields/buildings, production queues, treasury reserves) with

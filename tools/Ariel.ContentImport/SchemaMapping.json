@@ -5598,6 +5598,20 @@
     "requirements": []
   },
   {
+    "sourceClass": "CivilizationInfo",
+    "definition": "CivilizationCorporationsDef",
+    "mod": "corporations",
+    "fields": [
+      {
+        "source": "Units",
+        "property": "UnitOverrides",
+        "kind": "civilization",
+        "owned": true
+      }
+    ],
+    "requirements": []
+  },
+  {
     "sourceClass": "HandicapInfo",
     "definition": "HandicapCorporationsDef",
     "mod": "corporations",

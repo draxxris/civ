@@ -124,7 +124,7 @@ guilds) links an `Identity` reference, its `Seat` (what the founding building is
 `headquarters` or `Master Guild`, from the special building type of the source
 headquarters) and prerequisite resources
 (`PrereqBonuses`, empty for the four guilds that consume none). Each corporation is
-founded by exactly one base building whose `FoundsCorporation` names its identity, the
+founded by exactly one building whose `FoundsCorporation` names its identity, the
 imported headquarters or, for a guild, the Master Guild (`Seat` names it in the
 corporations screen, the city panel, notices and the encyclopedia; the Guild Hall is a
 different, common building). That building's own requirements gate founding
@@ -134,7 +134,22 @@ one founding building, a founding building with a negative cost or no technology
 building or unit row that names an identity no `CorporationDef` has, and an executive
 that spreads one of the mod's corporations but that no city could train (a negative
 cost, or every way through its requirements needs a building nothing can build or a
-corporation the mod does not define). Per-copy output (`YieldProducedHundredths`,
+corporation the mod does not define).
+
+The founding buildings and the executives are the mod's own `BuildingDef` and `UnitDef`
+rows (`data/building.json`, `data/unit.json`, ids `corporations:corporation_*` and
+`corporations:*executive*`), imported like the base rows of their class. The importer
+gives a source record to a feature mod outright when a rule in `IdMapping.RecordOwners`
+claims it: a building with `FoundsCorporation`, or a unit with a positive
+`CorporationSpreads`. The claiming mod then emits every row about the record, including
+other mods' attachments (`data/building-great-people.json`). A row of any other mod
+leaves out a map entry that names the record, such as a great person's
+`ConstructibleBuildings` or a civilization's `UnitOverrides`. A mapping field marked
+`owned` keeps only such entries, which is how `CivilizationCorporationsDef`
+(`data/civilization-corporations.json`) holds the barbarians' executive overrides. Any
+other reference to a claimed record from another mod's row fails the import.
+
+Per-copy output (`YieldProducedHundredths`,
 `CommerceProducedHundredths`) uses hundredths of a point per consumed resource copy,
 summed and truncated per city. Flat branch output (`YieldChanges`, `CommerceChanges`)
 and headquarters commerce per branch (`HeadquartersCommerce`) use whole points.

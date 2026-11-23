@@ -109,7 +109,7 @@ public sealed class CorporationRulesTests
             // The founding building is the imported headquarters or Master Guild: world-unique, priced, and gated by a
             // technology (a guild's also by the buildings of its trade).
             var building = sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, corporation.Id));
-            Assert.StartsWith("cities:corporation_", building.Id);
+            Assert.StartsWith("corporations:corporation_", building.Id);
             Assert.Equal(1, building.Limits.World);
             Assert.True(building.Cost > 0, building.Id);
             Assert.NotEmpty(GameFactory.FoundingTechs(sim, corporation.Id));
@@ -235,7 +235,7 @@ public sealed class CorporationRulesTests
         Assert.Contains("gold", P6RulesScenario.Reject(sim, spread)); sim.State.PlayerById(0).Treasury = initial;
         P6RulesScenario.Apply(sim, spread);
         Assert.Contains("executive", P6RulesScenario.Reject(sim, new SpreadCorporationCommand { Player = 0, City = foreign.Id, Corporation = Cereal }));
-        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
+        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "corporations:executive_1");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
         Assert.Null(sim.State.FindUnit(executive.Id));
         // The foreign city costs twice the base (the foreign spread percent).
@@ -249,7 +249,7 @@ public sealed class CorporationRulesTests
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0]; var branch = sim.State.Cities[1]; var rival = sim.State.Cities[2];
         string hall = GameFactory.Headquarters(sim, Masons);
-        Assert.Equal("cities:corporation_masonguild", hall);
+        Assert.Equal("corporations:corporation_masonguild", hall);
         // The technology alone is not enough: the Master Guild also wants the buildings of its trade across the empire.
         GameFactory.GrantFoundingTechs(sim, city, Masons);
         P6RulesScenario.Resource(sim, city, "world:stone");
@@ -279,7 +279,7 @@ public sealed class CorporationRulesTests
 
         // The guild's own executive trains in its Master Guild and opens branches abroad, as a corporation's does; no
         // Guild Hall is asked for anywhere.
-        const string Executive = "military:executive_masonguild";
+        const string Executive = "corporations:executive_masonguild";
         Assert.Empty(UnitRefusals(sim, city, Executive));
         Assert.Equal(["Requires the Masons Master Guild"], UnitRefusals(sim, branch, Executive));
         P6RulesScenario.Resource(sim, rival, "world:stone");
@@ -289,11 +289,12 @@ public sealed class CorporationRulesTests
     }
 
     [Fact]
-    public void A_great_person_that_lists_a_headquarters_does_not_construct_it_where_production_may_build_it()
+    public void A_great_person_does_not_construct_a_headquarters_where_production_may_build_it()
     {
+        // The source's merchants list the headquarters; the base unit cannot name this mod's building, so it does not.
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
         string headquarters = GameFactory.Headquarters(sim, Cereal);
-        Assert.True(sim.Content.Get<Ariel.Content.Schema.UnitDef>("military:merchant").ConstructibleBuildings.GetValueOrDefault(headquarters));
+        Assert.False(sim.Content.Get<Ariel.Content.Schema.UnitDef>("military:merchant").ConstructibleBuildings.ContainsKey(headquarters));
         GameFactory.SatisfyFounding(sim, city, Cereal);
         Assert.Empty(Refusals(sim, city, headquarters));
         var merchant = P6RulesScenario.AddUnit(sim, 0, city, "military:merchant");
@@ -325,10 +326,27 @@ public sealed class CorporationRulesTests
         Assert.True(carpenters.YieldChanges.Production > 0);
     }
     [Fact]
+    public void A_city_that_trains_barbarian_classes_trains_none_of_the_seven_executives_the_barbarians_override()
+    {
+        // The barbarians' overrides of this mod's executives are the mod's own row, as the base civilization cannot name
+        // them; they apply to the civilization the city trains for, here its founder's under Assimilation.
+        var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[1];
+        const string Replaced = "Civilization class replacement required";
+        Assert.Null(sim.Content.Attachment<CivilizationCorporationsDef>("peoples:barbarian")!.UnitOverrides["corporations:executive_1"]);
+        Assert.DoesNotContain(Replaced, UnitRefusals(sim, hq, "corporations:executive_1"));
+        sim.Settings.GameOptions["foundation:gameoption_assimilation"] = true;
+        var state = hq.Extensions.Get<CityRuleState>(sim.Content) ?? new();
+        state.OriginalCivilization = "peoples:barbarian"; hq.Extensions.Set(sim.Content, state);
+        Assert.Equal("peoples:barbarian", CityTraining.Civilization(sim, hq));
+        Assert.Contains(Replaced, UnitRefusals(sim, hq, "corporations:executive_1"));
+        Assert.Contains(Replaced, UnitRefusals(sim, hq, "corporations:executive_7"));
+        Assert.DoesNotContain(Replaced, UnitRefusals(sim, hq, "corporations:executive_masonguild"));
+    }
+    [Fact]
     public void An_executive_trained_in_the_headquarters_it_was_built_for_spreads_into_a_foreign_city()
     {
         var sim = P6RulesScenario.Create(); var branch = sim.State.Cities[0]; var hq = sim.State.Cities[1]; var foreign = sim.State.Cities[2];
-        const string Executive = "military:executive_1";
+        const string Executive = "corporations:executive_1";
         sim.TeamOf(0).Techs.Add("research:organic_chemistry");
         foreach (var city in sim.State.Cities) P6RulesScenario.Resource(sim, city, "world:corn");
         Assert.Contains(HeadquartersRefusal, UnitRefusals(sim, hq, Executive));
@@ -368,8 +386,8 @@ public sealed class CorporationRulesTests
     {
         // The shape the executives had while the imported headquarters were not buildable: no city could train one.
         var error = Assert.Throws<InvalidDataException>(() => P6RulesScenario.With(new UntrainableExecutiveMod()));
-        Assert.Contains("military:executive_1: spreads foundation:1 but can never be trained: it needs building 'cities:corporation_1'", error.Message);
-        Assert.Contains("cities:corporation_1: founds foundation:1 but has a negative cost, so no city can build it", error.Message);
+        Assert.Contains("corporations:executive_1: spreads foundation:1 but can never be trained: it needs building 'corporations:corporation_1'", error.Message);
+        Assert.Contains("corporations:corporation_1: founds foundation:1 but has a negative cost, so no city can build it", error.Message);
     }
     private sealed class UntrainableExecutiveMod : IMod
     {
@@ -378,12 +396,12 @@ public sealed class CorporationRulesTests
             // The headquarters as the source left it, for a great person only.
             context.Content<Ariel.Content.Schema.BuildingDef>().Override(new()
             {
-                Id = "cities:corporation_1", Name = "Cereal Mills", DefaultBuilding = "cities:corporation_1", Cost = -1, FoundsCorporation = "foundation:1",
+                Id = "corporations:corporation_1", Name = "Cereal Mills", DefaultBuilding = "corporations:corporation_1", Cost = -1, FoundsCorporation = "foundation:1",
             });
             context.Content<Ariel.Content.Schema.UnitDef>().Override(new()
             {
-                Id = "military:executive_1", Name = "Executive", DefaultUnit = "military:executive_1", Cost = 100,
-                Requirements = new Requirement.All([new Requirement.Leaf("building", "cities:corporation_1"), new Requirement.Leaf("corporation", "foundation:1")]),
+                Id = "corporations:executive_1", Name = "Executive", DefaultUnit = "corporations:executive_1", Cost = 100,
+                Requirements = new Requirement.All([new Requirement.Leaf("building", "corporations:corporation_1"), new Requirement.Leaf("corporation", "foundation:1")]),
             });
         }
     }
@@ -435,12 +453,12 @@ public sealed class CorporationRulesTests
         Assert.Equal("a branch of Masons Guild", requirements.Describe(new("corporation", "foundation:masonguild"), sim.Content));
 
         // The pedia lists the same phrases among an executive's prerequisites.
-        var entry = new Ariel.Client.GameSession(sim).Pedia.Find("military:executive_1")!;
+        var entry = new Ariel.Client.GameSession(sim).Pedia.Find("corporations:executive_1")!;
         Assert.Contains("the headquarters of Cereal Mills", entry.Prerequisites);
         Assert.Contains("a branch of Cereal Mills", entry.Prerequisites);
         // A guild's executive reads the same way.
         var pedia = new Ariel.Client.GameSession(sim).Pedia;
-        Assert.Contains("the Masons Master Guild", pedia.Find("military:executive_masonguild")!.Prerequisites);
+        Assert.Contains("the Masons Master Guild", pedia.Find("corporations:executive_masonguild")!.Prerequisites);
     }
     [Fact]
     public void Queries_answer_a_stale_city_id_instead_of_throwing()
@@ -468,14 +486,14 @@ public sealed class CorporationRulesTests
         Found(sim, hq); Found(sim, otherHq, Ethanol);
         P6RulesScenario.Resource(sim, branch, "world:corn");
         P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = branch.Id, Corporation = Cereal });
-        var unit = P6RulesScenario.AddUnit(sim, 1, branch, "military:executive_3");
+        var unit = P6RulesScenario.AddUnit(sim, 1, branch, "corporations:executive_3");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 1, Unit = unit.Id, Mission = CorporationMissions.Spread, Subject = Ethanol });
         Assert.DoesNotContain(Cereal, Corps(sim).Present(sim, branch.Id)); Assert.Contains(Ethanol, Corps(sim).Present(sim, branch.Id));
         // Displacement is silent in the rules, so it must at least be reported.
         Assert.Contains(sim.Events.Published.OfType<CorporationDisplaced>(),
             e => e.Corporation == Cereal && e.By == Ethanol && e.City == branch.Id);
         Assert.Equal(2, P6RulesScenario.Service<IPlayerEconomyService>(sim).CalculateCity(sim, branch.Id).Ledger.Lines.Single(l => l.Source == Ethanol && l.Key == "commerce.flat.research").Amount);
-        var attacker = P6RulesScenario.AddUnit(sim, 1, hq, "military:executive_3");
+        var attacker = P6RulesScenario.AddUnit(sim, 1, hq, "corporations:executive_3");
         Assert.Contains("headquarters", P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 1, Unit = attacker.Id, Mission = CorporationMissions.Spread, Subject = Ethanol }));
     }
     [Fact]
@@ -518,7 +536,7 @@ public sealed class CorporationRulesTests
     {
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var foreign = sim.State.Cities[2]; Found(sim, hq);
         P6RulesScenario.Resource(sim, foreign, "world:corn");
-        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
+        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "corporations:executive_1");
         var command = new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal };
         sim.State.PlayerById(1).Civics["test"] = "government:mercantilism";
         Assert.Contains("Civics", P6RulesScenario.Reject(sim, command));
@@ -559,7 +577,7 @@ public sealed class CorporationRulesTests
         var tile = sim.State.Grid.Neighbors(sim.State.Grid.TileAt(branch.Position)).First();
         var extra = sim.State.Plots[tile.Value]; extra.Owner = 0; extra.Bonus = "world:corn";
         extra.Improvement = "world:improvement_improvement_farm"; extra.Route = "world:road";
-        var executive = P6RulesScenario.AddUnit(sim, 1, branch, "military:executive_1");
+        var executive = P6RulesScenario.AddUnit(sim, 1, branch, "corporations:executive_1");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 1, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
         var maintenance = P6RulesScenario.Service<ICityMaintenanceService>(sim);
         var economy = P6RulesScenario.Service<IPlayerEconomyService>(sim);

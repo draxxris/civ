@@ -290,12 +290,18 @@ internal sealed class CorporationService : ICorporationService
     /// <summary>Why nobody opens a branch by hand with Realistic Guilds/Corporations.</summary>
     internal static string RealisticSpreadRefusal(ContentDb content) =>
         $"Guilds and corporations spread on their own with {CorporationMode.OptionName(content)}";
-    /// <summary>Executives are not trained with Realistic Guilds/Corporations, where nothing can use
-    /// them; every other unit is left to its own requirements.</summary>
-    public string? RefuseUnit(Simulation sim, City city, UnitDef unit) =>
-        CorporationMode.Realistic(sim) && IsExecutive(sim, unit.Id)
-            ? $"Executives are not used with {CorporationMode.OptionName(sim.Content)}: guilds and corporations spread on their own"
-            : null;
+    /// <summary>Executives are not trained with Realistic Guilds/Corporations, where nothing can use them, nor by a
+    /// civilization whose <see cref="CivilizationCorporationsDef"/> overrides their class; every other unit is left to
+    /// its own requirements.</summary>
+    public string? RefuseUnit(Simulation sim, City city, UnitDef unit)
+    {
+        if (CorporationMode.Realistic(sim) && IsExecutive(sim, unit.Id))
+            return $"Executives are not used with {CorporationMode.OptionName(sim.Content)}: guilds and corporations spread on their own";
+        // The civilization's overrides of this mod's own executives, which its base overrides cannot name: the same
+        // class substitution the city rules apply to every other unit.
+        var overrides = (sim.Content.Attachment<CivilizationCorporationsDef>(CityTraining.Civilization(sim, city)) ?? CivilizationCorporationsDef.None).UnitOverrides;
+        return overrides.TryGetValue(unit.DefaultUnit, out var replacement) && replacement != unit.Id ? "Civilization class replacement required" : null;
+    }
     /// <summary>The checks on the city's resources and headquarters, last because the connectivity query is the dearest.
     /// A corporation that consumes no resource needs none.</summary>
     internal string? RefuseSite(Simulation sim, City city, CorporationDef def)

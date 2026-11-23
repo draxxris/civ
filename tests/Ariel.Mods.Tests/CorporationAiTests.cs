@@ -14,7 +14,7 @@ namespace Ariel.Mods.Tests;
 /// as the religion planner does with missionaries.</summary>
 public sealed class CorporationAiTests(ITestOutputHelper output)
 {
-    private const string Cereal = "corporations:1", Executive = "military:executive_1";
+    private const string Cereal = "corporations:1", Executive = "corporations:executive_1";
 
     /// <summary>Player 0 holds the Cereal Mills headquarters in its second city and a branch-less first city; player 1,
     /// at peace and met, has a city with corn whose surroundings it owns. Every plot is revealed to both teams.</summary>

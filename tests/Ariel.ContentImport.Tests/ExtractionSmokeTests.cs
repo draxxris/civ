@@ -131,9 +131,12 @@ public sealed class ExtractionSmokeTests
         Assert.DoesNotContain(result.Definitions, d => d.Definition is GameContentDef { Era: { } era } && era != "foundation:era_ancient");
         using var directory = new TemporaryDirectory();
         ContentEmission.Write(result, Roots(directory.Path), directory.Path);
-        // One file per family, one per mod's rule constants row, and Foundation's conditions and rule constants.
-        Assert.Equal(SchemaCatalog.Definitions.Count + SchemaCatalog.Constants.Attachments.Length + 2, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));
+        // One file per family, one per mod's rule constants row, Foundation's conditions and rule constants, and the
+        // buildings and units Corporations owns outright, written even when the filter leaves none.
+        Assert.Equal(SchemaCatalog.Definitions.Count + SchemaCatalog.Constants.Attachments.Length + 2 + 2, ContentEmission.Families(result).Count);
+        Assert.Equal(ContentEmission.Families(result).Count, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));
         Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "rules/Foundation/data/handicap.json")).Trim());
+        Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "mods/Corporations/data/building.json")).Trim());
     }
 
     [SourceFact]
@@ -174,9 +177,9 @@ public sealed class ExtractionSmokeTests
         var buildings = definitions.OfType<Ariel.Content.Schema.BuildingDef>().Where(b => b.FoundsCorporation is not null).ToArray();
         Assert.Equal(36, buildings.Length);
         Assert.All(buildings, b => Assert.True(b.Cost > 0, b.Id));
-        Assert.Equal(210, buildings.Single(b => b.Id == "cities:corporation_masonguild").Cost);
-        Assert.Equal(490, buildings.Single(b => b.Id == "cities:corporation_1").Cost);
-        Assert.Equal(910, buildings.Single(b => b.Id == "cities:corporation_7").Cost);
+        Assert.Equal(210, buildings.Single(b => b.Id == "corporations:corporation_masonguild").Cost);
+        Assert.Equal(490, buildings.Single(b => b.Id == "corporations:corporation_1").Cost);
+        Assert.Equal(910, buildings.Single(b => b.Id == "corporations:corporation_7").Cost);
         Assert.Equal(21, result.Issues.Count(i => i.Field == "iCost"));
     }
 

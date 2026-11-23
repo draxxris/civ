@@ -12,7 +12,13 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MODELS_DIR = ROOT / "src/Ariel.Rules/Military/art/models"
+# Unit models live with the module or mod that owns the unit: Military's, and Corporations' executives.
+MODELS_DIRS = [ROOT / "src/Ariel.Rules/Military/art/models", ROOT / "src/Mods/Corporations/art/models"]
+
+
+def model_path(name):
+    """The unit's .glb in whichever owner folder holds it (Military's when none does)."""
+    return next((d / f"{name}.glb" for d in MODELS_DIRS if (d / f"{name}.glb").exists()), MODELS_DIRS[0] / f"{name}.glb")
 OUT_ROOT = ROOT / "docs/models"
 
 
@@ -274,9 +280,9 @@ def main():
     args = parser.parse_args()
 
     if args.units:
-        names = [u.removeprefix("military:").removesuffix(".glb") for u in args.units]
+        names = [u.split(":", 1)[-1].removesuffix(".glb") for u in args.units]
     else:
-        names = sorted(p.stem for p in MODELS_DIR.glob("*.glb"))
+        names = sorted(p.stem for d in MODELS_DIRS for p in d.glob("*.glb"))
 
     if args.skip_existing:
         names = [n for n in names if not (OUT_ROOT / n / "composite.png").exists()]
@@ -292,7 +298,7 @@ def main():
     script_file = tmp_dir / "render_blender.py"
 
     tasks = [
-        {"name": name, "glb": str(MODELS_DIR / f"{name}.glb"), "out_dir": str(OUT_ROOT / name)}
+        {"name": name, "glb": str(model_path(name)), "out_dir": str(OUT_ROOT / name)}
         for name in names
     ]
     tasks_file.write_text(json.dumps(tasks))
@@ -325,11 +331,11 @@ def main():
         for item in chunk:
             name = item["name"]
             out_dir = OUT_ROOT / name
-            info = glb_info(MODELS_DIR / f"{name}.glb")
+            info = glb_info(model_path(name))
             textures = textures_by_unit.get(name, [])
             meta = {
                 "name": name,
-                "model": f"src/Ariel.Rules/Military/art/models/{name}.glb",
+                "model": str(model_path(name).relative_to(ROOT)),
                 "texture_path": textures[0] if len(textures) == 1 else textures,
                 "textures": textures,
                 "triangles": info["triangles"],

@@ -1,6 +1,6 @@
 {
   "name": "executive_ewtrade",
-  "model": "src/Ariel.Rules/Military/art/models/executive_ewtrade.glb",
+  "model": "src/Mods/Corporations/art/models/executive_ewtrade.glb",
   "texture_path": [
     "art/units/executive/eastwest_a.dds",
     "art/units/executive/ceo_case_64.dds",

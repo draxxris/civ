@@ -182,6 +182,18 @@ ID, both names receive the class stem plus the complete source symbol. The impor
 fails if disambiguated IDs still collide. Neutral substitutions occur before lowercase
 conversion.
 
+A class belongs to one module, but `IdMapping.RecordOwners` can give single records of a
+base class to a feature mod outright. Corporations owns every building that founds a
+corporation and every unit with a positive corporation spread. Those records take the
+owner's namespace (`corporations:corporation_1`, `corporations:executive_1`), and the
+owner emits every row about them into its own folder, other mods' attachments included
+(`Corporations/data/building.json`, `unit.json` and `building-great-people.json`). An
+attachment a mod keeps about its own record shares that record's id. Other rows leave out
+map entries that name these records: great people's constructible buildings, and
+civilization unit overrides. A field mapping marked `owned` keeps only those entries, in
+the owner's attachment (`CivilizationCorporationsDef`). Any other reference to them fails
+the import, so a new edge cannot pull a feature mod into the base game.
+
 Specialists belong to foundation, as the plan specifies. Great-person units remain
 military records. Great-people and trade have no dedicated Info classes in this profile.
 Later rules consume units, specialists, routes, and constants.

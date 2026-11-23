@@ -1,0 +1,17 @@
+[
+  {
+    "id": "corporations:barbarian",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:barbarian",
+    "unitOverrides": {
+      "corporations:executive_1": null,
+      "corporations:executive_2": null,
+      "corporations:executive_3": null,
+      "corporations:executive_4": null,
+      "corporations:executive_5": null,
+      "corporations:executive_6": null,
+      "corporations:executive_7": null
+    }
+  }
+]

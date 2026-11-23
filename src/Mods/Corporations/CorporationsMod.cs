@@ -8,9 +8,18 @@ namespace Ariel.Mods.Corporations;
 
 public sealed class CorporationsMod : IPreparableMod
 {
-    /// <summary>The corporations and guilds, imported. Each is founded by the base building whose
+    /// <summary>The corporations and guilds, imported. Each is founded by this mod's building whose
     /// <c>FoundsCorporation</c> names its identity.</summary>
     private static readonly ModJsonFile<CorporationDef[]> Corporations = new("data/corporation.json");
+    /// <summary>The 21 headquarters and 15 Master Guilds that found them, and the executives that spread them. They
+    /// are this mod's own buildings and units, so without it the base game has none.</summary>
+    private static readonly ModJsonFile<BuildingDef[]> FoundingBuildings = new("data/building.json");
+    private static readonly ModJsonFile<UnitDef[]> Executives = new("data/unit.json");
+    /// <summary>The great person each founding building's great people points count towards, in the Great People mod's
+    /// vocabulary. Read only when that mod is loaded.</summary>
+    private static readonly ModJsonFile<Ariel.Mods.GreatPeople.BuildingGreatPeopleDef[]> GreatPeople = new("data/building-great-people.json");
+    /// <summary>The civilizations that may not train some executives (the barbarians).</summary>
+    private static readonly ModJsonFile<CivilizationCorporationsDef[]> Civilizations = new("data/civilization-corporations.json");
     private static readonly ModJsonFile<CivicCorporationsDef[]> Civics = new("data/civic-corporations.json");
     private static readonly ModJsonFile<ModifierKeyDef[]> ModifierKeys = new("data/modifier-key.json");
     /// <summary>What units, handicaps and world sizes mean to corporations, attached to the base rows.</summary>
@@ -19,7 +28,8 @@ public sealed class CorporationsMod : IPreparableMod
     private static readonly ModJsonFile<WorldSizeCorporationsDef[]> WorldSizes = new("data/world-size-corporations.json");
     /// <summary>The numbers of the Realistic Guilds/Corporations mode the source does not define.</summary>
     private static readonly ModJsonFile<CorporationRulesDef> Rules = new("data/corporation-rules.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Civics, ModifierKeys, Units, Handicaps, WorldSizes, Rules];
+    public IReadOnlyList<ModJsonFile> PreparationFiles =>
+        [Corporations, FoundingBuildings, Executives, GreatPeople, Civilizations, Civics, ModifierKeys, Units, Handicaps, WorldSizes, Rules];
 
     public void Register(IModContext context)
     {
@@ -27,6 +37,10 @@ public sealed class CorporationsMod : IPreparableMod
         if (rules.Problems().ToArray() is { Length: > 0 } problems)
             throw new InvalidDataException("Corporation rules validation failed:\n" + string.Join("\n", problems));
         context.Content<CorporationRulesDef>().Register(rules);
+        Ariel.Rules.ContentRegistration.Load(context, FoundingBuildings);
+        Ariel.Rules.ContentRegistration.Load(context, Executives);
+        Ariel.Rules.ContentRegistration.Load(context, GreatPeople);
+        Ariel.Rules.ContentRegistration.Load(context, Civilizations);
         Ariel.Rules.ContentRegistration.Load(context, Civics);
         Ariel.Rules.ContentRegistration.Load(context, ModifierKeys);
         Ariel.Rules.ContentRegistration.Load(context, Units);
@@ -35,7 +49,7 @@ public sealed class CorporationsMod : IPreparableMod
         var definitions = Corporations.Read(context.Data);
         foreach (var definition in definitions) context.Content<CorporationDef>().Register(definition);
         // The schema covers reference resolution and sign-free fields; these invariants are rules-level. The founding
-        // buildings and executives belong to other modules and are checked once content freezes.
+        // buildings and executives are checked once content freezes, with every building founder registered.
         CorporationContentValidation.Validate(definitions);
         var service = new CorporationService();
         var natural = service.Natural;

@@ -143,7 +143,7 @@ public sealed class CorporationSourceRulesTests
         Assert.Contains(sim.Events.Published.OfType<CorporationObsolete>(), e => e.Corporation == Masons && e.City == foreign.Id);
         Assert.True(Corps(sim).IsActive(sim, branch.Id, Masons));
         // Nothing opens in, or is spread by, a team that knows it.
-        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_masonguild");
+        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "corporations:executive_masonguild");
         Assert.Contains("obsolete for this city's owner",
             P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Masons }));
 
@@ -166,7 +166,7 @@ public sealed class CorporationSourceRulesTests
         Plant(sim, hq, Masons);
         P6RulesScenario.Resource(sim, foreign, "world:stone");
         Assert.DoesNotContain(sim.State.Cities, c => c.Buildings.Any(b => b.Contains("guildhall", StringComparison.Ordinal)));
-        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_masonguild");
+        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "corporations:executive_masonguild");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Masons });
         Assert.Contains(Masons, Corps(sim).Present(sim, foreign.Id));
     }
@@ -194,7 +194,7 @@ public sealed class CorporationSourceRulesTests
         long before = sim.State.PlayerById(0).Treasury;
         P6RulesScenario.Apply(sim, new SpreadCorporationCommand { Player = 0, City = own.Id, Corporation = Cereal });
         Assert.Equal(before - 50, sim.State.PlayerById(0).Treasury);
-        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
+        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "corporations:executive_1");
         var terms = P6RulesScenario.Service<IMissionService>(sim).Terms(sim, 0, executive.Id, CorporationMissions.Spread, Cereal)!;
         Assert.StartsWith($"{50 * 2 * 3} gold", terms.Note);
     }
@@ -209,7 +209,7 @@ public sealed class CorporationSourceRulesTests
         int total = sim.Content.Get<CorporationDef>().Count;
         int? Chance(City city, out Unit unit)
         {
-            unit = P6RulesScenario.AddUnit(sim, 0, city, "military:executive_1");
+            unit = P6RulesScenario.AddUnit(sim, 0, city, "corporations:executive_1");
             return missions.Terms(sim, 0, unit.Id, CorporationMissions.Spread, Cereal)!.Chance;
         }
         // The executive's 40, raised by the share of corporations the city lacks: certain in an empty own city.

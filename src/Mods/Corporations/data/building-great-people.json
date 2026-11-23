@@ -1,0 +1,326 @@
+[
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_1",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_1",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_2",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_2",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "corporations:corporation_3",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_3",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "corporations:corporation_4",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_4",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "corporations:corporation_5",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_5",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "corporations:corporation_6",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_6",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "corporations:corporation_7",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_7",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_adventure_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_adventure_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "corporations:corporation_apotheguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_apotheguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "corporations:corporation_artistguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_artistguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_bakerguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_bakerguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "corporations:corporation_blacksmguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_blacksmguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_burgerworld_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_burgerworld_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_butcherguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_butcherguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "corporations:corporation_carpenterguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_carpenterguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "corporations:corporation_clerksguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_clerksguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "corporations:corporation_drapersguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_drapersguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_empcloth_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_empcloth_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_equestguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_equestguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_ewtrade_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_ewtrade_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "corporations:corporation_fashion_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_fashion_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_fishmonguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_fishmonguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "corporations:corporation_glassguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_glassguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "corporations:corporation_goldsmguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_goldsmguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "corporations:corporation_grocerguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_grocerguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_mallwart_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_mallwart_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "corporations:corporation_mapster_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_mapster_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "corporations:corporation_masonguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_masonguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_mercerguild",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_mercerguild",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:engineer",
+    "id": "corporations:corporation_milehigh_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_milehigh_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_mobby_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_mobby_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_moonbean_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_moonbean_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "corporations:corporation_red_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_red_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_safari_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_safari_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:great_spy",
+    "id": "corporations:corporation_ultsoldier_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_ultsoldier_hq",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:merchant",
+    "id": "corporations:corporation_wonka_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_wonka_hq",
+    "tradeMissionModifier": 0
+  }
+]

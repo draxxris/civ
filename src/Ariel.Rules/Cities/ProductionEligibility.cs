@@ -88,10 +88,7 @@ internal static class ProductionEligibility
         string? selected = CityData.ResolveBuilding(sim, city, category);
         if (unit)
         {
-            string civilization = sim.State.PlayerById(city.Owner).Civilization;
-            if (sim.IsOptionEnabled("foundation:gameoption_assimilation"))
-                civilization = CityData.Read(sim, city).OriginalCivilization is { Length: > 0 } original ? original : civilization;
-            selected = sim.Content.Get<S.CivilizationDef>(civilization).UnitOverrides.GetValueOrDefault(category, category);
+            selected = sim.Content.Get<S.CivilizationDef>(CityTraining.Civilization(sim, city)).UnitOverrides.GetValueOrDefault(category, category);
         }
         if (selected != id) Fail(failures, "Civilization class replacement required");
     }

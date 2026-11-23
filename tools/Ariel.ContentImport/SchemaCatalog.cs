@@ -7,10 +7,11 @@ namespace Ariel.ContentImport;
 
 /// <summary>One source field. An <c>effect*</c> kind adds data-driven modifiers (<see cref="Ariel.Content.ModifierEffect"/>)
 /// under <see cref="Modifier"/> in <see cref="Scope"/> to the definition's <c>Effects</c> instead of setting
-/// <see cref="Property"/>.</summary>
+/// <see cref="Property"/>. With <see cref="Owned"/>, a map keeps only the entries naming records the emitting mod owns
+/// outright (<see cref="IdMapping.RecordOwners"/>): what a mod says about a base row in terms of its own records.</summary>
 public sealed record FieldMapping(string Source, string Property, string Kind, string? Target = null,
     string? ValueTarget = null, string? Key = null, string? Value = null, JsonElement Default = default,
-    string? Scope = null, string? Modifier = null);
+    string? Scope = null, string? Modifier = null, bool Owned = false);
 public sealed record RequirementMapping(string Source, string Kind, string Target, string Mode, int? Scope = null);
 /// <summary>One emitted family. A family whose definition is a <see cref="ContentAttachment"/> is what a feature mod says
 /// about the same source records in its own vocabulary: each record with a non-default field becomes one row, with

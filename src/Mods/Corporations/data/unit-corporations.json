@@ -6,7 +6,7 @@
     "id": "corporations:executive_1",
     "name": "",
     "requirements": null,
-    "target": "military:executive_1"
+    "target": "corporations:executive_1"
   },
   {
     "corporationSpreads": {
@@ -15,7 +15,7 @@
     "id": "corporations:executive_2",
     "name": "",
     "requirements": null,
-    "target": "military:executive_2"
+    "target": "corporations:executive_2"
   },
   {
     "corporationSpreads": {
@@ -24,7 +24,7 @@
     "id": "corporations:executive_3",
     "name": "",
     "requirements": null,
-    "target": "military:executive_3"
+    "target": "corporations:executive_3"
   },
   {
     "corporationSpreads": {
@@ -33,7 +33,7 @@
     "id": "corporations:executive_4",
     "name": "",
     "requirements": null,
-    "target": "military:executive_4"
+    "target": "corporations:executive_4"
   },
   {
     "corporationSpreads": {
@@ -42,7 +42,7 @@
     "id": "corporations:executive_5",
     "name": "",
     "requirements": null,
-    "target": "military:executive_5"
+    "target": "corporations:executive_5"
   },
   {
     "corporationSpreads": {
@@ -51,7 +51,7 @@
     "id": "corporations:executive_6",
     "name": "",
     "requirements": null,
-    "target": "military:executive_6"
+    "target": "corporations:executive_6"
   },
   {
     "corporationSpreads": {
@@ -60,7 +60,7 @@
     "id": "corporations:executive_7",
     "name": "",
     "requirements": null,
-    "target": "military:executive_7"
+    "target": "corporations:executive_7"
   },
   {
     "corporationSpreads": {
@@ -69,7 +69,7 @@
     "id": "corporations:executive_adventure",
     "name": "",
     "requirements": null,
-    "target": "military:executive_adventure"
+    "target": "corporations:executive_adventure"
   },
   {
     "corporationSpreads": {
@@ -78,7 +78,7 @@
     "id": "corporations:executive_apotheguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_apotheguild"
+    "target": "corporations:executive_apotheguild"
   },
   {
     "corporationSpreads": {
@@ -87,7 +87,7 @@
     "id": "corporations:executive_artistguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_artistguild"
+    "target": "corporations:executive_artistguild"
   },
   {
     "corporationSpreads": {
@@ -96,7 +96,7 @@
     "id": "corporations:executive_bakerguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_bakerguild"
+    "target": "corporations:executive_bakerguild"
   },
   {
     "corporationSpreads": {
@@ -105,7 +105,7 @@
     "id": "corporations:executive_blacksmguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_blacksmguild"
+    "target": "corporations:executive_blacksmguild"
   },
   {
     "corporationSpreads": {
@@ -114,7 +114,7 @@
     "id": "corporations:executive_burgerworld",
     "name": "",
     "requirements": null,
-    "target": "military:executive_burgerworld"
+    "target": "corporations:executive_burgerworld"
   },
   {
     "corporationSpreads": {
@@ -123,7 +123,7 @@
     "id": "corporations:executive_butcherguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_butcherguild"
+    "target": "corporations:executive_butcherguild"
   },
   {
     "corporationSpreads": {
@@ -132,7 +132,7 @@
     "id": "corporations:executive_carpenterguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_carpenterguild"
+    "target": "corporations:executive_carpenterguild"
   },
   {
     "corporationSpreads": {
@@ -141,7 +141,7 @@
     "id": "corporations:executive_clerksguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_clerksguild"
+    "target": "corporations:executive_clerksguild"
   },
   {
     "corporationSpreads": {
@@ -150,7 +150,7 @@
     "id": "corporations:executive_drapersguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_drapersguild"
+    "target": "corporations:executive_drapersguild"
   },
   {
     "corporationSpreads": {
@@ -159,7 +159,7 @@
     "id": "corporations:executive_empcloth",
     "name": "",
     "requirements": null,
-    "target": "military:executive_empcloth"
+    "target": "corporations:executive_empcloth"
   },
   {
     "corporationSpreads": {
@@ -168,7 +168,7 @@
     "id": "corporations:executive_equestguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_equestguild"
+    "target": "corporations:executive_equestguild"
   },
   {
     "corporationSpreads": {
@@ -177,7 +177,7 @@
     "id": "corporations:executive_ewtrade",
     "name": "",
     "requirements": null,
-    "target": "military:executive_ewtrade"
+    "target": "corporations:executive_ewtrade"
   },
   {
     "corporationSpreads": {
@@ -186,7 +186,7 @@
     "id": "corporations:executive_fashion",
     "name": "",
     "requirements": null,
-    "target": "military:executive_fashion"
+    "target": "corporations:executive_fashion"
   },
   {
     "corporationSpreads": {
@@ -195,7 +195,7 @@
     "id": "corporations:executive_fishmonguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_fishmonguild"
+    "target": "corporations:executive_fishmonguild"
   },
   {
     "corporationSpreads": {
@@ -204,7 +204,7 @@
     "id": "corporations:executive_glassguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_glassguild"
+    "target": "corporations:executive_glassguild"
   },
   {
     "corporationSpreads": {
@@ -213,7 +213,7 @@
     "id": "corporations:executive_goldsmguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_goldsmguild"
+    "target": "corporations:executive_goldsmguild"
   },
   {
     "corporationSpreads": {
@@ -222,7 +222,7 @@
     "id": "corporations:executive_grocerguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_grocerguild"
+    "target": "corporations:executive_grocerguild"
   },
   {
     "corporationSpreads": {
@@ -231,7 +231,7 @@
     "id": "corporations:executive_mallwart",
     "name": "",
     "requirements": null,
-    "target": "military:executive_mallwart"
+    "target": "corporations:executive_mallwart"
   },
   {
     "corporationSpreads": {
@@ -240,7 +240,7 @@
     "id": "corporations:executive_mapster",
     "name": "",
     "requirements": null,
-    "target": "military:executive_mapster"
+    "target": "corporations:executive_mapster"
   },
   {
     "corporationSpreads": {
@@ -249,7 +249,7 @@
     "id": "corporations:executive_masonguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_masonguild"
+    "target": "corporations:executive_masonguild"
   },
   {
     "corporationSpreads": {
@@ -258,7 +258,7 @@
     "id": "corporations:executive_mercerguild",
     "name": "",
     "requirements": null,
-    "target": "military:executive_mercerguild"
+    "target": "corporations:executive_mercerguild"
   },
   {
     "corporationSpreads": {
@@ -267,7 +267,7 @@
     "id": "corporations:executive_milehigh",
     "name": "",
     "requirements": null,
-    "target": "military:executive_milehigh"
+    "target": "corporations:executive_milehigh"
   },
   {
     "corporationSpreads": {
@@ -276,7 +276,7 @@
     "id": "corporations:executive_mobby",
     "name": "",
     "requirements": null,
-    "target": "military:executive_mobby"
+    "target": "corporations:executive_mobby"
   },
   {
     "corporationSpreads": {
@@ -285,7 +285,7 @@
     "id": "corporations:executive_red",
     "name": "",
     "requirements": null,
-    "target": "military:executive_red"
+    "target": "corporations:executive_red"
   },
   {
     "corporationSpreads": {
@@ -294,7 +294,7 @@
     "id": "corporations:executive_safari",
     "name": "",
     "requirements": null,
-    "target": "military:executive_safari"
+    "target": "corporations:executive_safari"
   },
   {
     "corporationSpreads": {
@@ -303,7 +303,7 @@
     "id": "corporations:executive_ultsoldier",
     "name": "",
     "requirements": null,
-    "target": "military:executive_ultsoldier"
+    "target": "corporations:executive_ultsoldier"
   },
   {
     "corporationSpreads": {
@@ -312,7 +312,7 @@
     "id": "corporations:executive_wonka",
     "name": "",
     "requirements": null,
-    "target": "military:executive_wonka"
+    "target": "corporations:executive_wonka"
   },
   {
     "corporationSpreads": {
@@ -321,6 +321,6 @@
     "id": "corporations:moonbean_executive",
     "name": "",
     "requirements": null,
-    "target": "military:moonbean_executive"
+    "target": "corporations:moonbean_executive"
   }
 ]

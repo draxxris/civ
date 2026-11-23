@@ -3,6 +3,8 @@ using System.Text.RegularExpressions;
 namespace Ariel.ContentImport;
 
 public sealed record IdEntry(string Class, string SourceType, string Mod, string Id, string? Era);
+/// <summary>A feature mod that owns the records of a base class that <see cref="Claims"/> selects (<see cref="IdMapping.RecordOwners"/>).</summary>
+public sealed record RecordOwner(string Class, string Mod, Func<EffectiveRecord, bool> Claims);
 
 public static class IdMapping
 {
@@ -22,15 +24,41 @@ public static class IdMapping
     {
         family = CanonicalClass(family);
         if (!ClassMods.TryGetValue(family, out var mod)) throw new InvalidDataException($"No mod assignment for {family}.");
-        var name = type;
-        if (StrippedPrefixes.TryGetValue(family, out var prefix) && name.StartsWith(prefix, StringComparison.Ordinal)) name = name[prefix.Length..];
-        return mod + ":" + Normalize(name);
+        return mod + ":" + Name(family, type);
     }
+    /// <summary>The id's name part, without its mod: the source symbol, less its class prefix, normalized.</summary>
+    private static string Name(string family, string type)
+    {
+        if (StrippedPrefixes.TryGetValue(family, out var prefix) && type.StartsWith(prefix, StringComparison.Ordinal)) type = type[prefix.Length..];
+        return Normalize(type);
+    }
+
+    /// <summary>Records a feature mod owns outright although their class belongs to a base module: the buildings that
+    /// found a corporation or guild, and the executives that spread one, are Corporations' own content
+    /// (<c>corporations:*</c>), so the base game carries no trace of corporations. Rules apply in order; the first match
+    /// owns the record.</summary>
+    public static readonly IReadOnlyList<RecordOwner> RecordOwners =
+    [
+        new("BuildingInfo", "corporations", r => ContentMapper.Present(r.Node.Value("FoundsCorporation"))),
+        new("UnitInfo", "corporations",
+            r => r.Node.Child("CorporationSpreads")?.Children.Any(n => n.Children.Length > 1 && ContentMapper.Integer(n.Children[1].Text) > 0) == true),
+    ];
+
+    /// <summary>The mod that owns the record: its class's module, unless a <see cref="RecordOwners"/> rule claims it.</summary>
+    public static string Owner(EffectiveRecord record)
+    {
+        var family = CanonicalClass(record.Class);
+        if (!ClassMods.TryGetValue(family, out var mod)) throw new InvalidDataException($"No mod assignment for {family}.");
+        return Claimant(record) ?? mod;
+    }
+    /// <summary>The feature mod a <see cref="RecordOwners"/> rule gives the record to, or null when its class's module owns it.</summary>
+    public static string? Claimant(EffectiveRecord record) =>
+        RecordOwners.FirstOrDefault(o => o.Class == CanonicalClass(record.Class) && o.Claims(record))?.Mod;
 
     public static IReadOnlyList<IdEntry> Create(IEnumerable<EffectiveRecord> records)
     {
-        var entries = records.Select(x => new IdEntry(CanonicalClass(x.Class), x.Type,
-            ClassMods[CanonicalClass(x.Class)], Id(x.Class, x.Type), x.Era)).ToArray();
+        var entries = records.Select(x => (Record: x, Owner: Owner(x))).Select(x => new IdEntry(CanonicalClass(x.Record.Class), x.Record.Type,
+            x.Owner, x.Owner + ":" + Name(CanonicalClass(x.Record.Class), x.Record.Type), x.Record.Era)).ToArray();
         var collisions = entries.GroupBy(x => x.Id, StringComparer.Ordinal).Where(x => x.Count() > 1)
             .SelectMany(x => x.Select(y => (y.Class, y.SourceType))).ToHashSet();
         entries = entries.Select(x => collisions.Contains((x.Class, x.SourceType))

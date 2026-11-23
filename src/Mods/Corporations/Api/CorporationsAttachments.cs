@@ -27,6 +27,18 @@ public sealed class UnitCorporationsDef : ContentAttachment<UnitDef>, Ariel.Game
     }
 }
 
+/// <summary>What a civilization means to corporations: its class overrides of this mod's own executives, which the base
+/// civilization's <see cref="CivilizationDef.UnitOverrides"/> cannot name. A null replacement means the civilization
+/// trains no unit of that class.</summary>
+public sealed class CivilizationCorporationsDef : ContentAttachment<CivilizationDef>
+{
+    /// <summary>The row of a civilization nothing attached to.</summary>
+    public static readonly CivilizationCorporationsDef None = new();
+    [ContentReference(typeof(UnitDef), ReferencePart.Keys)]
+    [ContentReference(typeof(UnitDef), ReferencePart.Values)]
+    public ImmutableDictionary<string, string?> UnitOverrides { get; init; } = ImmutableDictionary<string, string?>.Empty;
+}
+
 /// <summary>What a handicap means to corporations.</summary>
 public sealed class HandicapCorporationsDef : ContentAttachment<HandicapDef>
 {
