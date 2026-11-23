@@ -214,9 +214,13 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
 
     private bool HuntOne(Unit unit)
     {
+        // The odds are against a tile's best defender, so every enemy of a stack shares its tile's odds: each tile's
+        // are reckoned once, not once per enemy standing on it.
+        var tileOdds = new Dictionary<Hex, int?>();
+        int? Odds(Hex tile) => tileOdds.TryGetValue(tile, out var odds) ? odds : tileOdds[tile] = _orders.Odds(unit, tile);
         var best = ctx.Enemies.Where(e => ctx.Alive(e) && ctx.Grid.Distance(e.Position, unit.Position) <= 3 && OnOurLand(e.Position)
             && ctx.Sim.State.CityAt(e.Position) is null)
-            .Select(e => (Enemy: e, Odds: _orders.Odds(unit, e.Position))).Where(x => x.Odds is { } o && o >= _orders.ThresholdFor(unit))
+            .Select(e => (Enemy: e, Odds: Odds(e.Position))).Where(x => x.Odds is { } o && o >= _orders.ThresholdFor(unit))
             .OrderByDescending(x => x.Odds).ThenBy(x => x.Enemy.Id).FirstOrDefault();
         if (best.Enemy is null) return false;
         ctx.Done.Add(unit.Id);
