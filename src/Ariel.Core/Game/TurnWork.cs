@@ -75,6 +75,7 @@ public sealed partial class Simulation
     /// <summary>Do the pending turn work in place, on this thread.</summary>
     public void RunPendingTurnWork()
     {
+        using var kernel = EnterKernel();
         bool defer = DeferTurnWork;
         DeferTurnWork = false; // The AI's own commands must not wait for the work they are part of.
         try { Proceed(mayAdvance: true, defer: false); }
@@ -94,6 +95,7 @@ public sealed partial class Simulation
         {
             AiWaveLimit = AiWaveLimit,
             VerifyReadEpochs = VerifyReadEpochs,
+            VerifyWrites = VerifyWrites,
             Profiler = Profiler,
         };
         fork.Events.CopyFrom(Events);
@@ -108,6 +110,7 @@ public sealed partial class Simulation
         if (work.Version != _version) throw new InvalidOperationException("The simulation changed while its turn work ran");
         EndReadEpoch();
         State.RestoreFrom(work.Fork.State);
+        NoteStateReplaced();
         Rng.Set(work.Fork.Rng.State);
         Events.CopyFrom(work.Fork.Events);
         _version++;

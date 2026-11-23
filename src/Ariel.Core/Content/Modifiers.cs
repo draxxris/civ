@@ -42,11 +42,19 @@ public enum ModifierScope
 }
 /// <summary>Calculation subject. The calculating mod chooses the scope and supplies applicable subject ids.</summary>
 public sealed record ModifierContext(Simulation Sim, ModifierScope Scope, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null, Team? Team = null, Plot? ProposedPlot = null);
-/// <summary>Cross-mod contribution source. Contribute must not change simulation state.</summary>
+/// <summary>Cross-mod contribution source. Contribute must not change simulation state, and what it adds must depend
+/// only on the context and the state: not on the sink it adds to, nor on anything outside the simulation.</summary>
 public interface IModifierSource
 {
     /// <summary>Append typed effects to a calculation's sink; ignore unsupported scopes.</summary>
     void Contribute(ModifierContext context, ModifierSink sink);
+    /// <summary>The state domains (<see cref="StateDomain"/>) this source never reads, directly or through any rule it
+    /// asks, for any scope. Inside kernel work a contribution is kept and used again until something it may read is
+    /// written (<see cref="ModifierSink.Collect"/>), so a write confined to these domains leaves it valid. Null, the
+    /// default, declares nothing: the source may read everything, and any write makes it compute again. A wrong
+    /// declaration makes the game read stale values; <see cref="Simulation.VerifyWrites"/> catches it where a run
+    /// exercises it.</summary>
+    IReadOnlyList<string>? UnreadDomains => null;
 }
 /// <summary>One explainable contribution to a calculation.</summary>
 public sealed record LedgerLine(string Source, string Key, long Amount);

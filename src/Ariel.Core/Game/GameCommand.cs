@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Ariel.Content;
 using Ariel.Modding;
 
@@ -15,6 +16,16 @@ public abstract class GameCommand
 
     /// <summary>Whether a player may issue this command outside its turn segment. Session control, not play.</summary>
     public virtual bool OutOfTurn => false;
+
+    /// <summary>The state domains (<see cref="StateDomain"/>) this command's application writes, everything that
+    /// runs inside it included: rule services it calls, commands it applies and subscribers of events it publishes.
+    /// Null, the default, declares nothing: the command may write anything. Only what is declared here lets remembered
+    /// answers (<see cref="ModifierSink.Collect"/>) survive the command, so a command declares only when every path
+    /// of its application stays inside the domains it names; <see cref="Simulation.VerifyWrites"/> checks it. A
+    /// published event that a subscriber handles widens the command to everything regardless. Not part of the
+    /// command's data.</summary>
+    [JsonIgnore]
+    public virtual IReadOnlyList<string>? WriteDomains => null;
 
     /// <summary>Return null if legal, otherwise the reason it was rejected.</summary>
     public abstract string? Validate(Simulation sim);
