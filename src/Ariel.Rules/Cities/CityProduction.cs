@@ -7,7 +7,9 @@ namespace Ariel.Rules.Cities;
 internal sealed class CityProduction(ICityYieldService yields, ICityGrowthService growth) : ICityProductionService
 {
     public RequirementResult Validate(Simulation sim, int cityId, string kind, string content) => ProductionEligibility.Validate(sim, sim.State.CityById(cityId), kind, content);
-    public CityProductionResult Calculate(Simulation sim, int cityId, string kind, string content)
+    public CityProductionResult Calculate(Simulation sim, int cityId, string kind, string content) =>
+        CityReadScope.Run(sim, _ => CalculateScoped(sim, cityId, kind, content));
+    private CityProductionResult CalculateScoped(Simulation sim, int cityId, string kind, string content)
     {
         var city = sim.State.CityById(cityId);
         var result = yields.Calculate(sim, cityId);

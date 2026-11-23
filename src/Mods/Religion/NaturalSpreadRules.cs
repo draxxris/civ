@@ -12,6 +12,7 @@ internal sealed partial class ReligionService
         private readonly Dictionary<(int City, string Religion), int> _influence = [];
         private readonly Dictionary<int, HashSet<int>> _connected = [];
         private readonly Dictionary<int, IReadOnlyList<BuildingDef>> _active = [];
+        private int[]? _ids;
 
         public int Influence(City city, string religion)
         {
@@ -42,7 +43,11 @@ internal sealed partial class ReligionService
             if (!_connected.TryGetValue(city.Id, out var linked))
             {
                 linked = [];
-                foreach (var candidate in Cities) if (ReligionService.TradeConnected(sim, city, candidate)) linked.Add(candidate.Id);
+                // One flood from the city answers every candidate's network connection.
+                _ids ??= Cities.Select(c => c.Id).ToArray();
+                var network = sim.Rules().CityConnections?.ConnectedFrom(sim, city.Id, _ids);
+                for (int i = 0; i < Cities.Count; i++)
+                    if (ReligionService.TradeConnected(sim, city, Cities[i], network?[i])) linked.Add(Cities[i].Id);
                 _connected[city.Id] = linked;
             }
             return linked.Contains(source.Id);
@@ -80,7 +85,10 @@ internal sealed partial class ReligionService
         return new(threshold / Math.Max(1, ReligionData.Raw(sim, "RELIGION_SPREAD_THRESHOLD_UNIT", 4)), range);
     }
 
-    private static bool TradeConnected(Simulation sim, City city, City source)
+    private static bool TradeConnected(Simulation sim, City city, City source) => TradeConnected(sim, city, source, null);
+    /// <param name="network">The network connection from <paramref name="city"/> to <paramref name="source"/>, when the
+    /// caller already knows it; asked otherwise.</param>
+    private static bool TradeConnected(Simulation sim, City city, City source, bool? network)
     {
         int team = sim.TeamOf(city.Owner).Id, other = sim.TeamOf(source.Owner).Id;
         if (team != other)
@@ -88,7 +96,7 @@ internal sealed partial class ReligionService
             if (sim.TeamOf(city.Owner).Wars.Contains(other)) return false;
             if (!sim.Rules().Relations.HasMet(sim, team, other)) return false;
         }
-        if (sim.Rules().CityConnections?.Connected(sim, city.Id, source.Id) == true) return true;
+        if ((network ?? sim.Rules().CityConnections?.Connected(sim, city.Id, source.Id)) == true) return true;
         return sim.Rules().TradeLinks?.Linked(sim, city.Id, source.Id) == true;
     }
     private int Influence(Simulation sim, City city, string religion, SpreadTurn? turn = null)

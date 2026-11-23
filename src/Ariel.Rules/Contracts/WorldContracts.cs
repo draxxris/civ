@@ -65,6 +65,14 @@ public interface ICityConnectionService
         }
         return groups;
     }
+    /// <summary>For each of <paramref name="others"/>, in order, whether <see cref="Connected"/> from
+    /// <paramref name="city"/> to it holds. The default asks pair by pair; the network answers with one flood.</summary>
+    bool[] ConnectedFrom(Simulation sim, int city, IReadOnlyList<int> others)
+    {
+        var result = new bool[others.Count];
+        for (int i = 0; i < result.Length; i++) result[i] = Connected(sim, city, others[i]);
+        return result;
+    }
     bool IsTileBlockaded(Simulation sim, TileId tile, int team);
     bool IsCityBlockaded(Simulation sim, int city);
 }

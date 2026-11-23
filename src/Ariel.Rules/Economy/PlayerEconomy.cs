@@ -37,6 +37,8 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
     public CityCommerceResult CalculateCity(Simulation sim, int city) => commerce.Calculate(sim, city, Rates(sim, sim.State.CityById(city).Owner));
     public PlayerEconomyResult Calculate(Simulation sim, int player)
     {
+        // Only reads: every city's commerce shares one span's modifier sums and city scope.
+        using var span = sim.OpenReadSpan();
         var lines = new List<LedgerLine>();
         CommerceVector total = default;
         foreach (var city in EconomyData.Cities(sim, player))

@@ -122,6 +122,63 @@ public sealed class ReadEpochTests
         }
     }
 
+    private sealed class SpanProbe : GameCommand
+    {
+        public long Inside { get; private set; } = -1;
+        public long After { get; private set; } = -1;
+        public override string? Validate(Simulation sim) => null;
+        public override void Apply(Simulation sim)
+        {
+            using (sim.OpenReadSpan()) Inside = sim.ReadEpoch;
+            After = sim.ReadEpoch;
+        }
+    }
+
+    // A dedicated thread: Task.Wait may run a task that has not started yet inline, on the waiting thread.
+    private static long OnAnotherThread(Func<long> read)
+    {
+        long seen = -1;
+        var thread = new Thread(() => seen = read());
+        thread.Start();
+        thread.Join();
+        return seen;
+    }
+
+    [Fact]
+    public void A_span_belongs_to_its_thread_opens_inside_a_command_and_ends_before_any_write()
+    {
+        var sim = TestGame.Sim(5);
+        long seenElsewhere = -1;
+        using (var span = sim.OpenReadSpan())
+        {
+            long s = sim.ReadEpoch;
+            Assert.NotEqual(0, s);
+            using (sim.OpenReadSpan()) Assert.Equal(s, sim.ReadEpoch); // A nested span reads under the open one.
+            seenElsewhere = OnAnotherThread(() => sim.ReadEpoch);
+            Assert.Equal(0, seenElsewhere); // Other threads do not see it.
+            var probe = new SpanProbe { Player = 0 };
+            Assert.True(sim.TryApply(probe, out _));
+            Assert.True(probe.Inside > s);
+            Assert.Equal(0, probe.After);
+            Assert.Equal(0, sim.ReadEpoch); // The command ended the span before it validated.
+        }
+        using (sim.OpenReadEpoch())
+        {
+            long e = sim.ReadEpoch;
+            using (sim.OpenReadSpan()) Assert.Equal(e, sim.ReadEpoch); // An open epoch already shares more.
+            seenElsewhere = OnAnotherThread(() => sim.ReadEpoch);
+            Assert.Equal(e, seenElsewhere);
+        }
+        var stale = sim.OpenReadSpan();
+        sim.AdvanceTurn();
+        Assert.Equal(0, sim.ReadEpoch);
+        stale.Dispose();
+        sim.VerifyReadEpochs = true;
+        var written = sim.OpenReadSpan();
+        sim.State.Turn++;
+        Assert.Throws<InvalidOperationException>(written.Dispose);
+    }
+
     private sealed class WritingRejection : GameCommand
     {
         public override string? Validate(Simulation sim) { sim.State.Turn++; return "no"; }

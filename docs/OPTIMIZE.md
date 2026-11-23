@@ -1915,6 +1915,193 @@ From the final tree, 4 turns at 451 and at 552 (processor time per 4 turns):
 5. **Unit-scope sources.** `BuildingMilitaryEffects` (625 ms) and `ScriptedWonderService`
    (427 ms) at 552, over 16,230 unit collections (F11).
 
+### Pass 16: Repeated Reads Inside One Query
+
+- **Date**: 2026-11-23
+- **Commits**: `b5bbc0c9`, `2c544728`, `5f0f631d`
+
+This pass profiled the Pass 15 tree again, from the late saves, from a new game, and
+from an eight-player game on a standard map through turn 150. It took the three exact
+changes the profile supported. Every final state is byte-identical.
+
+#### Method, Saves and Hashes
+
+- Same machine and Release builds as Pass 15. Other agents shared the machine; the load
+  average was 0.3 to 5 during the runs quoted here. Base and candidate builds were run
+  alternately (`git checkout REV -- src tests`, then rebuild), never one after the
+  other in blocks.
+- Late runs continue the Pass 14 saves for 8 turns: "451" is `ai450.json`, "552" the
+  turn-551 save. The figure is the mean wall time of the last 6 turns. The first two
+  turns after a load include JIT tiering; on the new code the second is about 400 ms
+  slower, and the gap disappears with `DOTNET_TieredCompilation=0`.
+- "New game" is `--seed 3 --players 6 --turns 100`. "New8" is `--seed 3 --players 8
+  --world foundation:worldsize_standard --turns 150`. Both give the total wall.
+- Entries are processor time summed over threads per 8 turns (late runs) or per game.
+- Saves were re-headed after every `mod.json` bump, as in Pass 15.
+- Reference hashes, unchanged by every commit: 451 + 4 `975963b591c0c71e`, 451 + 20
+  `6eedba278a9d2381`, 552 + 4 `11d283f0b52d0e80`, new game `9bf38cf7bc3e5245`,
+  corporation save + 4 `24a7278a6d3bddb2`. Added for this pass: 451 + 8
+  `f8a688851542c921`, 552 + 8 `b26ccf369976e5e1`, new8 `a9ba4f3b5780707a`.
+
+#### Baseline: Where a Turn Went
+
+The Pass 15 tree (`29ce4192`), three alternating runs at 451 and 552 and two for the new
+games. Pass 15 gave the same tree 1,541 to 1,564 ms per turn at 451 and 1,981 to 2,066 ms
+at 552, from 4 turns with the first left out. The figures here are lower because they
+average turns 3 to 8 of 8, after JIT tiering has settled; they are not comparable across
+the two passes.
+
+| Run                | Turn wall           | Allocated per turn | Modifier collections |
+| :----------------- | ------------------: | -----------------: | -------------------: |
+| 451, 8 turns       | 1,209 to 1,239 ms   |            985 MiB |               22,375 |
+| 552, 8 turns       | 1,736 to 1,755 ms   |          1,475 MiB |               43,420 |
+| New game           | 13.7 to 14.4 s      |             41 MiB |               64,691 |
+| New8               | 24.7 to 24.9 s      |             96 MiB |              203,428 |
+
+The largest entries (processor time):
+
+| Entry                    | 451, 8 turns | 552, 8 turns | New game | New8     |
+| :----------------------- | -----------: | -----------: | -------: | -------: |
+| `modifiers:collect`      |     6,575 ms |     9,358 ms | 2,556 ms | 4,043 ms |
+| `ai:military`            |        1,878 |        3,787 |    2,064 |    3,038 |
+| `ai:cities`              |        1,310 |        1,138 |      933 |    1,542 |
+| `cities:growth`          |        1,265 |        1,678 |      610 |      988 |
+| `ai:citizens`            |        1,234 |        1,256 |      793 |    1,200 |
+| `cities:production`      |          974 |        1,324 |          |      744 |
+| `ai:civics`              |          817 |          812 |      663 |    1,141 |
+| `economy:gold`           |          749 |          959 |          |          |
+| `world:sight_recompute`  |          652 |          802 |    1,443 |    2,781 |
+| `MoveUnitPathCommand`    |          533 |          726 |    1,030 |    2,309 |
+| `religion:city_turns`    |          523 |          555 |          |          |
+| `military:units`         |          298 |          868 |          |          |
+| `world:improvements`     |          106 |              |      929 |    1,322 |
+| `barbarians:behavior`    |          140 |          181 |          |    1,056 |
+| `kernel:state_hash`      |          329 |          239 |    1,608 |    5,170 |
+
+Findings:
+
+- **The same sums, asked again within one step.** A temporary probe counted, per 4
+  turns at 451, the collections that repeated one made earlier in the same system or
+  command: 677 of 829 in `cities:growth`, 227 of 364 in `cities:production`, 152 city
+  and 260 player collections of their totals in `economy:gold`, 152 of 304 in
+  `cities:assign_work`, 234 of 386 in the `SetCityAssignmentsCommand` apply, and 839 of
+  1,800 in `military:units` (2,437 of 4,971 at 552). About 3.4 s of collection ran
+  outside any read epoch, against 0.9 s inside.
+- **Collecting a city is mostly its resources.** Of 6,070 City `BuildingEffects`
+  collections over 8 turns at 451, `Bonuses` took 2,482 ms (63%), local effects 492,
+  active buildings 437 and global effects 391. Inside it, the exporter path
+  (`AvailableResourceCounts`) took 2,764 ms; network floods
+  (`ResourceNetwork.ConnectedCounts`, uncached) ran 27,082 times for 2,111 ms, 78 µs
+  each, and each `Reach` spent 17 µs of it resetting its search (813 of 3,040 ms).
+- **The early game has no superlinear term.** New8 turns rise from about 90 ms to 230 to
+  290 ms by turn 150, in step with units and cities. The largest early costs are sight
+  (19 ms per turn in new8), unit paths, AI planners and `kernel:state_hash`.
+- **The state hash is a fifth of a tool run.** `kernel:state_hash` is 34.5 ms per turn
+  in new8 (21% of its wall). Only lockstep multiplayer and the tools hash every turn, so
+  a single-player game never pays it; a multiplayer game does.
+- **World generation and start are small.** `mise run benchmark` on the base:
+  generation 309.65, 203.91 and 294.71 ms for seeds 1, 42 and 987654; fifty-city turn
+  289.54 ms; eight-player preparation 14,481 ms; AI decisions at turn 100 57.60 ms.
+
+#### Accepted
+
+Alternating runs, per later turn (mean of the last 6 of 8):
+
+| Commit     | Change                                                       | 451 turn        | 552 turn        | Entry evidence (per 8 turns)                                                                                        |
+| :--------- | :----------------------------------------------------------- | --------------: | --------------: | :------------------------------------------------------------------------------------------------------------------ |
+| (baseline) | Pass 15 tree, `29ce4192`                                     | 1,220 ms        | 1,743 ms        | 985 / 1,475 MiB per turn                                                                                            |
+| `b5bbc0c9` | Thread-local read spans share a query's modifier sums        | 1,025 to 1,075  | 1,512 to 1,515  | collections 22,375 → 17,963 (451), 43,420 → 38,982 (552); `cities:production` 974 → 465, `economy:gold` 749 → 330, `ai:civics` 817 → 373 (451); 821 / 1,265 MiB |
+| `2c544728` | A refreshed unit's moves are asked again only after a change | 1,018 to 1,066  | 1,461 to 1,476  | `military:units` 301 to 330 → 175 (451), 906 to 1,120 → 576 (552); its allocation halves; collections → 16,352 / 34,341 |
+| `5f0f631d` | One network flood answers a city's religion spread links     | 1,012 to 1,045  | 1,434 to 1,473  | `religion:city_turns` 579 to 610 → 355 to 360 (451), 714 to 722 → 324 to 360 (552); 805 / 1,221 MiB              |
+
+- **Read spans (`b5bbc0c9`).** Pass 15's read epochs made memos live only inside an AI
+  segment. A read span is the same promise held by one thread: it opens around the
+  outermost `CityReadScope` query, `ICityProductionService.Calculate` and
+  `IPlayerEconomyService.Calculate`, only when nothing is open, and the kernel ends it
+  at its next write (see DESIGN.md). Opening inside a command is allowed, because a
+  command's own writes end it. `--verify-read-epochs` checks spans too; it takes about
+  100 s per turn at 451.
+- **Unit refresh (`2c544728`)** and **religion spread (`5f0f631d`)** move the walls by
+  less than the noise (1 to 3%). They were kept on their entries, which are
+  deterministic in calls and allocation and fall by 40 to 50%.
+
+#### Rejected
+
+| Candidate                                    | Evidence                                                                                                                                                                                                                                                   |
+| :------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Validation inside a read epoch               | `TryApply` kept or opened an epoch around `Validate`, aimed at `ReviewCivicGoalCommand` and `ReviewCampaignGoalsCommand` (287 and 280 ms of validation per 4 turns at 451). Collections 17,961 → 17,118 (451) and 38,981 → 37,727 (552); walls 1,027 → 1,017 and 1,511 → 1,479 ms. Within noise, and it widens the kernel contract. |
+| Early game (all three commits together)      | Not a candidate but a check: new game 13.7 / 14.4 → 12.7 / 13.5 s, new8 24.7 / 24.9 → 25.0 / 26.0 s, alternating. Within noise; allocation fell 41 → 37 and 96 → 87 MiB per turn.                                                                       |
+
+#### Results
+
+Alternating runs of the base and the final tree (three at 451 and 552, two otherwise),
+load 0.3 to 5:
+
+| Run          | Before              | After               | Change | Systems before / after | AI before / after | Allocated per turn before / after |
+| :----------- | ------------------: | ------------------: | -----: | ---------------------: | ----------------: | --------------------------------: |
+| 451, 8 turns | 1,209 to 1,239 ms   | 1,012 to 1,045 ms   |   −16% |       583-594 / 450-469 ms | 576-602 / 515-523 ms |                     985 / 805 MiB |
+| 552, 8 turns | 1,736 to 1,755 ms   | 1,434 to 1,473 ms   |   −17% |       808-824 / 603-609 ms | 898-902 / 801-830 ms |                 1,475 / 1,221 MiB |
+| New game     | 13.7 to 14.4 s      | 12.7 to 13.5 s      | noise  |                        |                   |                       41 / 37 MiB |
+| New8         | 24.7 to 24.9 s      | 25.0 to 26.0 s      | noise  |                        |                   |                       96 / 87 MiB |
+| Corporations | 1,323 to 1,366 ms   | 1,214 to 1,318 ms   | noise  |       610-631 / 509-537 ms | 670-693 / 634-709 ms |               1,076 / 855 MiB |
+
+"Corporations" is Pass 14's synthetic save with corporation branches, 4 turns, the mean
+of the last 2. Its collections fell from 14,318 to 9,612 per 4 turns.
+
+`ai:cities` rose in every pair: 1,310 to 1,337 → 1,384 to 1,483 ms per 8 turns at 451,
+1,138 → 1,244 to 1,285 at 552, and 662 → 877 to 975 per 4 turns on the corporation save,
+with the same calls and allocation. It runs inside AI epochs, where no span opens. The
+cause was not found; the turn walls fall regardless.
+
+`mise run benchmark`, single samples (load about 4 before, 3 to 5 after):
+
+| Benchmark                                      | Before                       | After                        |
+| :--------------------------------------------- | ---------------------------: | ---------------------------: |
+| World generation, seeds 1, 42, 987654          | 309.65, 203.91, 294.71 ms    | 351.75, 218.55, 294.48 ms    |
+| Fifty-city turn                                | 289.54 ms                    | 248.35 ms                    |
+| Eight-player preparation (99 turns, save/load) | 14,481 ms                    | 12,548 ms                    |
+| Eight-player AI decisions at turn 100          | 57.60 ms                     | 44.99 ms                     |
+
+World generation is unchanged code; its spread is load.
+
+Verification on the final tree: the five reference hashes printed again, and
+`--verify-read-epochs` (which now checks spans) printed the same hashes for 451 + 4
+(7 minutes) and the new game (17 minutes). `mise run check:sync`, `mise run test`,
+`mise run test:worldgen` and `mise run build:game` pass.
+
+#### Still Slow, Ranked
+
+From the final tree, per 8 turns at 451 and 552:
+
+1. **A city's ledger, rebuilt by each turn system.** `modifiers:collect` is still 5.0 to
+   5.5 s (451) and 7.6 to 8.0 s (552). Each turn system reads a city in its own span, so
+   eight systems each collect every city about once per turn, about 1 ms each, most of
+   it resource floods (27,082 per 8 turns at 451, 78 µs each). The structural step is a
+   city ledger kept across systems, invalidated by a kernel write revision, or turn
+   systems split into a read pass and a write pass so one span covers the reads. One
+   flood per group would also need the network's edges proved symmetric, which
+   `RiverEdge` does not guarantee.
+2. **AI military.** `ai:military` 1.5 s (451) and 3.6 to 3.8 s (552), the largest
+   planner. It previews combat per hunter, tile and defender (Pass 15 F13, N14).
+3. **City turn systems.** `cities:growth` (1.1 to 1.3 s and 1.6 s), `cities:assign_work`
+   (0.7 and 0.9 s) and the `SetCityAssignmentsCommand` apply (0.7 and 0.8 s) still
+   recalculate work and wellbeing per city; item 1 would cover most of them.
+4. **AI city and citizen planners.** `ai:cities` (1.4 and 1.3 s) and `ai:citizens` (1.2
+   to 1.3 and 1.3 to 1.5 s).
+5. **Network search reset.** 17 µs per `Reach` (813 ms per 8 turns at 451), clearing
+   map-sized arrays and rescanning the team's techs. Clearing only the touched tiles
+   would cut it, but it was not measured on its own.
+6. **Per-turn systems not yet examined.** `global_warming:warming` (one call per turn,
+   595 to 682 ms per 8 turns at 451 and 822 to 892 at 552, about 75 to 110 ms per turn),
+   `great_people:births` (386 to 439 and 556 to 573), `revolution:instability` (361 to
+   406 and 514 to 546), `cities:culture` (363 to 421 and 519 to 549) and
+   `relations:discover_contacts` (254 to 270 and 283 to 293). None was attempted; each
+   should be checked for work that need not run every turn.
+7. **The early game.** Sight (19 ms per turn in new8), unit paths, `world:improvements`
+   and barbarian behaviour. Each is linear in units or plots; none was measured as a
+   candidate. In multiplayer, `kernel:state_hash` (34.5 ms per turn in new8) is larger
+   than any of them.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -1977,3 +2164,7 @@ passes:
 |                                         |                      | Same, per turn at turns 452-471 (saved game)               | Managed bytes per turn   |            4,710 MiB |         1,049 MiB |                                **-77.7%** |
 |                                         |                      | 100-turn six-player AI game, ancient start (seed 3)        | Wall time (profiled)     |               22.2 s |      13.4–14.5 s |                       **-35% to -40%** |
 |                                         |                      | Eight-player preparation (`mise run benchmark`)            | Wall time                |            31,366 ms |         13,192 ms |                                **-57.9%** |
+| **Pass 16: Repeated Reads**             | `b5bbc0c9`..`5f0f631d` | Six-player AI game, per turn at turns 454-459 (saved game) | Wall time (profiled)     |    1,209–1,239 ms |    1,012–1,045 ms |                                  **-16%** |
+|                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |    1,736–1,755 ms |    1,434–1,473 ms |                                  **-17%** |
+|                                         |                      | Same, per turn at turns 454-459 (saved game)               | Managed bytes per turn   |              985 MiB |           805 MiB |                                **-18.3%** |
+|                                         |                      | Eight-player preparation (`mise run benchmark`)            | Wall time                |            14,481 ms |         12,548 ms |                                **-13.3%** |

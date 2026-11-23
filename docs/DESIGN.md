@@ -2153,6 +2153,15 @@ Several query paths avoid redundant traversal:
   epoch's start and end and throws on a difference, and also throws when a rejected
   command changed the state or the RNG; `hash-trace --verify-read-epochs` turns it on
   for a whole game.
+- Read spans (`Simulation.OpenReadSpan`): the same promise for one bracketed query on one
+  thread. While a span is open, `ReadEpoch` reports it on the thread that opened it only,
+  so the epoch memos above serve that query; other threads see nothing. A span opens only
+  when neither an epoch nor a span is open, may open inside a command because its opener
+  disposes it before returning, and is ended by every kernel write like an epoch. The
+  outermost `CityReadScope` query opens one, and so do `ICityProductionService.Calculate`
+  and `IPlayerEconomyService.Calculate`, so a turn system's or a command's city
+  calculation gathers each modifier sum and connected resource count once. Verification
+  hashes spans like epochs (about 100 s per turn at turn 451, so verify short runs).
 - Lazy `ResourceNetwork.Modes`: route and transport mode checks are resolved lazily per
   query on first access rather than traversed upfront.
 - `INavalBlockadeService.BlockadedTiles`: computes and caches the complete set of

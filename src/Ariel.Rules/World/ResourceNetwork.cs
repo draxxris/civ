@@ -37,6 +37,21 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         // Seen marks only queued tiles, and the flood has drained its queue, so it is exactly the reached set.
         return search.Seen[sim.State.Grid.TileAt(second.Position).Value];
     }
+    /// <summary>One flood from <paramref name="city"/> answers every other city, exactly as <see cref="Connected"/>
+    /// from it would: the flood depends only on the first city.</summary>
+    public bool[] ConnectedFrom(Simulation sim, int city, IReadOnlyList<int> others)
+    {
+        var first = sim.State.CityById(city);
+        var wars = sim.TeamOf(first.Owner).Wars;
+        var result = new bool[others.Count];
+        using var search = Reach(sim, first.Owner, first, peacefulForeign: true);
+        for (int i = 0; i < result.Length; i++)
+        {
+            var second = sim.State.CityById(others[i]);
+            result[i] = !wars.Contains(sim.TeamOf(second.Owner).Id) && search.Seen[sim.State.Grid.TileAt(second.Position).Value];
+        }
+        return result;
+    }
     /// <summary>Each group's first member is the first city no earlier group reached, so one flood from it decides
     /// every later city still without a group, exactly as <see cref="Connected"/> from it would.</summary>
     public IReadOnlyList<IReadOnlyList<int>> Groups(Simulation sim, IReadOnlyList<int> cities)
