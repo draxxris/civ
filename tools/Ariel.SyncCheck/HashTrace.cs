@@ -12,7 +12,8 @@ namespace Ariel.SyncCheck;
 /// and reloads its game every N turns, which must not change the hashes either; a rejoining peer starts from a save.
 /// With <c>--background</c> every turn rolls over as a front end runs it: as turn work on a copy of the game, on another
 /// thread, taken back afterwards. With <c>--save PATH</c> the run writes the final game as a save, for inspecting
-/// what the AIs did. With <c>--profile DIR</c> (or <c>ARIEL_PROFILE=DIR</c>) it times every turn system, AI planner,
+/// what the AIs did. With <c>--load PATH</c> the run continues that save instead of starting a new game (seed, players,
+/// world and era then come from the save), for measuring a late game without replaying it. With <c>--profile DIR</c> (or <c>ARIEL_PROFILE=DIR</c>) it times every turn system, AI planner,
 /// AI seam, command and kernel step, prints the table sorted by cost to stderr and writes it with per-turn CSVs to DIR.
 /// </summary>
 internal static class HashTrace
@@ -28,12 +29,14 @@ internal static class HashTrace
         var mode = Enum.Parse<TurnMode>(Option(args, "--turn-mode") ?? nameof(TurnMode.Simultaneous), ignoreCase: true);
         bool background = args.Contains("--background");
         string? save = Option(args, "--save");
+        string? load = Option(args, "--load");
         var profiler = SimulationProfiler.FromEnvironment(out string? profileDir);
         if (Option(args, "--profile") is { } dir) (profiler, profileDir) = (profiler ?? new SimulationProfiler(), dir);
 
-        var sim = GameFactory.CreateAi(content, seed, players, world, mode, era);
+        var sim = load is null ? GameFactory.CreateAi(content, seed, players, world, mode, era) : SaveGame.Load(content, File.ReadAllText(load));
         sim.Profiler = profiler;
-        Console.Error.WriteLine($"hash-trace seed={seed} players={players} turns={turns} era={era} turn-mode={mode} reload-every={reload} background={background} " +
+        string start = load is null ? $"seed={seed} players={players} era={era} turn-mode={mode}" : $"load={load} turn={sim.State.Turn}";
+        Console.Error.WriteLine($"hash-trace {start} turns={turns} reload-every={reload} background={background} " +
                                 $"processors={Environment.ProcessorCount} content={content.ContentHash}");
         Console.WriteLine($"{sim.State.Turn} {sim.ComputeHash():x16}");
         for (int i = 1; i <= turns; i++)
@@ -52,6 +55,7 @@ internal static class HashTrace
             Console.Error.WriteLine(profiler.Report());
             Console.Error.WriteLine($"profile written to {Path.GetFullPath(profileDir!)}");
         }
+        Console.Error.WriteLine($"final turn {sim.State.Turn} hash {sim.ComputeHash():x16}");
         if (save is not null) File.WriteAllText(save, SaveGame.Save(sim));
         return 0;
     }

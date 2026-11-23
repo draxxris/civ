@@ -12,6 +12,6 @@ Environment.ExitCode = args.FirstOrDefault() switch
 static int Usage()
 {
     Console.Error.WriteLine("usage: Ariel.SyncCheck diff-saves A.json B.json [--max N]");
-    Console.Error.WriteLine("usage: Ariel.SyncCheck hash-trace [--seed N] [--players N] [--turns N] [--reload-every N] [--world id] [--era id] [--turn-mode simultaneous|dynamic|sequential] [--background] [--optional A,B] [--save PATH] [--profile DIR]");
+    Console.Error.WriteLine("usage: Ariel.SyncCheck hash-trace [--seed N] [--players N] [--turns N] [--reload-every N] [--world id] [--era id] [--turn-mode simultaneous|dynamic|sequential] [--background] [--optional A,B] [--load PATH] [--save PATH] [--profile DIR]");
     return 2;
 }

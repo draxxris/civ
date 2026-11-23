@@ -112,7 +112,12 @@ ARIEL_PROFILE=/tmp/ariel/profile mise run ai:play -- --seed 3 --turns 100
 ARIEL_PROFILE=/tmp/ariel/eval-profile mise run ai:eval -- --seeds 1 --turns 100
 # A later start, to reach late-game rules within 100 turns.
 mise run ai:play -- --seed 3 --players 4 --turns 100 --era foundation:era_industrial --profile DIR
+# Continue a saved late game for 40 more turns, profiled, and write where it ended.
+mise run ai:play -- --load /tmp/ariel/ai330.json --turns 40 --profile DIR --save /tmp/ariel/out.json
 ```
+
+The run prints `final turn T hash H` on stderr, so two builds continuing the same save can
+be compared by hash as well as by their final saves (`mise run check:desync-diff`).
 
 A host attaches a `SimulationProfiler` to `Simulation.Profiler`; nothing is measured, read
 or allocated without one, and a profiled game plays exactly as an unprofiled one (tests in
