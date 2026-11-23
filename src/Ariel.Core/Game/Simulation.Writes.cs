@@ -63,6 +63,9 @@ public sealed partial class Simulation
     /// saved.</summary>
     public bool VerifyWrites { get; set; }
 
+    /// <summary>The modifier contributions remembered across writes for this simulation (<see cref="ModifierSink"/>).</summary>
+    internal ModifierCache ModifierCache { get; } = new();
+
     /// <summary>Whether answers may be kept across writes now: inside kernel work, where every write is in a window.</summary>
     internal bool KeepsAnswers => _kernelDepth > 0;
 
@@ -152,6 +155,7 @@ public sealed partial class Simulation
     internal void NoteStateReplaced()
     {
         NoteKernelWrite();
+        ModifierCache.Clear();
     }
 
     private void Stamp(ulong mask, bool rest)
@@ -206,5 +210,6 @@ public sealed partial class Simulation
     {
         if (--_kernelDepth > 0) return;
         NoteKernelWrite();
+        ModifierCache.Clear();
     }
 }

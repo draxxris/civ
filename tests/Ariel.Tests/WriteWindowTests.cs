@@ -101,6 +101,66 @@ public sealed class WriteWindowTests
 
     private static ModifierSink Player(Simulation sim) => ModifierSink.Collect(new(sim, ModifierScope.Player, 0));
 
+    [Fact]
+    public void A_contribution_is_reused_across_a_write_to_a_domain_its_source_never_reads()
+    {
+        var (sim, treasury, culture) = Game();
+        sim.State.PlayerById(0).Treasury = 40;
+        int t = 0, c = 0;
+        long seenTreasury = 0, seenCulture = 0;
+        Assert.True(sim.TryApply(new Script(s =>
+        {
+            Player(s);
+            (t, c) = (treasury.Calls, culture.Calls);
+            Assert.True(s.TryApply(new SetCulture { Player = 0, Value = 9 }, out _));
+            var after = Player(s);
+            Assert.Equal(t, treasury.Calls); // culture is declared unread: reused
+            Assert.Equal(c + 1, culture.Calls); // undeclared: computed again
+            Assert.Equal(9, after.Total("probe:culture"));
+            Assert.Equal(new YieldVector(40, 0, 0), after.FlatYield); // reused lines rebuild the typed vectors
+            Assert.True(s.TryApply(new SetTreasury { Player = 0, Value = 55 }, out _));
+            var third = Player(s);
+            Assert.Equal(t + 1, treasury.Calls);
+            seenTreasury = third.Total("probe:treasury");
+            seenCulture = third.Total("probe:culture");
+        }) { Player = 0 }, out _));
+        Assert.Equal(55, seenTreasury);
+        Assert.Equal(9, seenCulture);
+    }
+
+    [Fact]
+    public void Nothing_is_reused_outside_kernel_work_where_a_host_may_edit_the_state_directly()
+    {
+        var (sim, treasury, _) = Game();
+        Player(sim);
+        sim.State.PlayerById(0).Treasury = 12;
+        Assert.Equal(12, Player(sim).Total("probe:treasury"));
+        Assert.Equal(2, treasury.Calls);
+        // A command run between two direct edits starts from nothing remembered.
+        long inside = 0;
+        Assert.True(sim.TryApply(new Script(s => inside = Player(s).Total("probe:treasury")) { Player = 0 }, out _));
+        sim.State.PlayerById(0).Treasury = 13;
+        Assert.True(sim.TryApply(new Script(s => inside = Player(s).Total("probe:treasury")) { Player = 0 }, out _));
+        Assert.Equal(13, inside);
+    }
+
+    [Fact]
+    public void An_undeclared_writer_and_a_handled_event_count_as_writing_everything()
+    {
+        var (sim, treasury, _) = Game(subscribe: true);
+        Assert.True(sim.TryApply(new Script(s =>
+        {
+            Player(s);
+            int before = treasury.Calls;
+            Assert.True(s.TryApply(new SetCulture { Player = 0, Value = 1, Poke = true }, out _));
+            Player(s);
+            Assert.Equal(before + 1, treasury.Calls); // the subscriber may have written anything
+            Assert.True(s.TryApply(new UndeclaredWrite { Player = 0 }, out _));
+            Player(s);
+            Assert.Equal(before + 2, treasury.Calls);
+        }) { Player = 0 }, out _));
+    }
+
     private sealed class UndeclaredWrite : GameCommand
     {
         public override string? Validate(Simulation sim) => null;
@@ -115,6 +175,7 @@ public sealed class WriteWindowTests
         Assert.True(sim.TryApply(new SetCulture { Player = 0, Value = 3 }, out _));
         var error = Assert.Throws<InvalidOperationException>(() => sim.TryApply(new Sneaky { Player = 0 }, out _));
         Assert.Contains("Sneaky", error.Message);
+
     }
 
     [Fact]
