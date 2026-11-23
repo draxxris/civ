@@ -2049,7 +2049,10 @@ Specialized planners handle empire governance and military campaigns:
   happiness and health at the civic planner's weights (8 and 6), its military production
   percent as production of a ten-production city, and its produced resource's happiness
   and health; spreads are only paid when the treasury covers the city's real
-  `SpreadCost`, and an obsolete corporation is not spread. `CorporationCivicValuer`
+  `SpreadCost`, and an obsolete corporation is not spread. A Guild Hall (any building a
+  live corporation's `PrereqBuildingClasses` names) the empire holds too few of is worth
+  half a founding building, since without it the guild is neither founded nor spread
+  there. `CorporationCivicValuer`
   weighs a ban by the same terms.
 - **Espionage (`EspionagePlanner`, contributed by the Espionage mod)**: Points the
   espionage weights at an enemy, else the nearest known rival, walks spies to its

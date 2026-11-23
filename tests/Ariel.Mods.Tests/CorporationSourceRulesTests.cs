@@ -296,6 +296,25 @@ public sealed class CorporationSourceRulesTests
         Assert.Equal(-(3 * 8 - 1 * 6) + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, adjust);
     }
 
+    [Fact]
+    public void The_city_planner_wants_a_guild_hall_until_the_empire_holds_one()
+    {
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>().Single(v => v.Id == "corporations:headquarters_valuer");
+        var hall = sim.Content.Get<Ariel.Content.Schema.BuildingDef>("cities:cguildhall");
+        int Value() => valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0), new Ariel.Ai.BuildingSubject(hall, city));
+        // The crafts guilds (the Masons among them) cannot be founded or spread to the empire without it.
+        int wanted = Value();
+        // Half the founding value (80), and up to as much again for the guild's worth.
+        Assert.InRange(wanted, 40, 80);
+        sim.State.Cities[1].Buildings.Add("cities:cguildhall");
+        Assert.Equal(0, Value());
+        // Nor once every guild that needs it is obsolete for the team.
+        sim.State.Cities[1].Buildings.Remove("cities:cguildhall");
+        sim.TeamOf(0).Techs.Add("research:corporation");
+        Assert.Equal(0, Value());
+    }
+
     /// <summary>The source corporation fields with non-default data that no rule reads, each with its reason. The importer
     /// lists such fields in a row's <c>unsupported</c>; every other field it maps is read by a rule above.</summary>
     internal static readonly IReadOnlyDictionary<string, string> UnreadSourceFields = new Dictionary<string, string>

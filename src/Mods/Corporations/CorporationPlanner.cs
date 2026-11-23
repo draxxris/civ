@@ -232,14 +232,30 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
 /// headquarters income, the first branch and the right to spread it, on top of what the building itself gives. As
 /// with a religion's founding wonder, production only offers it where founding can happen (its requirements met, a
 /// consumed resource connected when the corporation consumes any, nothing founded). A corporation worth more adds up
-/// to as much again.</summary>
+/// to as much again.
+/// <para>A building a corporation's branches need in the owner's empire (<see cref="CorporationDef.PrereqBuildingClasses"/>,
+/// a guild's Guild Hall, which its Master Guild needs too) stands for half of that while the empire holds too few of
+/// it and the corporation is not obsolete for the player: without it the guild can neither be founded nor spread to
+/// the empire's cities.</para></summary>
 internal sealed class HeadquartersValuer : IAiValuer<BuildingSubject>
 {
     internal const int FoundingValue = 80;
     public string Id => "corporations:headquarters_valuer";
 
-    public int Adjust(AiContext ctx, in BuildingSubject subject) =>
-        CorporationFounder.Corporation(ctx.Sim.Content, subject.Building) is { } corporation
-            ? FoundingValue + (int)Math.Clamp(CorporationPlanner.Worth(ctx.Sim.Content, corporation), 0, FoundingValue)
-            : 0;
+    public int Adjust(AiContext ctx, in BuildingSubject subject)
+    {
+        var content = ctx.Sim.Content;
+        if (CorporationFounder.Corporation(content, subject.Building) is { } corporation)
+            return FoundingValue + (int)Math.Clamp(CorporationPlanner.Worth(content, corporation), 0, FoundingValue);
+        string buildingClass = subject.Building.DefaultBuilding;
+        long best = -1;
+        int? held = null;
+        foreach (var def in content.Get<CorporationDef>().All)
+        {
+            if (!def.PrereqBuildingClasses.TryGetValue(buildingClass, out int needed) || CorporationService.Obsolete(ctx.Sim, ctx.PlayerId, def)) continue;
+            held ??= CorporationService.BuildingClassCount(ctx.Sim, ctx.PlayerId, buildingClass);
+            if (held < needed) best = Math.Max(best, CorporationPlanner.Worth(content, def));
+        }
+        return best < 0 ? 0 : FoundingValue / 2 + (int)Math.Clamp(best, 0, FoundingValue / 2);
+    }
 }

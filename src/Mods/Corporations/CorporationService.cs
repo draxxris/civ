@@ -229,14 +229,18 @@ internal sealed class CorporationService : ICorporationService
     private static string? MissingBuildingClass(Simulation sim, int owner, CorporationDef def)
     {
         if (def.PrereqBuildingClasses.Count == 0) return null;
-        var buildings = sim.Rules().CityBuildings;
         foreach (var (building, needed) in def.PrereqBuildingClasses.OrderBy(p => p.Key, StringComparer.Ordinal))
         {
-            int count = sim.State.Cities.Where(c => c.Owner == owner)
-                .Sum(c => buildings.EffectiveBuildings(sim, c.Id).Count(b => sim.Content.Get<BuildingDef>(b).DefaultBuilding == building));
-            if (count < needed) return $"Requires {needed} {sim.Content.Find(building)?.Name ?? building} in the city owner's empire";
+            if (BuildingClassCount(sim, owner, building) < needed) return $"Requires {needed} {sim.Content.Find(building)?.Name ?? building} in the city owner's empire";
         }
         return null;
+    }
+    /// <summary>How many buildings of the class (<see cref="BuildingDef.DefaultBuilding"/>) the player's cities hold.</summary>
+    internal static int BuildingClassCount(Simulation sim, int owner, string buildingClass)
+    {
+        var buildings = sim.Rules().CityBuildings;
+        return sim.State.Cities.Where(c => c.Owner == owner)
+            .Sum(c => buildings.EffectiveBuildings(sim, c.Id).Count(b => sim.Content.Get<BuildingDef>(b).DefaultBuilding == buildingClass));
     }
     public void Spread(Simulation sim, int player, int city, string corporation)
     {
