@@ -30,6 +30,32 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         // Seen marks only queued tiles, and the flood has drained its queue, so it is exactly the reached set.
         return search.Seen[sim.State.Grid.TileAt(second.Position).Value];
     }
+    /// <summary>Each group's first member is the first city no earlier group reached, so one flood from it decides
+    /// every later city still without a group, exactly as <see cref="Connected"/> from it would.</summary>
+    public IReadOnlyList<IReadOnlyList<int>> Groups(Simulation sim, IReadOnlyList<int> cities)
+    {
+        var groups = new List<IReadOnlyList<int>>();
+        var members = cities.Select(sim.State.CityById).ToArray();
+        var grouped = new bool[members.Length];
+        for (int i = 0; i < members.Length; i++)
+        {
+            if (grouped[i]) continue;
+            var first = members[i];
+            var group = new List<int> { first.Id };
+            grouped[i] = true;
+            groups.Add(group);
+            var wars = sim.TeamOf(first.Owner).Wars;
+            using var search = Reach(sim, first.Owner, first, peacefulForeign: true);
+            for (int j = i + 1; j < members.Length; j++)
+            {
+                if (grouped[j] || wars.Contains(sim.TeamOf(members[j].Owner).Id)
+                    || !search.Seen[sim.State.Grid.TileAt(members[j].Position).Value]) continue;
+                grouped[j] = true;
+                group.Add(members[j].Id);
+            }
+        }
+        return groups;
+    }
     public IReadOnlySet<TileId> ConnectedTiles(Simulation sim, int player, int city)
     {
         var target = sim.State.FindCity(city);

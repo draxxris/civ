@@ -118,17 +118,15 @@ internal sealed partial class DiplomacyService
         private readonly Dictionary<int, IReadOnlyDictionary<string, int>> _counts = new();
         private readonly List<List<City>> _groups = [];
 
-        public CityGroups(Simulation sim, int player)
+        /// <param name="known">A member's connected copies the caller has already gathered, if any.</param>
+        public CityGroups(Simulation sim, int player, (int City, IReadOnlyDictionary<string, int> Counts)? known = null)
         {
             (_sim, _player, _network) = (sim, player, sim.Rules().Resources);
             var connections = sim.Rules().CityConnections;
             if (_network is null || connections is null) return;
-            foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id))
-            {
-                var group = _groups.FirstOrDefault(g => connections.Connected(sim, g[0].Id, city.Id));
-                if (group is null) _groups.Add([city]);
-                else group.Add(city);
-            }
+            if (known is { } seed) _counts[seed.City] = seed.Counts;
+            var owned = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id).Select(c => c.Id).ToArray();
+            foreach (var group in connections.Groups(sim, owned)) _groups.Add(group.Select(sim.State.CityById).ToList());
             var capital = Root(sim, player);
             _groups = _groups.OrderBy(g => capital is not null && g.Contains(capital) ? 1 : 0).ToList();
         }
@@ -155,10 +153,6 @@ internal sealed partial class DiplomacyService
         var layout = new CityGroups(sim, player);
         return layout.Groups.Sum(g => layout.Copies(g, resource));
     }
-    /// <summary>Imports arrive from the other side of each live deal the player takes part in.</summary>
-    private static long Imports(Simulation sim, int player, string resource) => Read(sim).Deals
-        .Where(d => Live(sim, d) && (d.Proposer == player || d.Recipient == player)).SelectMany(d => d.Items)
-        .Where(i => i.FromPlayer != player && i.Kind == TradeItemKind.Resource && i.ContentId == resource).Sum(i => i.Amount);
     /// <summary>The capital, or the oldest city when the player has no capital building.</summary>
     private static City? Root(Simulation sim, int player)
     {
@@ -330,22 +324,49 @@ internal sealed partial class DiplomacyService
             ?? new Dictionary<string, int>();
         bool rooted = false;
         CityGroups? groups = null;
+        var flows = ResourceFlows(sim, player);
         foreach (var resource in resources.Distinct(StringComparer.Ordinal))
         {
             long own = connected.GetValueOrDefault(resource);
-            long physical = Exports(sim, player, resource) == 0 ? own
-                : Math.Min(own, Remaining(sim, player, target, resource, groups ??= new CityGroups(sim, player)));
-            long imports = Imports(sim, player, resource);
+            long exports = flows.Exports.GetValueOrDefault(resource);
+            long physical = exports == 0 ? own
+                : Math.Min(own, Remaining(target, resource, exports, groups ??= new CityGroups(sim, player, (city, connected))));
+            long imports = flows.Imports.GetValueOrDefault(resource);
             if (imports == 0) { result[resource] = physical; continue; }
             if (!rooted) rooted = ConnectedToRoot(sim, player, target);
             result[resource] = rooted ? physical + imports : physical;
         }
         return result;
     }
-    /// <summary>Exports leave the empire pool in group order. Returns the copies that stay in the target's group.</summary>
-    private static long Remaining(Simulation sim, int player, City target, string resource, CityGroups layout)
+    private static readonly Dictionary<string, long> NoFlow = new(StringComparer.Ordinal);
+    /// <summary>The player's resource exports (from every live deal) and imports (arriving from the other side of each
+    /// live deal the player takes part in) by resource, in one pass over the deals.</summary>
+    private static (IReadOnlyDictionary<string, long> Exports, IReadOnlyDictionary<string, long> Imports) ResourceFlows(Simulation sim, int player)
     {
-        long pending = Exports(sim, player, resource);
+        Dictionary<string, long>? exports = null, imports = null;
+        foreach (var deal in Read(sim).Deals)
+        {
+            if (!Live(sim, deal)) continue;
+            bool party = deal.Proposer == player || deal.Recipient == player;
+            foreach (var item in deal.Items)
+            {
+                if (item.Kind != TradeItemKind.Resource) continue;
+                if (item.FromPlayer == player) Add(ref exports, item);
+                else if (party) Add(ref imports, item);
+            }
+        }
+        return (exports ?? NoFlow, imports ?? NoFlow);
+
+        static void Add(ref Dictionary<string, long>? flows, DiplomaticTradeItem item)
+        {
+            flows ??= new(StringComparer.Ordinal);
+            flows[item.ContentId] = flows.GetValueOrDefault(item.ContentId) + item.Amount;
+        }
+    }
+    /// <summary>Exports leave the empire pool in group order. Returns the copies that stay in the target's group.</summary>
+    private static long Remaining(City target, string resource, long exports, CityGroups layout)
+    {
+        long pending = exports;
         foreach (var group in layout.Groups)
         {
             long copies = layout.Copies(group, resource);

@@ -416,6 +416,30 @@ public sealed class DiplomacyRulesTests
     }
 
     [Fact]
+    public void Network_city_groups_equal_the_pairwise_connection_groups_at_peace_and_at_war()
+    {
+        var sim = Scenario(); Meet(sim); Wall(sim);
+        int[] cities = [City(sim, 0, 40).Id, City(sim, 0, 47).Id, City(sim, 1, 43).Id, City(sim, 0, 41).Id,
+            City(sim, 0, 50).Id, City(sim, 1, 52).Id, City(sim, 0, 44).Id];
+        var network = sim.Rules().CityConnections;
+        ICityConnectionService pairwise = new PairwiseConnections(network);
+        void Same(IReadOnlyList<int> ids) =>
+            Assert.Equal(pairwise.Groups(sim, ids).Select(g => g.ToArray()), network.Groups(sim, ids).Select(g => g.ToArray()));
+        int[] own = cities.Where(id => sim.State.CityById(id).Owner == 0).ToArray();
+        Assert.True(pairwise.Groups(sim, own).Count > 1, "The wall must split player 0's cities");
+        Same(own); Same(cities); Same(cities.Reverse().ToArray()); Same([]);
+        Apply(sim, new DeclareWarCommand { Player = 0, Target = 1 });
+        Same(own); Same(cities); Same(cities.Reverse().ToArray());
+    }
+    /// <summary>Only the pair question, so <see cref="ICityConnectionService.Groups"/> runs its default.</summary>
+    private sealed class PairwiseConnections(ICityConnectionService inner) : ICityConnectionService
+    {
+        public bool Connected(Simulation sim, int firstCity, int secondCity) => inner.Connected(sim, firstCity, secondCity);
+        public bool IsTileBlockaded(Simulation sim, TileId tile, int team) => inner.IsTileBlockaded(sim, tile, team);
+        public bool IsCityBlockaded(Simulation sim, int city) => inner.IsCityBlockaded(sim, city);
+    }
+
+    [Fact]
     public void Declaring_war_consumes_the_victims_defensive_pacts()
     {
         var sim = Scenario(); Meet(sim, 0, 1); Meet(sim, 1, 2);

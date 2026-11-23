@@ -51,6 +51,20 @@ public interface IResourceNetwork
 public interface ICityConnectionService
 {
     bool Connected(Simulation sim, int firstCity, int secondCity);
+    /// <summary>The cities split into groups in their given order: a city joins the first group whose first member is
+    /// <see cref="Connected"/> to it, otherwise it starts a group. The default asks <see cref="Connected"/> pair by
+    /// pair; the network answers with one flood per group.</summary>
+    IReadOnlyList<IReadOnlyList<int>> Groups(Simulation sim, IReadOnlyList<int> cities)
+    {
+        var groups = new List<List<int>>();
+        foreach (int city in cities)
+        {
+            var group = groups.FirstOrDefault(g => Connected(sim, g[0], city));
+            if (group is null) groups.Add([city]);
+            else group.Add(city);
+        }
+        return groups;
+    }
     bool IsTileBlockaded(Simulation sim, TileId tile, int team);
     bool IsCityBlockaded(Simulation sim, int city);
 }

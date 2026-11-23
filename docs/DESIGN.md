@@ -1380,7 +1380,10 @@ Natural spread runs immediately before the city post-production phase. All rando
 use the simulation RNG.
 
 World supplies `ICityConnectionService` for physical routes, river trade, and unlocked
-water trade. Distance uses hex distance and the hex map diameter. Religion age uses
+water trade. Its `Groups` splits cities into connected groups, each city joining the first
+group whose first member reaches it; the default asks `Connected` pair by pair, and the
+network answers with one flood per group. Deal resource accounting groups a player's
+cities this way. Distance uses hex distance and the hex map diameter. Religion age uses
 elapsed turns.
 
 Religion mechanics:
