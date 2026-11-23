@@ -46,15 +46,17 @@ public sealed class SimulationProfiler
     public readonly record struct Entry(ProfileKind Kind, string Id, long Calls, double Milliseconds, long AllocatedBytes);
 
     /// <summary>What one turn cost: wall time since the previous sample, the turn systems' and the AI waves' share of
-    /// it, managed bytes allocated, gen-2 collections, and the size of the game afterwards.</summary>
+    /// it, managed bytes allocated, time the garbage collector paused the process, gen-2 collections, and the size of
+    /// the game afterwards.</summary>
     public readonly record struct TurnSample(int Turn, double WallMs, double SystemsMs, double AiMs, long AllocatedBytes,
-        int Gen2Collections, int Cities, int Units);
+        double GcPauseMs, int Gen2Collections, int Cities, int Units);
 
     private readonly ConcurrentDictionary<(ProfileKind, string), Counter> _counters = new();
     private readonly List<TurnSample> _turns = new();
     private readonly List<(int Turn, ProfileKind Kind, string Id, long Calls, double Ms, long Bytes)> _turnEntries = new();
     private long _turnStart = Stopwatch.GetTimestamp(), _turnAllocated = GC.GetTotalAllocatedBytes(), _runStart = Stopwatch.GetTimestamp();
     private int _turnGen2 = GC.CollectionCount(2);
+    private TimeSpan _turnPause = GC.GetTotalPauseDuration();
 
     /// <summary>A profiler when <c>ARIEL_PROFILE</c> names an output directory, else null. Hosts that offer
     /// profiling read it so one switch works for every tool.</summary>
@@ -88,6 +90,7 @@ public sealed class SimulationProfiler
     {
         long now = Stopwatch.GetTimestamp(), allocated = GC.GetTotalAllocatedBytes();
         int gen2 = GC.CollectionCount(2);
+        var pause = GC.GetTotalPauseDuration();
         long systems = 0, ai = 0;
         foreach (var c in _counters.Values)
         {
@@ -100,8 +103,8 @@ public sealed class SimulationProfiler
             else if (c.Kind == ProfileKind.Kernel && c.Id == AiWaves) ai += dt;
         }
         _turns.Add(new TurnSample(sim.State.Turn, Ms(now - _turnStart), Ms(systems), Ms(ai), allocated - _turnAllocated,
-            gen2 - _turnGen2, sim.State.Cities.Count, sim.State.Units.Count));
-        _turnStart = now; _turnAllocated = allocated; _turnGen2 = gen2;
+            (pause - _turnPause).TotalMilliseconds, gen2 - _turnGen2, sim.State.Cities.Count, sim.State.Units.Count));
+        _turnStart = now; _turnAllocated = allocated; _turnGen2 = gen2; _turnPause = pause;
     }
 
     /// <summary>The kernel entry that times whole AI waves (<see cref="Simulation.RunAi"/>), wall time.</summary>
@@ -114,13 +117,14 @@ public sealed class SimulationProfiler
         double wall = Ms(Stopwatch.GetTimestamp() - _runStart);
         var inv = CultureInfo.InvariantCulture;
         sb.AppendLine(inv, $"Profile: {_turns.Count} turns, {wall / 1000:F1} s since the profiler started, " +
-                           $"{_turns.Sum(t => t.AllocatedBytes) / 1048576.0:F0} MiB allocated over the recorded turns");
+                           $"{_turns.Sum(t => t.AllocatedBytes) / 1048576.0:F0} MiB allocated and " +
+                           $"{_turns.Sum(t => t.GcPauseMs) / 1000:F1} s of collector pauses over the recorded turns");
         if (_turns.Count > 0)
         {
             sb.AppendLine();
-            sb.AppendLine("  turn    wall ms  systems ms     ai ms  alloc MiB  gen2  cities  units");
+            sb.AppendLine("  turn    wall ms  systems ms     ai ms  alloc MiB  gc ms  gen2  cities  units");
             foreach (var t in CurveTurns())
-                sb.AppendLine(inv, $"{t.Turn,6} {t.WallMs,10:F1} {t.SystemsMs,11:F1} {t.AiMs,9:F1} {t.AllocatedBytes / 1048576.0,10:F1} {t.Gen2Collections,5} {t.Cities,7} {t.Units,6}");
+                sb.AppendLine(inv, $"{t.Turn,6} {t.WallMs,10:F1} {t.SystemsMs,11:F1} {t.AiMs,9:F1} {t.AllocatedBytes / 1048576.0,10:F1} {t.GcPauseMs,6:F1} {t.Gen2Collections,5} {t.Cities,7} {t.Units,6}");
         }
         sb.AppendLine();
         sb.AppendLine("Inclusive time by entry, summed over every thread it ran on. Turn systems and the kernel's wave");
@@ -150,9 +154,9 @@ public sealed class SimulationProfiler
         var totals = new StringBuilder("kind,id,calls,ms,allocated_bytes\n");
         foreach (var e in Entries()) totals.AppendLine(inv, $"{e.Kind},{e.Id},{e.Calls},{e.Milliseconds:F3},{e.AllocatedBytes}");
         File.WriteAllText(Path.Combine(directory, "totals.csv"), totals.ToString());
-        var turns = new StringBuilder("turn,wall_ms,systems_ms,ai_ms,allocated_bytes,gen2,cities,units\n");
+        var turns = new StringBuilder("turn,wall_ms,systems_ms,ai_ms,allocated_bytes,gc_pause_ms,gen2,cities,units\n");
         foreach (var t in _turns)
-            turns.AppendLine(inv, $"{t.Turn},{t.WallMs:F3},{t.SystemsMs:F3},{t.AiMs:F3},{t.AllocatedBytes},{t.Gen2Collections},{t.Cities},{t.Units}");
+            turns.AppendLine(inv, $"{t.Turn},{t.WallMs:F3},{t.SystemsMs:F3},{t.AiMs:F3},{t.AllocatedBytes},{t.GcPauseMs:F3},{t.Gen2Collections},{t.Cities},{t.Units}");
         File.WriteAllText(Path.Combine(directory, "turns.csv"), turns.ToString());
         var entries = new StringBuilder("turn,kind,id,calls,ms,allocated_bytes\n");
         foreach (var (turn, kind, id, calls, ms, bytes) in _turnEntries) entries.AppendLine(inv, $"{turn},{kind},{id},{calls},{ms:F3},{bytes}");
