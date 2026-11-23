@@ -25,6 +25,10 @@ public sealed class RevolutionMod : IPreparableMod
         context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new RevolutionNotices());
         context.RegisterService<IModifierSource>("unrest", service);
         context.RegisterStateComponent<RevolutionCityState>("city_state");
+        // A city's instability, revolt turns and last update are read by Revolution's own steps and planners; the one
+        // modifier source that reads them sees only whether the city mutinies, and the instability step widens before
+        // that changes (RevolutionService.Update).
+        context.RegisterPrivateStateDomain("instability", "Cities/*/Extensions/revolution:city_state");
         context.RegisterCommand<SuppressRebellionCommand>("suppress_rebellion");
         context.RegisterService<ITimerKind>("rebellion_cooldown", new TimerKind(RevolutionService.CooldownKind));
         // Another rebellion or incited revolt prolongs unrest under way; a conquest ends it.
@@ -74,6 +78,8 @@ internal sealed class InstabilityTurns(RevolutionService service) : IPlayerTurnS
 {
     public string Id => "revolution:instability";
     public int Order => TurnPhase.PlayerEnd + 1;
+    public IReadOnlyList<string>? WriteDomains => Instability;
+    private static readonly IReadOnlyList<string> Instability = ["revolution:instability"];
     public void Run(Simulation sim, int player)
     {
         if (!PlayerRules.IsNation(sim, player)) return;

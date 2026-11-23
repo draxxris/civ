@@ -135,6 +135,8 @@ internal sealed partial class ReligionService
             var odds = NaturalSpreadOdds(sim, turn, city.Id, religion.Id);
             if (odds.Threshold <= 0) continue;
             if (sim.Rng.Next(odds.RandomRange) >= odds.Threshold) continue;
+            // A faith that arrives is a write beyond a narrow declaration (ReligionTurns).
+            sim.WidenWriteWindow();
             ReligionData.Add(sim, city, religion.Id);
             break;
         }

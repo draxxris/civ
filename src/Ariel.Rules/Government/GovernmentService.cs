@@ -107,10 +107,14 @@ internal sealed class GovernmentTimers : IPlayerTurnSystem
 {
     public string Id => "government:timers";
     public int Order => TurnPhase.PlayerEnd;
+    public IReadOnlyList<string>? WriteDomains => Timers;
+    private static readonly IReadOnlyList<string> Timers = ["government:timers"];
     public void Run(Simulation sim, int player)
     {
         var state = sim.State.PlayerById(player).Extensions.Get<GovernmentPlayerState>(sim.Content);
         if (state is null) return;
+        // The step declares only the private timers: the end of anarchy is a write beyond them.
+        if (state.AnarchyTurns == 1) sim.WidenWriteWindow();
         state.AdvanceTurn();
     }
     public void Run(Simulation sim) { foreach (var player in sim.State.Players.OrderBy(p => p.Id)) Run(sim, player.Id); }

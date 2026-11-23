@@ -128,22 +128,27 @@ internal static class CityData
         .Where(l => sim.Content.Requirements.Evaluate(l.Requirements, new RequirementContext(sim, player, city)).Success)
         .OrderBy(l => l.SpeedThresholds[sim.Settings.GameSpeed]).ThenBy(l => l.Id, StringComparer.Ordinal).ToArray();
     internal static int LevelIndex(Simulation sim, City city) => LevelIndex(sim, city, Levels(sim, city.Owner, city));
-    internal static int LevelIndex(Simulation sim, City city, IReadOnlyList<S.CultureLevelDef> levels)
+    internal static int LevelIndex(Simulation sim, City city, IReadOnlyList<S.CultureLevelDef> levels) => LevelIndex(sim, levels, city.Culture);
+    /// <summary>The index among <paramref name="levels"/> of the level a city with <paramref name="culture"/> points has.</summary>
+    internal static int LevelIndex(Simulation sim, IReadOnlyList<S.CultureLevelDef> levels, long culture)
     {
         int result = 0;
         for (int i = 0; i < levels.Count; i++)
-            if (city.Culture >= levels[i].SpeedThresholds[sim.Settings.GameSpeed]) result = i;
+            if (culture >= levels[i].SpeedThresholds[sim.Settings.GameSpeed]) result = i;
         return result;
     }
     internal static S.CultureLevelDef Level(Simulation sim, City city) => CityReadScope.Run(sim, scope => CityReadScope.Memo(scope.Level, city,
         () => Levels(sim, city.Owner, city)[LevelIndex(sim, city)]));
 }
 
-/// <summary>Reusable ordered player/city phase adapter; calculations remain in small owning services.</summary>
-internal sealed class CityPhase(string name, int order, Action<Simulation, City> run) : IPlayerTurnSystem
+/// <summary>Reusable ordered player/city phase adapter; calculations remain in small owning services. A phase that
+/// names the state domains its step writes (<see cref="ITurnSystem.WriteDomains"/>) lets kept modifier contributions
+/// survive it; null writes anything.</summary>
+internal sealed class CityPhase(string name, int order, Action<Simulation, City> run, IReadOnlyList<string>? writes = null) : IPlayerTurnSystem
 {
     public string Id => "cities:" + name;
     public int Order => order;
+    public IReadOnlyList<string>? WriteDomains => writes;
     public void Run(Simulation sim, int player)
     {
         foreach (var city in CityData.Owned(sim, player).ToArray()) run(sim, city);

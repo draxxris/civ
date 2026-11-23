@@ -26,6 +26,8 @@ public sealed class EspionageMod : IPreparableMod
         context.RegisterService<IEspionageService>("espionage", service);
         context.RegisterStateComponent<EspionageTeamState>("team_state");
         context.RegisterStateComponent<EspionagePlayerState>("player_state");
+        // Espionage points and remainders are read by Espionage's own rules and planners, never by a modifier source.
+        context.RegisterPrivateStateDomain("points", "Players/*/Extensions/espionage:player_state", "Teams/*/Extensions/espionage:team_state");
         context.RegisterCommand<SetEspionageWeightCommand>("set_weight");
         // Fomenting again restarts the unrest, and a new counter-espionage restarts its protection. Both, and a spy's
         // revolt, end if the city changes hands, as the Espionage state of a conquered city always did.
@@ -89,6 +91,8 @@ internal sealed class SpyAllocation(EspionageService service) : IPlayerTurnSyste
     /// <summary>One slot after the economy's espionage phase (<see cref="TurnPhase.Espionage"/>), which banks the output
     /// only when no feature spends it.</summary>
     public int Order => TurnPhase.Espionage + 1;
+    public IReadOnlyList<string>? WriteDomains => Points;
+    private static readonly IReadOnlyList<string> Points = ["espionage:points"];
     public void Run(Simulation sim, int player) => service.Allocate(sim, player);
 }
 

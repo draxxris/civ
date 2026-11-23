@@ -39,6 +39,9 @@ public sealed class GreatPeopleMod : IPreparableMod
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new GreatPersonAiPlanner());
         context.RegisterStateComponent<GreatPeopleCityState>("city_state");
         context.RegisterStateComponent<GreatPeoplePlayerState>("player_state");
+        // Only the births step spends a city's progress and class points; no modifier source reads them.
+        context.RegisterPrivateStateDomain("progress", "Cities/*/Extensions/great_people:city_state/Progress",
+            "Cities/*/Extensions/great_people:city_state/ClassPoints");
         context.Subscribe<BuildingCompleted>("golden_age_wonder", GoldenAges.Completed);
         context.TurnSystems.Register(new GreatPeopleTurns(service));
         context.TurnSystems.Register(new GoldenAgeTimers());
@@ -50,6 +53,10 @@ internal sealed class GreatPeopleTurns(GreatPeopleService service) : IPlayerTurn
 {
     public string Id => "great_people:births";
     public int Order => TurnPhase.CityPostProduction;
+    /// <summary>A turn adds to cities' progress and class points; a birth, and a city's first record, widen the step
+    /// (<see cref="GreatPeopleService.Run"/>).</summary>
+    public IReadOnlyList<string>? WriteDomains => Progress;
+    private static readonly IReadOnlyList<string> Progress = ["great_people:progress"];
     public void Run(Simulation sim, int player)
     {
         foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)) service.Run(sim, city);

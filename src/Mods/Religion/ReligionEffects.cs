@@ -6,6 +6,8 @@ namespace Ariel.Mods.Religion;
 
 internal sealed class ReligionEffects : IModifierSource
 {
+    /// <summary>Religion effects follow faiths, civics, traits and running buildings, never a turn's tallies.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(CityStateDomains.Tallies, content);
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         var sim = context.Sim;

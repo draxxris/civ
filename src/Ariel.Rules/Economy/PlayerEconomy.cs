@@ -238,10 +238,11 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
     }
 }
 
-internal sealed class EconomyPhase(string name, int order, Action<Simulation, int> run) : IPlayerTurnSystem
+internal sealed class EconomyPhase(string name, int order, Action<Simulation, int> run, IReadOnlyList<string>? writes = null) : IPlayerTurnSystem
 {
     public string Id => "economy:" + name;
     public int Order => order;
+    public IReadOnlyList<string>? WriteDomains => writes;
     public void Run(Simulation sim, int player) => run(sim, player);
     public void Run(Simulation sim) { foreach (var player in sim.State.Players.OrderBy(p => p.Id)) run(sim, player.Id); }
 }

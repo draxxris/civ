@@ -19,6 +19,9 @@ public sealed class ResearchModule : IPreparableMod
         context.RegisterService<ITechTreePresentation>("tech_tree", new TechTreePresentation());
         context.RegisterService<ISetupPolicy>("setup", new TechTreeSetupPolicy());
         context.RegisterStateComponent<ResearchTeamState>("team_state");
+        // Research progress, the current choice and the research state are read by Research's own rules and planners,
+        // never by a modifier source; a discovery widens the research step (ResearchService.Discover).
+        context.RegisterPrivateStateDomain("progress", "Teams/*/Research", "Teams/*/Researching", "Teams/*/Extensions/research:team_state");
         context.RegisterCommand<SetTeamResearchCommand>("set_research");
         context.TurnSystems.Register(new ResearchPhase(research));
     }

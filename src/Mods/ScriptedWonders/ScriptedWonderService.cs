@@ -8,9 +8,10 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
 {
     private static IEnumerable<WonderScriptDef> Rules(Simulation sim) => sim.Content.Get<WonderScriptDef>().All;
 
-    /// <summary>Wonder scripts follow buildings, culture and units, never who works a city's plots or what it is
-    /// building, as a modifier source and as a building grant provider.</summary>
-    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.WorkAndQueue;
+    /// <summary>Wonder scripts follow buildings, civics, plots and units, never who works a city's plots, what it is
+    /// building or a turn's tallies (<see cref="CityStateDomains.Tallies"/>), as a modifier source (of unit
+    /// calculations only) and as a building grant provider.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.Tallies;
 
     public bool IsActive(Simulation sim, int cityId, string building)
     {
@@ -88,7 +89,12 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
     internal void Tick(Simulation sim, City city)
     {
         foreach (var rule in Rules(sim).Where(r => IsActive(sim, city.Id, r.Building) && CompletionPending(sim, city, r)).ToArray())
+        {
+            // The step declares only the scripts' private progress: a completion's units, culture and buildings are
+            // writes beyond it.
+            sim.WidenWriteWindow();
             ApplyCompletion(sim, city, rule);
+        }
         foreach (var rule in Rules(sim).Where(r => r.IntervalTurns > 0 && IsActive(sim, city.Id, r.Building)))
         {
             var progress = Edit(sim, city, rule.Building);
@@ -98,6 +104,7 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
             int interval = Interval(sim, rule);
             if (progress.ElapsedTurns < interval) continue;
             progress.ElapsedTurns -= interval;
+            sim.WidenWriteWindow();
             sim.Rules().Units.Create(sim, city.Owner, rule.Unit!, city.Position);
             Effect(sim, city, rule, "periodic_unit", 1);
         }

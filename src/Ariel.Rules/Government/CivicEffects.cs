@@ -10,6 +10,14 @@ namespace Ariel.Rules.Government;
 internal sealed class CivicEffects : IModifierSource
 {
     private static readonly string[] AllSpecialistKeys = SpecialistKeys("all");
+    // Civics read populations (the largest cities), plot owners and the work area, which follows the culture level alone.
+    private static readonly IReadOnlyList<string> Unread =
+        [CityStateDomains.Work, CityStateDomains.Queue, CityStateDomains.Culture, CityStateDomains.PlotCulture, CityStateDomains.Production,
+            EconomyStateDomains.Treasury];
+
+    /// <summary>Civic effects follow civics, buildings, units, plots, the work area and city sizes, never who works a
+    /// city, what it builds, its culture points beyond its level, its production bookkeeping or the treasury.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(Unread, content);
 
     public void Contribute(ModifierContext context, ModifierSink sink)
     {

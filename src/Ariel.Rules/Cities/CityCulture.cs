@@ -12,6 +12,9 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
         long rate = Rate(sim, city);
         state.LastCultureRateHundredths = rate;
         long total = state.CultureRemainder + rate;
+        // The step declares only culture points; a new culture level (a wider work area) is a write beyond them.
+        var levels = CityData.Levels(sim, city.Owner, city);
+        if (CityData.LevelIndex(sim, levels, city.Culture + total / 100) != CityData.LevelIndex(sim, levels, city.Culture)) sim.WidenWriteWindow();
         city.Culture += total / 100;
         state.CultureRemainder = total % 100;
         state.CultureHundredths[city.Owner] = city.Culture * 100 + state.CultureRemainder;
@@ -170,9 +173,11 @@ internal sealed class CityCulture(ICityYieldService yields, ICityWorkService wor
     private static bool Resolve(Simulation sim, TileId tile, CultureRanges ranges)
     {
         var plot = sim.State.Plots[tile.Value];
-        int? before = plot.Owner;
-        plot.Owner = Owner(sim, tile, plot, ranges);
-        if (plot.Owner == before) return false;
+        int? before = plot.Owner, owner = Owner(sim, tile, plot, ranges);
+        if (owner == before) return false;
+        // The spread step declares only plot culture; a new owner is a write beyond it.
+        sim.WidenWriteWindow();
+        plot.Owner = owner;
         ranges.OwnerChanged(before, plot.Owner);
         return true;
     }

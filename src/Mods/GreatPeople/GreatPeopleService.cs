@@ -80,6 +80,8 @@ internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeople
     {
         if (GovernmentStatus.IsDisorder(sim, city)) return;
         var result = Calculate(sim, city.Id);
+        // The births step declares only progress and class points: a city's first record is a write beyond them.
+        if (city.Extensions.TryGet<GreatPeopleCityState>(sim.Content) is null) sim.WidenWriteWindow();
         var state = GreatPeopleData.Edit(sim, city);
         state.Progress += result.Rate;
         foreach (var line in result.Ledger.Lines.Where(l => l.Key.StartsWith("great_people:class:", StringComparison.Ordinal)))
@@ -103,6 +105,9 @@ internal sealed class GreatPeopleService : IGreatPeopleService, ICityGreatPeople
     }
     private static void Birth(Simulation sim, City city, string unitClass)
     {
+        // A birth writes far beyond the births step's declared progress: a unit, thresholds and whatever the event's
+        // subscribers do.
+        sim.WidenWriteWindow();
         string type = GreatPeopleData.ResolveUnit(sim, city.Owner, unitClass)!;
         var unit = sim.Rules().Units.Create(sim, city.Owner, type, city.Position);
         var player = GreatPeopleData.Edit(sim, city.Owner);

@@ -39,6 +39,8 @@ public sealed class ReligionMod : IPreparableMod
         context.RegisterService<IModifierSource>("effects", new ReligionEffects());
         context.RegisterStateComponent<ReligionCityState>("city_state");
         context.RegisterStateComponent<ReligionPlayerState>("player_state");
+        // Only Religion's own commands and planners read the conversion timer.
+        context.RegisterPrivateStateDomain("conversion", "Players/*/Extensions/religion:player_state/ConversionTimer");
         context.RegisterStateComponent<ReligionGameState>("game_state");
         context.RegisterCommand<SetStateReligionCommand>("set_state_religion");
         context.RegisterService<IMission>("inquisition", new InquisitionMission(service));
@@ -85,6 +87,9 @@ internal sealed class ReligionTurns(ReligionService service) : IPlayerTurnSystem
 {
     public string Id => "religion:city_turns";
     public int Order => TurnPhase.CityPostProduction - 1;
+    /// <summary>A turn counts down the conversion timer; a faith that spreads or decays widens the step.</summary>
+    public IReadOnlyList<string>? WriteDomains => Conversion;
+    private static readonly IReadOnlyList<string> Conversion = ["religion:conversion"];
     public void Run(Simulation sim, int player)
     {
         var spread = service.BeginSpreadTurn(sim);

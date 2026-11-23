@@ -225,7 +225,7 @@ public sealed class FoundCityWithSettlerCommand : GameCommand
     public override string? Validate(Simulation sim) => sim.Rules().CityCommands.ValidateFound(sim, Player, Settler);
     public override void Apply(Simulation sim) => sim.Rules().CityCommands.Found(sim, Player, Settler);
 }
-/// <summary>The Cities module's state domains (<see cref="Ariel.Content.StateDomain"/>): what its writers declare and
+/// <summary>The Cities module's state domains (<see cref="StateDomain"/>): what its writers declare and
 /// what readers that never read them may name.</summary>
 public static class CityStateDomains
 {
@@ -233,8 +233,46 @@ public static class CityStateDomains
     public const string Work = "cities:work";
     /// <summary>A city's production orders: its queue, the next order id and the progress kept for paused orders.</summary>
     public const string Queue = "cities:queue";
+    /// <summary>A city's size: its stored and kept food, its population and the highest it has reached.</summary>
+    public const string Growth = "cities:growth";
+    /// <summary>A city's culture points: its culture, the hundredths carried over, last turn's rate and the points
+    /// each player has earned in it. A reader may depend on them through the city's culture level alone and still
+    /// count this domain as unread, because every writer that declares this domain widens its window
+    /// (<see cref="Simulation.WidenWriteWindow"/>) before the level changes.</summary>
+    public const string Culture = "cities:culture";
+    /// <summary>A city's production bookkeeping between the production and completion steps: the order due to complete,
+    /// the overflow and the production granted by cleared features.</summary>
+    public const string Production = "cities:production";
+    /// <summary>The culture every player has spread on each plot. A reader may depend on it through plot owners alone
+    /// and still count this domain as unread, because every writer that declares this domain widens its window before
+    /// a plot changes owner.</summary>
+    public const string PlotCulture = "cities:plot_culture";
+    /// <summary>A city's conscription anger turns.</summary>
+    public const string ConscriptAnger = "cities:conscript_anger";
+    /// <summary>A city's occupation turns: private, read by rules and sources only through whether the city is in
+    /// disorder (<see cref="GovernmentStatus.IsDisorder"/>), which every writer that declares it widens before
+    /// changing.</summary>
+    public const string Occupation = "cities:occupation";
     /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
-    public static readonly IReadOnlyList<string> WorkOnly = [Work], QueueOnly = [Queue], WorkAndQueue = [Work, Queue];
+    public static readonly IReadOnlyList<string> WorkOnly = [Work], QueueOnly = [Queue], WorkAndQueue = [Work, Queue],
+        GrowthAndWork = [Growth, Work], CultureOnly = [Culture], ProductionWrites = [Production, Queue, EconomyStateDomains.Treasury],
+        BordersWrites = [PlotCulture, Work], ConscriptAngerOnly = [ConscriptAnger], OccupationOnly = [Occupation];
+    /// <summary>The domains a rule that follows a city's buildings, techs, civics, resources, holdings and grants never
+    /// reads: who works the city and what it builds, and the tallies a turn counts up and down (food and population,
+    /// culture points in cities and on plots, production bookkeeping, conscription and hurry anger, the treasury). Culture points count as unread for a
+    /// reader that sees them only through the culture level (<see cref="Culture"/>) or plot owners
+    /// (<see cref="PlotCulture"/>). The building seams (<see cref="ICityResourceSupply"/>,
+    /// <see cref="IFreeBuildingGrants"/>) bind their implementations to this by default, so every rule that resolves a
+    /// city's running buildings may declare it (<see cref="UnreadThroughBuildings"/>).</summary>
+    public static readonly IReadOnlyList<string> Tallies = [Work, Queue, Growth, Culture, PlotCulture, Production, ConscriptAnger,
+        EconomyStateDomains.HurryAnger, EconomyStateDomains.Treasury];
+
+    /// <summary>What a reader that resolves cities' running buildings or resource counts may declare unread, given its
+    /// own list: the part of <paramref name="own"/> that every resource supplier and building grant provider also
+    /// declares (<see cref="StateDomainRegistry.UnreadByAll"/>).</summary>
+    public static IReadOnlyList<string> UnreadThroughBuildings(IReadOnlyList<string> own, ContentDb content) =>
+        StateDomainRegistry.UnreadByAll(own, content,
+            content.Services.Get<ICityResourceSupply>().Concat<object>(content.Services.Get<IFreeBuildingGrants>()));
 }
 
 public sealed class SetCityAssignmentsCommand : GameCommand

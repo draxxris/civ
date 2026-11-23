@@ -50,6 +50,8 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterStateComponent<CorporationCityState>("city_state");
         context.RegisterStateComponent<CorporationGameState>("game_state");
         context.RegisterStateComponent<CorporationPlayerState>("player_state");
+        // Only the fallback maintenance step reads a player's maintenance remainder.
+        context.RegisterPrivateStateDomain("maintenance", "Players/*/Extensions/corporations:player_state");
         context.RegisterService<IBuildingFounder>("headquarters", new CorporationFounder(service));
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>("headquarters_valuer", new HeadquartersValuer());
         context.RegisterService<IMission>("spread", new SpreadCorporationMission(service));
@@ -116,6 +118,8 @@ internal sealed class CorporationMaintenance(ICorporationService service) : IPla
 {
     public string Id => "corporations:maintenance";
     public int Order => TurnPhase.Economy + 1;
+    public IReadOnlyList<string>? WriteDomains => Writes;
+    private static readonly IReadOnlyList<string> Writes = ["corporations:maintenance", EconomyStateDomains.Treasury];
     public void Run(Simulation sim, int player)
     {
         var owner = sim.State.PlayerById(player);

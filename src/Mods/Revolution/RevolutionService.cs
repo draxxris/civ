@@ -117,6 +117,12 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         var state = Edit(sim, city);
         if (state.LastUpdatedTurn == sim.State.Turn) return;
         long change = DescribeCityStability(sim, city.Id).ChangePerTurn;
+        // The instability step declares only Revolution's private city state, which modifier sources see only through
+        // the mutiny tier (Contribute): a city that starts or stops mutinying is a write beyond it.
+        var rules = Rules(sim);
+        bool mutiny = Status(state.InstabilityIndex, rules) >= CityStabilityStatus.Mutiny;
+        int next = (int)Math.Clamp(state.InstabilityIndex + change, 0, int.MaxValue);
+        if ((Status(next, rules) >= CityStabilityStatus.Mutiny) != mutiny) sim.WidenWriteWindow();
         state.RecordInstabilityChange(change, sim.State.Turn);
     }
 
@@ -223,6 +229,8 @@ internal sealed class RevolutionService : IRevolutionService, IModifierSource
         RebellionSpawns.Trigger(sim, city, rules);
     }
 
+    /// <summary>Reads the private instability domain only through the mutiny tier, which every writer that declares the
+    /// domain widens before changing (<see cref="Update"/>).</summary>
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;

@@ -59,6 +59,8 @@ internal sealed class PeoplesService : IPeoplesService
 
 internal sealed class TraitEffects(IPeoplesService peoples) : IModifierSource
 {
+    /// <summary>Trait effects follow traits, buildings, civics, resources and plots, never a turn's tallies.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(CityStateDomains.Tallies, content);
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         foreach (var trait in peoples.Traits(context.Sim, context.Player))

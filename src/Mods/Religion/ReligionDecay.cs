@@ -74,6 +74,8 @@ internal sealed partial class ReligionService
         {
             int threshold = DecayThreshold(sim, city, religion, turn);
             if (threshold <= 0 || sim.Rng.Next(DecayRange(sim)) >= threshold) continue;
+            // A faith that leaves a city is a write beyond a narrow declaration (ReligionTurns).
+            sim.WidenWriteWindow();
             foreach (var building in ReligionData.InvalidatedBuildings(sim, city, [religion])) city.Buildings.Remove(building.Id);
             ReligionData.Remove(sim, city, religion, "decay");
             turn?.Forget(city);

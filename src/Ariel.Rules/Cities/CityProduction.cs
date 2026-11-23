@@ -144,6 +144,9 @@ internal sealed class CityProduction(ICityYieldService yields, ICityGrowthServic
     {
         var state = CityData.Edit(sim, city);
         if (state.PendingCommit is not { } commit) return;
+        // The completion step declares only production bookkeeping, the queue and the treasury: what an order
+        // completes (a building, a unit, a project) is a write beyond them.
+        sim.WidenWriteWindow();
         state.PendingCommit = null;
         var order = commit.Order;
         // Earlier city completions may consume a global/team/player class limit.

@@ -28,6 +28,15 @@ public sealed class CitiesModule : IPreparableMod
             "Cities/*/Extensions/cities:city_state/ManualWork", "Cities/*/Extensions/cities:city_state/AvoidGrowth");
         context.RegisterStateDomain("queue", "Cities/*/ProductionQueue", "Cities/*/NextOrderId",
             "Cities/*/Extensions/cities:city_state/PausedProduction");
+        context.RegisterStateDomain("growth", "Cities/*/FoodStored", "Cities/*/Population",
+            "Cities/*/Extensions/cities:city_state/FoodKept", "Cities/*/Extensions/cities:city_state/HighestPopulation");
+        context.RegisterStateDomain("culture", "Cities/*/Culture", "Cities/*/Extensions/cities:city_state/CultureRemainder",
+            "Cities/*/Extensions/cities:city_state/LastCultureRateHundredths", "Cities/*/Extensions/cities:city_state/CultureHundredths");
+        context.RegisterStateDomain("plot_culture", "Plots/*/Culture");
+        context.RegisterStateDomain("conscript_anger", "Cities/*/Extensions/cities:city_state/ConscriptAngerTurns");
+        context.RegisterPrivateStateDomain("occupation", "Cities/*/Extensions/cities:city_state/OccupationTurns");
+        context.RegisterStateDomain("production", "Cities/*/Extensions/cities:city_state/PendingCommit",
+            "Cities/*/Extensions/cities:city_state/Overflow", "Cities/*/Extensions/cities:city_state/FeatureProduction");
         context.RegisterService<ICityAppearanceService>("city_appearance", new CityAppearanceService());
         context.RegisterService<ICityBuildingService>("building_state", new CityBuildingService());
         context.RegisterService<IModifierSource>("buildings", new BuildingEffects());
@@ -68,16 +77,16 @@ public sealed class CitiesModule : IPreparableMod
         context.RegisterCommand<ConscriptCityCommand>("conscript");
         context.RegisterCommand<ResolveCityConquestCommand>("resolve_conquest");
         context.TurnSystems.Register(new CityPhase("puppet_work", TurnPhase.PlayerBegin, PreparePuppet));
-        context.TurnSystems.Register(new CityPhase("conquest_timers", TurnPhase.PlayerEnd, SettleConquest));
+        context.TurnSystems.Register(new CityPhase("conquest_timers", TurnPhase.PlayerEnd, SettleConquest, CityStateDomains.OccupationOnly));
         context.TurnSystems.Register(new ConscriptPlayerPhase("reset_drafts", TurnPhase.PlayerBegin, CityConscript.ResetDrafts));
         context.TurnSystems.Register(new CityPhase("defense_recovery", TurnPhase.PlayerBegin + 1, RecoverDefense));
-        context.TurnSystems.Register(new ConscriptPlayerPhase("conscript_anger", TurnPhase.PlayerEnd, CityConscript.DecayAnger));
+        context.TurnSystems.Register(new ConscriptPlayerPhase("conscript_anger", TurnPhase.PlayerEnd, CityConscript.DecayAnger, CityStateDomains.ConscriptAngerOnly));
         context.TurnSystems.Register(new AssignWorkPhase(work));
-        context.TurnSystems.Register(new CityPhase("growth", TurnPhase.CityGrowth, growth.Run));
-        context.TurnSystems.Register(new CityPhase("culture", TurnPhase.CityCulture, culture.Accumulate));
-        context.TurnSystems.Register(new CityPhase("borders", TurnPhase.CityPlotCulture, culture.Spread));
-        context.TurnSystems.Register(new CityPhase("production", TurnPhase.CityProduction, production.Work));
-        context.TurnSystems.Register(new CityPhase("completion", TurnPhase.CityCompletion, production.Complete));
+        context.TurnSystems.Register(new CityPhase("growth", TurnPhase.CityGrowth, growth.Run, CityStateDomains.GrowthAndWork));
+        context.TurnSystems.Register(new CityPhase("culture", TurnPhase.CityCulture, culture.Accumulate, CityStateDomains.CultureOnly));
+        context.TurnSystems.Register(new CityPhase("borders", TurnPhase.CityPlotCulture, culture.Spread, CityStateDomains.BordersWrites));
+        context.TurnSystems.Register(new CityPhase("production", TurnPhase.CityProduction, production.Work, CityStateDomains.ProductionWrites));
+        context.TurnSystems.Register(new CityPhase("completion", TurnPhase.CityCompletion, production.Complete, CityStateDomains.ProductionWrites));
         context.TurnSystems.Register(new CityCultureDecayPhase());
         context.Subscribe<TechDiscovered>("era_progression", EraProgression.Discovered);
         context.Subscribe<BuildingCompleted>("founding", BuildingFounding.Completed);
@@ -96,6 +105,9 @@ public sealed class CitiesModule : IPreparableMod
     private static void SettleConquest(Simulation sim, City city)
     {
         var state = CityData.Edit(sim, city);
+        // The step declares only the private occupation turns: the end of an occupation (the city leaves disorder)
+        // and a settled conquest are writes beyond them.
+        if (state.OccupationTurns == 1 || state.Governance == CityGovernance.PendingConquest) sim.WidenWriteWindow();
         state.OccupationTurns = Math.Max(0, state.OccupationTurns - 1);
         if (state.Governance != CityGovernance.PendingConquest) return;
         sim.Rules().CityCommands.ResolveConquestChoice(sim, city.Owner, city.Id, CityConquestOption.Puppet);

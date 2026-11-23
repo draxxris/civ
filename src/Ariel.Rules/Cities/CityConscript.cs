@@ -100,9 +100,10 @@ internal sealed class CityConscript(ICityWorkService work, ICityCultureService c
     }
 }
 
-internal sealed class ConscriptPlayerPhase(string name, int order, Action<Simulation, int> run) : IPlayerTurnSystem
+internal sealed class ConscriptPlayerPhase(string name, int order, Action<Simulation, int> run, IReadOnlyList<string>? writes = null) : IPlayerTurnSystem
 {
     public string Id => "cities:" + name;
     public int Order => order;
+    public IReadOnlyList<string>? WriteDomains => writes;
     public void Run(Simulation sim, int player) => run(sim, player);
 }

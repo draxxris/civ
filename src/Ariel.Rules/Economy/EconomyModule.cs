@@ -27,19 +27,21 @@ public sealed class EconomyModule : IPreparableMod
         context.RegisterService<IModifierSource>("hurry_anger", hurry);
         context.RegisterStateComponent<EconomyPlayerState>("player_state");
         context.RegisterStateComponent<EconomyCityState>("city_state");
+        context.RegisterStateDomain("treasury", "Players/*/Treasury", "Players/*/Extensions/economy:player_state");
+        context.RegisterStateDomain("hurry_anger", "Cities/*/Extensions/economy:city_state");
         context.RegisterCommand<SetCommerceRatesCommand>("set_commerce_rates");
         context.RegisterCommand<HurryCityCommand>("hurry");
         context.Subscribe<BuildingCompleted>("hurry_anger", CityHurry.BuildingCompleted);
-        context.TurnSystems.Register(new EconomyPhase("gold", TurnPhase.Gold, economy.Settle));
+        context.TurnSystems.Register(new EconomyPhase("gold", TurnPhase.Gold, economy.Settle, EconomyStateDomains.TreasuryOnly));
         context.TurnSystems.Register(new EconomyPhase("reconcile_gold", TurnPhase.Map + 2, economy.ReconcileGold));
-        context.TurnSystems.Register(new EconomyPhase("inflation", TurnPhase.Economy, Inflation.Update));
-        context.TurnSystems.Register(new EconomyPhase("anger", TurnPhase.PlayerEnd, CityHurry.DecayAnger));
+        context.TurnSystems.Register(new EconomyPhase("inflation", TurnPhase.Economy, Inflation.Update, EconomyStateDomains.TreasuryOnly));
+        context.TurnSystems.Register(new EconomyPhase("anger", TurnPhase.PlayerEnd, CityHurry.DecayAnger, EconomyStateDomains.HurryAngerOnly));
         context.TurnSystems.Register(new EconomyPhase("espionage", TurnPhase.Espionage, (sim, player) =>
         {
             // A feature that spends espionage banks it itself.
             if (sim.Rules().EspionageSpending is not null) return;
             var state = EconomyData.Edit(sim, player);
             state.EspionageHundredths += economy.EspionageHundredths(sim, player);
-        }));
+        }, EconomyStateDomains.TreasuryOnly));
     }
 }

@@ -23,6 +23,9 @@ public sealed class GovernmentModule : IPreparableMod
         context.RegisterService<IGovernmentService>("civics", new GovernmentService());
         context.RegisterService<IModifierSource>("civics", new CivicEffects());
         context.RegisterStateComponent<GovernmentPlayerState>("player_state");
+        // Rules and modifier sources see a player's anarchy and cooldown timers only through whether anarchy lasts
+        // (GovernmentStatus.IsAnarchy), and the timers step widens before that changes (GovernmentTimers).
+        context.RegisterPrivateStateDomain("timers", "Players/*/Extensions/government:player_state");
         context.RegisterCommand<SetCivicsCommand>("set_civics");
         context.TurnSystems.Register(new GovernmentTimers());
     }

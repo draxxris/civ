@@ -82,7 +82,10 @@ internal sealed class ResearchService : IResearchService
     {
         if (GovernmentStatus.IsAnarchy(sim, player)) return;
         var team = sim.TeamOf(player);
-        foreach (var policy in sim.Content.Services.Get<IResearchSelectionPolicy>()) policy.Refresh(sim, team.Id);
+        var policies = sim.Content.Services.Get<IResearchSelectionPolicy>();
+        // A selection policy keeps state of its own, beyond the research step's declared progress.
+        if (policies.Count > 0) sim.WidenWriteWindow();
+        foreach (var policy in policies) policy.Refresh(sim, team.Id);
         var state = Edit(sim, team);
         SelectNext(sim, player, team, state);
         if (team.Researching is not { } tech) { state.Overflow = checked(state.Overflow + beakers); return; }
@@ -131,6 +134,8 @@ internal sealed class ResearchService : IResearchService
     }
     private static void Discover(Simulation sim, int player, Team team, string tech)
     {
+        // A new technology changes what nearly every rule reads: a write beyond any narrow declaration.
+        sim.WidenWriteWindow();
         var def = sim.Content.Get<TechDef>(tech);
         bool first = !sim.State.Teams.Any(t => t.Techs.Contains(tech));
         var state = Edit(sim, team);
@@ -163,6 +168,8 @@ internal sealed class ResearchPhase(IResearchService research) : IPlayerTurnSyst
 {
     public string Id => "research:progress";
     public int Order => TurnPhase.Research;
+    public IReadOnlyList<string>? WriteDomains => Progress;
+    private static readonly IReadOnlyList<string> Progress = ["research:progress"];
     public void Run(Simulation sim, int player)
     {
         if (GovernmentStatus.IsAnarchy(sim, player)) return;

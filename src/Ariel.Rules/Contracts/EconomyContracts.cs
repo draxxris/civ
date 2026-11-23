@@ -49,6 +49,17 @@ public interface ICityHurryService
     string? Validate(Simulation sim, int player, int city, string hurry);
     void Hurry(Simulation sim, int city, string hurry);
 }
+/// <summary>The Economy module's state domains (<see cref="StateDomain"/>).</summary>
+public static class EconomyStateDomains
+{
+    /// <summary>A player's gold and settlement: the treasury, and the Economy player state (rates, unpaid gold, the last
+    /// settlement, the inflation ratio, hurry and strike counts, banked espionage).</summary>
+    public const string Treasury = "economy:treasury";
+    /// <summary>A city's hurry anger: the Economy city state.</summary>
+    public const string HurryAnger = "economy:hurry_anger";
+    /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
+    public static readonly IReadOnlyList<string> TreasuryOnly = [Treasury], HurryAngerOnly = [HurryAnger];
+}
 public sealed class EconomyPlayerState
 {
     public CommerceVector Rates { get; set; } = new(50, 50, 0, 0);

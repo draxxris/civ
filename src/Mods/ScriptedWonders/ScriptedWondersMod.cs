@@ -24,6 +24,8 @@ public sealed class ScriptedWondersMod : IPreparableMod
         context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new WonderNotices());
         context.RegisterService<IModifierSource>("effects", service);
         context.RegisterStateComponent<ScriptedWonderCityState>("city_state");
+        // Wonder scripts' progress is read only by their own steps; completions and periodic units widen the step.
+        context.RegisterPrivateStateDomain("progress", "Cities/*/Extensions/scripted_wonders:city_state");
         context.Subscribe<BuildingCompleted>("completion", service.Completed);
         context.Subscribe<CombatResolved>("victory", service.Victory);
         context.TurnSystems.Register(new WonderTurns(service));
@@ -38,6 +40,8 @@ internal sealed class WonderTurns(ScriptedWonderService service) : IPlayerTurnSy
 {
     public string Id => "scripted_wonders:city_turns";
     public int Order => TurnPhase.CityPostProduction + 10;
+    public IReadOnlyList<string>? WriteDomains => Progress;
+    private static readonly IReadOnlyList<string> Progress = ["scripted_wonders:progress"];
     public void Run(Simulation sim, int player)
     {
         foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id).ToArray()) service.Tick(sim, city);
