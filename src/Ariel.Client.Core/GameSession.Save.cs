@@ -66,6 +66,7 @@ public sealed partial class GameSession
     {
         AbandonTurnWork();
         Sim = sim;
+        Sim.AiWaveLimit = AiWaveLimit;
         Sim.DeferTurnWork = BackgroundTurns;
         _ordersTurn = sim.State.Turn;
         _gotos.Clear();

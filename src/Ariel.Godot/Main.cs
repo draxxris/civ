@@ -151,9 +151,25 @@ public partial class Main : Node3D
         ShowSetup();
     }
 
+    private ClientPreferences? _preferences;
+    /// <summary>This computer's preferences, read once from the user data folder (see <see cref="ClientPreferences"/>).</summary>
+    private ClientPreferences Preferences => _preferences ??= ClientPreferences.Load(PreferencesPath);
+    private static string PreferencesPath => System.IO.Path.Combine(OS.GetUserDataDir(), "preferences.json");
+
+    private void SetPreferences(ClientPreferences preferences)
+    {
+        _preferences = preferences;
+        try { preferences.Save(PreferencesPath); }
+        catch (Exception error) when (error is System.IO.IOException or UnauthorizedAccessException)
+        {
+            GD.PrintErr("Could not save the preferences: " + error.Message);
+        }
+    }
+
     private void ShowSetup()
     {
-        _setup = new SetupScreen(_catalog!);
+        _setup = new SetupScreen(_catalog!, Preferences);
+        _setup.PreferencesChanged += SetPreferences;
         _setup.StartRequested += Start;
         _setup.ModsRequested += () => ShowModManager();
         _setup.MultiplayerRequested += ShowMultiplayer;
@@ -213,7 +229,8 @@ public partial class Main : Node3D
         _status.Text = "Generating world…";
         _status.Visible = true;
         var catalog = _catalog!;
-        _starting = Task.Run(() => GameSession.Start(catalog, options, backgroundTurns: true));
+        int waveLimit = Preferences.AiWaveLimit;
+        _starting = Task.Run(() => GameSession.Start(catalog, options, backgroundTurns: true, aiWaveLimit: waveLimit));
     }
 
     public override void _ExitTree() => _multiplayer?.Dispose();
@@ -243,7 +260,8 @@ public partial class Main : Node3D
         var catalog = _catalog!;
         var start = lobby.Starting!;
         var transport = lobby.Release();
-        _startingMultiplayer = Task.Run(() => MultiplayerGame.Create(catalog, transport, start, lobby.Chat));
+        int waveLimit = Preferences.AiWaveLimit;
+        _startingMultiplayer = Task.Run(() => MultiplayerGame.Create(catalog, transport, start, lobby.Chat, waveLimit));
     }
 
     private void PollStarting()

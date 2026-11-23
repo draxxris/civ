@@ -207,12 +207,21 @@ public sealed partial class Simulation
     /// <summary>Whether this simulation is planning a player in a concurrent AI wave. Read-only planners should
     /// score serially in this scope to avoid nesting parallel work inside the wave. Not authoritative or saved.</summary>
     public bool IsParallelAiTurn { get; internal set; }
-    /// <summary>Most AI players planned together in one speculative wave. The default, one, runs every AI strictly in
+    /// <summary>Most AI players planned together in one speculative wave. One, the default, runs every AI strictly in
     /// turn, each planner scoring its candidates in parallel; wider waves plan later players on forks instead. A wave
     /// is specified to equal sequential play, so the width changes wall time, never results. One is the default
     /// because it was faster on every measured game (docs/OPTIMIZE.md, Pass 15): later plans conflicted and were
-    /// thrown away too often. Not saved: a host that sets it sets it again after loading.</summary>
-    public int AiWaveLimit { get; set; } = 1;
+    /// thrown away too often. Not saved and not hashed, so each process, and each peer of a networked game, may
+    /// choose its own; a host that sets it sets it again after loading. Front ends offer it as the experimental
+    /// "parallel AI planning" preference and pass <see cref="AiWaveLimitFor"/>.</summary>
+    public int AiWaveLimit { get; set; } = SequentialAiWaveLimit;
+    /// <summary>The width that runs AI players one after another.</summary>
+    public const int SequentialAiWaveLimit = 1;
+    /// <summary>The wave width for the parallel AI planning preference: a quarter of the processors, from two to four.
+    /// Pass 15 measured wider waves as ever slower, because later plans conflict and are discarded, so the width stays
+    /// small; it is more than two only where there are cores to spare for the forks.</summary>
+    public static int AiWaveLimitFor(bool parallelPlanning, int processors) =>
+        parallelPlanning ? Math.Clamp(processors / 4, 2, 4) : SequentialAiWaveLimit;
     /// <summary>Optional diagnostic sink for AI wave decisions.</summary>
     internal Action<SpeculationEvent>? SpeculationObserver { get; set; }
     /// <summary>Apply a command a player issued, from a front end or the network: it must also be that player's move.

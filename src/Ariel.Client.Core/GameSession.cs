@@ -19,6 +19,9 @@ public sealed partial class GameSession
     private int _ordersTurn;   // the turn whose standing orders already continued
 
     public Simulation Sim { get; private set; }
+    /// <summary>The AI wave width this front end asks of its simulation (see <see cref="Simulation.AiWaveLimit"/>). It is
+    /// a property of this process, not of the game, so a loaded or replacement simulation takes it over.</summary>
+    public int AiWaveLimit { get; }
     /// <summary>The player this front end controls.</summary>
     public int LocalPlayer { get; }
     public string Message { get; private set; } = "";
@@ -34,6 +37,7 @@ public sealed partial class GameSession
     {
         if (sim.State.Players.All(p => p.Id != localPlayer)) throw new ArgumentException($"No player {localPlayer} to control", nameof(localPlayer));
         Sim = sim;
+        AiWaveLimit = sim.AiWaveLimit;
         LocalPlayer = localPlayer;
         _channel = channel ?? LocalCommandChannel.Instance;
         BackgroundTurns = backgroundTurns;
@@ -45,8 +49,9 @@ public sealed partial class GameSession
     }
 
     /// <summary>Create a new game from the setup screen's choices.</summary>
-    public static GameSession Start(GameCatalog catalog, NewGameOptions options, bool backgroundTurns = false) =>
-        new(new Simulation(catalog.Content, options.ToSettings(catalog)), backgroundTurns: backgroundTurns);
+    public static GameSession Start(GameCatalog catalog, NewGameOptions options, bool backgroundTurns = false,
+        int aiWaveLimit = Simulation.SequentialAiWaveLimit) =>
+        new(new Simulation(catalog.Content, options.ToSettings(catalog)) { AiWaveLimit = aiWaveLimit }, backgroundTurns: backgroundTurns);
 
     public Player Me => Sim.State.PlayerById(LocalPlayer);
     /// <summary>What has gone wrong with a networked game's connection, or null.</summary>
