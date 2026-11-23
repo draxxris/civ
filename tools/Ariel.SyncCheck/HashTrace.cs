@@ -24,15 +24,16 @@ internal static class HashTrace
         int turns = int.Parse(Option(args, "--turns") ?? "100", CultureInfo.InvariantCulture);
         int reload = int.Parse(Option(args, "--reload-every") ?? "0", CultureInfo.InvariantCulture);
         string world = Option(args, "--world") ?? "foundation:worldsize_small";
+        string era = Option(args, "--era") ?? "foundation:era_ancient";
         var mode = Enum.Parse<TurnMode>(Option(args, "--turn-mode") ?? nameof(TurnMode.Simultaneous), ignoreCase: true);
         bool background = args.Contains("--background");
         string? save = Option(args, "--save");
         var profiler = SimulationProfiler.FromEnvironment(out string? profileDir);
         if (Option(args, "--profile") is { } dir) (profiler, profileDir) = (profiler ?? new SimulationProfiler(), dir);
 
-        var sim = GameFactory.CreateAi(content, seed, players, world, mode);
+        var sim = GameFactory.CreateAi(content, seed, players, world, mode, era);
         sim.Profiler = profiler;
-        Console.Error.WriteLine($"hash-trace seed={seed} players={players} turns={turns} turn-mode={mode} reload-every={reload} background={background} " +
+        Console.Error.WriteLine($"hash-trace seed={seed} players={players} turns={turns} era={era} turn-mode={mode} reload-every={reload} background={background} " +
                                 $"processors={Environment.ProcessorCount} content={content.ContentHash}");
         Console.WriteLine($"{sim.State.Turn} {sim.ComputeHash():x16}");
         for (int i = 1; i <= turns; i++)
