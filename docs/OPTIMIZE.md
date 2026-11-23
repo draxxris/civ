@@ -99,6 +99,46 @@ mise exec -- godot-mono --path src/Ariel.Godot -- --stage map --world tiny --see
 
 The `--` separates Godot arguments from game runtime arguments.
 
+#### Turn Profiler
+
+To see where a long AI game's time goes, by turn system, AI planner, AI seam, command and
+kernel step, with a per-turn curve:
+
+```sh
+# One game, profiled: report on stderr, files in the directory.
+mise run ai:play -- --seed 3 --players 4 --turns 100 --profile /tmp/ariel/profile
+# The same switch as an environment variable; ai:eval writes one profile per sample.
+ARIEL_PROFILE=/tmp/ariel/profile mise run ai:play -- --seed 3 --turns 100
+ARIEL_PROFILE=/tmp/ariel/eval-profile mise run ai:eval -- --seeds 1 --turns 100
+# A later start, to reach late-game rules within 100 turns.
+mise run ai:play -- --seed 3 --players 4 --turns 100 --era foundation:era_industrial --profile DIR
+```
+
+A host attaches a `SimulationProfiler` to `Simulation.Profiler`; nothing is measured, read
+or allocated without one, and a profiled game plays exactly as an unprofiled one (tests in
+`SimulationProfilerTests` and `AiPlannerTests`). The directory receives:
+
+- `report.txt`: the run's wall time, allocation and collector pauses, the per-turn curve
+  (first recorded turn, turn 10, every 25th, the last), then every entry sorted by cost:
+  kind, total ms, calls, mean µs, MiB allocated by the measuring thread, id.
+- `totals.csv`: the same entries, unrounded.
+- `turns.csv`: one row per advance (`turn,wall_ms,systems_ms,ai_ms,allocated_bytes,
+  gc_pause_ms,gen2,cities,units`). A row is the rollover into that turn plus that turn's
+  AI moves; the first row includes JIT compilation.
+- `turn-entries.csv`: every entry's calls, ms and bytes per turn, for finding what grows.
+
+How to read the kinds: `TurnSystem` is each registered system by id (a player-interval
+system counts one call per player); `AiPlanner` is each planner by id, per player;
+`AiSeam` is each valuer and production wish source inside a planner; `Command` is each
+top-level command type; `Rule` is a shared rules step nested inside its callers
+(`modifiers:collect`, `world:sight_recompute`, `relations:discover_contacts`); `Kernel`
+is the AI waves as a whole (`kernel:ai_turns`, wall time), their parallel planning
+(`kernel:wave_plan`), direct turns, forks, commits and speculation bookkeeping, and
+`kernel:state_hash`, which is the harness hashing each turn (lockstep peers pay it too).
+Entries are inclusive and summed over every thread they ran on: AI planners, seams and
+the commands AI players issue also run on parallel forks, and a wave's commit replays
+those commands, so those sums are processor time and can exceed the wall time.
+
 ### Controlled Measurement Methodology
 
 To ensure repeatable and reliable performance comparisons:
@@ -169,6 +209,10 @@ ______________________________________________________________________
        ▼
 [Pass 11: Nov 12, 2026] Work Reassigned Only Where Borders Move
                         (Commit: reassign work only where borders move)
+       │
+       ▼
+[Pass 13: Nov 22, 2026] Turn Profiler and Long AI Game Costs
+                        (Commits: 5016ba5 .. 8c23637)
 ```
 
 ______________________________________________________________________
@@ -1052,6 +1096,225 @@ The latest recorded idle figure for the fifty-city turn is 921 to 1,105 ms (prev
 section). The machine's load, not the change, set the "before" column; timer queries
 are a pass over a handful of timers and a turn with nothing to expire allocates nothing.
 
+### Pass 13: Turn Profiler and Long AI Game Costs
+
+- **Date**: 2026-11-22
+- **Commits**: `5016ba5`, `8f182fe`, `7d25936`, `8d4aafb`, `f35cf8c`, `202e187` (profiler and
+  tooling); `6eb72f2`, `de952e8`, `6d8feda`, `9d88c13`, `604af14`, `708d2bc`, `8c23637`
+  (optimizations)
+
+Long AI games were reported to take hours over 350 to 500 turns. Nothing measured where a
+turn's time went, so this pass first added the turn profiler (see "Turn Profiler" above),
+then measured and removed the largest costs it showed. Every optimization leaves the
+game byte-identical: each commit's 100-turn final save matches the one before it
+(`mise run check:desync-diff`), the final tree's saves match `b424234`'s for all three
+subjects below, and `mise run check:sync -- --seed 3 --players 4 --turns 100` matches all
+101 turn hashes on the final tree, the same 101 hashes that `b424234` prints.
+
+#### Method and Machine
+
+- AMD Ryzen AI 5 PRO 340 (12 threads), Release builds through `mise run ai:play`.
+- Main subject: seed 3, four AI players, small world, ancient start, default mod set (the
+  main mods and every optional feature mod), 100 turns. No 300-turn run was made: the
+  owner already knows it is intolerable, so the 100-turn curve is the evidence.
+- Supplementary subjects, same seed and 100 turns: an industrial-era start
+  (`--era foundation:era_industrial`), which reaches 30 cities and late-game rules, and
+  eight players on a standard world.
+- "Before" is `b424234` (main) with only the profiler patches applied, in a separate
+  worktree. "After" is the final tree. Both play the identical game.
+- Other agents shared the machine (load average 0.5 to 5 during the runs). Wall times of
+  a 20-second game vary by 1 to 2 seconds between back-to-back runs. The commit tables
+  therefore lead with calls and bytes, which are deterministic. The ancient-start wall
+  time is the mean of three alternating runs of each build.
+
+#### Baseline: What a Turn Costs
+
+The mandated game does not take hours. 100 turns took 20.4 s (three runs: 20.4, 19.9 and
+21.3 s) and allocated 19.6 GiB. The AIs founded few cities: 4 until turn 50, then 19 cities
+and 71 units at turn 100. A turn at turn 100 costs about 0.3 s.
+
+| Advance | Wall ms | Turn systems ms | AI waves ms | Allocated MiB | GC pause ms | Cities | Units |
+| ------: | ------: | --------------: | ----------: | ------------: | ----------: | -----: | ----: |
+|       2 |   988.7 |            61.0 |        81.1 |         339.3 |        51.1 |      4 |     4 |
+|      10 |   159.5 |            36.0 |        84.5 |          69.8 |        16.3 |      4 |     4 |
+|      25 |   216.9 |            66.7 |       121.7 |          69.8 |        14.6 |      4 |     9 |
+|      50 |    88.9 |            17.0 |        58.1 |          80.7 |        11.8 |      4 |    20 |
+|      75 |   252.8 |            77.1 |       167.2 |         352.7 |        53.0 |     13 |    43 |
+|     100 |   368.1 |            84.4 |       273.6 |         527.7 |       102.3 |     19 |    71 |
+
+Row 2 is the first advance and includes compiling. Turn time follows the game's size,
+not the turn number. The growth shows in the industrial start: fitting its turn time to
+cities and units gives R² 0.69 with linear terms and 0.93 once squared terms are added.
+Four costs grow faster than the game:
+
+1. **Sight and contacts per move step.** Every step of every move recomputed every
+   team's sight from every unit and city (units × observers). It then scanned every plot
+   of the map for contacts and built two sorted sets per plot (steps × map size).
+2. **Per-city modifier ledgers.** Each city query rebuilds the city's ledger from every
+   modifier source: about 130,000 city ledgers in the 100 industrial turns. Building
+   effects add every building of the owner's other cities to each ledger (cities
+   squared). Each ledger also gathered a whole player ledger for corporate maintenance.
+3. **Great people.** Each idle great person scores every city on the map every turn.
+   Each foreign city costs three ledgers for the profit of its trade mission.
+4. **Allocation.** The industrial game allocated 1.5 GiB per turn at 30 cities. The AI
+   plans its players on parallel threads, and each collection pauses all of them: 13.6 s
+   of pauses in 82 s.
+
+Top entries of the baseline, ancient start (processor time summed over threads):
+
+| Entry                              | Calls | Total ms | Allocated MiB |
+| :--------------------------------- | ----: | -------: | ------------: |
+| `kernel:ai_turns` (AI waves, wall) |   100 |   12,875 |         6,497 |
+| `MoveUnitPathCommand`              | 1,796 |    8,932 |         4,950 |
+| `ai:military`                      |   709 |    8,254 |         4,337 |
+| `relations:discover_contacts`      | 4,895 |    7,865 |         4,787 |
+| `ai:settlers`                      |   709 |    3,598 |         1,765 |
+| `ai:citizens`                      |   709 |    3,147 |         1,723 |
+| `world:sight_recompute`            | 5,053 |    2,511 |         1,514 |
+| `ai:civics`                        |   709 |    2,328 |           571 |
+| `ai:economy`                       |   709 |    2,280 |         1,952 |
+| `ai:cities`                        |   709 |    1,809 |         1,114 |
+
+Top entries of the industrial start (82.4 s, 145 GiB):
+
+| Entry                              | Calls | Total ms | Allocated MiB |
+| :--------------------------------- | ----: | -------: | ------------: |
+| `kernel:ai_turns` (AI waves, wall) |   100 |   59,081 |        43,339 |
+| `great_people:planner`             |   890 |   35,084 |        41,290 |
+| `ai:military`                      |   890 |   19,177 |        20,282 |
+| `ai:citizens`                      |   890 |   16,325 |        16,105 |
+| `ai:cities`                        |   890 |   12,130 |        11,934 |
+| `MoveUnitPathCommand`              | 2,535 |   11,112 |         8,112 |
+| `ai:economy`                       |   890 |   10,546 |        11,135 |
+| `SetCityAssignmentsCommand`        | 7,484 |    8,477 |         8,892 |
+| `relations:discover_contacts`      | 6,531 |    7,977 |         6,600 |
+| `world:sight_recompute`            | 6,986 |    4,387 |         2,683 |
+
+A diagnostic run timed each modifier source; that timing was not committed. It put 73 s
+of the game's processor time in modifier collection. The largest sources were
+`BuildingEffects` (30.5 s, 40 GiB), `CivicEffects` (17.5 s), `CorporationEffects` (8.7 s,
+in a game with no corporation) and `BuildingMilitaryEffects` (5.8 s). Only 23 of 658
+great-person evaluations led to an action. The rest scored every city and stayed idle.
+
+#### Optimizations
+
+Each commit message records its own before and after. Figures are processor time summed
+over threads, from the subject named.
+
+| Commit    | Change                                                       | Subject    | Before                  | After                   |
+| :-------- | :----------------------------------------------------------- | :--------- | :---------------------- | :---------------------- |
+| `6eb72f2` | Contact discovery skips plots with no unit and no owner      | ancient    | 8,089 ms, 4.5 GiB       | 728 ms, 0.2 GiB         |
+| `de952e8` | Sight tests and captures each plot once per team             | ancient    | 2,945 ms, 1.4 GiB       | 2,034 ms, 0.8 GiB       |
+| `6d8feda` | Sight keeps a plot memory that already holds what is seen    | ancient    | 2,034 ms, 779 MiB       | 1,867 ms, 499 MiB       |
+| `9d88c13` | A path renews sight once when its last step just did         | ancient    | 5,053 recomputes        | 3,007 recomputes        |
+| `604af14` | Building effects name only non-zero lines                    | industrial | 30.5 s, 40.0 GiB        | 25.6 s, 21.2 GiB        |
+| `708d2bc` | Civic effects resolve running buildings once per calculation | industrial | 17.5 s, 23.0 GiB        | 12.5 s, 15.9 GiB        |
+| `8c23637` | No player ledger for a city without corporations             | industrial | 730,615 ledgers, 60.5 s | 589,093 ledgers, 39.4 s |
+
+One change was measured and dropped. It asked each city only for the great-person actions
+that depend on going there, which skips the technology choice. It saved nothing
+measurable (32.3 s before, 31.8 s after): the cost was in trade profits, not discovery.
+
+#### Results
+
+| Subject (100 turns, seed 3)              | Wall before | Wall after | Allocated before | Allocated after | GC pauses before | GC pauses after |
+| :--------------------------------------- | ----------: | ---------: | ---------------: | --------------: | ---------------: | --------------: |
+| Four players, small, ancient (mean of 3) |      20.5 s |     16.9 s |         19.6 GiB |        11.3 GiB |            3.4 s |           2.0 s |
+| Four players, small, industrial          |      82.4 s |     57.4 s |        145.0 GiB |        88.9 GiB |           13.6 s |           6.8 s |
+| Eight players, standard, ancient         |      53.2 s |     34.0 s |         58.9 GiB |        31.4 GiB |           19.3 s |          10.3 s |
+
+Per-turn wall time before and after:
+
+| Advance | Ancient before | Ancient after | Industrial before | Industrial after | 8 players before | 8 players after |
+| ------: | -------------: | ------------: | ----------------: | ---------------: | ---------------: | --------------: |
+|      10 |         160 ms |        110 ms |            398 ms |           273 ms |           433 ms |          230 ms |
+|      25 |         217 ms |        157 ms |            324 ms |           267 ms |           234 ms |          266 ms |
+|      50 |          89 ms |        168 ms |            689 ms |           488 ms |           297 ms |          215 ms |
+|      75 |         253 ms |        165 ms |            887 ms |           633 ms |           543 ms |          334 ms |
+|     100 |         368 ms |        206 ms |            850 ms |           532 ms |           959 ms |          494 ms |
+
+Single turns vary by tens of milliseconds between runs, so compare the totals above. At
+turn 100 the eight-player game allocated 1,252 MiB before and 666 MiB after. It paused
+for collection for 402 ms before and 188 ms after.
+
+Top entries after, industrial start:
+
+| Entry                              |   Calls | Total ms | Allocated MiB |
+| :--------------------------------- | ------: | -------: | ------------: |
+| `kernel:ai_turns` (AI waves, wall) |     100 |   42,513 |        27,633 |
+| `modifiers:collect`                | 589,093 |   37,679 |        39,547 |
+| `great_people:planner`             |     890 |   20,227 |        22,983 |
+| `ai:military`                      |     890 |   14,407 |        16,529 |
+| `ai:citizens`                      |     890 |   11,476 |         8,419 |
+| `ai:cities`                        |     890 |   10,705 |        10,290 |
+| `ai:economy`                       |     890 |    8,616 |         7,277 |
+| `SetCityAssignmentsCommand`        |   7,484 |    5,099 |         4,097 |
+| `MoveUnitPathCommand`              |   2,535 |    2,209 |           772 |
+| `world:sight_recompute`            |   4,451 |    2,071 |           591 |
+
+`mise run benchmark` (single samples), at the start of the pass (`b424234`) and on the
+final tree:
+
+| Workload                                       |             Before |              After |
+| :--------------------------------------------- | -----------------: | -----------------: |
+| Fifty-city turn (turn 2)                       |             913 ms |             877 ms |
+| Eight-player preparation (99 turns, save/load) |          50,076 ms |          31,712 ms |
+| Eight-player AI decisions at turn 100          |             262 ms |             255 ms |
+| World generation, seeds 1 / 42 / 987654        | 467 / 308 / 253 ms | 245 / 184 / 234 ms |
+
+World generation is untouched by this pass. Its difference is machine noise.
+
+#### Corporation Branch (Unmerged) Compared
+
+The corporation rules on `worktree-agent-a1512cf58901b57f1` (tip `449a89e`) were measured
+with the same profiler patches, in a separate worktree. Each game ran with Corporations
+loaded (the default set) and without it (`--optional` naming the other six feature
+mods). Neither the ancient nor the industrial game founded a corporation within 100
+turns, so the branch's per-branch-city rules ran only on their empty paths.
+
+| Game (100 turns, seed 3)    | Main, with Corporations | Branch, with | Branch, without |
+| :-------------------------- | ----------------------: | -----------: | --------------: |
+| Ancient start: wall         |                  20.4 s |       20.9 s |          20.8 s |
+| Ancient start: allocated    |                19.6 GiB |     19.6 GiB |        18.8 GiB |
+| Industrial start: wall      |                  82.4 s |       82.0 s |          74.8 s |
+| Industrial start: allocated |               145.0 GiB |    144.9 GiB |       129.3 GiB |
+
+The branch costs nothing measurable over main. Every entry is within run-to-run noise,
+and the games are identical. The corporation entries themselves (planner, valuers and
+maintenance) total under 70 ms per game. Loading Corporations at all cost about 8 s and
+16 GiB per industrial game, on main and on the branch alike. That cost was
+`CorporationEffects` gathering a player ledger for every city calculation. Commit
+`8c23637` removes it here, and the corporation branch would inherit the fix on merge:
+the branch leaves `MaintenanceHundredths` unchanged. The cost of active corporations,
+per branch city per turn, is still unmeasured: it needs a game that founds some.
+
+#### Still Slow, Ranked
+
+1. **Per-city modifier ledgers.** `modifiers:collect` takes 38 s of processor time and
+   40 GiB in the industrial game, over about 590,000 collections at 64 µs each. Every
+   query rebuilds a city's ledger from all sources, and building effects walk every
+   building of the owner's other cities, so the cost grows with cities squared. The
+   structural fix is a ledger cached per city and invalidated by a state revision
+   (buildings, civics, techs, ownership, population). A smaller step is a read scope
+   spanning one turn system or one AI segment. Either needs every source's inputs named
+   for invalidation, which is more than one clean commit. The measured ceiling is most
+   of the 38 s above.
+2. **Great-person planning** (20 s). An idle great person scores every city on the map
+   every turn, and each foreign city's trade profit gathers three ledgers. Caching the
+   trade profit per partner within one evaluation would remove most of it. Scoring
+   trade missions only for the few best partners would remove more, but it changes AI
+   choices.
+3. **Sight per move step.** `world:sight_recompute` takes 2 s and grows with units
+   squared. An incremental recompute for the moving team alone would make it linear.
+   Every team's plot memories must still refresh at each recompute, though, so it needs
+   per-team observer counts per plot. Not attempted.
+4. **AI planners' fixed cost.** `ai:military`, `ai:citizens`, `ai:cities` and
+   `ai:economy` each take 3 to 15 ms per player per turn. The economy planner tries
+   slider settings by issuing commands and recalculating, and each issued command renews
+   the AI context's cached views.
+5. **Allocation in general.** The industrial game still allocates 0.7 GiB per turn at 30
+   cities, and collector pauses are still 10 to 20% of a turn.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -1099,3 +1362,8 @@ passes:
 |                                         |                      | Gigantic turn-1 8-player `ComputeHash`                     | Managed bytes per hash   |            31,002 KB |          2,327 KB |                                **-92.5%** |
 | **Pass 9: AI Threat Grid Reuse**        | `4cb9780`            | Gigantic 8-player turns 21-30                              | Managed bytes per turn   |             483.4 MB |          481.4 MB |                                  **-0.4%** |
 | **Pass 10: Culture Reach Cache**        | `4eb56de`            | Turn-100 culture spread and plot ownership (36 cities)     | Wall time                |              1.44 ms |           0.37 ms |                                **-74.3%** |
+| **Pass 13: Long AI Games**              | `6eb72f2`..`8c23637` | 100-turn 4-player AI game, ancient start (seed 3)          | Wall time                |               20.5 s |            16.9 s |                                **-17.6%** |
+|                                         |                      | 100-turn 4-player AI game, industrial start (seed 3)       | Wall time                |               82.4 s |            57.4 s |                                **-30.3%** |
+|                                         |                      | 100-turn 4-player AI game, industrial start (seed 3)       | Managed bytes            |            145.0 GiB |          88.9 GiB |                                **-38.7%** |
+|                                         |                      | 100-turn 8-player AI game, standard world (seed 3)         | Wall time                |               53.2 s |            34.0 s |                                **-36.1%** |
+|                                         |                      | Eight-player preparation (`mise run benchmark`)            | Wall time                |            50,076 ms |         31,712 ms |                                **-36.7%** |
