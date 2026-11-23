@@ -77,10 +77,14 @@ public sealed class MultiplayerGame : IDisposable
 
     /// <summary>Build the agreed world, or load the agreed save, and join lockstep. Generating the world takes a while,
     /// so call it off the game thread; input from faster peers waits in the transport until then.</summary>
-    public static MultiplayerGame Create(GameCatalog catalog, ITransport transport, GameStart start, ChatLog chat)
+    /// <param name="aiWaveLimit">This peer's own AI wave width. It is not part of what peers agree on: the width changes
+    /// wall time only, so each peer may choose.</param>
+    public static MultiplayerGame Create(GameCatalog catalog, ITransport transport, GameStart start, ChatLog chat,
+        int aiWaveLimit = Simulation.SequentialAiWaveLimit)
     {
         var sim = start.Save is { } save ? SaveGame.Load(catalog.Content, save)
             : new Simulation(catalog.Content, start.Settings ?? throw new ArgumentException("A new game needs settings"));
+        sim.AiWaveLimit = aiWaveLimit;
         return new MultiplayerGame(catalog, transport, start, chat, sim);
     }
 

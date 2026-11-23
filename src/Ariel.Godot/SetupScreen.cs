@@ -34,13 +34,18 @@ internal sealed partial class SetupScreen : Control
     private ulong _previewDue;
     private Task<(int Token, MapImage? Image, string? Note)>? _previewTask;
 
+    private ClientPreferences _preferences;
+
     public event Action<NewGameOptions>? StartRequested;
+    /// <summary>The player changed a preference of this computer; the owner stores it.</summary>
+    public event Action<ClientPreferences>? PreferencesChanged;
     public event Action? ModsRequested;
     public event Action? MultiplayerRequested;
 
-    public SetupScreen(GameCatalog catalog)
+    public SetupScreen(GameCatalog catalog, ClientPreferences preferences)
     {
         _catalog = catalog;
+        _preferences = preferences;
         var defaults = catalog.DefaultOptions();
         _selected = catalog.LeaderById(defaults.Leader);
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
@@ -119,7 +124,26 @@ internal sealed partial class SetupScreen : Control
             options.AddChild(check);
         }
         col.AddChild(Ui.Scroll(options, 100));
+        col.AddChild(Ui.Text("This computer", 14, Ui.Dim, wrap: false));
+        col.AddChild(ParallelPlanningCheck());
+        col.AddChild(Ui.Text(ClientPreferences.ParallelAiPlanningHelp, 12, Ui.Dim));
         return col;
+    }
+
+    /// <summary>A preference, not a game option: it is kept on this computer, never in a game, and cannot change a game's outcome.</summary>
+    private CheckBox ParallelPlanningCheck()
+    {
+        var check = new CheckBox
+        {
+            Text = ClientPreferences.ParallelAiPlanningLabel, TooltipText = ClientPreferences.ParallelAiPlanningHelp,
+            ButtonPressed = _preferences.ParallelAiPlanning,
+        };
+        check.Toggled += on =>
+        {
+            _preferences = _preferences with { ParallelAiPlanning = on };
+            PreferencesChanged?.Invoke(_preferences);
+        };
+        return check;
     }
 
     private static void Row(GridContainer table, string label, Control control)
