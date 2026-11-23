@@ -4,7 +4,10 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Rules.Cities;
 
-/// <summary>Building effects use the same Core modifier boundary as civic and trait effects.</summary>
+/// <summary>Building effects use the same Core modifier boundary as civic and trait effects.
+/// <para>Every city calculation collects these for each of the city's buildings and each building of the owner's
+/// other cities, so a source name made by concatenation is built only when the line it names is not zero: the sink
+/// drops zero amounts, and most buildings have nothing for most techs, resources and global effects.</para></summary>
 internal sealed class BuildingEffects : IModifierSource
 {
     public void Contribute(ModifierContext context, ModifierSink sink) =>
@@ -25,7 +28,8 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var other in CityData.Owned(sim, city.Owner))
             foreach (var building in CityData.Active(sim, other)) Global(sim, city, other, building, sink);
         foreach (var building in CityData.EffectiveBuildings(sim, city))
-            sink.AddCommerce(building.Id + ":safe", building.ObsoleteSafeCommerceChanges);
+            if (building.ObsoleteSafeCommerceChanges != default)
+                sink.AddCommerce(building.Id + ":safe", building.ObsoleteSafeCommerceChanges);
         foreach (var bonus in bonuses.Keys.Order(StringComparer.Ordinal))
         {
             var def = sim.Content.Get<S.BonusDef>(bonus);
@@ -86,34 +90,54 @@ internal sealed class BuildingEffects : IModifierSource
         AddNumbers(b, sink);
         AddMaps(sim, city, b, bonuses, sink);
         AddVicinity(sim, city, b, bonuses, sink);
+        if (b.TechYieldChanges.IsEmpty && b.TechYieldModifiers.IsEmpty && b.TechCommerceChanges.IsEmpty && b.TechSpecialistChanges.IsEmpty)
+            return;
         foreach (var tech in sim.TeamOf(city.Owner).Techs)
         {
-            sink.AddYield(b.Id + ":" + tech, b.TechYieldChanges.GetValueOrDefault(tech));
-            sink.AddYield(b.Id + ":" + tech, b.TechYieldModifiers.GetValueOrDefault(tech), true);
-            sink.AddCommerce(b.Id + ":" + tech, b.TechCommerceChanges.GetValueOrDefault(tech));
+            var yields = b.TechYieldChanges.GetValueOrDefault(tech);
+            var percent = b.TechYieldModifiers.GetValueOrDefault(tech);
+            var commerce = b.TechCommerceChanges.GetValueOrDefault(tech);
+            if (yields != default || percent != default || commerce != default)
+            {
+                string source = b.Id + ":" + tech;
+                sink.AddYield(source, yields);
+                sink.AddYield(source, percent, true);
+                sink.AddCommerce(source, commerce);
+            }
             if (b.TechSpecialistChanges.TryGetValue(tech, out var changes))
                 foreach (var slot in changes.Slots.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:slots:" + slot.Key, slot.Value);
         }
     }
     private static void AddNumbers(S.BuildingDef b, ModifierSink sink)
     {
-        var values = new (string Key, int Value)[] {
-            ("happiness", b.Happiness), ("food_kept_percent", b.FoodKept),
-            ("growth_percent", b.PopulationGrowthPercent), ("free_specialists", b.FreeSpecialist),
-            ("maintenance_percent", b.MaintenanceModifier), ("distance_maintenance_percent", b.DistanceMaintenanceModifier),
-            ("coastal_maintenance_percent", b.CoastalDistanceMaintenanceModifier), ("count_maintenance_percent", b.CityCountMaintenancePercent),
-            ("great_people_percent", b.GreatPeopleRateModifier), ("experience", b.Experience),
-            ("military_production_percent", b.MilitaryProductionModifier), ("no_unhappiness", b.NoUnhappiness ? 1 : 0),
-            ("no_unhealthy_population", b.NoUnhealthyPopulation ? 1 : 0), ("building_only_healthy", b.BuildingOnlyHealthy ? 1 : 0) };
-        foreach (var value in values) sink.Add(b.Id, "cities:" + value.Key, value.Value);
+        sink.Add(b.Id, "cities:happiness", b.Happiness);
+        sink.Add(b.Id, "cities:food_kept_percent", b.FoodKept);
+        sink.Add(b.Id, "cities:growth_percent", b.PopulationGrowthPercent);
+        sink.Add(b.Id, "cities:free_specialists", b.FreeSpecialist);
+        sink.Add(b.Id, "cities:maintenance_percent", b.MaintenanceModifier);
+        sink.Add(b.Id, "cities:distance_maintenance_percent", b.DistanceMaintenanceModifier);
+        sink.Add(b.Id, "cities:coastal_maintenance_percent", b.CoastalDistanceMaintenanceModifier);
+        sink.Add(b.Id, "cities:count_maintenance_percent", b.CityCountMaintenancePercent);
+        sink.Add(b.Id, "cities:great_people_percent", b.GreatPeopleRateModifier);
+        sink.Add(b.Id, "cities:experience", b.Experience);
+        sink.Add(b.Id, "cities:military_production_percent", b.MilitaryProductionModifier);
+        sink.Add(b.Id, "cities:no_unhappiness", b.NoUnhappiness ? 1 : 0);
+        sink.Add(b.Id, "cities:no_unhealthy_population", b.NoUnhealthyPopulation ? 1 : 0);
+        sink.Add(b.Id, "cities:building_only_healthy", b.BuildingOnlyHealthy ? 1 : 0);
         sink.Add(b.Id, HealthKeys.Building, b.Health);
     }
     private static void AddMaps(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
         foreach (var bonus in bonuses.Keys.Order(StringComparer.Ordinal))
         {
-            sink.AddYield(b.Id + ":" + bonus, b.BonusYieldChanges.GetValueOrDefault(bonus));
-            sink.AddYield(b.Id + ":" + bonus, b.BonusYieldModifiers.GetValueOrDefault(bonus), true);
+            var yields = b.BonusYieldChanges.GetValueOrDefault(bonus);
+            var percent = b.BonusYieldModifiers.GetValueOrDefault(bonus);
+            if (yields != default || percent != default)
+            {
+                string source = b.Id + ":" + bonus;
+                sink.AddYield(source, yields);
+                sink.AddYield(source, percent, true);
+            }
             sink.Add(b.Id, "cities:happiness", b.BonusHappinessChanges.GetValueOrDefault(bonus));
             sink.Add(b.Id, HealthKeys.Bonus, b.BonusHealthChanges.GetValueOrDefault(bonus));
         }
@@ -128,8 +152,8 @@ internal sealed class BuildingEffects : IModifierSource
     }
     private static void Global(Simulation sim, City city, City origin, S.BuildingDef b, ModifierSink sink)
     {
-        sink.AddYield(b.Id + ":global", b.GlobalYieldModifiers, true);
-        sink.AddCommerce(b.Id + ":global", b.GlobalCommerceModifiers, true);
+        if (b.GlobalYieldModifiers != default) sink.AddYield(b.Id + ":global", b.GlobalYieldModifiers, true);
+        if (b.GlobalCommerceModifiers != default) sink.AddCommerce(b.Id + ":global", b.GlobalCommerceModifiers, true);
         sink.Add(b.Id, "cities:happiness", b.GlobalHappiness); sink.Add(b.Id, HealthKeys.Building, b.GlobalHealth);
         sink.Add(b.Id, "cities:free_specialists", b.GlobalFreeSpecialist);
         sink.Add(b.Id, "cities:great_people_percent", b.GlobalGreatPeopleRateModifier);
