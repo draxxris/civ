@@ -8,7 +8,13 @@ namespace Ariel.Rules.World;
 internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
 {
     public int ConnectedCount(Simulation sim, int player, int city, string bonus) => ConnectedCounts(sim, player, city).GetValueOrDefault(bonus);
-    public IReadOnlyDictionary<string, int> ConnectedCounts(Simulation sim, int player, int city)
+    /// <summary>Inside a read epoch (<see cref="Simulation.OpenReadEpoch"/>) the state cannot change, so a thread keeps
+    /// the epoch's answers: an AI segment asks the same city again for every view, eligibility check and exporter's
+    /// city group. Outside an epoch every call floods afresh.</summary>
+    public IReadOnlyDictionary<string, int> ConnectedCounts(Simulation sim, int player, int city) =>
+        _counts.GetOrAdd(sim, (player, city), 0, static (sim, key, _) => ConnectedCountsUncached(sim, key.Player, key.City));
+    private readonly ReadEpochMemo<(int Player, int City), IReadOnlyDictionary<string, int>> _counts = new();
+    private static IReadOnlyDictionary<string, int> ConnectedCountsUncached(Simulation sim, int player, int city)
     {
         var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
         var target = sim.State.FindCity(city);

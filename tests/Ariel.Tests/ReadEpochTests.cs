@@ -87,6 +87,41 @@ public sealed class ReadEpochTests
         }
     }
 
+    [Fact]
+    public void An_epoch_memo_keeps_answers_only_within_one_epoch_of_one_simulation()
+    {
+        var sim = TestGame.Sim(5);
+        var other = TestGame.Sim(5);
+        var memo = new ReadEpochMemo<int, int>();
+        int made = 0;
+        int Ask(Simulation s, int key) => memo.GetOrAdd(s, key, 10, (_, k, offset) => { made++; return k + offset; });
+        Assert.Equal(11, Ask(sim, 1)); Assert.Equal(11, Ask(sim, 1));
+        Assert.Equal(2, made); // Outside an epoch every ask computes.
+        Assert.False(memo.TryGet(sim, 1, out _));
+        memo.Set(sim, 1, 99);
+        Assert.False(memo.TryGet(sim, 1, out _));
+        using (sim.OpenReadEpoch())
+        {
+            made = 0;
+            Assert.Equal(11, Ask(sim, 1)); Assert.Equal(11, Ask(sim, 1)); Assert.Equal(12, Ask(sim, 2));
+            Assert.Equal(2, made);
+            Assert.True(memo.TryGet(sim, 2, out int kept)); Assert.Equal(12, kept);
+            using (other.OpenReadEpoch())
+            {
+                Assert.False(memo.TryGet(other, 1, out _)); // Another simulation never sees this one's answers.
+                Assert.Equal(11, Ask(other, 1));
+            }
+        }
+        using (sim.OpenReadEpoch())
+        {
+            Assert.False(memo.TryGet(sim, 1, out _)); // A new epoch starts empty.
+            memo.Set(sim, 1, 7);
+            Assert.Equal(7, Ask(sim, 1));
+            sim.AdvanceTurn();
+            Assert.Equal(11, Ask(sim, 1)); // The rollover ended the epoch.
+        }
+    }
+
     private sealed class WritingRejection : GameCommand
     {
         public override string? Validate(Simulation sim) { sim.State.Turn++; return "no"; }

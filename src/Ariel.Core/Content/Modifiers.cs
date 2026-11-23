@@ -174,32 +174,17 @@ public sealed class ModifierSink
     public static ModifierSink Collect(ModifierContext context)
     {
         var sim = context.Sim;
-        long epoch = sim.ReadEpoch;
-        Dictionary<ModifierContext, ModifierSink>? memo = null;
-        if (epoch != 0)
-        {
-            if (!ReferenceEquals(t_memoSim, sim) || t_memoEpoch != epoch)
-            {
-                (t_memoSim, t_memoEpoch) = (sim, epoch);
-                (t_memo ??= new()).Clear();
-            }
-            memo = t_memo!;
-            if (memo.TryGetValue(context, out var known)) return known.Copy();
-        }
+        if (Memo.TryGet(sim, context, out var known)) return known.Copy();
         ModifierSink sink;
         using (sim.Profiler.Measure(ProfileKind.Rule, "modifiers:collect"))
         {
             sink = new ModifierSink();
             foreach (var source in sim.Content.Services.Get<IModifierSource>()) source.Contribute(context, sink);
         }
-        if (memo is not null) memo[context] = sink.Copy();
+        Memo.Set(sim, context, sink.Copy());
         return sink;
     }
-    // One epoch's sums per thread. A simulation never reuses an epoch value, so a stale table never matches; it is
-    // cleared, not reallocated, when the epoch moves on.
-    [ThreadStatic] private static Simulation? t_memoSim;
-    [ThreadStatic] private static long t_memoEpoch;
-    [ThreadStatic] private static Dictionary<ModifierContext, ModifierSink>? t_memo;
+    private static readonly ReadEpochMemo<ModifierContext, ModifierSink> Memo = new();
 }
 
 /// <summary>One data-driven modifier: a definition that carries it adds <see cref="Amount"/> under <see cref="Key"/> to
