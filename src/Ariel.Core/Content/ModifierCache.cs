@@ -5,7 +5,7 @@ namespace Ariel.Content;
 
 /// <summary>One simulation's modifier contributions kept across writes: each source's lines for each calculation
 /// context, with the write stamp they were computed at (<see cref="Simulation.WriteStamp"/>). A contribution is used
-/// again while nothing the source reads was written since (<see cref="IModifierSource.UnreadDomains"/>), and only
+/// again while nothing the source reads was written since (<see cref="IStateReader.UnreadDomains"/>), and only
 /// inside kernel work (<see cref="Simulation.EnterKernel"/>), where every write is in a window.
 /// <para>Thread model: the table belongs to one simulation; forks and copies start with their own, empty. Several
 /// threads may read and fill it at once (AI candidates are scored in parallel over one simulation), which is safe
