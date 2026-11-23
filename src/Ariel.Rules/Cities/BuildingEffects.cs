@@ -77,10 +77,12 @@ internal sealed class BuildingEffects : IModifierSource
         if (traded.Count == 0 && supplied.Count == 0) return physical;
         var result = new SortedDictionary<string, int>(StringComparer.Ordinal);
         if (traded.Count == 0) foreach (var pair in physical) result[pair.Key] = pair.Value;
-        else foreach (var bonus in physical.Keys.Concat(traded).Distinct(StringComparer.Ordinal))
+        else
         {
-            int count = (int)exchanges.AvailableResourceCount(sim, city.Owner, city.Id, bonus);
-            if (count > 0) result[bonus] = count;
+            // One batched answer: asking per resource repeated the city's connectivity query and every deal scan.
+            var wanted = physical.Keys.Concat(traded).Distinct(StringComparer.Ordinal).ToArray();
+            foreach (var (bonus, available) in exchanges.AvailableResourceCounts(sim, city.Owner, city.Id, wanted))
+                if ((int)available > 0) result[bonus] = (int)available;
         }
         foreach (var (bonus, copies) in supplied) result[bonus] = result.GetValueOrDefault(bonus) + (int)copies;
         return result;
