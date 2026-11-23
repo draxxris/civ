@@ -32,9 +32,12 @@ internal static class P6RulesScenario
         });
     }
     public static T Service<T>(Simulation sim) where T : class => sim.Content.Services.Get<T>().Single();
-    public static Simulation Create(bool halfMaintenance = false)
+    /// <param name="realistic">The Realistic Guilds/Corporations option; off by default, so a scenario founds by building
+    /// and spreads by executives and gold unless it asks for the realistic mode.</param>
+    public static Simulation Create(bool halfMaintenance = false, bool realistic = false)
     {
         var sim = GameFactory.Scenario(halfMaintenance ? HalfMaintenanceContent.Value : Content.Value);
+        sim.Settings.GameOptions[CorporationMode.Option] = realistic;
         GameFactory.NeutralPolitics(sim);
         foreach (var plot in sim.State.Plots) plot.Owner = null;
         AddCity(sim, 0, 14); AddCity(sim, 0, 18); AddCity(sim, 1, 57);
@@ -485,17 +488,30 @@ public sealed class CorporationRulesTests
         // Three quarters of a food per copy: two copies make one and a half, of which the city gets the whole one.
         Assert.Equal(75, sim.Content.Get<CorporationDef>(Cereal).YieldProducedHundredths.Food);
         Assert.Equal(1, ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq)).Ledger.Lines.Single(l => l.Source == Cereal && l.Key == "yield.flat.food").Amount);
-        Assert.Equal(750, Corps(sim).MaintenanceHundredths(sim, hq.Id)); // (400 headquarters + 200 resources) * 100/80.
+        Assert.Equal(600, Corps(sim).MaintenanceHundredths(sim, hq.Id)); // 400 headquarters + 200 resources.
         sim.State.PlayerById(0).Civics["test"] = "government:guilds";
+        Assert.Equal(-10, ModifierSink.Collect(new(sim, ModifierScope.Player, 0)).Ledger.Total("corporations:maintenance_percent"));
+        Assert.Equal(540, Corps(sim).MaintenanceHundredths(sim, hq.Id));
+        // The Realistic Guilds/Corporations option picks the civic's other figure and, above a handicap's 80%, scales by it.
+        sim.Settings.GameOptions[CorporationMode.Option] = true;
         Assert.Equal(-105, ModifierSink.Collect(new(sim, ModifierScope.Player, 0)).Ledger.Total("corporations:maintenance_percent"));
         Assert.Equal(0, Corps(sim).MaintenanceHundredths(sim, hq.Id));
+        sim.State.PlayerById(0).Civics.Clear();
+        Assert.Equal(750, Corps(sim).MaintenanceHundredths(sim, hq.Id)); // (400 + 200) * 100/80.
+        sim.Settings.GameOptions[CorporationMode.Option] = false;
         sim.State.PlayerById(0).Civics["test"] = "government:planned";
         Assert.False(Corps(sim).IsActive(sim, hq.Id, Cereal)); Assert.Equal(0, Corps(sim).MaintenanceHundredths(sim, hq.Id));
         Assert.Contains(Cereal, Corps(sim).Present(sim, hq.Id));
         Assert.DoesNotContain(ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq)).Ledger.Lines, l => l.Source == Cereal);
         sim.State.PlayerById(0).Civics.Clear(); Assert.True(Corps(sim).IsActive(sim, hq.Id, Cereal));
         second.Bonus = null; sim.State.PlotAt(hq.Position).Bonus = null;
-        Assert.Equal(500, Corps(sim).MaintenanceHundredths(sim, hq.Id)); // Headquarters commerce remains in the base without resources.
+        // Without its resource the branch stays but works no more, as the source's active corporation: it gives and costs
+        // nothing, and the corporation is still founded here.
+        Assert.Contains(Cereal, Corps(sim).Present(sim, hq.Id));
+        Assert.False(Corps(sim).IsActive(sim, hq.Id, Cereal));
+        Assert.Equal(0, Corps(sim).MaintenanceHundredths(sim, hq.Id));
+        Assert.DoesNotContain(ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq)).Ledger.Lines, l => l.Source.StartsWith(Cereal, StringComparison.Ordinal));
+        Assert.Equal(hq.Id, Corps(sim).Headquarters(sim, Cereal));
     }
     [Fact]
     public void Foreign_corporation_civics_block_spread_and_suspend_existing_foreign_branches()
@@ -527,7 +543,9 @@ public sealed class CorporationRulesTests
         Assert.Equal(0, Corps(sim).MaintenanceHundredths(sim, branch.Id));
         Assert.Contains(Cereal, Corps(sim).Present(sim, branch.Id));
         Assert.Equal(hq.Id, Corps(sim).Headquarters(sim, Cereal));
-        Assert.True(Corps(sim).IsActive(sim, hq.Id, Cereal)); // Domestic to the new owner, which has no mercantilism.
+        // It is the civic that stops the branch, which still has its corn: without Mercantilism it works again.
+        sim.State.PlayerById(0).Civics.Clear();
+        Assert.True(Corps(sim).IsActive(sim, branch.Id, Cereal));
     }
     [Theory]
     [InlineData(0)]
@@ -547,7 +565,7 @@ public sealed class CorporationRulesTests
         var economy = P6RulesScenario.Service<IPlayerEconomyService>(sim);
         branch.Buildings.Add("cities:palace"); // Enough commerce to cover the full corporate formula at zero treasury.
         long corporateCost = Corps(sim).MaintenanceHundredths(sim, branch.Id);
-        Assert.Equal(750, corporateCost);
+        Assert.Equal(600, corporateCost); // 400 headquarters + 2 corn x 100.
         var full = maintenance.Calculate(sim, branch.Id);
         Assert.Equal(corporateCost, full.CorporateHundredths);
         Assert.Equal(full.DistanceHundredths + full.CityCountHundredths + corporateCost, full.TotalHundredths);
@@ -559,7 +577,7 @@ public sealed class CorporationRulesTests
         var before = economy.Calculate(sim, 0);
         Assert.Equal(reduced.TotalHundredths, before.Ledger.Total("economy:maintenance_hundredths"));
         Assert.Equal(corporateCost, before.Ledger.Total("economy:corporate_maintenance_hundredths"));
-        Assert.Equal(7, before.Ledger.Total("economy:corporate_maintenance"));
+        Assert.Equal(6, before.Ledger.Total("economy:corporate_maintenance"));
         Assert.Equal(3, before.Expenses);
         var owner = sim.State.PlayerById(0); owner.Treasury = treasury;
         sim.AdvanceTurn();
@@ -593,7 +611,7 @@ public sealed class CorporationRulesTests
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; Found(sim, hq);
         sim.State.PlayerById(0).Civics["test"] = "government:corporatist";
         foreach (var city in sim.State.Cities) city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
-        Assert.Equal(156, Corps(sim).MaintenanceHundredths(sim, hq.Id)); // (400 + 100) * 25/100 * 100/80.
+        Assert.Equal(375, Corps(sim).MaintenanceHundredths(sim, hq.Id)); // (400 + 100) * 75/100: Corporatist's -25%.
         long net = P6RulesScenario.Service<IPlayerEconomyService>(sim).Calculate(sim, 0).NetGold;
         long gold = sim.State.PlayerById(0).Treasury;
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim)); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());

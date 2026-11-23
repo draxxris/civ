@@ -56,9 +56,32 @@ internal static class CorporationReport
             var city = sim.State.FindCity(record.Headquarters);
             Console.WriteLine($"    turn {record.Turn,4}  {content.Get<CorporationDef>(id).Name} by player {city?.Owner.ToString() ?? "?"} (city {record.Headquarters})");
         }
+        Console.WriteLine("  " + Branches(sim));
+        Console.WriteLine("  " + Bans(sim));
         foreach (int player in AiPlayers(sim)) Console.WriteLine(PlayerBlock(sim, player, buildings));
         if (save is not null) File.WriteAllText(save, SaveGame.Save(sim));
         return 0;
+    }
+
+    /// <summary>Every branch at the end, in all, and per corporation that has one.</summary>
+    private static string Branches(Simulation sim)
+    {
+        var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
+        foreach (var city in sim.State.Cities)
+            foreach (var id in city.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations ?? [])
+                counts[id] = counts.GetValueOrDefault(id) + 1;
+        return $"branches: {counts.Values.Sum()}" + (counts.Count == 0 ? ""
+            : " (" + string.Join(", ", counts.Select(c => $"{sim.Content.Get<CorporationDef>(c.Key).Name} {c.Value}")) + ")");
+    }
+
+    /// <summary>How many AI players with cities run a civic that bans all corporations, or foreign ones.</summary>
+    private static string Bans(Simulation sim)
+    {
+        var players = AiPlayers(sim).Where(p => sim.State.Cities.Any(c => c.Owner == p)).ToArray();
+        bool Has(int p, Func<CivicCorporationsDef, bool> ban) => sim.State.PlayerById(p).Civics.Values
+            .Any(c => sim.Content.Attachment<CivicCorporationsDef>(c) is { } d && ban(d));
+        return $"AI players with cities: {players.Length}; banning all corporations: {players.Count(p => Has(p, d => d.NoCorporations))}; "
+            + $"banning foreign: {players.Count(p => Has(p, d => d.NoForeignCorporations))}";
     }
 
     private static bool IsGuild(ContentDb content, string id) => content.Get<CorporationDef>(id).Seat != "headquarters";

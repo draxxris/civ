@@ -18,10 +18,21 @@ public sealed record CorporationFounding(int Headquarters, int FounderTeam, int 
 public sealed record CorporationFounded(string Corporation, int City, int Player) : DomainEvent;
 public sealed record CorporationSpread(string Corporation, int City, int Player) : DomainEvent;
 public sealed record CorporationDissolved(string Corporation, int City, int Player) : DomainEvent;
-/// <summary>A competing branch was evicted by <paramref name="By"/> without compensation, as in the reference rules.</summary>
 /// <summary>A branch closed because the city's team learned the corporation's obsolete technology.</summary>
 public sealed record CorporationObsolete(string Corporation, int City) : DomainEvent;
+/// <summary>A competing branch was evicted by <paramref name="By"/> without compensation, as in the reference rules.</summary>
 public sealed record CorporationDisplaced(string Corporation, string By, int City) : DomainEvent;
+/// <summary>A branch closed because its city went without the corporation's resource for too long (Realistic
+/// Guilds/Corporations).</summary>
+public sealed record CorporationWithdrawn(string Corporation, int City) : DomainEvent;
+
+/// <summary>The chance a city takes a branch of a corporation this turn on its own: the branch opens when a draw in
+/// [0, <see cref="Range"/>) falls below <see cref="Threshold"/>.</summary>
+public readonly record struct CorporationSpreadOdds(int Threshold, int Range)
+{
+    /// <summary>The chance in hundredths of a percent.</summary>
+    public int BasisPoints => Range <= 0 ? 0 : (int)Math.Min(10000L, (long)Math.Max(0, Threshold) * 10000 / Range);
+}
 
 /// <summary>Read-only previews and validated corporation mutations. It also answers the base game's questions about
 /// corporations in a city (<see cref="ICityCorporations"/>); <see cref="ICityCorporations.HasIdentity"/> takes the
@@ -41,6 +52,14 @@ public interface ICorporationService : ICityCorporations
     long SpreadCost(Simulation sim, int player, int city, string corporation);
     /// <summary>Why a player cannot pay to open a branch in one of its own cities without an executive, or null.</summary>
     string? ValidateSpread(Simulation sim, int player, int city, string corporation);
+    /// <summary>With Realistic Guilds/Corporations (<see cref="CorporationMode"/>), the city in which the player's nation
+    /// would found the corporation if this turn's draw chose it, or null when the nation cannot found it now (it is
+    /// founded, the nation lacks its technology or resource, its civics ban corporations, or it waits out a cooldown).
+    /// The same answer in either mode; only the realistic mode draws for it. Draws nothing.</summary>
+    int? NaturalFoundingCity(Simulation sim, int player, string corporation);
+    /// <summary>The odds that the city takes a branch of the corporation this turn on its own with Realistic
+    /// Guilds/Corporations; a zero threshold when it cannot take one. Draws nothing.</summary>
+    CorporationSpreadOdds NaturalSpreadOdds(Simulation sim, int city, string corporation);
     /// <summary>Open a branch in an own city for the spread cost. An executive spreads through the
     /// <see cref="CorporationMissions.Spread"/> mission instead, which also reaches foreign cities.</summary>
     void Spread(Simulation sim, int player, int city, string corporation);

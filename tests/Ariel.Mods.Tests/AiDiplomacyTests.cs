@@ -156,6 +156,8 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
                 foreach (var team in game.State.Teams) team.Techs.Clear();
                 foreach (var plot in game.State.Plots) { plot.Owner = 0; plot.Revealed.Add(game.TeamOf(0).Id); }
             });
+        // Founding by building is the manual mode's: with Realistic Guilds/Corporations nobody builds a headquarters.
+        sim.Settings.GameOptions[CorporationMode.Option] = false;
         AddCity(sim, 0, 4, 4);
         var city = sim.State.Cities[0];
         city.Population = 12;

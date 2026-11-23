@@ -15,6 +15,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -30,6 +31,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Cereal Mills",
+    "naturalSpreadPercent": 60,
     "obsoleteTech": null,
     "pedia": "\tWhile most food processing corporations are less than 150 years old, food processing is an ancient tradition. The miller was the original food processing entrepreneur, turning inedible wheat into versatile flour, all while pulling in a tidy profit. Understandably, many modern food processing companies rose from the milling industry, often picking up a few new subsidiaries along the way. Today\u0027s food processors deal in a diverse range of consumer products, lining the walls of the local supermarket with everything from mayonnaise to deodorant.",
     "prereqBonuses": [
@@ -45,8 +47,7 @@
     "strategy": "",
     "unsupported": [
       "PrereqBuildingClasses",
-      "Sound",
-      "iSpread"
+      "Sound"
     ],
     "yieldChanges": {
       "commerce": 0,
@@ -75,6 +76,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -90,6 +92,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Sid\u0027s Sushi Co",
+    "naturalSpreadPercent": 60,
     "obsoleteTech": null,
     "pedia": "\tSushi is an ancient form of food preservation that originated in Southeast Asia in the fourth century BC. This technique of wrapping fish in vinegar-soaked rice spread through out Asia, making its way to China in the thirteenth century and later to Japan.[PARAGRAPH:1]In Japan, the dish became extremely popular in the early nineteenth century, when a sushi stall owner in Edo began placing bits of extremely fresh and even raw fish within or atop the classic bed of vinegar rice. It was here that modern sushi was born. Sushi has since become Japan\u0027s signature dish, and from the 1980s onward has become a popular delicacy throughout the world.",
     "prereqBonuses": [
@@ -107,7 +110,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -137,6 +139,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -152,6 +155,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Standard Ethanol",
+    "naturalSpreadPercent": 60,
     "obsoleteTech": null,
     "pedia": "\tAs an energy source, few things can compare to fossil fuels. Yet, like most resources, the limited nature of fossil fuels has made an alternative energy source a necessary compliment to the world\u0027s power supply. Ethanol, which can be created from corn, beets and sweet potatoes, has become one of the leading candidates to wean consumers from their daily gasoline fix. Used as a fuel additive or a fuel itself, ethanol\u0027s renewable nature, as well as the increased availability of ethanol-powered vehicles, has made it the most widely used gasoline alternative in the world. But with an ever-increasing world population the use of fields to produce fuel instead of food has made the full-blown adoption of biofuels a difficult choice for those in positions of power. ",
     "prereqBonuses": [
@@ -168,7 +172,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -198,6 +201,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -213,6 +217,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Creative Constructions",
+    "naturalSpreadPercent": 60,
     "obsoleteTech": null,
     "pedia": "\tThe Great Pyramids, the Hagia Sophia and the Hoover Dam all started their famed existences in the same way - with a pile of stones and an ambitious engineer. In the past, grand projects were taken on by princes or heads of state, but today these works are built by corporations. Often employing both an architect and a construction team, modern construction companies both dream up and execute the shaping of a piece of land into a new edifice. Beyond simply erecting the building, it often falls upon the construction company to reign in the wild designs of upstart architects like Frank Lloyd Wright and Antoni Gaudi to ensure the completion of their works. Perhaps if a construction executive had been present during the designing of Gaudi\u0027s Sagrada Familia, it would already be complete and accepting donations for renovations.",
     "prereqBonuses": [
@@ -230,7 +235,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -260,6 +264,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -275,6 +280,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Mining Inc",
+    "naturalSpreadPercent": 60,
     "obsoleteTech": null,
     "pedia": "\tFor much of human history, victory has gone to those with access to the finest metals. From the Bronze Age onwards, metal tools, weapons and alloys have been an inherent part of the rise of civilization, spurring conquests and construction by the world\u0027s greatest empires. And while metal mining has had an impressive history, it was not until the nineteenth century that industrial mining truly began to take root.[PARAGRAPH:1]Two reasons explain this sudden intensification in mining operations. The first was the almost daily revolutions in the production of tools and consumer items, requiring a continual source of metal to produce them. The second was that the fuel that powered the Industrial Revolution was coal, nestled deep within the earth. In modern times, enormous excavators like the Bagger 288 have it possible to mine a pit three-hundred feet long and one-hundred feet deep in a day, a feat that, in the past, would have required the mobilization of nations.",
     "prereqBonuses": [
@@ -293,7 +299,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -323,6 +328,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -338,6 +344,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Aluminum Co",
+    "naturalSpreadPercent": 60,
     "obsoleteTech": null,
     "pedia": "\tDespite being the most abundant metal on Earth, aluminum in its purest form was exceedingly rare until the nineteenth century, with a price-per-pound comparable to that of pure silver. The development of the Hall-Heroult process in 1886, by which pure aluminum is drawn out of common bauxite ore, made aluminum cheap and readily available. Harnessing his invention, Charles Martin Hall created the Pittsburgh Reduction Company, which would grow into the largest provider of aluminum in the world, with its product included in everything from soda cans to spaceships.",
     "prereqBonuses": [
@@ -352,7 +359,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -382,6 +388,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -397,6 +404,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Civilized Jewelers Inc",
+    "naturalSpreadPercent": 60,
     "obsoleteTech": null,
     "pedia": "\tHumanity\u0027s fascination with shiny objects has persisted since time immemorial. Gold, silver and jewels have decorated the heads of monarchs and the interiors of palaces for millennia, but it was the nineteenth century that began the true blossoming of the trade in treasures. Gold rushes throughout the world - in the United States, Canada and Australia - not only created new fonts of wealth, but left a lasting impression on the shape of world population, relocating avaricious prospectors to some of the most remote places on earth.[PARAGRAPH:1]The gem trade, with diamonds as its crown, grew up around similar circumstances. Throngs of miners flocked to South Africa in the mid-nineteenth century with the discovery of the \u0022Star of Africa,\u0022 an enormous 83.5 carat diamond. As of the turn of the twentieth century, the age of the traveling prospector bowed before the growth of enormous precious metal and jewel firms. South Africa remains one of the most important sources for gold and diamonds in the world, as well as the birth place to some of the most influential corporations in the business.",
     "prereqBonuses": [
@@ -413,7 +421,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -443,6 +450,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 1,
     "headquartersCommerce": {
       "culture": 0,
@@ -458,6 +466,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Adventure Tours",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": null,
     "pedia": "\tBored of your monotonous life? Ready for adventures? Adventure Tours bring to you the excitement of scubadiving, horseback riding, exploration of ancient ruins or watching the biggest animals on earth\u0027s face in their own habitat. Spice up your life with us!",
     "prereqBonuses": [
@@ -476,7 +485,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -511,6 +519,9 @@
       "foundation:equestguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {
+      "cities:apothecary": 4
+    },
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -526,6 +537,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Apothecaries Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [],
@@ -537,7 +549,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -572,6 +583,9 @@
       "foundation:equestguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {
+      "cities:theatre": 4
+    },
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -587,6 +601,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Artists Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [],
@@ -598,7 +613,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -633,6 +647,7 @@
       "foundation:mercerguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -648,6 +663,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Bakers Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -664,7 +680,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -699,6 +714,7 @@
       "foundation:masonguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -714,6 +730,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Blacksmiths Guild",
+    "naturalSpreadPercent": 35,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -728,7 +745,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -758,6 +774,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -773,6 +790,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Burgerworld",
+    "naturalSpreadPercent": 100,
     "obsoleteTech": null,
     "pedia": "Fast Food Restaurants are the lifeblood of these companies. Serving Burgers and Fries for lunch and Dinner and a Muffin Sandwich for breakfast for hungry customer, in foreign branches the same company not only makes Fast Food but also \u0093Pub/Diner Food\u0094 available to the consumers there since smaller investments in foreign cities is risky and given the turnover rate of unsuccessful restaurants it will be a heavy risk to go in without major corporation backing. Hong Kong\u0092s Fast Food branches for example have implemented several Hong Kong Cuisine Classics to their menu and some places like Germany allow beer to be served in their restaurants.[PARAGRAPH:1]Built under a \u0093Bureaucratic\u0094 factory System, food produced here is cheap, fast and filling which has been so \u0093effective\u0094 that it has a social effect termed as \u0093McDonaldization\u0094 where Efficiency, Calculability, Predictability and Control is what society needs.",
     "prereqBonuses": [
@@ -790,7 +808,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -825,6 +842,7 @@
       "foundation:mercerguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -840,6 +858,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Butchers Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -856,7 +875,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -891,6 +909,9 @@
       "foundation:masonguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {
+      "cities:siege_workshop": 4
+    },
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -906,6 +927,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Carpenters Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [],
@@ -917,7 +939,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -952,6 +973,9 @@
       "foundation:equestguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {
+      "cities:library": 4
+    },
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -967,6 +991,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Clerks Guild",
+    "naturalSpreadPercent": 40,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [],
@@ -978,7 +1003,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1013,6 +1037,7 @@
       "foundation:equestguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 1,
@@ -1028,6 +1053,7 @@
     "maintenanceHundredths": 45,
     "militaryProductionPercent": 0,
     "name": "Drapers Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -1045,7 +1071,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1075,6 +1100,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 1,
     "headquartersCommerce": {
       "culture": 0,
@@ -1090,6 +1116,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Emperors Clothing",
+    "naturalSpreadPercent": 60,
     "obsoleteTech": null,
     "pedia": "See Fashion House for details. Emperors Clothing is a rival of Fashion House, and thus requires many of the same resources.",
     "prereqBonuses": [
@@ -1107,7 +1134,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1142,6 +1168,7 @@
       "foundation:drapersguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1157,6 +1184,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Equestrians Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -1171,7 +1199,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1201,6 +1228,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 1,
     "headquartersCommerce": {
       "culture": 0,
@@ -1216,6 +1244,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "East West Traders",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "The East West Traders evolved from corporations such as Transatlantic Triangular Trade, that operated during the 17th, 18th, and early 19th centuries, carrying slaves, cash crops, and manufactured goods between West Africa, the Caribbean  or American  colonies and the European colonial powers, with the northern colonies of British North America, especially New England, sometimes taking over the role of Europe. They are now more benign.",
     "prereqBonuses": [
@@ -1233,7 +1262,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1263,6 +1291,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1278,6 +1307,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Fashion House",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "\tThe first fashion designer who was not merely a dressmaker was Charles Frederick Worth (1826 -1895). Before the former draper set up his maison couture (fashion house) in Paris, clothing design and creation was handled by largely anonymous seamstresses, and high fashion descended from styles worn at royal courts. Worth\u0027s success was such that he was able to dictate to his customers what they should wear, instead of following their lead as earlier dressmakers had done. It was during this period that many design houses began to hire artists to sketch or paint designs for garments. The images alone could be presented to clients much more cheaply than by producing an actual sample garment in the workroom. If the client liked the design, they ordered it and the resulting garment made money for the house. Thus, the tradition of designers sketching out garment designs instead of presenting completed garments on models to customers began as an economy.",
     "prereqBonuses": [
@@ -1295,7 +1325,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1330,6 +1359,7 @@
       "foundation:mercerguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1345,6 +1375,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Fishmongers Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -1362,7 +1393,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1397,6 +1427,7 @@
       "foundation:masonguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1412,6 +1443,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Glassblowers Guild",
+    "naturalSpreadPercent": 35,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -1426,7 +1458,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1461,6 +1492,7 @@
       "foundation:masonguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1476,6 +1508,7 @@
     "maintenanceHundredths": 50,
     "militaryProductionPercent": 0,
     "name": "Goldsmiths Guild",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -1492,7 +1525,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1527,6 +1559,7 @@
       "foundation:mercerguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1542,6 +1575,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Grocers Guild",
+    "naturalSpreadPercent": 30,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -1559,7 +1593,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1589,6 +1622,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1604,6 +1638,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "MallWart",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "Fresh groceries and fruits delivered from all over the world directly to your home cities.",
     "prereqBonuses": [
@@ -1621,7 +1656,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1651,6 +1685,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 2,
     "headquartersCommerce": {
       "culture": 0,
@@ -1666,6 +1701,7 @@
     "maintenanceHundredths": 50,
     "militaryProductionPercent": 0,
     "name": "Mapster",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "Mass media denotes a section of the media specifically designed to reach a large audience. The term was coined in the 1920s with the advent of nationwide radio networks, mass-circulation newspapers and magazines. However, some forms of mass media such as books and manuscripts had already been in use for centuries.\nMass media includes Internet media (like blogs, message boards, podcasts, and video sharing) because individuals now have a means to exposure that is comparable in scale to that previously restricted to a select group of mass media producers. The communications audience has been viewed by some commentators as forming a mass society with special characteristics, notably atomization or lack of social connections, which render it especially susceptible to the influence of modern mass-media techniques such as advertising and propaganda. The term \u0022MSM\u0022 or \u0022mainstream media\u0022 has been widely used in the blogosphere in discussion of the mass media and media bias.",
     "prereqBonuses": [
@@ -1715,6 +1751,7 @@
       "foundation:goldsmguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1730,6 +1767,7 @@
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Masons Guild",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -1743,7 +1781,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1778,6 +1815,7 @@
       "foundation:grocerguild"
     ],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1793,6 +1831,7 @@
     "maintenanceHundredths": 55,
     "militaryProductionPercent": 0,
     "name": "Mercers Guild",
+    "naturalSpreadPercent": 75,
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [
@@ -1810,7 +1849,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1840,6 +1878,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 1,
     "headquartersCommerce": {
       "culture": 0,
@@ -1855,6 +1894,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "MileHigh Travels",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "A travel agency is a retail business, that sells travel related products and services to customers, on behalf of suppliers, such as airlines, car rentals, cruise lines, hotels, railways, sightseeing tours and package holidays that combine several products. In addition to dealing with ordinary tourists, most travel agencies have a separate department devoted to making travel arrangements for business travelers and some travel agencies specialize in commercial and business travel only. There are also travel agencies that serve as general sales agents for foreign travel companies, allowing them to have offices in countries other than where their headquarters are located.\nThe British company Cox and Kings is sometimes said to be the oldest travel agency in the world, but this rests upon the services that the original bank, established in 1758, supplied to its wealthy clients. The modern travel agency first appeared in the second half of the 19th century. Thomas Cook, in addition to developing the package tour, established a chain of agencies in the last quarter of the 19th century, in association with the Midland Railway. They not only sold their own tours to the public, but in addition, represented other tour companies. Other British pioneer travel agencies were Dean and Dawson, the Polytechnic Touring Association and the Co-operative Wholesale Society. The oldest travel agency in North America is Brownell Travel; on July 4, 1887, Walter T. Brownell led ten travelers on a European tour, setting sail from New York on the SS Devonia.\nTravel agencies became more commonplace with the development of commercial aviation, starting in the 1920s. Originally, travel agencies largely catered to middle and upper class customers, but the post-war boom in mass-market package holidays resulted in travel agencies on the main streets of most British towns, catering to a working class client\u00E8le, looking for a convenient way to book overseas beach holidays.",
     "prereqBonuses": [
@@ -1873,7 +1913,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1903,6 +1942,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -1918,6 +1958,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Mobby Meats",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "A supermarket, also called a grocery store, is a self-service store offering a wide variety of food and household merchandise, organized into departments. It is larger in size and has a wider selection than a traditional grocery store and it is smaller than a hypermarket or superstore.\nThe supermarket typically comprises meat, fresh produce, dairy, and baked goods departments along with shelf space reserved for canned and packaged goods as well as for various nonfood items such as household cleaners, pharmacy products, and pet supplies. Most supermarkets also sell a variety of other household products that are consumed regularly, such as alcohol (where permitted), household cleaning products, medicine, clothes, and some sell a much wider range of nonfood products.\nThe traditional suburban supermarket occupies a large amount of floor space, usually on a single level, and is situated near a residential area in order to be convenient to consumers. Its basic appeal is the availability of a broad selection of goods under a single roof at relatively low prices. Other advantages include ease of parking and, frequently, the convenience of shopping hours that extend far into the evening or even 24 hours a day. Supermarkets usually make massive outlays of newspaper and other advertising and often present elaborate in-store displays of products. The stores often are part of a corporate chain that owns or controls (sometimes by franchise) other supermarkets located nearby \u0097 even transnationally \u0097 thus increasing opportunities for economies of scale.\nSupermarkets typically are supplied by the distribution centers of its parent company, such as Loblaw Companies in Canada, which operates thousands of supermarkets across the nation. Loblaw operates a distribution center in every province \u0097 usually in the largest city in the province.Supermarkets usually offer products at low prices by reducing their economic margins. Certain products (typically staple foods such as bread, milk and sugar) are occasionally sold as loss leaders, that is, with negative profit margins. To maintain a profit, supermarkets attempt to make up for the lower margins by a higher overall volume of sales, and with the sale of higher-margin items. Customers usually shop by placing their selected merchandise into shopping carts (trolleys) or baskets (self-service) and pay for the merchandise at the check-out. At present, many supermarket chains are attempting to further reduce labor costs by shifting to self-service check-out machines, where a single employee can oversee a group of four or five machines at once, assisting multiple customers at a time.\nA larger full-service supermarket combined with a department store is sometimes known as a hypermarket. Other services offered at some supermarkets may include those of banks, caf\u00E9s, childcare centers/creches, photo processing, video rentals, pharmacies, source/or filling stations.",
     "prereqBonuses": [
@@ -1935,7 +1976,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -1965,6 +2005,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 2,
     "headquartersCommerce": {
       "culture": 0,
@@ -1980,6 +2021,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "MoonBean Coffee",
+    "naturalSpreadPercent": 100,
     "obsoleteTech": null,
     "pedia": "Coffee and other hot caffeinated beverages was always a vital part of societies as humans enjoy tea time with their fellow men. However, the idea of a coffee branch changed the way of the \u0093Coffee Culture\u0094 to fit with the consumerism standards of America. With the founding of Starbucks however, the face of the coffee culture changed forever. In the year 1971, Jerry Baldwin, Zev Siegel and Gordon Bowker had started one of the biggest coffee branches in Seattle as they desired to turn coffee and tea to a sophisticated drink as they bought high quality coffee equipment and coffee beans to follow. The following result is what will be one of the biggest coffee giants in the entire world as they were able to quickly spread not only in America but in other developed nations of the world. The effect of Starbucks wasn\u0092t their coffee but rather the new age culture it has created with special blends of coffee beverages and tea were made to cater to the tastes and whims of everyone to the artist culture that Starbucks supports as well as attempts to influence \u0093Fair Trade\u0094 policies where developing nations can sell coffee and tea competitively with larger companies who in the age of neo-imperialism have impoverished subsistence farmers with their \u0093Banana Republic\u0094 policies.",
     "prereqBonuses": [
@@ -1996,7 +2038,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -2026,6 +2067,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 1,
     "headquartersCommerce": {
       "culture": 0,
@@ -2041,6 +2083,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Red Curtains",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "Entertainment always has been prominent in society despite today\u0092s skeptical perception that a doctor earns several times less than a famous celebrity for the amount of time invested. In Rome, gladiators were quite popular with housewives of both the plebian and nobility alike. Actors in the Renaissance Europe enjoyed fame and at times immunity from some crimes and today\u0092s society of entertainment is no exception to the rule. In exchange for their pride and personal space and a very low career security, they could potentially live lavishly in cultural capitals such as Hollywood and New York being worshipped by people as entertainment icons. The Entertainment Moguls often take advantage of that by setting up contracts and hiring agents who get paid relative to the success of their star to be. While the benefits of becoming a celebrity these days can be great, so are the drawbacks. The paparazzi seeks any opportunity to pull a smear job on their target, the reviewers are often insatiable critics who at time hates certain stars on principle and the ever demanding agents puts them through a stressful schedule with little choice in what they do and a less than stable domestic life. Still with money being a source of happiness and entertainment a seemingly inexhaustible well of money, it is no wonder why the entertainment industry is so powerful especially in this time.",
     "prereqBonuses": [
@@ -2056,7 +2099,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -2086,6 +2128,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 0,
     "headquartersCommerce": {
       "culture": 0,
@@ -2101,6 +2144,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Safari Hunters",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "Hunting was always a part of nobility as a source of recreation where they will go to the wilderness to hunt game for both food and sport. During the great age of colonialism in Africa, Europe discovered what lifeblood was during the days before they settled down: Hunting. Many aristocrats will head to parts of Africa to hunt and kill animals for sport which was considered to be trophy hunting as the creatures in Africa were much more fierce and deadly than what they had encountered in Europe ranging from elephants to lions despite controversy in. Hunting remains a recreation sport in many areas including Africa but compared to the old days where hunting laws were made to prohibit peasants from hunting certain animals during certain seasons.",
     "prereqBonuses": [
@@ -2118,7 +2162,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -2148,6 +2191,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": -2,
     "headquartersCommerce": {
       "culture": 0,
@@ -2163,6 +2207,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 15,
     "name": "Ultimate Soldiers",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "Arms Production has always been mostly a government duty during the earlier with most of the weapons being built by the nation owned armories, but with private investors such as Smith and Wesson and Krupp Steelworks and Boeing, weapon production shifted from the duty of the government to the private sector. Billions of dollars is spent yearly to devise new and inventive ways to not only protect the nation from threats but also extend their influence worldwide against other groups that may fall afoul of the interests of the government. As well as producing weapons, this company also covers Private Military Contractors, who hires mostly professional soldiers (80% of the PMCs soldiers consists of ex-military or law enforcement) who have at least 5-10 years of experience in the military branches but has \u0093Retired\u0094 by the government due to their age and placing them in non-military roles such as office work . An approved PMC usually offer security services to a variety of people or certain areas that normal soldiers cannot reach due to chain of command, others work as soldiers of fortune or belief. Contrary to popular belief in fiction, no PMC is willing to recruit fresh out of school soldiers since sending them back in a body bag can be very poor for their reputation of professional soldiers.",
     "prereqBonuses": [
@@ -2178,7 +2223,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {
@@ -2208,6 +2252,7 @@
     },
     "competingCorporations": [],
     "era": null,
+    "foundingBuildingClasses": {},
     "happiness": 3,
     "headquartersCommerce": {
       "culture": 0,
@@ -2223,6 +2268,7 @@
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Wonka Confectioneries",
+    "naturalSpreadPercent": 50,
     "obsoleteTech": null,
     "pedia": "Since the dawn of civilization, humanity desired treats that cleansed their palates after consuming rich savory meals or plain meals. Early forays to treats mostly resided in cakes and pastries with the notion of just using beet sugar to satisfy the taste buds or sap based taffy. Other means for common people to enjoy sweets often relied on more sweet starchy foods such as yams or azuki beans mashed to a fine paste for sweet snacks and relying on honeyed alcohol for drinks (Roman wine is much sweeter than any wine of today) as sugar based candies were often too expensive to make let alone enjoy by the average person. Although sugar cultivation happened in Southeast Asia and in the Middle East, it wasn\u0092t used in widespread use for commoners whom while may know about spices does not have access to refined sugar treats[PARAGRAPH:1]Thanks to easy access to sugar and cacao in the 1800\u0092s America were able to mass produce candy treats with Whitman\u0092s Chocolate boxes being the first case of mass produced confectionaries in America. However, it is the Swiss who produce most if not all of the most well known candy in the world when Confectionery as a business became truly lucrative with Lindt and Nestle being one of the candy magnates known to man although Mars Bars Inc. managed to wrestle control of the candy market away from Europe in 1911 with the delicious nougat, caramel and chocolate combination.",
     "prereqBonuses": [
@@ -2240,7 +2286,6 @@
     "unsupported": [
       "PrereqBuildingClasses",
       "Sound",
-      "iSpread",
       "iTGAIndex"
     ],
     "yieldChanges": {

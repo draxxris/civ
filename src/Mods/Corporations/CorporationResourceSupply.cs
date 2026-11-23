@@ -18,7 +18,9 @@ internal sealed class CorporationResourceSupply(CorporationService service) : IC
         foreach (var id in service.Present(sim, city.Id))
         {
             var def = sim.Content.Get<CorporationDef>(id);
-            if (def.BonusProduced is { } bonus && Producible(sim, city.Owner, bonus) && service.IsActive(sim, city.Id, id)) producers.Add(def);
+            // Not IsActive: that counts the city's resources, which is what is being answered here. A branch without its
+            // consumed resource produces no copy anyway (copies below is zero).
+            if (def.BonusProduced is { } bonus && Producible(sim, city.Owner, bonus) && service.IsOperating(sim, city.Id, id)) producers.Add(def);
         }
         if (producers.Count == 0) return [];
         var consumed = producers.SelectMany(p => p.PrereqBonuses).Distinct(StringComparer.Ordinal).ToArray();

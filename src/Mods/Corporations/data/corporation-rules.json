@@ -1,0 +1,13 @@
+{
+  "id": "corporations:rules",
+  "name": "Realistic Guilds/Corporations rules",
+  "foundingMeanTurns": 30,
+  "foundingCooldownTurns": 20,
+  "branchDecayTurns": 5,
+  "headquartersDecayTurns": 10,
+  "supplyPercentPerCopy": 50,
+  "supplyCopiesCap": 10,
+  "spreadDistanceFloor": 5,
+  "competitorInfluenceDivisor": 10,
+  "crowdingDivisor": 2
+}

@@ -43,6 +43,10 @@ internal sealed class CorporationIndex
     /// <summary>The founding building of each corporation, by the corporation's rules id; the first by id when content
     /// names more than one (validation reports that).</summary>
     public IReadOnlyDictionary<string, BuildingDef> FoundingBuildings { get; }
+    /// <summary>The technologies the founding building of each corporation requires, by rules id, in the order its
+    /// requirement names them: what a nation must know for the corporation to be founded on its own. The source does
+    /// the same, taking the founding building's technology when the corporation names none.</summary>
+    public IReadOnlyDictionary<string, string[]> FoundingTechs { get; }
 
     private CorporationIndex(ContentDb content)
     {
@@ -55,6 +59,8 @@ internal sealed class CorporationIndex
             if (building.FoundsCorporation is { } identity && byIdentity.TryGetValue(identity, out var corporation))
                 buildings.TryAdd(corporation.Id, building);
         FoundingBuildings = buildings;
+        FoundingTechs = buildings.ToDictionary(p => p.Key, p => ContentReferences.Leaves(p.Value.Requirements ?? new Requirement.All([]))
+            .Where(l => l.Kind == "tech").Select(l => l.Id).Distinct(StringComparer.Ordinal).ToArray(), StringComparer.Ordinal);
     }
 
     public static CorporationIndex Of(ContentDb content) => Cache.GetValue(content, c => new CorporationIndex(c));

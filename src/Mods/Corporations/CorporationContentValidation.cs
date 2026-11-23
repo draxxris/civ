@@ -25,6 +25,14 @@ internal static class CorporationContentValidation
                 errors.Add($"{def.Id}: negative MaintenanceHundredths would subsidise the branch");
             if (def.CompetingCorporations.Contains(def.Identity, StringComparer.Ordinal))
                 errors.Add($"{def.Id}: competes with itself, so it would evict its own branches");
+            if (def.NaturalSpreadPercent <= 0)
+                errors.Add($"{def.Id}: NaturalSpreadPercent {def.NaturalSpreadPercent} would never spread with Realistic Guilds/Corporations");
+            if (def.PrereqBonuses.Length == 0 && def.FoundingBuildingClasses.Count == 0)
+                errors.Add($"{def.Id}: consumes no resource and has no FoundingBuildingClasses, so Realistic Guilds/Corporations would found it with its technology alone");
+            if (def.PrereqBonuses.Length > 0 && def.FoundingBuildingClasses.Count > 0)
+                errors.Add($"{def.Id}: consumes a resource, which gates its founding; FoundingBuildingClasses is only for a corporation that consumes none");
+            foreach (var (building, count) in def.FoundingBuildingClasses.Where(p => p.Value < 1))
+                errors.Add($"{def.Id}: FoundingBuildingClasses needs {count} of {building}; a count must be at least 1");
         }
         foreach (var group in definitions.GroupBy(d => d.Identity, StringComparer.Ordinal).Where(g => g.Count() > 1))
             errors.Add($"{string.Join(", ", group.Select(d => d.Id))}: share identity '{group.Key}', so building, headquarters and executive references are ambiguous");
@@ -112,4 +120,30 @@ internal sealed class FoundingBuildingCheck : Ariel.Game.IContentCheck
 internal sealed class ExecutiveTrainingCheck : Ariel.Game.IContentCheck
 {
     public IEnumerable<string> Problems(ContentDb content) => CorporationContentValidation.Executives(content);
+}
+
+/// <summary>The source's rule constants the Realistic Guilds/Corporations spread reads are present and usable: a spread
+/// range and distance divisor above zero, a resource influence not below zero, and a free-trade change no lower than
+/// -100%. Foundation owns the rule constants, so this runs on frozen content.</summary>
+internal sealed class SourceConstantCheck : Ariel.Game.IContentCheck
+{
+    public IEnumerable<string> Problems(ContentDb content)
+    {
+        var raw = content.Get<RuleConstantsDef>().All.Single().Raw;
+        foreach (var key in NaturalCorporations.SourceConstants)
+        {
+            if (!int.TryParse(raw.GetValueOrDefault(key), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int value))
+            {
+                yield return $"rule constant {key} is missing or not a whole number; the realistic corporation spread reads it";
+                continue;
+            }
+            int minimum = key switch
+            {
+                "CORPORATION_SPREAD_RAND" or "CORPORATION_SPREAD_DISTANCE_DIVISOR" => 1,
+                "FREE_TRADE_CORPORATION_SPREAD_MOD" => -100,
+                _ => 0,
+            };
+            if (value < minimum) yield return $"rule constant {key} is {value}; the realistic corporation spread needs at least {minimum}";
+        }
+    }
 }

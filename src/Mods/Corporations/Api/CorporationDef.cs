@@ -70,6 +70,16 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     public int SpreadFactorPercent { get; init; }
     /// <summary>Maintenance per consumed resource copy, hundredths of gold.</summary>
     public int MaintenanceHundredths { get; init; }
+    /// <summary>The source's <c>iSpread</c>: percent of a holding city's influence that reaches out to open branches on
+    /// their own with Realistic Guilds/Corporations (<see cref="CorporationMode"/>). Zero would never spread.</summary>
+    public int NaturalSpreadPercent { get; init; }
+    /// <summary>For a guild that consumes no resource, which therefore has no resource to gate on: buildings, by class
+    /// (the class's default building), and how many of each a nation must hold across its empire for the guild to be
+    /// founded on its own with Realistic Guilds/Corporations, and to keep its Master Guild. They are the buildings of its
+    /// trade its Master Guild needs when built by hand, counted as that building's requirement counts them. Empty for
+    /// every corporation that consumes a resource, which its connected resource gates instead.</summary>
+    [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
+    public ImmutableDictionary<string, int> FoundingBuildingClasses { get; init; } = ImmutableDictionary<string, int>.Empty;
 
     /// <summary>The seat's name as a title: "Headquarters", "Master Guild".</summary>
     public string SeatTitle() => Seat.Length == 0 ? Seat : char.ToUpperInvariant(Seat[0]) + Seat[1..];

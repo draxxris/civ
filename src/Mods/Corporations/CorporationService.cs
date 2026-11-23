@@ -6,6 +6,14 @@ namespace Ariel.Mods.Corporations;
 
 internal sealed class CorporationService : ICorporationService
 {
+    public CorporationService() => Natural = new NaturalCorporations(this);
+    /// <summary>The Realistic Guilds/Corporations rules: founding, spread and decay on their own.</summary>
+    internal NaturalCorporations Natural { get; }
+    public int? NaturalFoundingCity(Simulation sim, int player, string corporation) =>
+        sim.Content.TryGet<CorporationDef>(corporation, out var def) ? Natural.FoundingSite(sim, player, def)?.Id : null;
+    public CorporationSpreadOdds NaturalSpreadOdds(Simulation sim, int city, string corporation) =>
+        sim.State.FindCity(city) is { } target && sim.Content.TryGet<CorporationDef>(corporation, out var def)
+            ? Natural.SpreadOdds(sim, target, def) : default;
     private static CorporationGameState Read(Simulation sim) => sim.State.Extensions.Get<CorporationGameState>(sim.Content) ?? new();
     /// <summary>The recorded state, created and attached on first use. Callers must mutate the returned instance:
     /// a fresh state is only persisted once it is set, so a caller that reads without editing loses nothing.</summary>
@@ -43,15 +51,26 @@ internal sealed class CorporationService : ICorporationService
             ? "the " + building : $"the {def.Seat} of {def.Name}";
     }
     /// <summary>One founding answer for the rules, the effects and the UI: a live headquarters city.</summary>
-    private static CorporationFounding? Founding(Simulation sim, string corporation) =>
+    internal static CorporationFounding? Founding(Simulation sim, string corporation) =>
         Read(sim).Founded.TryGetValue(corporation, out var record) && sim.State.FindCity(record.Headquarters) is not null ? record : null;
     public int? Headquarters(Simulation sim, string corporation) => Founding(sim, corporation)?.Headquarters;
     public bool IsFounded(Simulation sim, string corporation) => Founding(sim, corporation) is not null;
     /// <summary>The team that owns the headquarters now. A captured headquarters moves the corporation with it; a razed one falls back to the founder.</summary>
-    private static int HeadquartersTeam(Simulation sim, CorporationFounding founded) =>
+    internal static int HeadquartersTeam(Simulation sim, CorporationFounding founded) =>
         sim.State.FindCity(founded.Headquarters) is { } hq ? sim.TeamOf(hq.Owner).Id : founded.FounderTeam;
-    private static bool Blocked(Simulation sim, City city, int headquartersTeam) => Civics(sim, city.Owner).Any(c => c.NoCorporations || (c.NoForeignCorporations && sim.TeamOf(city.Owner).Id != headquartersTeam));
-    public bool IsActive(Simulation sim, int city, string corporation) => sim.State.FindCity(city) is { } target
+    internal static bool Blocked(Simulation sim, City city, int headquartersTeam) => Civics(sim, city.Owner).Any(c => c.NoCorporations || (c.NoForeignCorporations && sim.TeamOf(city.Owner).Id != headquartersTeam));
+    /// <summary>Whether the player's civics ban every corporation.</summary>
+    internal static bool BansCorporations(Simulation sim, int player) => Civics(sim, player).Any(c => c.NoCorporations);
+    /// <summary>A branch works, as the source's active corporation does: the corporation is founded, its branch is in
+    /// the city, the owner's civics allow it, it is not obsolete for the owner, and the city can use a copy of a resource
+    /// it consumes (a corporation that consumes none needs none). A branch without its resource stays, but gives,
+    /// produces and costs nothing and counts for no headquarters income.</summary>
+    public bool IsActive(Simulation sim, int city, string corporation) => IsOperating(sim, city, corporation)
+        && (sim.Content.Get<CorporationDef>(corporation).PrereqBonuses.Length == 0 || ConsumedBonusCount(sim, city, corporation) > 0);
+    /// <summary><see cref="IsActive"/> without the resource: what the branch's produced resource asks
+    /// (<see cref="CorporationResourceSupply"/>), which counts its copies from the city's network itself and is asked
+    /// from inside the resource count, so it must not count resources again.</summary>
+    internal bool IsOperating(Simulation sim, int city, string corporation) => sim.State.FindCity(city) is { } target
         && Founding(sim, corporation) is { } record && Present(sim, city).Contains(corporation)
         && !Blocked(sim, target, HeadquartersTeam(sim, record)) && !Obsolete(sim, target.Owner, sim.Content.Get<CorporationDef>(corporation));
     /// <summary>Whether the player's team knows the corporation's <see cref="CorporationDef.ObsoleteTech"/>.</summary>
@@ -75,16 +94,22 @@ internal sealed class CorporationService : ICorporationService
     /// <summary>The copies of its consumed resources a branch uses, read from <see cref="ConsumedCounts"/>.</summary>
     internal static long Consumed(CorporationDef def, IReadOnlyDictionary<string, long> counts) => def.PrereqBonuses.Length == 0 ? 0
         : def.PrereqBonuses.Distinct(StringComparer.Ordinal).Sum(b => Math.Max(0, counts.GetValueOrDefault(b)));
-    /// <summary>The corporations with an active branch in the city, in id order.</summary>
-    internal IReadOnlyList<CorporationDef> ActiveIn(Simulation sim, City city) =>
-        Present(sim, city.Id).Where(c => IsActive(sim, city.Id, c)).Select(sim.Content.Get<CorporationDef>).ToArray();
+    /// <summary>The corporations with an active branch in the city (<see cref="IsActive"/>), in id order, and the copies
+    /// of their consumed resources the city can use, gathered in one resource query for all of them.</summary>
+    internal (IReadOnlyList<CorporationDef> Active, IReadOnlyDictionary<string, long> Counts) ActiveIn(Simulation sim, City city)
+    {
+        var present = Present(sim, city.Id);
+        if (present.Count == 0) return ([], NoCounts);
+        var operating = present.Where(c => IsOperating(sim, city.Id, c)).Select(sim.Content.Get<CorporationDef>).ToArray();
+        if (operating.Length == 0) return ([], NoCounts);
+        var counts = ConsumedCounts(sim, city, operating);
+        return (operating.Where(d => d.PrereqBonuses.Length == 0 || Consumed(d, counts) > 0).ToArray(), counts);
+    }
     public long MaintenanceHundredths(Simulation sim, int city)
     {
         var cityObj = sim.State.CityById(city);
-        // A city without a corporation owes nothing; only one with a branch resolves which are active.
-        bool any = cityObj.Extensions.Get<CorporationCityState>(sim.Content) is { Corporations.Count: > 0 };
-        IReadOnlyList<CorporationDef> active = any ? ActiveIn(sim, cityObj) : [];
-        return MaintenanceHundredths(sim, cityObj, active, active.Count == 0 ? NoCounts : ConsumedCounts(sim, cityObj, active));
+        var (active, counts) = ActiveIn(sim, cityObj);
+        return MaintenanceHundredths(sim, cityObj, active, counts);
     }
     /// <summary>The city's maintenance for its active branches, given their consumed resource counts
     /// (<see cref="ConsumedCounts"/>), so the city's effects and its maintenance can share one resource query.</summary>
@@ -100,7 +125,7 @@ internal sealed class CorporationService : ICorporationService
         if (active.Count == 0) return 0;
         long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total(MaintenanceKey);
         int inflation = InflationPercent(sim, cityObj.Owner) + 100;
-        bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
+        bool realistic = CorporationMode.Realistic(sim);
         long total = 0;
         foreach (var def in active)
         {
@@ -150,10 +175,25 @@ internal sealed class CorporationService : ICorporationService
     /// Cities, which also refuses barbarians first.</summary>
     internal string? RefuseFounding(Simulation sim, City city, CorporationDef def)
     {
+        if (CorporationMode.Realistic(sim)) return RealisticFoundingRefusal(sim.Content, def);
         if (IsFounded(sim, def.Id)) return "Corporation is already founded";
         if (Obsolete(sim, city.Owner, def)) return ObsoleteReason(sim, def, "your team");
         if (Blocked(sim, city, sim.TeamOf(city.Owner).Id)) return "Civics prohibit corporations";
         return RefuseSite(sim, city, def);
+    }
+    /// <summary>What the founding building says with Realistic Guilds/Corporations, where nobody builds it.</summary>
+    internal static string RealisticFoundingRefusal(ContentDb content, CorporationDef def) =>
+        $"Founded automatically with {CorporationMode.OptionName(content)}: {FoundingCondition(content, def)}";
+    /// <summary>What a nation needs for the corporation to be founded on its own: "a nation with Guilds and stone", or
+    /// for a guild that consumes nothing, "a nation with Engineering and 4 Siege Workshops".</summary>
+    internal static string FoundingCondition(ContentDb content, CorporationDef def)
+    {
+        string Name(string id) => content.Find(id)?.Name is { Length: > 0 } name ? name : id;
+        string techs = string.Join(" and ", CorporationIndex.Of(content).FoundingTechs.GetValueOrDefault(def.Id, []).Select(Name));
+        string need = def.PrereqBonuses.Length > 0
+            ? string.Join(" or ", def.PrereqBonuses.Select(Name)) + " connected"
+            : string.Join(" and ", def.FoundingBuildingClasses.OrderBy(p => p.Key, StringComparer.Ordinal).Select(p => $"{p.Value} {Name(p.Key)}"));
+        return techs.Length == 0 ? $"a nation with {need}" : $"a nation with {techs} and {need}";
     }
     /// <summary>Found the corporation with its headquarters and first branch in the city. One already founded, by a city
     /// that completed its headquarters first or by a scenario, stays as it is.</summary>
@@ -166,6 +206,15 @@ internal sealed class CorporationService : ICorporationService
         Add(sim, city, def);
         sim.Events.Publish(new CorporationFounded(def.Id, city.Id, city.Owner));
     }
+    /// <summary>Found the corporation in the city without anyone building it (Realistic Guilds/Corporations): its founding
+    /// building is placed there as the source moves it with its headquarters, so the city is the seat as if it had built
+    /// it. Nothing is completed, so no <see cref="BuildingCompleted"/> is published.</summary>
+    internal void FoundWithoutBuilding(Simulation sim, City city, CorporationDef def)
+    {
+        if (IsFounded(sim, def.Id)) return;
+        if (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building && !city.Buildings.Contains(building.Id)) city.Buildings.Add(building.Id);
+        Found(sim, city, def);
+    }
     /// <summary>A razed headquarters dissolves its corporations.</summary>
     internal void DissolveHeadquartersOf(Simulation sim, int city, int player)
     {
@@ -173,13 +222,22 @@ internal sealed class CorporationService : ICorporationService
         foreach (var corporation in Read(sim).Founded.Where(pair => pair.Value.Headquarters == city).Select(pair => pair.Key).ToArray())
             Dissolve(sim, corporation, city, player);
     }
-    /// <summary>Dissolve the corporation: its branches leave every city and it may be founded again.</summary>
-    private static void Dissolve(Simulation sim, string corporation, int city, int player)
+    /// <summary>Dissolve the corporation: the headquarters city loses its founding building, its branches leave every
+    /// city and it may be founded again.</summary>
+    internal static void Dissolve(Simulation sim, string corporation, int city, int player)
     {
+        if (sim.State.FindCity(city) is { } seat && CorporationFounder.Headquarters(sim.Content, corporation) is { } building)
+            seat.Buildings.Remove(building.Id);
         foreach (var other in sim.State.Cities)
             other.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.Remove(corporation);
         Edit(sim).Founded.Remove(corporation);
         sim.Events.Publish(new CorporationDissolved(corporation, city, player));
+    }
+    /// <summary>Close one branch outside the headquarters, which lost its resource (Realistic Guilds/Corporations).</summary>
+    internal static void Withdraw(Simulation sim, City city, string corporation)
+    {
+        if (city.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.Remove(corporation) == true)
+            sim.Events.Publish(new CorporationWithdrawn(corporation, city.Id));
     }
     /// <summary>A team learned a technology that makes corporations obsolete (<see cref="CorporationDef.ObsoleteTech"/>):
     /// their branches close in the team's cities, and a headquarters there loses its founding building and dissolves the
@@ -193,7 +251,6 @@ internal sealed class CorporationService : ICorporationService
                 if (!Present(sim, city.Id).Contains(def.Id)) continue;
                 if (Founding(sim, def.Id)?.Headquarters == city.Id)
                 {
-                    if (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building) city.Buildings.Remove(building.Id);
                     Dissolve(sim, def.Id, city.Id, city.Owner);
                     continue;
                 }
@@ -210,6 +267,7 @@ internal sealed class CorporationService : ICorporationService
     {
         if (!sim.State.Players.Any(p => p.Id == player)) return "Unknown player";
         if (!sim.Content.TryGet<CorporationDef>(corporation, out var def)) return "Unknown corporation";
+        if (CorporationMode.Realistic(sim)) return RealisticSpreadRefusal(sim.Content);
         if (Founding(sim, corporation) is not { } record) return "Corporation is not founded";
         var city = sim.State.FindCity(cityId);
         if (city is null) return "Unknown city";
@@ -225,12 +283,22 @@ internal sealed class CorporationService : ICorporationService
     /// an executive or sends one, so it never aims at a city the spread itself would refuse.</summary>
     internal string? RefuseBranch(Simulation sim, int player, City city, CorporationDef def)
     {
+        if (CorporationMode.Realistic(sim)) return RealisticSpreadRefusal(sim.Content);
         if (Founding(sim, def.Id) is not { } record) return "Corporation is not founded";
         return ValidateBranch(sim, player, city, def.Id, record) ?? RefuseSite(sim, city, def);
     }
+    /// <summary>Why nobody opens a branch by hand with Realistic Guilds/Corporations.</summary>
+    internal static string RealisticSpreadRefusal(ContentDb content) =>
+        $"Guilds and corporations spread on their own with {CorporationMode.OptionName(content)}";
+    /// <summary>Executives are not trained with Realistic Guilds/Corporations, where nothing can use
+    /// them; every other unit is left to its own requirements.</summary>
+    public string? RefuseUnit(Simulation sim, City city, UnitDef unit) =>
+        CorporationMode.Realistic(sim) && IsExecutive(sim, unit.Id)
+            ? $"Executives are not used with {CorporationMode.OptionName(sim.Content)}: guilds and corporations spread on their own"
+            : null;
     /// <summary>The checks on the city's resources and headquarters, last because the connectivity query is the dearest.
     /// A corporation that consumes no resource needs none.</summary>
-    private string? RefuseSite(Simulation sim, City city, CorporationDef def)
+    internal string? RefuseSite(Simulation sim, City city, CorporationDef def)
     {
         if (def.PrereqBonuses.Length > 0 && ConsumedBonusCount(sim, city.Id, def.Id) <= 0) return "Requires a connected corporation resource";
         return HeadquartersConflict(sim, city.Id, def);
@@ -295,8 +363,8 @@ internal sealed class CorporationService : ICorporationService
     internal static bool Competes(CorporationDef a, CorporationDef b) => a.Id != b.Id
         && (a.CompetingCorporations.Contains(b.Identity, StringComparer.Ordinal) || b.CompetingCorporations.Contains(a.Identity, StringComparer.Ordinal)
             || a.PrereqBonuses.Intersect(b.PrereqBonuses, StringComparer.Ordinal).Any());
-    private string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
-    private static void Add(Simulation sim, City city, CorporationDef def)
+    internal string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
+    internal static void Add(Simulation sim, City city, CorporationDef def)
     {
         var state = city.Extensions.Get<CorporationCityState>(sim.Content) ?? new();
         city.Extensions.Set(sim.Content, state);

@@ -17,10 +17,16 @@ public sealed class CorporationsMod : IPreparableMod
     private static readonly ModJsonFile<UnitCorporationsDef[]> Units = new("data/unit-corporations.json");
     private static readonly ModJsonFile<HandicapCorporationsDef[]> Handicaps = new("data/handicap-corporations.json");
     private static readonly ModJsonFile<WorldSizeCorporationsDef[]> WorldSizes = new("data/world-size-corporations.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Civics, ModifierKeys, Units, Handicaps, WorldSizes];
+    /// <summary>The numbers of the Realistic Guilds/Corporations mode the source does not define.</summary>
+    private static readonly ModJsonFile<CorporationRulesDef> Rules = new("data/corporation-rules.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Corporations, Civics, ModifierKeys, Units, Handicaps, WorldSizes, Rules];
 
     public void Register(IModContext context)
     {
+        var rules = Rules.Read(context.Data);
+        if (rules.Problems().ToArray() is { Length: > 0 } problems)
+            throw new InvalidDataException("Corporation rules validation failed:\n" + string.Join("\n", problems));
+        context.Content<CorporationRulesDef>().Register(rules);
         Ariel.Rules.ContentRegistration.Load(context, Civics);
         Ariel.Rules.ContentRegistration.Load(context, ModifierKeys);
         Ariel.Rules.ContentRegistration.Load(context, Units);
@@ -32,8 +38,9 @@ public sealed class CorporationsMod : IPreparableMod
         // buildings and executives belong to other modules and are checked once content freezes.
         CorporationContentValidation.Validate(definitions);
         var service = new CorporationService();
+        var natural = service.Natural;
         context.RegisterService<ICorporationService>("corporations", service);
-        context.RegisterService<IGameScreen>("screen", new CorporationsScreen());
+        context.RegisterService<IGameScreen>("screen", new CorporationsScreen(natural));
         context.RegisterService<ICityPanel>("city", new CorporationsCityPanel());
         context.RegisterService<INotificationSource>("notices", new CorporationNotices());
         context.RegisterService<IPediaSource>("pedia", new CorporationPedia());
@@ -53,6 +60,11 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>("civic_valuer", new CorporationCivicValuer(service));
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
+        context.TurnSystems.Register(new NaturalCorporationTurn(natural));
+        context.RegisterService<ITimerKind>("branch_decay", new NaturalCorporations.BranchDecay(service));
+        context.RegisterService<ITimerKind>("headquarters_decay", new NaturalCorporations.HeadquartersDecay(service));
+        context.RegisterService<ITimerKind>("founding_cooldown", new TimerKind(NaturalCorporations.CooldownKind));
+        context.RegisterService<IContentCheck>("source_constants", new SourceConstantCheck());
         context.RegisterService<ICapitalWeight>("capital_weight", new BranchCapitalWeight(service));
         context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => service.DissolveHeadquartersOf(sim, razed.City, razed.Player));
         context.Subscribe<TechDiscovered>("corporations:obsolete", (sim, e) => service.Obsolete(sim, e.Team, e.Tech));
@@ -66,8 +78,7 @@ internal sealed class CorporationEffects(CorporationService service) : IModifier
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
         var sim = context.Sim;
         // The branches' outputs and their maintenance read the same resource counts, gathered once for the city.
-        IReadOnlyList<CorporationDef> active = service.Present(sim, city.Id).Count == 0 ? [] : service.ActiveIn(sim, city);
-        var counts = CorporationService.ConsumedCounts(sim, city, active);
+        var (active, counts) = service.ActiveIn(sim, city);
         foreach (var def in active)
         {
             string corporation = def.Id;
@@ -90,11 +101,11 @@ internal sealed class CorporationEffects(CorporationService service) : IModifier
         sink.Add("corporations:maintenance", "cities:maintenance_flat_hundredths", CorporationService.MaintenanceHundredths(sim, city, active, counts));
     }
 
-    /// <summary>The player's civics' change to corporation maintenance, with the realistic corporations option choosing
+    /// <summary>The player's civics' change to corporation maintenance, with the Realistic Guilds/Corporations option choosing
     /// which of the two figures counts.</summary>
     private static void CivicMaintenance(Simulation sim, int player, ModifierSink sink)
     {
-        bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
+        bool realistic = CorporationMode.Realistic(sim);
         foreach (var civic in sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal))
             if (sim.Content.Attachment<CivicCorporationsDef>(civic) is { } rules)
                 sink.Add(civic, CorporationService.MaintenanceKey, realistic ? rules.RealisticMaintenancePercent : rules.MaintenancePercent);

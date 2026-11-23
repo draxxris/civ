@@ -24,9 +24,13 @@ public sealed class ClientIntelligenceEventsTests
         return ModLoader.Build(loaded.Sources.Concat(optional.Select(Optional)));
     })).Value;
 
-    private static GameSession Session(params string[] optional)
+    private static GameSession Session(params string[] optional) => Session(false, optional);
+
+    /// <param name="realistic">The Realistic Guilds/Corporations option, off unless a test asks for it.</param>
+    private static GameSession Session(bool realistic, params string[] optional)
     {
         var sim = GameFactory.Scenario(Content(optional));
+        sim.Settings.GameOptions[CorporationMode.Option] = realistic;
         GameFactory.NeutralPolitics(sim);
         foreach (var plot in sim.State.Plots) plot.Owner = null;
         foreach (var player in sim.State.Players) player.Treasury = 10000;
@@ -100,7 +104,9 @@ public sealed class ClientIntelligenceEventsTests
         Assert.NotNull(ScreenProbe.Button(session, CorporationsId));
         Assert.Equal($"not founded (build its headquarters, {building})", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), corporation)!.Detail);
         Assert.DoesNotContain(session.DescribeCity(city)!.Panels.Status, s => s.Id == "corporations:city");
-        Assert.Contains(session.Pedia.Find(corporation)!.Prerequisites, p => p == $"Headquarters: founded by building {building}");
+        Assert.Contains(session.Pedia.Find(corporation)!.Prerequisites, p => p == $"Without Realistic Guilds/Corporations: Headquarters founded by building {building}; spread by executives and gold");
+        Assert.Contains(session.Pedia.Find(corporation)!.Prerequisites, p => p.StartsWith("With Realistic Guilds/Corporations: founded automatically when a nation with ", StringComparison.Ordinal));
+        Assert.StartsWith("Realistic Guilds/Corporations is off:", ScreenProbe.Paragraph(ScreenProbe.Body(session, CorporationsId), "mode"));
 
         // The headquarters is ordinary production in the city; completing it founds the corporation there.
         Assert.Contains(session.ProductionChoices(city), c => c.Id == headquarters && c.Available);
@@ -132,13 +138,33 @@ public sealed class ClientIntelligenceEventsTests
         var masterGuild = Founder(session, city, out var guild, "Master Guild");
         string building = session.Sim.Content.Get<S.BuildingDef>(masterGuild).Name;
         Assert.Equal($"not founded (build its Master Guild, {building})", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), guild)!.Detail);
-        Assert.Contains(session.Pedia.Find(guild)!.Prerequisites, p => p == $"Master Guild: founded by building {building}");
+        Assert.Contains(session.Pedia.Find(guild)!.Prerequisites, p => p == $"Without Realistic Guilds/Corporations: Master Guild founded by building {building}; spread by executives and gold");
 
         Assert.Contains(session.ProductionChoices(city), c => c.Id == masterGuild && c.Available);
         GameFactory.FoundCorporation(session.Sim, city, guild);
         Assert.Equal($"Master Guild {city.Name}, 1 cities", ViewWalk.Find<ListItem>(ScreenProbe.Body(session, CorporationsId), guild)!.Detail);
         var panel = Assert.Single(session.DescribeCity(city)!.Panels.Status, s => s.Id == "corporations:city");
         Assert.Contains(ViewWalk.All([panel]).OfType<Paragraph>(), p => p.Id == guild && p.Text.EndsWith("★ Master Guild", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void With_realistic_corporations_the_screen_says_they_found_themselves_and_production_refuses_their_buildings()
+    {
+        var session = Session(true, "Corporations");
+        var city = AddCity(session.Sim, 0, 14);
+        var headquarters = Founder(session, city, out var corporation);
+        var body = ScreenProbe.Body(session, CorporationsId);
+        Assert.StartsWith("Realistic Guilds/Corporations: guilds and corporations are founded and spread on their own", ScreenProbe.Paragraph(body, "mode"));
+        string detail = ViewWalk.Find<ListItem>(body, corporation)!.Detail!;
+        Assert.StartsWith("not founded: founded automatically when a nation with ", detail);
+        // The founding building stays in the list, disabled with the reason.
+        var choice = Assert.Single(session.ProductionChoices(city), c => c.Id == headquarters);
+        Assert.False(choice.Available);
+        Assert.False(session.Enqueue(city, "cities:building", headquarters, append: true));
+        // An executive cannot be trained.
+        string executive = session.Sim.Content.Get<S.UnitDef>().All.First(u => u.Id.Contains("executive")).Id;
+        var refusals = session.Sim.Rules().CityProduction.Validate(session.Sim, city.Id, "cities:unit", executive).Failures.Select(f => f.Explanation);
+        Assert.Contains("Executives are not used with Realistic Guilds/Corporations: guilds and corporations spread on their own", refusals);
     }
 
     [Fact]

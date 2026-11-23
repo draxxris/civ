@@ -15,4 +15,8 @@ public interface ICityCorporations
     /// running text ("the headquarters of Cereal Mills", "the Masons Master Guild"), or null when no corporation has the
     /// identity. Content alone answers it, so requirement descriptions can ask.</summary>
     string? SeatPhrase(Content.ContentDb content, string identity);
+    /// <summary>Why the city may not train the unit for what it means to corporations (an executive in a game where
+    /// corporations spread on their own), or null. Asked by production eligibility for every unit, as
+    /// <see cref="ICityReligions.RefuseUnit"/> is.</summary>
+    string? RefuseUnit(Simulation sim, City city, Content.Schema.UnitDef unit);
 }

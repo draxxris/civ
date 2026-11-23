@@ -5205,6 +5205,7 @@
       { "source": "iMilitaryProductionModifier", "property": "MilitaryProductionPercent", "kind": "int" },
       { "source": "ObsoleteTech", "property": "ObsoleteTech", "kind": "ref", "target": "TechInfo" },
       { "source": "iSpreadFactor", "property": "SpreadFactorPercent", "kind": "int" },
+      { "source": "iSpread", "property": "NaturalSpreadPercent", "kind": "int" },
       { "source": "BonusProduced", "property": "BonusProduced", "kind": "ref", "target": "BonusInfo" }
     ],
     "requirements": []

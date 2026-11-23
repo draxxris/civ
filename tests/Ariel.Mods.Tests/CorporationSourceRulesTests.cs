@@ -47,6 +47,13 @@ public sealed class CorporationSourceRulesTests
     /// a rule that only reads what a branch does once it is there.</summary>
     internal static void Plant(Simulation sim, City headquarters, string corporation, params City[] branches)
     {
+        PlantBare(sim, headquarters, corporation, branches);
+        foreach (var city in branches.Prepend(headquarters)) Supply(sim, city, corporation);
+    }
+
+    /// <summary><see cref="Plant"/> without giving the cities the corporation's resource.</summary>
+    internal static void PlantBare(Simulation sim, City headquarters, string corporation, params City[] branches)
+    {
         var game = sim.State.Extensions.Get<CorporationGameState>(sim.Content) ?? new();
         game.Founded[corporation] = new(headquarters.Id, sim.TeamOf(headquarters.Owner).Id, sim.State.Turn);
         sim.State.Extensions.Set(sim.Content, game);
@@ -55,6 +62,18 @@ public sealed class CorporationSourceRulesTests
             var state = city.Extensions.Get<CorporationCityState>(sim.Content) ?? new();
             state.Corporations.Add(corporation);
             city.Extensions.Set(sim.Content, state);
+        }
+    }
+
+    /// <summary>A copy of a resource the corporation consumes for the city, unless it has one already: a branch works only
+    /// where its resource is connected.</summary>
+    internal static void Supply(Simulation sim, City city, string corporation)
+    {
+        var corporations = P6RulesScenario.Service<ICorporationService>(sim);
+        foreach (var bonus in sim.Content.Get<CorporationDef>(corporation).PrereqBonuses)
+        {
+            if (corporations.ConsumedBonusCount(sim, city.Id, corporation) > 0) return;
+            P6RulesScenario.Resource(sim, city, bonus);
         }
     }
 
@@ -264,7 +283,7 @@ public sealed class CorporationSourceRulesTests
         Assert.False(CorporationsCompete(tours, equestrians));
         P6RulesScenario.Resource(sim, city, "world:wheat");
         sim.TeamOf(0).Techs.Add("research:animal_husbandry");
-        Plant(sim, city, Tours);
+        PlantBare(sim, city, Tours);
         Assert.Equal(0, Corps(sim).ConsumedBonusCount(sim, city.Id, Tours));
         // The Equestrians turn the wheat into a horse, which Adventure Tours consumes.
         Plant(sim, sim.State.Cities[1], Equestrians, city);
@@ -279,14 +298,18 @@ public sealed class CorporationSourceRulesTests
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
         Plant(sim, city, Wonka);
         var wonka = sim.Content.Get<CorporationDef>(Wonka);
-        // No consumed resource: the branch yields nothing, so happiness and health are all a ban takes away.
-        Assert.Equal(0, Corps(sim).ConsumedBonusCount(sim, city.Id, Wonka));
+        // One consumed copy: a ban takes away the branch's output for it, and its happiness and health.
+        long copies = Corps(sim).ConsumedBonusCount(sim, city.Id, Wonka);
+        Assert.Equal(1, copies);
         Assert.Equal(new YieldVector(), wonka.YieldChanges); Assert.Equal(new CommerceVector(), wonka.CommerceChanges);
         var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "corporations:civic_valuer");
         int adjust = valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0),
             new Ariel.Ai.CivicSubject(sim.Content.Get<Ariel.Content.Schema.CivicDef>("government:planned")));
         long maintenance = Corps(sim).MaintenanceHundredths(sim, city.Id);
-        Assert.Equal(-(3 * 8 - 1 * 6) + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, adjust);
+        var produced = wonka.CommerceProducedHundredths * copies; var yields = wonka.YieldProducedHundredths * copies;
+        long output = Ariel.Ai.PlannerPoints.Yields(new(yields.Food / 100, yields.Production / 100, yields.Commerce / 100))
+            + Ariel.Ai.PlannerPoints.Commerce(new(produced.Gold / 100, produced.Research / 100, produced.Culture / 100, produced.Espionage / 100));
+        Assert.Equal(-(output + 3 * 8 - 1 * 6) + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, adjust);
     }
 
     [Fact]
@@ -309,7 +332,6 @@ public sealed class CorporationSourceRulesTests
         ["Sound"] = "presentation: the founding and spread sound; the client plays no corporation sounds yet",
         ["iTGAIndex"] = "presentation: the source's font-atlas glyph index; Ariel has no font atlas",
         ["PrereqBuildingClasses"] = "owner decision: a guild works like a corporation, so its branches need no group Guild Hall (the only buildings the source lists here); those halls are not built",
-        ["iSpread"] = "the realistic-corporations option's automatic spread, decay and founding, which is not built",
     };
 
     [Fact]
