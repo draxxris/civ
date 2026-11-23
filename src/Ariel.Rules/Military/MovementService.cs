@@ -171,15 +171,21 @@ internal sealed class MovementService : IMovementService
     public void Move(Simulation sim, int unitId, IReadOnlyList<Hex> path)
     {
         var unit = sim.State.UnitById(unitId);
+        // A step that walks onto its plot ends by renewing sight and contacts. Nothing runs between that and the end
+        // of the path, so renewing them again then would find exactly what that step found.
+        bool sighted = false;
         foreach (var step in path)
         {
             if (unit.MovesLeft <= 0) break;
-            if (MoveStep(sim, unit, sim.State.Grid.TileAt(step))) break;
+            if (MoveStep(sim, unit, sim.State.Grid.TileAt(step), out sighted)) break;
         }
-        MilitaryData.Sight(sim);
+        if (!sighted) MilitaryData.Sight(sim);
     }
-    private bool MoveStep(Simulation sim, Unit unit, TileId to)
+    /// <summary>Take one step; true when the path stops here. <paramref name="sighted"/> is whether the step ended by
+    /// renewing sight and contacts, so that nothing has changed since.</summary>
+    private bool MoveStep(Simulation sim, Unit unit, TileId to, out bool sighted)
     {
+        sighted = false;
         var from = sim.State.Grid.TileAt(unit.Position);
         var target = sim.State.Grid.HexOf(to);
         int cost = StepCost(sim, unit.Id, from, to);
@@ -212,6 +218,7 @@ internal sealed class MovementService : IMovementService
         CompleteBoarding(sim, unit, from, to, transport);
         GoodyService.Receive(sim, unit);
         MilitaryData.Sight(sim);
+        sighted = true;
         return hostile;
     }
     private static void CompleteBoarding(Simulation sim, Unit unit, TileId from, TileId to, int? transport)
