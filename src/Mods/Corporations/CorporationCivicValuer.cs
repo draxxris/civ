@@ -31,24 +31,43 @@ internal sealed class CorporationCivicValuer(ICorporationService corporations) :
         if (!banned && !foreignBanned && maintenancePercent == 0) return 0;
 
         long points = 0;
+        foreach (var city in ctx.Derived("corporations:civic_valuer:branches", () => Branches(ctx)))
+        {
+            foreach (var (corporation, worth) in city.Outputs)
+            {
+                if (!banned && !(foreignBanned && Foreign(ctx, corporation))) continue;
+                points -= worth;
+            }
+            // Maintenance is in hundredths of gold. A ban ends it with the branches; a cut is a gain.
+            if (banned) points += city.MaintenanceHundredths * PlannerPoints.Gold / 100;
+            else if (maintenancePercent != 0) points -= city.MaintenanceHundredths * maintenancePercent / 100 * PlannerPoints.Gold / 100;
+        }
+        return (int)Math.Clamp(points, -AiValuation.Limit, AiValuation.Limit);
+    }
+
+    /// <summary>What each branch in a city produces, in points, and what the city pays for its branches: the same for
+    /// every civic weighed, so gathered once per state rather than once per civic.</summary>
+    private sealed record CityBranches((string Corporation, long Worth)[] Outputs, long MaintenanceHundredths);
+
+    private CityBranches[] Branches(AiContext ctx)
+    {
+        var sim = ctx.Sim;
+        var result = new List<CityBranches>();
         foreach (var city in ctx.Cities)
         {
             var present = corporations.Present(sim, city.Id);
             if (present.Count == 0) continue;
-            foreach (var corporation in present)
+            var outputs = new (string, long)[present.Count];
+            for (int i = 0; i < present.Count; i++)
             {
-                if (!banned && !(foreignBanned && Foreign(ctx, corporation))) continue;
-                var def = sim.Content.Get<CorporationDef>(corporation);
-                long copies = corporations.ConsumedBonusCount(sim, city.Id, corporation);
+                var def = sim.Content.Get<CorporationDef>(present[i]);
+                long copies = corporations.ConsumedBonusCount(sim, city.Id, present[i]);
                 var (yields, commerce) = CorporationService.BranchOutput(def, copies);
-                points -= PlannerPoints.Yields(yields) + PlannerPoints.Commerce(commerce) + CorporationPlanner.Extras(sim.Content, def, copies);
+                outputs[i] = (present[i], PlannerPoints.Yields(yields) + PlannerPoints.Commerce(commerce) + CorporationPlanner.Extras(sim.Content, def, copies));
             }
-            // Maintenance is in hundredths of gold. A ban ends it with the branches; a cut is a gain.
-            long maintenance = corporations.MaintenanceHundredths(sim, city.Id);
-            if (banned) points += maintenance * PlannerPoints.Gold / 100;
-            else if (maintenancePercent != 0) points -= maintenance * maintenancePercent / 100 * PlannerPoints.Gold / 100;
+            result.Add(new(outputs, corporations.MaintenanceHundredths(sim, city.Id)));
         }
-        return (int)Math.Clamp(points, -AiValuation.Limit, AiValuation.Limit);
+        return result.ToArray();
     }
 
     /// <summary>Whether the corporation's headquarters lies in another team; an unfounded one counts as nobody's.</summary>

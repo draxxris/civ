@@ -39,6 +39,7 @@ public sealed class AiContext
         public readonly ConcurrentDictionary<int, Lazy<CityView>> Views = new();
         public readonly ConcurrentDictionary<TileId, City?> NearestCities = new();
         public readonly ConcurrentDictionary<(int City, string Kind, string Id), Lazy<bool>> Production = new();
+        public readonly ConcurrentDictionary<string, Lazy<object>> Derived = new(StringComparer.Ordinal);
         private readonly Dictionary<(int Unit, TileId Goal, bool Attack), Lazy<UnitPath?>> _paths = new();
         private readonly object _pathsLock = new();
 
@@ -197,6 +198,11 @@ public sealed class AiContext
         Production.Options.BestAmong(city, candidates, score);
     internal int CountUnits(UnitRole role) => _segment.UnitCounts.Value.GetValueOrDefault(role);
     internal int CountQueued(UnitRole role) => _segment.QueuedCounts.Value.GetValueOrDefault(role);
+    /// <summary>A value derived from the game, computed once until the next successful command or <see cref="Refresh"/>,
+    /// as the context's own views are. For a valuer that weighs many subjects (each civic, say) against the same state:
+    /// <paramref name="key"/>, namespaced by the caller, must name everything the value depends on besides the game.</summary>
+    public T Derived<T>(string key, Func<T> compute) where T : class =>
+        (T)_segment.Derived.GetOrAdd(key, _ => new Lazy<object>(compute)).Value;
     internal CityView ViewOf(City city) => _segment.Views.GetOrAdd(city.Id,
         _ => new Lazy<CityView>(() => CityView.Build(this, city))).Value;
     internal bool IsEnemy(int player) => player != PlayerId && Team.Wars.Contains(Sim.State.PlayerById(player).TeamId);

@@ -303,6 +303,26 @@ public sealed class AiValuerTests
         return sim;
     }
 
+    /// <summary>A valuer that weighs many subjects against one state gathers what they share once: the derived value
+    /// stays until the context refreshes after a change, and is gathered again from the changed game.</summary>
+    [Fact]
+    public void Derived_values_last_until_the_context_refreshes()
+    {
+        var sim = Grassland(Plain.Value);
+        var ctx = AiContext.Observe(sim, 0);
+        int gathered = 0;
+        int[] Cities() { gathered++; return [ctx.Cities.Count]; }
+
+        var first = ctx.Derived("valuer_probe:cities", Cities);
+        Assert.Same(first, ctx.Derived("valuer_probe:cities", Cities));
+        Assert.Equal(1, gathered);
+
+        AddCity(sim, 0, 8, 4);
+        ctx.Refresh();
+        Assert.Equal([2], ctx.Derived("valuer_probe:cities", Cities));
+        Assert.Equal(2, gathered);
+    }
+
     private static TileId Tile(Simulation sim, int column, int row) => sim.State.Grid.TileAt(HexGrid.FromOffset(column, row));
 
     private static City AddCity(Simulation sim, int owner, int column, int row)
