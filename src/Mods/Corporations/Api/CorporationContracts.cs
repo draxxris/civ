@@ -19,6 +19,8 @@ public sealed record CorporationFounded(string Corporation, int City, int Player
 public sealed record CorporationSpread(string Corporation, int City, int Player) : DomainEvent;
 public sealed record CorporationDissolved(string Corporation, int City, int Player) : DomainEvent;
 /// <summary>A competing branch was evicted by <paramref name="By"/> without compensation, as in the reference rules.</summary>
+/// <summary>A branch closed because the city's team learned the corporation's obsolete technology.</summary>
+public sealed record CorporationObsolete(string Corporation, int City) : DomainEvent;
 public sealed record CorporationDisplaced(string Corporation, string By, int City) : DomainEvent;
 
 /// <summary>Read-only previews and validated corporation mutations. It also answers the base game's questions about
@@ -33,6 +35,10 @@ public interface ICorporationService : ICityCorporations
     bool IsActive(Simulation sim, int city, string corporation);
     long ConsumedBonusCount(Simulation sim, int city, string corporation);
     long MaintenanceHundredths(Simulation sim, int city);
+    /// <summary>Gold the player pays to open a branch of the corporation in the city, as the source prices it: the base
+    /// cost with inflation, times the foreign spread percent in another team's city, times (100 + factor)% for each
+    /// active competing branch there. Executives and paid spreads both pay it.</summary>
+    long SpreadCost(Simulation sim, int player, int city, string corporation);
     /// <summary>Why a player cannot pay to open a branch in one of its own cities without an executive, or null.</summary>
     string? ValidateSpread(Simulation sim, int player, int city, string corporation);
     /// <summary>Open a branch in an own city for the spread cost. An executive spreads through the

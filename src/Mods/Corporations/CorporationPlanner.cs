@@ -29,8 +29,11 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
     public void Plan()
     {
         if (ctx.Sim.Service<ICorporationService>() is null || ctx.Cities.Count == 0) return;
-        var spreading = ctx.Sim.Content.Get<CorporationDef>().All.Where(c => service.IsFounded(ctx.Sim, c.Id) && Worth(c) > 0)
-            .OrderByDescending(Worth).ThenBy(c => c.Id, StringComparer.Ordinal).ToList();
+        var content = ctx.Sim.Content;
+        // An obsolete corporation can be spread nowhere by this team, so it is not planned.
+        var spreading = content.Get<CorporationDef>().All.Where(c => service.IsFounded(ctx.Sim, c.Id)
+                && !CorporationService.Obsolete(ctx.Sim, ctx.PlayerId, c) && Worth(content, c) > 0)
+            .OrderByDescending(c => Worth(content, c)).ThenBy(c => c.Id, StringComparer.Ordinal).ToList();
         if (spreading.Count == 0) return;
         Executives(spreading);
         PayForBranches(spreading);
@@ -39,14 +42,33 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
     /// <summary>Everything one branch and its share of headquarters income produce, in the same points the city
     /// planner uses, minus the maintenance of one resource copy: a branch with one copy of a resource it consumes, or
     /// with none for a corporation that consumes none. The per-copy output stays in hundredths until the end, so a
-    /// fraction of a point still counts.</summary>
-    public static long Worth(CorporationDef c)
+    /// fraction of a point still counts. Its happiness, health, military production and produced resource count as
+    /// <see cref="Extras"/> weighs them.</summary>
+    public static long Worth(Ariel.Content.ContentDb content, CorporationDef c)
     {
         long copies = c.PrereqBonuses.Length > 0 ? 1 : 0;
         long perCopy = (PlannerPoints.Yields(c.YieldProducedHundredths) + PlannerPoints.Commerce(c.CommerceProducedHundredths)
             - c.MaintenanceHundredths * PlannerPoints.Gold) * copies;
         return perCopy / 100 + PlannerPoints.Yields(c.YieldChanges) + PlannerPoints.Commerce(c.CommerceChanges)
-            + PlannerPoints.Commerce(c.HeadquartersCommerce);
+            + PlannerPoints.Commerce(c.HeadquartersCommerce) + Extras(content, c, copies);
+    }
+
+    /// <summary>The weights the civic planner gives a point of happiness and of health in a city.</summary>
+    internal const int HappinessPoints = 8, HealthPoints = 6;
+    /// <summary>The production a military production percent is weighed on: a modest city's ten.</summary>
+    internal const int MilitaryProductionBase = 10;
+
+    /// <summary>What a branch with this many consumed copies gives beyond its yields and commerce, in planner points:
+    /// its happiness and health at the civic planner's weights, its military production percent as production of a city
+    /// making <see cref="MilitaryProductionBase"/>, and the happiness and health of the resource it produces once it
+    /// produces a copy (more copies of one resource add nothing).</summary>
+    internal static long Extras(Ariel.Content.ContentDb content, CorporationDef c, long copies)
+    {
+        long points = (long)c.Happiness * HappinessPoints + (long)c.Health * HealthPoints
+            + (long)c.MilitaryProductionPercent * MilitaryProductionBase * PlannerPoints.Production / 100;
+        if (c.BonusProduced is { } produced && (c.PrereqBonuses.Length == 0 || copies > 0) && content.TryGet<BonusDef>(produced, out var bonus))
+            points += (long)bonus.Happiness * HappinessPoints + (long)bonus.Health * HealthPoints;
+        return points;
     }
 
     /// <summary>Each awake executive goes to the nearest city it can open a branch in: a foreign one, or failing that
@@ -78,7 +100,7 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
         bool here = ctx.Alive(unit) && unit.Position == city.Position;
         if (!moved && !here) return false;
         // An executive that arrived waits there for gold or the next turn's budget rather than wandering off.
-        if (here && unit.MovesLeft > 0 && CanSpend(corporation)
+        if (here && unit.MovesLeft > 0 && CanSpend(corporation, city)
             && ctx.Issue(new PerformMissionCommand { Player = ctx.PlayerId, Unit = unit.Id, Mission = CorporationMissions.Spread, Subject = corporation.Id }))
             Spent();
         // A unit that moved has spent its turn even when it did not arrive, so it is not planned again this pass.
@@ -95,18 +117,18 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
                 // One branch per turn for the whole empire. A rejected attempt changes nothing, so an unaffordable
                 // corporation must not end the pass: keep looking at the cheaper ones.
                 if (_spread >= SpreadsPerTurn) return;
-                if (!CanSpend(corporation)) continue;
+                if (!CanSpend(corporation, city)) continue;
                 if (ctx.Issue(new SpreadCorporationCommand { Player = ctx.PlayerId, City = city.Id, Corporation = corporation.Id }))
                     Spent();
             }
         }
     }
 
-    private bool CanSpend(CorporationDef corporation)
+    private bool CanSpend(CorporationDef corporation, City city)
     {
         if (_spread >= SpreadsPerTurn) return false;
         _netGold ??= NetGold(ctx);
-        return Affordable(ctx, corporation, _netGold.Value);
+        return Affordable(ctx, service.SpreadCost(ctx.Sim, ctx.PlayerId, city, corporation), _netGold.Value);
     }
 
     /// <summary>One economy calculation per pass: only our own spending moves the projection, and it is dropped
@@ -119,10 +141,10 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
 
     internal static long NetGold(AiContext ctx) => ctx.Service<IPlayerEconomyService>().Calculate(ctx.Sim, ctx.PlayerId).NetGold;
 
-    /// <summary>Whether the player should pay for a branch now: the spread cost leaves twice the gold reserve, and
-    /// income is not negative.</summary>
-    internal static bool Affordable(AiContext ctx, CorporationDef corporation, long netGold) =>
-        ctx.Self.Treasury - corporation.SpreadCost >= 2 * ctx.GoldReserve && netGold >= 0;
+    /// <summary>Whether the player should pay a spread cost now (<see cref="CorporationService.SpreadCost"/>, the
+    /// same price the spread charges): it leaves twice the gold reserve, and income is not negative.</summary>
+    internal static bool Affordable(AiContext ctx, long cost, long netGold) =>
+        ctx.Self.Treasury - cost >= 2 * ctx.GoldReserve && netGold >= 0;
 }
 
 /// <summary>The cities the computer player's executives aim at, shared by the planner that sends them and the wishes
@@ -182,16 +204,18 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
     {
         // Cheapest first: this runs for every city each time it plans, and only a headquarters trains executives.
         var corporations = ctx.Sim.Content.Get<CorporationDef>().All
-            .Where(c => service.Headquarters(ctx.Sim, c.Id) == city.Id && CorporationPlanner.Worth(c) > 0)
+            .Where(c => service.Headquarters(ctx.Sim, c.Id) == city.Id && CorporationPlanner.Worth(ctx.Sim.Content, c) > 0)
             .OrderBy(c => c.Id, StringComparer.Ordinal).ToList();
         if (corporations.Count == 0) yield break;
         long? netGold = null;
         foreach (var corporation in corporations)
         {
             if (Busy(ctx, corporation)) continue;
+            // The base cost is a lower bound of every price, so it rules out a poor treasury before the dear target search.
             netGold ??= CorporationPlanner.NetGold(ctx);
-            if (!CorporationPlanner.Affordable(ctx, corporation, netGold.Value)) continue;
-            if (!ExecutiveTargets.Foreign(ctx, service, corporation, city.Position).Any()) continue;
+            if (!CorporationPlanner.Affordable(ctx, corporation.SpreadCost, netGold.Value)) continue;
+            if (ExecutiveTargets.Foreign(ctx, service, corporation, city.Position).FirstOrDefault() is not { } target) continue;
+            if (!CorporationPlanner.Affordable(ctx, service.SpreadCost(ctx.Sim, ctx.PlayerId, target, corporation), netGold.Value)) continue;
             foreach (var unit in ctx.Sim.Content.Get<UnitDef>().All.Where(u => CorporationService.Spreads(ctx.Sim, u.Id, corporation)))
                 yield return new("cities:unit", unit.Id, Score(corporation, unit));
         }
@@ -208,14 +232,30 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
 /// headquarters income, the first branch and the right to spread it, on top of what the building itself gives. As
 /// with a religion's founding wonder, production only offers it where founding can happen (its requirements met, a
 /// consumed resource connected when the corporation consumes any, nothing founded). A corporation worth more adds up
-/// to as much again.</summary>
+/// to as much again.
+/// <para>A building a corporation's branches need in the owner's empire (<see cref="CorporationDef.PrereqBuildingClasses"/>,
+/// a guild's Guild Hall, which its Master Guild needs too) stands for half of that while the empire holds too few of
+/// it and the corporation is not obsolete for the player: without it the guild can neither be founded nor spread to
+/// the empire's cities.</para></summary>
 internal sealed class HeadquartersValuer : IAiValuer<BuildingSubject>
 {
     internal const int FoundingValue = 80;
     public string Id => "corporations:headquarters_valuer";
 
-    public int Adjust(AiContext ctx, in BuildingSubject subject) =>
-        CorporationFounder.Corporation(ctx.Sim.Content, subject.Building) is { } corporation
-            ? FoundingValue + (int)Math.Clamp(CorporationPlanner.Worth(corporation), 0, FoundingValue)
-            : 0;
+    public int Adjust(AiContext ctx, in BuildingSubject subject)
+    {
+        var content = ctx.Sim.Content;
+        if (CorporationFounder.Corporation(content, subject.Building) is { } corporation)
+            return FoundingValue + (int)Math.Clamp(CorporationPlanner.Worth(content, corporation), 0, FoundingValue);
+        string buildingClass = subject.Building.DefaultBuilding;
+        long best = -1;
+        int? held = null;
+        foreach (var def in content.Get<CorporationDef>().All)
+        {
+            if (!def.PrereqBuildingClasses.TryGetValue(buildingClass, out int needed) || CorporationService.Obsolete(ctx.Sim, ctx.PlayerId, def)) continue;
+            held ??= CorporationService.BuildingClassCount(ctx.Sim, ctx.PlayerId, buildingClass);
+            if (held < needed) best = Math.Max(best, CorporationPlanner.Worth(content, def));
+        }
+        return best < 0 ? 0 : FoundingValue / 2 + (int)Math.Clamp(best, 0, FoundingValue / 2);
+    }
 }

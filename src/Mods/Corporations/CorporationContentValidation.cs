@@ -23,6 +23,8 @@ internal static class CorporationContentValidation
                 errors.Add($"{def.Id}: negative SpreadCost would pay the spreader");
             if (def.MaintenanceHundredths < 0)
                 errors.Add($"{def.Id}: negative MaintenanceHundredths would subsidise the branch");
+            if (def.CompetingCorporations.Contains(def.Identity, StringComparer.Ordinal))
+                errors.Add($"{def.Id}: competes with itself, so it would evict its own branches");
         }
         foreach (var group in definitions.GroupBy(d => d.Identity, StringComparer.Ordinal).Where(g => g.Count() > 1))
             errors.Add($"{string.Join(", ", group.Select(d => d.Id))}: share identity '{group.Key}', so building, headquarters and executive references are ambiguous");

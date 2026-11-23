@@ -5198,7 +5198,22 @@
       { "source": "CommerceChanges", "property": "CommerceChanges", "kind": "commerce" },
       { "source": "HeadquarterCommerces", "property": "HeadquartersCommerce", "kind": "commerce" },
       { "source": "iSpreadCost", "property": "SpreadCost", "kind": "int" },
-      { "source": "iMaintenance", "property": "MaintenanceHundredths", "kind": "int" }
+      { "source": "iMaintenance", "property": "MaintenanceHundredths", "kind": "int" },
+      { "source": "CompetingCorporations", "property": "CompetingCorporations", "kind": "flaggedRefs", "target": "CorporationInfo" },
+      { "source": "iHappiness", "property": "Happiness", "kind": "int" },
+      { "source": "iHealth", "property": "Health", "kind": "int" },
+      { "source": "iMilitaryProductionModifier", "property": "MilitaryProductionPercent", "kind": "int" },
+      { "source": "ObsoleteTech", "property": "ObsoleteTech", "kind": "ref", "target": "TechInfo" },
+      { "source": "iSpreadFactor", "property": "SpreadFactorPercent", "kind": "int" },
+      { "source": "BonusProduced", "property": "BonusProduced", "kind": "ref", "target": "BonusInfo" },
+      {
+        "source": "PrereqBuildingClasses",
+        "property": "PrereqBuildingClasses",
+        "kind": "mapInt",
+        "target": "BuildingClassInfo",
+        "key": "BuildingClassType",
+        "value": "iNumBuildingNeeded"
+      }
     ],
     "requirements": []
   },

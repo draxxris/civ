@@ -88,8 +88,8 @@ public sealed class AiDiplomacyTests(ITestOutputHelper output)
         var worth = planner.GetMethod("Worth")!;
         var rich = new CorporationDef { Id = "test:rich", PrereqBonuses = ["world:corn"], CommerceProducedHundredths = new(400, 0, 0, 0) };
         var costly = new CorporationDef { Id = "test:costly", PrereqBonuses = ["world:corn"], CommerceProducedHundredths = new(100, 0, 0, 0), MaintenanceHundredths = 400 };
-        Assert.Equal(20L, (long)worth.Invoke(null, [rich])!);
-        Assert.True((long)worth.Invoke(null, [costly])! < 0);
+        Assert.Equal(20L, (long)worth.Invoke(null, [sim.Content, rich])!);
+        Assert.True((long)worth.Invoke(null, [sim.Content, costly])! < 0);
     }
 
     [Fact]

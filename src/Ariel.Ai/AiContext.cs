@@ -61,7 +61,8 @@ public sealed class AiContext
             HeldResources = new(() => BuildHeldResources(ctx));
         }
 
-        /// <summary>Copies of every resource usable at the capital, imports included, as <see cref="ResourceSubject.Held"/>
+        /// <summary>Copies of every resource on the trade network at the capital, imports included (what a city supplies
+        /// itself cannot be traded), as <see cref="ResourceSubject.Held"/>
         /// counts them. Built only when a resource valuer is registered.</summary>
         private static IReadOnlyDictionary<string, long> BuildHeldResources(AiContext ctx)
         {
@@ -69,7 +70,7 @@ public sealed class AiContext
                 .ThenBy(c => c.Id).FirstOrDefault();
             if (capital is null) return new Dictionary<string, long>(StringComparer.Ordinal);
             var resources = ctx.Sim.Content.Get<BonusDef>().All.Select(b => b.Id).ToArray();
-            return ResourceAccess.Counts(ctx.Sim, ctx.PlayerId, capital.Id, resources);
+            return ResourceAccess.TradeCounts(ctx.Sim, ctx.PlayerId, capital.Id, resources);
         }
 
         public UnitPath? FindPath(AiContext ctx, Unit unit, TileId goal, bool attack)

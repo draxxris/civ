@@ -14,7 +14,7 @@ namespace Ariel.Mods.Corporations;
 /// <para>The corporation is founded by completing the base building whose <c>FoundsCorporation</c> names its
 /// identity: that building's own requirements (its technology, and for a guild the buildings of its trade) say when
 /// it can be founded.</para></summary>
-public sealed class CorporationDef : GameContentDef
+public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedContent
 {
     [ContentReference(typeof(CorporationIdentityDef))]
     public string Identity { get; init; } = "";
@@ -38,10 +38,56 @@ public sealed class CorporationDef : GameContentDef
     public CommerceVector CommerceChanges { get; init; }
     /// <summary>Commerce the headquarters city earns for every active branch, whole points.</summary>
     public CommerceVector HeadquartersCommerce { get; init; }
+    /// <summary>Corporations, by identity, that compete with this one although they share no consumed resource (the
+    /// guilds of one Guild Hall group). Competition is mutual, either list or a shared resource is enough: opening a
+    /// branch evicts a competitor's branch from the city, and nobody opens one, or founds one, in a competitor's
+    /// headquarters city.</summary>
+    [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
+    public ImmutableArray<string> CompetingCorporations { get; init; } = [];
+    /// <summary>The resource a branch produces for its own city: one copy per consumed copy (one when it consumes none),
+    /// once the city's team can trade that resource and while it is not obsolete. The copies serve the city like
+    /// connected ones (happiness, health, buildings, units, other corporations) but cannot be traded.</summary>
+    [ContentReference(typeof(BonusDef))]
+    public string? BonusProduced { get; init; }
+    /// <summary>Happiness every active branch gives its city, whole points; negative is unhappiness.</summary>
+    public int Happiness { get; init; }
+    /// <summary>Health every active branch gives its city, whole points; negative is unhealthiness.</summary>
+    public int Health { get; init; }
+    /// <summary>Percent change to the production of military units in a city with an active branch.</summary>
+    public int MilitaryProductionPercent { get; init; }
+    /// <summary>The technology that ends the corporation for a team that knows it (Corporation, for every guild): its
+    /// branches in that team's cities close and stop working, a headquarters there dissolves the corporation, and the
+    /// team can neither found it nor open or receive a branch.</summary>
+    [ContentReference(typeof(TechDef))]
+    public string? ObsoleteTech { get; init; }
+    /// <summary>Buildings, by class (the class's default building), and how many of each the owner of a city must hold
+    /// across its empire before a branch opens there: a guild's branches need its group's Guild Hall.</summary>
+    [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
+    public ImmutableDictionary<string, int> PrereqBuildingClasses { get; init; } = ImmutableDictionary<string, int>.Empty;
+    /// <summary>Base gold to open a branch. What a spread actually costs is <see cref="ICorporationService.SpreadCost"/>:
+    /// scaled by inflation, by the foreign spread percent in another team's city, and by each active competitor's
+    /// <see cref="SpreadFactorPercent"/>.</summary>
     public int SpreadCost { get; init; }
+    /// <summary>Percent this corporation's active branch adds to the spread cost of a competitor opening in its city
+    /// (200 for every source corporation: a takeover costs three times as much).</summary>
+    public int SpreadFactorPercent { get; init; }
     /// <summary>Maintenance per consumed resource copy, hundredths of gold.</summary>
     public int MaintenanceHundredths { get; init; }
 
     /// <summary>The seat's name as a title: "Headquarters", "Master Guild".</summary>
     public string SeatTitle() => Seat.Length == 0 ? Seat : char.ToUpperInvariant(Seat[0]) + Seat[1..];
+
+    /// <summary>What an active branch does to its city beyond its yields and commerce, for the encyclopedia.</summary>
+    public IEnumerable<string> Describe(ContentDb content)
+    {
+        if (BonusProduced is { } bonus) yield return $"Produces {Name(content, bonus)} in each city with a branch, one per resource consumed";
+        if (Happiness != 0) yield return $"{Ariel.Presentation.Labels.Signed(Happiness)} happiness in each city with a branch";
+        if (Health != 0) yield return $"{Ariel.Presentation.Labels.Signed(Health)} health in each city with a branch";
+        if (MilitaryProductionPercent != 0) yield return $"{Ariel.Presentation.Labels.Signed(MilitaryProductionPercent)}% military unit production in each city with a branch";
+        foreach (var (building, count) in PrereqBuildingClasses.OrderBy(p => p.Key, StringComparer.Ordinal))
+            yield return $"A branch needs {count} {Name(content, building)} in the city owner's empire";
+        if (ObsoleteTech is { } tech) yield return $"Obsolete with {Name(content, tech)}";
+    }
+
+    private static string Name(ContentDb content, string id) => content.Find(id)?.Name is { Length: > 0 } name ? name : id;
 }

@@ -26,6 +26,7 @@ internal sealed class CorporationsScreen : IGameScreen
             string seat = def.Seat;
             string state = hq is int city ? $"{seat} {sim.State.FindCity(city)?.Name ?? "?"}, {branches} cities"
                 : "not founded" + (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building ? $" (build its {seat}, {building.Name})" : "");
+            if (CorporationService.Obsolete(sim, context.Player, def)) state += "; obsolete for you";
             list.Add(new ListItem(def.Id, def.Name, state, def.Id));
         }
         var items = new List<ViewElement> { new Section("corporations", null, list) };
@@ -61,7 +62,7 @@ internal sealed class CorporationsCityPanel : ICityPanel
     }
 }
 
-/// <summary>Founding, spread, dissolution and displacement of corporations that touch the player.</summary>
+/// <summary>Founding, spread, dissolution, displacement and obsolescence of corporations that touch the player.</summary>
 internal sealed class CorporationNotices : INotificationSource
 {
     public string Id => "corporations:notices";
@@ -79,6 +80,8 @@ internal sealed class CorporationNotices : INotificationSource
                 new("corporation", $"{Name(d.Corporation)} was dissolved with its {context.Sim.Content.Get<CorporationDef>(d.Corporation).Seat}"),
             CorporationDisplaced d when context.OwnsCity(d.City) =>
                 new("corporation", $"{Name(d.Corporation)} was displaced by {Name(d.By)}", d.City),
+            CorporationObsolete o when context.OwnsCity(o.City) =>
+                new("corporation", $"{Name(o.Corporation)} closed in {context.CityName(o.City)}: it is obsolete", o.City),
             _ => null,
         };
     }
@@ -94,10 +97,18 @@ internal sealed class CorporationPedia : IPediaSource
     public IEnumerable<PediaItem> Items(ContentDb content) => content.Get<CorporationDef>().All.Select(d =>
     {
         var building = CorporationFounder.Headquarters(content, d.Id);
-        return new PediaItem(d,
-            Notes: building is null ? null : [$"{d.SeatTitle()}: founded by building {building.Name}"],
-            UnlockedBy: building is null ? null : FoundingTech(building));
+        var notes = Notes(content, d, building).ToList();
+        return new PediaItem(d, Notes: notes.Count == 0 ? null : notes, UnlockedBy: building is null ? null : FoundingTech(building));
     });
+
+    /// <summary>The rules of a corporation the player reads in its entry, beyond its output.</summary>
+    internal static IEnumerable<string> Notes(ContentDb content, CorporationDef d, Ariel.Content.Schema.BuildingDef? building)
+    {
+        if (building is not null) yield return $"{d.SeatTitle()}: founded by building {building.Name}";
+        var rivals = content.Get<CorporationDef>().All.Where(o => CorporationService.Competes(d, o))
+            .Select(o => o.Name).Order(StringComparer.Ordinal).ToArray();
+        if (rivals.Length > 0) yield return "Competes with " + string.Join(", ", rivals) + ": a branch of one evicts the other";
+    }
 
     /// <summary>The first technology the founding building requires, which is where the encyclopedia files it.</summary>
     private static string? FoundingTech(Ariel.Content.Schema.BuildingDef building) =>

@@ -234,7 +234,9 @@ public sealed class CorporationRulesTests
         Assert.Contains("executive", P6RulesScenario.Reject(sim, new SpreadCorporationCommand { Player = 0, City = foreign.Id, Corporation = Cereal }));
         var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_1");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
-        Assert.Null(sim.State.FindUnit(executive.Id)); Assert.Equal(initial - 2 * cost, sim.State.PlayerById(0).Treasury);
+        Assert.Null(sim.State.FindUnit(executive.Id));
+        // The foreign city costs twice the base (the foreign spread percent).
+        Assert.Equal(initial - cost - 2 * cost, sim.State.PlayerById(0).Treasury);
         var effects = ModifierSink.Collect(new(sim, ModifierScope.City, 0, hq));
         Assert.Equal(12, effects.Ledger.Lines.Where(l => l.Source == Cereal + ":headquarters" && l.Key == "commerce.flat.gold").Sum(l => l.Amount));
         Assert.True(Corps(sim).IsActive(sim, domestic.Id, Cereal));
@@ -278,6 +280,7 @@ public sealed class CorporationRulesTests
         Assert.Empty(UnitRefusals(sim, city, Executive));
         Assert.Equal(["Requires the Masons Master Guild"], UnitRefusals(sim, branch, Executive));
         P6RulesScenario.Resource(sim, rival, "world:stone");
+        rival.Buildings.Add("cities:cguildhall"); // A guild branch needs its group's hall in the owner's empire.
         var master = P6RulesScenario.AddUnit(sim, 0, rival, "military:bgmaster");
         P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = master.Id, Mission = CorporationMissions.Spread, Subject = Masons });
         Assert.Contains(Masons, Corps(sim).Present(sim, rival.Id));

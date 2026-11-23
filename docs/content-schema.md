@@ -139,7 +139,18 @@ corporation the mod does not define). Per-copy output (`YieldProducedHundredths`
 summed and truncated per city. Flat branch output (`YieldChanges`, `CommerceChanges`)
 and headquarters commerce per branch (`HeadquartersCommerce`) use whole points.
 `SpreadCost` uses whole gold. `MaintenanceHundredths` uses hundredths of gold per
-consumed resource copy.
+consumed resource copy. `CompetingCorporations` lists identities whose branches a branch
+of this one evicts (either side listing the other, or a shared prerequisite resource,
+makes two compete; listing itself is refused). `Happiness` and `Health` are whole points
+and `MilitaryProductionPercent` a percent on military unit production in each city with
+an active branch. `BonusProduced` names a resource each active branch supplies to its
+own city, one copy per consumed copy (one when it consumes nothing), while the owner's
+team can trade the resource; supplied copies count for city use but not for trade.
+`ObsoleteTech` names the technology that closes the team's branches and dissolves a
+headquarters in the team. `PrereqBuildingClasses` maps a building to the count the city
+owner's empire must hold before a branch may open there. `SpreadFactorPercent` raises
+the spread cost by that percent for each active branch of a competitor in the target
+city.
 
 ### Event fields
 

@@ -39,6 +39,7 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterService<IPediaSource>("pedia", new CorporationPedia());
         context.RegisterService<ICityCorporations>("city_corporations", service);
         context.RegisterService<IModifierSource>("effects", new CorporationEffects(service));
+        context.RegisterService<ICityResourceSupply>("produced_resources", new CorporationResourceSupply(service));
         context.RegisterStateComponent<CorporationCityState>("city_state");
         context.RegisterStateComponent<CorporationGameState>("game_state");
         context.RegisterStateComponent<CorporationPlayerState>("player_state");
@@ -53,24 +54,8 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
         context.RegisterService<ICapitalWeight>("capital_weight", new BranchCapitalWeight(service));
-        context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => Dissolve(sim, razed.City, razed.Player));
-    }
-
-    /// <summary>A razed headquarters dissolves the corporation: its branches leave every city and it may be founded again.</summary>
-    private static void Dissolve(Simulation sim, int city, int player)
-    {
-        var state = sim.State.Extensions.Get<CorporationGameState>(sim.Content);
-        if (state is null) return;
-        foreach (var corporation in state.Founded.Where(pair => pair.Value.Headquarters == city).Select(pair => pair.Key).ToArray())
-        {
-            foreach (var other in sim.State.Cities)
-            {
-                var branches = other.Extensions.Get<CorporationCityState>(sim.Content);
-                branches?.Corporations.Remove(corporation);
-            }
-            state.Founded.Remove(corporation);
-            sim.Events.Publish(new CorporationDissolved(corporation, city, player));
-        }
+        context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => service.DissolveHeadquartersOf(sim, razed.City, razed.Player));
+        context.Subscribe<TechDiscovered>("corporations:obsolete", (sim, e) => service.Obsolete(sim, e.Team, e.Tech));
     }
 }
 internal sealed class CorporationEffects(ICorporationService service) : IModifierSource
@@ -87,6 +72,11 @@ internal sealed class CorporationEffects(ICorporationService service) : IModifie
             var (yields, commerce) = CorporationService.BranchOutput(def, service.ConsumedBonusCount(sim, city.Id, corporation));
             sink.AddYield(def.Id, yields);
             sink.AddCommerce(def.Id, commerce);
+            // The source's branch happiness and health, and its military production modifier. The keys are Cities'
+            // (a branch is neither a building nor a resource, so its health is the general kind).
+            sink.Add(def.Id, "cities:happiness", def.Happiness);
+            sink.Add(def.Id, "cities:health", def.Health);
+            sink.Add(def.Id, "cities:military_production_percent", def.MilitaryProductionPercent);
             if (service.Headquarters(sim, corporation) == city.Id)
             {
                 int branches = sim.State.Cities.Count(c => service.IsActive(sim, c.Id, corporation));

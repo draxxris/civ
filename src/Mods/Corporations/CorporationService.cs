@@ -53,7 +53,11 @@ internal sealed class CorporationService : ICorporationService
     private static bool Blocked(Simulation sim, City city, int headquartersTeam) => Civics(sim, city.Owner).Any(c => c.NoCorporations || (c.NoForeignCorporations && sim.TeamOf(city.Owner).Id != headquartersTeam));
     public bool IsActive(Simulation sim, int city, string corporation) => sim.State.FindCity(city) is { } target
         && Founding(sim, corporation) is { } record && Present(sim, city).Contains(corporation)
-        && !Blocked(sim, target, HeadquartersTeam(sim, record));
+        && !Blocked(sim, target, HeadquartersTeam(sim, record)) && !Obsolete(sim, target.Owner, sim.Content.Get<CorporationDef>(corporation));
+    /// <summary>Whether the player's team knows the corporation's <see cref="CorporationDef.ObsoleteTech"/>.</summary>
+    internal static bool Obsolete(Simulation sim, int player, CorporationDef def) => def.ObsoleteTech is { } tech && sim.KnowsTech(player, tech);
+    private static string ObsoleteReason(Simulation sim, CorporationDef def, string whose) =>
+        $"{def.Name} is obsolete for {whose}: {sim.Content.Find(def.ObsoleteTech!)?.Name ?? def.ObsoleteTech} is known";
     public long ConsumedBonusCount(Simulation sim, int city, string corporation)
     {
         if (sim.State.FindCity(city) is not { } cityObj) return 0;
@@ -129,6 +133,7 @@ internal sealed class CorporationService : ICorporationService
     internal string? RefuseFounding(Simulation sim, City city, CorporationDef def)
     {
         if (IsFounded(sim, def.Id)) return "Corporation is already founded";
+        if (Obsolete(sim, city.Owner, def)) return ObsoleteReason(sim, def, "your team");
         if (Blocked(sim, city, sim.TeamOf(city.Owner).Id)) return "Civics prohibit corporations";
         return RefuseSite(sim, city, def);
     }
@@ -143,6 +148,42 @@ internal sealed class CorporationService : ICorporationService
         Add(sim, city, def);
         sim.Events.Publish(new CorporationFounded(def.Id, city.Id, city.Owner));
     }
+    /// <summary>A razed headquarters dissolves its corporations.</summary>
+    internal void DissolveHeadquartersOf(Simulation sim, int city, int player)
+    {
+        if (Read(sim).Founded.Count == 0) return;
+        foreach (var corporation in Read(sim).Founded.Where(pair => pair.Value.Headquarters == city).Select(pair => pair.Key).ToArray())
+            Dissolve(sim, corporation, city, player);
+    }
+    /// <summary>Dissolve the corporation: its branches leave every city and it may be founded again.</summary>
+    private static void Dissolve(Simulation sim, string corporation, int city, int player)
+    {
+        foreach (var other in sim.State.Cities)
+            other.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.Remove(corporation);
+        Edit(sim).Founded.Remove(corporation);
+        sim.Events.Publish(new CorporationDissolved(corporation, city, player));
+    }
+    /// <summary>A team learned a technology that makes corporations obsolete (<see cref="CorporationDef.ObsoleteTech"/>):
+    /// their branches close in the team's cities, and a headquarters there loses its founding building and dissolves the
+    /// corporation, as in the source. A team without the technology may found it again.</summary>
+    internal void Obsolete(Simulation sim, int team, string tech)
+    {
+        foreach (var def in sim.Content.Get<CorporationDef>().All.Where(d => d.ObsoleteTech == tech).OrderBy(d => d.Id, StringComparer.Ordinal))
+        {
+            foreach (var city in sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == team).OrderBy(c => c.Id).ToArray())
+            {
+                if (!Present(sim, city.Id).Contains(def.Id)) continue;
+                if (Founding(sim, def.Id)?.Headquarters == city.Id)
+                {
+                    if (CorporationFounder.Headquarters(sim.Content, def.Id) is { } building) city.Buildings.Remove(building.Id);
+                    Dissolve(sim, def.Id, city.Id, city.Owner);
+                    continue;
+                }
+                city.Extensions.Get<CorporationCityState>(sim.Content)!.Corporations.Remove(def.Id);
+                sim.Events.Publish(new CorporationObsolete(def.Id, city.Id));
+            }
+        }
+    }
     public string? ValidateSpread(Simulation sim, int player, int cityId, string corporation) =>
         ValidateSpread(sim, player, cityId, corporation, null);
     /// <summary>One check for both ways to open a branch: paid for in an own city, or by an executive standing in
@@ -155,7 +196,7 @@ internal sealed class CorporationService : ICorporationService
         var city = sim.State.FindCity(cityId);
         if (city is null) return "Unknown city";
         // Cheap checks first: the branch scan and the connectivity queries are wasted on a player who cannot pay.
-        if (sim.State.PlayerById(player).Treasury < def.SpreadCost) return "Insufficient gold";
+        if (sim.State.PlayerById(player).Treasury < SpreadCost(sim, player, city, def)) return "Insufficient gold";
         if (ValidateBranch(sim, player, city, corporation, record) is { } branchError) return branchError;
         if (executive is null && city.Owner != player) return "Foreign spread requires an executive";
         if (executive is not null && !Spreads(sim, executive, def)) return "Unit cannot spread this corporation";
@@ -179,8 +220,30 @@ internal sealed class CorporationService : ICorporationService
     private string? ValidateBranch(Simulation sim, int player, City city, string corporation, CorporationFounding record)
     {
         if (Present(sim, city.Id).Contains(corporation)) return "Corporation is already present";
+        var def = sim.Content.Get<CorporationDef>(corporation);
+        if (Obsolete(sim, player, def)) return ObsoleteReason(sim, def, "your team");
+        if (Obsolete(sim, city.Owner, def)) return ObsoleteReason(sim, def, "this city's owner");
         if (Blocked(sim, city, HeadquartersTeam(sim, record))) return "Civics prohibit this corporation";
+        if (MissingBuildingClass(sim, city.Owner, def) is { } missing) return missing;
         return sim.State.Cities.Any(c => c.Owner == player && IsActive(sim, c.Id, corporation)) ? null : "Requires an active owned branch";
+    }
+    /// <summary>Why the city owner's empire lacks the buildings a branch needs (<see cref="CorporationDef.PrereqBuildingClasses"/>),
+    /// or null. As in the source the count is the owner's whole empire, unscaled by world size.</summary>
+    private static string? MissingBuildingClass(Simulation sim, int owner, CorporationDef def)
+    {
+        if (def.PrereqBuildingClasses.Count == 0) return null;
+        foreach (var (building, needed) in def.PrereqBuildingClasses.OrderBy(p => p.Key, StringComparer.Ordinal))
+        {
+            if (BuildingClassCount(sim, owner, building) < needed) return $"Requires {needed} {sim.Content.Find(building)?.Name ?? building} in the city owner's empire";
+        }
+        return null;
+    }
+    /// <summary>How many buildings of the class (<see cref="BuildingDef.DefaultBuilding"/>) the player's cities hold.</summary>
+    internal static int BuildingClassCount(Simulation sim, int owner, string buildingClass)
+    {
+        var buildings = sim.Rules().CityBuildings;
+        return sim.State.Cities.Where(c => c.Owner == owner)
+            .Sum(c => buildings.EffectiveBuildings(sim, c.Id).Count(b => sim.Content.Get<BuildingDef>(b).DefaultBuilding == buildingClass));
     }
     public void Spread(Simulation sim, int player, int city, string corporation)
     {
@@ -189,14 +252,50 @@ internal sealed class CorporationService : ICorporationService
         sim.Rules().Visibility?.Recompute(sim);
     }
     /// <summary>Charge the spread cost and open the branch; the caller has validated it.</summary>
-    internal void OpenBranch(Simulation sim, int player, City city, string corporation)
+    internal void OpenBranch(Simulation sim, int player, City city, string corporation) => SpendOnBranch(sim, player, city, corporation, true);
+    /// <summary>Charge the spread cost, then open the branch when the attempt succeeded: as in the source an executive's
+    /// gold is spent whether or not its spread takes. The caller has validated it.</summary>
+    internal void SpendOnBranch(Simulation sim, int player, City city, string corporation, bool success)
     {
         var def = sim.Content.Get<CorporationDef>(corporation);
-        sim.State.PlayerById(player).Treasury -= def.SpreadCost;
+        // Priced before the branch opens: a competitor it evicts still counted.
+        sim.State.PlayerById(player).Treasury -= SpreadCost(sim, player, city, def);
+        if (!success) return;
         Add(sim, city, def);
         sim.Events.Publish(new CorporationSpread(corporation, city.Id, player));
     }
-    private static bool Competes(Simulation sim, string corporation, CorporationDef incoming) => corporation != incoming.Id && sim.Content.Get<CorporationDef>(corporation).PrereqBonuses.Intersect(incoming.PrereqBonuses, StringComparer.Ordinal).Any();
+    public long SpreadCost(Simulation sim, int player, int city, string corporation) =>
+        sim.State.FindCity(city) is { } target && sim.Content.TryGet<CorporationDef>(corporation, out var def) ? SpreadCost(sim, player, target, def) : 0;
+    internal long SpreadCost(Simulation sim, int player, City city, CorporationDef def)
+    {
+        long cost = Math.Max(0L, (long)def.SpreadCost * (100 + InflationPercent(sim, player))) / 100;
+        if (sim.TeamOf(player).Id != sim.TeamOf(city.Owner).Id) cost = cost * RuleConstant(sim, "CORPORATION_FOREIGN_SPREAD_COST_PERCENT", 100) / 100;
+        foreach (var other in Present(sim, city.Id))
+        {
+            var rival = sim.Content.Get<CorporationDef>(other);
+            if (Competes(def, rival) && IsActive(sim, city.Id, other)) cost = cost * (100 + rival.SpreadFactorPercent) / 100;
+        }
+        return cost;
+    }
+    private static int RuleConstant(Simulation sim, string key, int fallback) =>
+        int.TryParse(sim.Content.Get<RuleConstantsDef>().All.Single().Raw.GetValueOrDefault(key), out int value) ? value : fallback;
+    /// <summary>Percent chance an executive's spread takes, as the source rolls it: the unit's spread value for the
+    /// corporation, halved in another team's city, then raised toward 100 by the share of corporations the city does not
+    /// yet have. Read-only and draws nothing; the mission service rolls it.</summary>
+    internal int SpreadChance(Simulation sim, Unit executive, City city, CorporationDef def)
+    {
+        int chance = (sim.Content.Attachment<UnitCorporationsDef>(executive.Type) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Identity);
+        if (sim.TeamOf(executive.Owner).Id != sim.TeamOf(city.Owner).Id) chance /= 2;
+        int corporations = Math.Max(1, sim.Content.Get<CorporationDef>().Count);
+        chance += (corporations - Present(sim, city.Id).Count) * (100 - chance) / corporations;
+        return Math.Clamp(chance, 0, 100);
+    }
+    private static bool Competes(Simulation sim, string corporation, CorporationDef incoming) => Competes(sim.Content.Get<CorporationDef>(corporation), incoming);
+    /// <summary>Whether two corporations compete, as the source defines it: either names the other in its
+    /// <see cref="CorporationDef.CompetingCorporations"/>, or they consume a common resource.</summary>
+    internal static bool Competes(CorporationDef a, CorporationDef b) => a.Id != b.Id
+        && (a.CompetingCorporations.Contains(b.Identity, StringComparer.Ordinal) || b.CompetingCorporations.Contains(a.Identity, StringComparer.Ordinal)
+            || a.PrereqBonuses.Intersect(b.PrereqBonuses, StringComparer.Ordinal).Any());
     private string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
     private static void Add(Simulation sim, City city, CorporationDef def)
     {

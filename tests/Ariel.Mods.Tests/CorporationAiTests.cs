@@ -113,7 +113,8 @@ public sealed class CorporationAiTests(ITestOutputHelper output)
         Assert.True(path.Count > 1 && path[1] != hq.Position, "the executive left the headquarters: " + string.Join(" ", path));
         Assert.Contains(Cereal, corporations.Present(sim, foreign.Id));
         Assert.Null(sim.State.FindUnit(executive.Id));
-        Assert.Equal(treasury - sim.Content.Get<CorporationDef>(Cereal).SpreadCost, sim.State.PlayerById(0).Treasury);
+        // Another team's city costs the source's foreign spread percent, twice the base.
+        Assert.Equal(treasury - 2 * sim.Content.Get<CorporationDef>(Cereal).SpreadCost, sim.State.PlayerById(0).Treasury);
     }
 
     [Fact]
