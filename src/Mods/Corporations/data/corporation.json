@@ -38,13 +38,13 @@
       "world:rice",
       "world:potato"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread"
     ],
@@ -99,13 +99,13 @@
       "world:shrimp",
       "world:rice"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -160,13 +160,13 @@
       "world:rice",
       "world:potato"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -222,13 +222,13 @@
       "world:stone",
       "world:bauxite"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -285,13 +285,13 @@
       "world:silver",
       "world:lead"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -344,13 +344,13 @@
       "world:coal",
       "world:bauxite"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -405,13 +405,13 @@
       "world:gems",
       "world:pearls"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -468,13 +468,13 @@
       "world:ancienttemple",
       "world:fossils"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -529,15 +529,13 @@
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [],
-    "prereqBuildingClasses": {
-      "cities:sguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -592,15 +590,13 @@
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [],
-    "prereqBuildingClasses": {
-      "cities:sguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -660,15 +656,13 @@
       "world:rice",
       "world:sugar"
     ],
-    "prereqBuildingClasses": {
-      "cities:vguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -726,15 +720,13 @@
       "world:iron",
       "world:copper"
     ],
-    "prereqBuildingClasses": {
-      "cities:cguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -790,13 +782,13 @@
       "world:potato",
       "world:wheat"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -856,15 +848,13 @@
       "world:deer",
       "world:sheep"
     ],
-    "prereqBuildingClasses": {
-      "cities:vguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -919,15 +909,13 @@
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [],
-    "prereqBuildingClasses": {
-      "cities:cguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -982,15 +970,13 @@
     "obsoleteTech": "research:corporation",
     "pedia": "\tA guild is an association of people who practice the same trade. The guilds seek to protect their members\u0027 incomes, maintain standards of performance, and train new workers in the trade. Guilds have often built hospitals, orphanages and schools to serve their members. Guilds seek to expand their membership to include all who practice their profession. Such monopolies allow guilds greater control over the fees their members can charge for their services. [PARAGRAPH:2]Many of the earliest guilds - Roman professional organizations, for instance - had strong religious components. One of the earliest known Muslim guilds were formed by the \u0022warraqeen,\u0022 or \u0022those who work with knowledge.\u0022 In the ninth century these professional writers and printers worked together to ensure the quality of published material and to stop other printers from making illegal copies of the material. [PARAGRAPH:2]The European guilds came into being around 1000 AD. They included a rigid hierarchy of skilled workers - apprentice, craftsman, journeyman, master and sometimes grandmaster. The higher in the hierarchy a member was, the more the payment he could demand. This structure greatly increased the guilds\u0027 memberships, since one could not attain the higher statuses without belonging to a guild.",
     "prereqBonuses": [],
-    "prereqBuildingClasses": {
-      "cities:sguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1051,15 +1037,13 @@
       "world:silk",
       "world:fur"
     ],
-    "prereqBuildingClasses": {
-      "cities:sguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1115,13 +1099,13 @@
       "world:sheep",
       "world:silk"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1179,15 +1163,13 @@
       "world:wheat",
       "world:corn"
     ],
-    "prereqBuildingClasses": {
-      "cities:sguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1243,13 +1225,13 @@
       "world:coffee",
       "world:cotton"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1305,13 +1287,13 @@
       "world:cow",
       "world:cotton"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1372,15 +1354,13 @@
       "world:clam",
       "world:whale"
     ],
-    "prereqBuildingClasses": {
-      "cities:vguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1438,15 +1418,13 @@
       "world:salt",
       "world:stone"
     ],
-    "prereqBuildingClasses": {
-      "cities:cguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1506,15 +1484,13 @@
       "world:gems",
       "world:pearls"
     ],
-    "prereqBuildingClasses": {
-      "cities:cguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1575,15 +1551,13 @@
       "world:potato",
       "world:olives"
     ],
-    "prereqBuildingClasses": {
-      "cities:vguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1639,13 +1613,13 @@
       "world:olives",
       "world:potato"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1699,13 +1673,13 @@
       "world:music",
       "world:drama"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iTGAIndex"
     ],
@@ -1761,15 +1735,13 @@
     "prereqBonuses": [
       "world:stone"
     ],
-    "prereqBuildingClasses": {
-      "cities:cguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1830,15 +1802,13 @@
       "world:tobacco",
       "world:spices"
     ],
-    "prereqBuildingClasses": {
-      "cities:vguildhall": 1
-    },
     "requirements": null,
     "seat": "Master Guild",
     "spreadCost": 0,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1895,13 +1865,13 @@
       "world:movies",
       "world:ancienttemple"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -1957,13 +1927,13 @@
       "world:deer",
       "world:whale"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -2018,13 +1988,13 @@
       "world:coffee",
       "world:tea"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -2078,13 +2048,13 @@
       "world:music",
       "world:drama"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -2140,13 +2110,13 @@
       "world:fur",
       "world:lead"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -2200,13 +2170,13 @@
       "world:vulcanized_rubber",
       "world:lead"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"
@@ -2262,13 +2232,13 @@
       "world:spices",
       "world:tea"
     ],
-    "prereqBuildingClasses": {},
     "requirements": null,
     "seat": "headquarters",
     "spreadCost": 50,
     "spreadFactorPercent": 200,
     "strategy": "",
     "unsupported": [
+      "PrereqBuildingClasses",
       "Sound",
       "iSpread",
       "iTGAIndex"

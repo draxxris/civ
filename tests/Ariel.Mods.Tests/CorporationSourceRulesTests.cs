@@ -124,9 +124,9 @@ public sealed class CorporationSourceRulesTests
         Assert.Contains(sim.Events.Published.OfType<CorporationObsolete>(), e => e.Corporation == Masons && e.City == foreign.Id);
         Assert.True(Corps(sim).IsActive(sim, branch.Id, Masons));
         // Nothing opens in, or is spread by, a team that knows it.
-        var master = P6RulesScenario.AddUnit(sim, 0, foreign, "military:bgmaster");
+        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_masonguild");
         Assert.Contains("obsolete for this city's owner",
-            P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 0, Unit = master.Id, Mission = CorporationMissions.Spread, Subject = Masons }));
+            P6RulesScenario.Reject(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Masons }));
 
         // When the headquarters' team learns it, the Master Guild comes down and the guild dissolves; a team that does not
         // know the technology may found it again, but one that does may not.
@@ -141,21 +141,14 @@ public sealed class CorporationSourceRulesTests
     }
 
     [Fact]
-    public void A_guild_branch_needs_its_group_hall_in_the_owners_empire()
+    public void A_guild_branch_opens_like_a_corporations_with_no_guild_hall_anywhere()
     {
         var sim = P6RulesScenario.Create(); var hq = sim.State.Cities[0]; var foreign = sim.State.Cities[2];
-        Assert.Equal(1, sim.Content.Get<CorporationDef>(Masons).PrereqBuildingClasses["cities:cguildhall"]);
         Plant(sim, hq, Masons);
         P6RulesScenario.Resource(sim, foreign, "world:stone");
-        var master = P6RulesScenario.AddUnit(sim, 0, foreign, "military:bgmaster");
-        var spread = new PerformMissionCommand { Player = 0, Unit = master.Id, Mission = CorporationMissions.Spread, Subject = Masons };
-        // The spreader's halls do not count: the city's owner needs one.
-        sim.State.Cities[1].Buildings.Add("cities:cguildhall");
-        Assert.Equal("Requires 1 Crafts Guild Hall in the city owner's empire", P6RulesScenario.Reject(sim, spread));
-        // Anywhere in the owner's empire will do.
-        var other = P6RulesScenario.AddCity(sim, 1, 70);
-        other.Buildings.Add("cities:cguildhall");
-        P6RulesScenario.Apply(sim, spread);
+        Assert.DoesNotContain(sim.State.Cities, c => c.Buildings.Any(b => b.Contains("guildhall", StringComparison.Ordinal)));
+        var executive = P6RulesScenario.AddUnit(sim, 0, foreign, "military:executive_masonguild");
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Masons });
         Assert.Contains(Masons, Corps(sim).Present(sim, foreign.Id));
     }
 
@@ -297,22 +290,16 @@ public sealed class CorporationSourceRulesTests
     }
 
     [Fact]
-    public void The_city_planner_wants_a_guild_hall_until_the_empire_holds_one()
+    public void The_city_planner_values_a_founding_building_and_no_other_building_for_a_guild()
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
         var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>().Single(v => v.Id == "corporations:headquarters_valuer");
-        var hall = sim.Content.Get<Ariel.Content.Schema.BuildingDef>("cities:cguildhall");
-        int Value() => valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0), new Ariel.Ai.BuildingSubject(hall, city));
-        // The crafts guilds (the Masons among them) cannot be founded or spread to the empire without it.
-        int wanted = Value();
-        // Half the founding value (80), and up to as much again for the guild's worth.
-        Assert.InRange(wanted, 40, 80);
-        sim.State.Cities[1].Buildings.Add("cities:cguildhall");
-        Assert.Equal(0, Value());
-        // Nor once every guild that needs it is obsolete for the team.
-        sim.State.Cities[1].Buildings.Remove("cities:cguildhall");
-        sim.TeamOf(0).Techs.Add("research:corporation");
-        Assert.Equal(0, Value());
+        int Value(string building) => valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0),
+            new Ariel.Ai.BuildingSubject(sim.Content.Get<Ariel.Content.Schema.BuildingDef>(building), city));
+        // The Master Guild founds the Masons: the founding value (80) and up to as much again for the guild's worth.
+        Assert.InRange(Value(GameFactory.Headquarters(sim, Masons)), 80, 160);
+        // A building of the trade the Master Guild asks for is the city planner's own business.
+        Assert.Equal(0, Value("cities:treadmill_crane"));
     }
 
     /// <summary>The source corporation fields with non-default data that no rule reads, each with its reason. The importer
@@ -321,6 +308,7 @@ public sealed class CorporationSourceRulesTests
     {
         ["Sound"] = "presentation: the founding and spread sound; the client plays no corporation sounds yet",
         ["iTGAIndex"] = "presentation: the source's font-atlas glyph index; Ariel has no font atlas",
+        ["PrereqBuildingClasses"] = "owner decision: a guild works like a corporation, so its branches need no group Guild Hall (the only buildings the source lists here); those halls are not built",
         ["iSpread"] = "the realistic-corporations option's automatic spread, decay and founding, which is not built",
     };
 

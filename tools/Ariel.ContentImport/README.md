@@ -283,7 +283,12 @@ headquarters and Master Guilds are the founding buildings. The source leaves the
 corporate headquarters to a great person (cost -1), so the importer prices them at 70% of
 the median national wonder of their era (490 industrial, 910 modern) and lists each as an
 `iCost` data issue. The Master Guilds, which cost 300 in the source, take the same 70%
-(210) as a balance rule. A text value that is
+(210) as a balance rule. The committed sidecars leave out three source buildings and
+three units a fresh import still emits: the Crafts, Servants and Victuallers Guild Halls
+and the three guild masters that spread a group's guilds. Guilds work as corporations in
+Ariel, spread by their own executives, so the Master Guilds' hall prerequisite and the
+corporations' `PrereqBuildingClasses` (which names only those halls) are dropped too,
+and the latter is no longer mapped. A text value that is
 a renamed key, such as `CHANGED_TXT_KEY_CORPORATION_2`, resolves through the text table
 as other keys do. Four
 native unit-AI roles absent from the XML inventory receive explicit military identities.

@@ -207,15 +207,6 @@
     "tradeMissionModifier": 0
   },
   {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:engineer",
-    "id": "great_people:cguildhall",
-    "name": "",
-    "requirements": null,
-    "target": "cities:cguildhall",
-    "tradeMissionModifier": 0
-  },
-  {
     "goldenAgeModifier": 20,
     "greatPersonUnit": "military:scientist",
     "id": "great_people:cheomseongdae",
@@ -1630,15 +1621,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:merchant",
-    "id": "great_people:sguildhall",
-    "name": "",
-    "requirements": null,
-    "target": "cities:sguildhall",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:prophet",
     "id": "great_people:shaolin",
     "name": "",
@@ -1932,15 +1914,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:versailles",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:merchant",
-    "id": "great_people:vguildhall",
-    "name": "",
-    "requirements": null,
-    "target": "cities:vguildhall",
     "tradeMissionModifier": 0
   },
   {

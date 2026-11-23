@@ -657,21 +657,6 @@ A source clip without matching transform targets does not count as an exported a
 - hurt: `art/units/panther/panther_md_hurta.kf`.
 - die: `art/units/panther/panther_md_diea.kf`.
 
-### military:bgmaster
-
-- Model: `src/Ariel.Rules/Military/art/models/bgmaster.glb` (228,332 bytes).
-- Art: `ART_DEF_UNIT_BGMASTER`. Source scale: 0.46.
-- NIF: `art/units/guildmaster/brownguildmaster_fx.nif`.
-- KFM: `art/units/missionary/christian/christianmissionary.kfm`.
-- Geometry: 632 triangles, 1 skins, 16 joint bindings, 2 textures.
-- Bounds: height 0.6000, radius 0.2644, feet Y=0.
-- Clips: idle (51 channels), run (51 channels), fortify (51 channels), die (51 channels).
-- SHA-256: `31a87664e94ce45c9616d264dae41d1d1cf24e8fc6aed84f4c3fff4dc8e092a1`.
-- idle: `art/units/missionary/christian/christianmissionary_md_idle.kf`.
-- run: `art/units/missionary/christian/christianmissionary_md_run.kf`.
-- fortify: `art/units/missionary/christian/christianmissionary_md_fortifya.kf`.
-- die: `art/units/missionary/christian/christianmissionary_md_idle_die.kf`.
-
 ### military:biological_warfare_missile
 
 - Model: `src/Ariel.Rules/Military/art/models/biological_warfare_missile.glb` (81,748 bytes).
@@ -2845,21 +2830,6 @@ A source clip without matching transform targets does not count as an exported a
 - fortify: `art/units/unique/german/panzer/panzer_md_rangedfortify.kf`.
 - attack: `art/units/unique/german/panzer/panzer_md_rangedstrike.kf`.
 - hurt: `art/units/unique/german/panzer/panzer_md_hurta.kf`.
-
-### military:ggmaster
-
-- Model: `src/Ariel.Rules/Military/art/models/ggmaster.glb` (229,352 bytes).
-- Art: `ART_DEF_UNIT_GGMASTER`. Source scale: 0.46.
-- NIF: `art/units/guildmaster/greenguildmaster_fx.nif`.
-- KFM: `art/units/missionary/christian/christianmissionary.kfm`.
-- Geometry: 632 triangles, 1 skins, 16 joint bindings, 2 textures.
-- Bounds: height 0.6000, radius 0.2644, feet Y=0.
-- Clips: idle (51 channels), run (51 channels), fortify (51 channels), die (51 channels).
-- SHA-256: `daf5b77e090326e3da394160be7dbbf83e8b29b0e59907b1a94a4e40eb5f4729`.
-- idle: `art/units/missionary/christian/christianmissionary_md_idle.kf`.
-- run: `art/units/missionary/christian/christianmissionary_md_run.kf`.
-- fortify: `art/units/missionary/christian/christianmissionary_md_fortifya.kf`.
-- die: `art/units/missionary/christian/christianmissionary_md_idle_die.kf`.
 
 ### military:gothic_cavalry
 
@@ -5758,21 +5728,6 @@ A source clip without matching transform targets does not count as an exported a
 - attack: `art/wales/welsh longbowman/longbowman_md_strikea.kf`.
 - hurt: `art/wales/welsh longbowman/longbowman_md_hurta.kf`.
 - die: `art/wales/welsh longbowman/longbowman_md_diea.kf`.
-
-### military:wgmaster
-
-- Model: `src/Ariel.Rules/Military/art/models/wgmaster.glb` (230,316 bytes).
-- Art: `ART_DEF_UNIT_WGMASTER`. Source scale: 0.46.
-- NIF: `art/units/guildmaster/whiteguildmaster_fx.nif`.
-- KFM: `art/units/missionary/christian/christianmissionary.kfm`.
-- Geometry: 632 triangles, 1 skins, 16 joint bindings, 2 textures.
-- Bounds: height 0.6000, radius 0.2644, feet Y=0.
-- Clips: idle (51 channels), run (51 channels), fortify (51 channels), die (51 channels).
-- SHA-256: `09602758d481bc1a7781c1e5675dba61ed83db9517514a27edca66015e6189ab`.
-- idle: `art/units/missionary/christian/christianmissionary_md_idle.kf`.
-- run: `art/units/missionary/christian/christianmissionary_md_run.kf`.
-- fortify: `art/units/missionary/christian/christianmissionary_md_fortifya.kf`.
-- die: `art/units/missionary/christian/christianmissionary_md_idle_die.kf`.
 
 ### military:wild_ram
 

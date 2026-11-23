@@ -1,19 +1,6 @@
 [
   {
     "corporationSpreads": {
-      "foundation:blacksmguild": 40,
-      "foundation:carpenterguild": 40,
-      "foundation:glassguild": 40,
-      "foundation:goldsmguild": 40,
-      "foundation:masonguild": 40
-    },
-    "id": "corporations:bgmaster",
-    "name": "",
-    "requirements": null,
-    "target": "military:bgmaster"
-  },
-  {
-    "corporationSpreads": {
       "foundation:1": 40
     },
     "id": "corporations:executive_1",
@@ -329,37 +316,11 @@
   },
   {
     "corporationSpreads": {
-      "foundation:bakerguild": 40,
-      "foundation:butcherguild": 40,
-      "foundation:fishmonguild": 40,
-      "foundation:grocerguild": 40,
-      "foundation:mercerguild": 40
-    },
-    "id": "corporations:ggmaster",
-    "name": "",
-    "requirements": null,
-    "target": "military:ggmaster"
-  },
-  {
-    "corporationSpreads": {
       "foundation:moonbean": 40
     },
     "id": "corporations:moonbean_executive",
     "name": "",
     "requirements": null,
     "target": "military:moonbean_executive"
-  },
-  {
-    "corporationSpreads": {
-      "foundation:apotheguild": 40,
-      "foundation:artistguild": 40,
-      "foundation:clerksguild": 40,
-      "foundation:drapersguild": 40,
-      "foundation:equestguild": 40
-    },
-    "id": "corporations:wgmaster",
-    "name": "",
-    "requirements": null,
-    "target": "military:wgmaster"
   }
 ]

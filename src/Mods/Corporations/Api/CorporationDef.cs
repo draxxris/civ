@@ -20,8 +20,9 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     public string Identity { get; init; } = "";
     /// <summary>What this corporation's founding building is called as a kind of building, wherever the player reads
     /// about it: "headquarters" for a corporation, "Master Guild" for a guild. The rules are the same; only the words
-    /// differ, and the source's special building type of the founding building picks them. The common building named
-    /// Guild Hall is a different building. <see cref="SeatTitle"/> gives the form for a heading.</summary>
+    /// differ, and the source's special building type of the founding building picks them: a guild is a corporation of
+    /// an older era. The common building named Guild Hall is a different building. <see cref="SeatTitle"/> gives the
+    /// form for a heading.</summary>
     public string Seat { get; init; } = "headquarters";
     /// <summary>The resources a branch consumes. Each connected copy adds the produced yield and commerce and the
     /// per-copy maintenance. Empty for a corporation that consumes none: it needs no resource to be founded or to open
@@ -39,7 +40,7 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     /// <summary>Commerce the headquarters city earns for every active branch, whole points.</summary>
     public CommerceVector HeadquartersCommerce { get; init; }
     /// <summary>Corporations, by identity, that compete with this one although they share no consumed resource (the
-    /// guilds of one Guild Hall group). Competition is mutual, either list or a shared resource is enough: opening a
+    /// guilds of one trade group). Competition is mutual, either list or a shared resource is enough: opening a
     /// branch evicts a competitor's branch from the city, and nobody opens one, or founds one, in a competitor's
     /// headquarters city.</summary>
     [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
@@ -60,10 +61,6 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     /// team can neither found it nor open or receive a branch.</summary>
     [ContentReference(typeof(TechDef))]
     public string? ObsoleteTech { get; init; }
-    /// <summary>Buildings, by class (the class's default building), and how many of each the owner of a city must hold
-    /// across its empire before a branch opens there: a guild's branches need its group's Guild Hall.</summary>
-    [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
-    public ImmutableDictionary<string, int> PrereqBuildingClasses { get; init; } = ImmutableDictionary<string, int>.Empty;
     /// <summary>Base gold to open a branch. What a spread actually costs is <see cref="ICorporationService.SpreadCost"/>:
     /// scaled by inflation, by the foreign spread percent in another team's city, and by each active competitor's
     /// <see cref="SpreadFactorPercent"/>.</summary>
@@ -84,8 +81,6 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
         if (Happiness != 0) yield return $"{Ariel.Presentation.Labels.Signed(Happiness)} happiness in each city with a branch";
         if (Health != 0) yield return $"{Ariel.Presentation.Labels.Signed(Health)} health in each city with a branch";
         if (MilitaryProductionPercent != 0) yield return $"{Ariel.Presentation.Labels.Signed(MilitaryProductionPercent)}% military unit production in each city with a branch";
-        foreach (var (building, count) in PrereqBuildingClasses.OrderBy(p => p.Key, StringComparer.Ordinal))
-            yield return $"A branch needs {count} {Name(content, building)} in the city owner's empire";
         if (ObsoleteTech is { } tech) yield return $"Obsolete with {Name(content, tech)}";
     }
 

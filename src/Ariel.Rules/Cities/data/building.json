@@ -22752,252 +22752,6 @@
     }
   },
   {
-    "advancedStartCost": -1,
-    "advancedStartCostIncrease": 0,
-    "aiWeight": 0,
-    "airModifier": 0,
-    "airUnitCapacity": 0,
-    "allCityDefense": 0,
-    "allowsNuclearStrikes": false,
-    "allowsNukes": false,
-    "anarchyModifier": 0,
-    "areaCleanPower": false,
-    "areaFreeSpecialist": 0,
-    "areaHappiness": 0,
-    "areaHealth": 0,
-    "areaMaintenanceModifier": 0,
-    "bombardDefense": 0,
-    "bonusHappinessChanges": {},
-    "bonusHealthChanges": {},
-    "bonusProductionModifiers": {},
-    "bonusType": null,
-    "bonusYieldChanges": {},
-    "bonusYieldModifiers": {},
-    "buildingClassProductionModifiers": {},
-    "buildingHappinessChanges": {},
-    "buildingOnlyHealthy": false,
-    "capital": false,
-    "capitalExtraCommerce": 0,
-    "captureSurvivalPercent": 0,
-    "cityCountMaintenancePercent": 0,
-    "coastalDistanceMaintenanceModifier": 0,
-    "coastalLocation": false,
-    "commerceChanges": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "commerceModifiers": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "cost": 200,
-    "defaultBuilding": "cities:cguildhall",
-    "defensePercent": 0,
-    "dirtyPower": false,
-    "distanceMaintenanceModifier": 0,
-    "domainFreeExperiences": {},
-    "domainProductionModifiers": {},
-    "era": "foundation:era_medieval",
-    "experience": 0,
-    "extendsBuildingClass": null,
-    "extraFreeBonuses": {},
-    "flavors": {
-      "production": 10,
-      "science": 8
-    },
-    "foodKept": 0,
-    "foundsCorporation": null,
-    "freeBonus": null,
-    "freeBonusCount": 0,
-    "freeBuilding": null,
-    "freePromotion": null,
-    "freeSpecialist": 0,
-    "freeSpecialistCounts": {},
-    "freeTechs": 0,
-    "globalBuildingClassProductionModifiers": {},
-    "globalBuildingExtraCommerces": {},
-    "globalCommerceModifiers": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "globalExperience": 0,
-    "globalFreeSpecialist": 0,
-    "globalGreatPeopleRateModifier": 0,
-    "globalHappiness": 0,
-    "globalHealth": 0,
-    "globalHurryModifier": 0,
-    "globalMaintenanceModifier": 0,
-    "globalSeaPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "globalYieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "goldenAge": false,
-    "governmentCenter": false,
-    "greatPeopleRateChange": 1,
-    "greatPeopleRateModifier": 0,
-    "happiness": 0,
-    "happinessPercentPerPopulation": 0,
-    "healRateChange": 0,
-    "health": 0,
-    "healthPercentPerPopulation": 0,
-    "help": "",
-    "hurryAngerModifier": 0,
-    "hurryCostModifier": 0,
-    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,6",
-    "id": "cities:cguildhall",
-    "limits": {
-      "extraPlayer": 0,
-      "noLimit": false,
-      "player": 1,
-      "team": -1,
-      "world": -1
-    },
-    "maintenanceModifier": 20,
-    "maxLatitude": 90,
-    "militaryProductionModifier": 0,
-    "minAreaSize": -1,
-    "minLatitude": 0,
-    "minimumPopulation": 0,
-    "name": "Crafts Guild Hall",
-    "neverCapture": true,
-    "noBonus": null,
-    "noPower": false,
-    "noUnhappiness": false,
-    "noUnhealthyPopulation": false,
-    "nukeExplosionRand": 0,
-    "nukeImmune": false,
-    "nukeModifier": 0,
-    "obsoleteSafeCommerceChanges": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "obsoleteTech": null,
-    "occupationTimeModifier": 0,
-    "pedia": "\tA Guildhall is a building used by guilds for meetings. The town authorities were represented in the guild meetings and thus had a means of controlling the handicraft activities. This was important since towns very often depended on a good reputation for export of a narrow range of products, on which not only the guild\u0027s, but the town\u0027s, reputation depended.",
-    "populationGrowthPercent": 0,
-    "powerBonus": null,
-    "powerYieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "producesPower": false,
-    "religionType": null,
-    "replaceBuildings": {},
-    "requirements": {
-      "all": [
-        {
-          "all": [
-            "research:machinery"
-          ]
-        },
-        {
-          "all": [
-            {
-              "count": 3,
-              "id": "cities:forge",
-              "kind": "building-class",
-              "param": 1
-            }
-          ]
-        },
-        {
-          "all": [
-            {
-              "count": 1,
-              "id": "cities:forge",
-              "kind": "building-class",
-              "param": 0
-            }
-          ]
-        },
-        {
-          "all": [
-            {
-              "not": {
-                "id": "foundation:gameoption_realistic_corporations",
-                "kind": "game-option"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "requiresActiveCivics": false,
-    "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
-    "riverLocation": false,
-    "riverPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "seaPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "specialistCommercePercentChanges": {},
-    "specialistExtraCommerces": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "specialistSlots": {},
-    "specialistYieldChanges": {},
-    "strategy": "Increases production in city but the downside is slightly higher maintenance costs.",
-    "teamShare": false,
-    "techCommerceChanges": {},
-    "techSpecialistChanges": {},
-    "techYieldChanges": {},
-    "techYieldModifiers": {},
-    "traitHappinessChanges": {},
-    "traitProductionModifiers": {
-      "peoples:trait_industrious": 100
-    },
-    "unitClassProductionModifiers": {},
-    "unitCombatExtraStrengths": {},
-    "unitCombatFreeExperiences": {},
-    "unsupported": [
-      "Advisor",
-      "ArtDefineTag",
-      "ConstructSound",
-      "SpecialBuildingType",
-      "fVisibilityPriority",
-      "iAsset",
-      "iDCMAirbombMission"
-    ],
-    "vicinityBonusYieldChanges": {},
-    "wonderCapacityIncrement": 0,
-    "workableRadius": 0,
-    "yieldChanges": {
-      "commerce": 5,
-      "food": 0,
-      "production": 5
-    },
-    "yieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    }
-  },
-  {
     "advancedStartCost": 100,
     "advancedStartCostIncrease": 0,
     "aiWeight": 150,
@@ -33216,12 +32970,6 @@
               "id": "cities:apothecary",
               "kind": "building-class",
               "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:sguildhall",
-              "kind": "building-class",
-              "param": 1
             }
           ]
         }
@@ -33448,12 +33196,6 @@
             {
               "count": 4,
               "id": "cities:theatre",
-              "kind": "building-class",
-              "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:sguildhall",
               "kind": "building-class",
               "param": 1
             }
@@ -33684,12 +33426,6 @@
               "id": "cities:bakery",
               "kind": "building-class",
               "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:vguildhall",
-              "kind": "building-class",
-              "param": 1
             }
           ]
         }
@@ -33916,12 +33652,6 @@
             {
               "count": 4,
               "id": "cities:armourer",
-              "kind": "building-class",
-              "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:cguildhall",
               "kind": "building-class",
               "param": 1
             }
@@ -34618,12 +34348,6 @@
               "id": "cities:butchery",
               "kind": "building-class",
               "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:vguildhall",
-              "kind": "building-class",
-              "param": 1
             }
           ]
         }
@@ -34850,12 +34574,6 @@
             {
               "count": 4,
               "id": "cities:siege_workshop",
-              "kind": "building-class",
-              "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:cguildhall",
               "kind": "building-class",
               "param": 1
             }
@@ -35086,12 +34804,6 @@
               "id": "cities:library",
               "kind": "building-class",
               "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:sguildhall",
-              "kind": "building-class",
-              "param": 1
             }
           ]
         }
@@ -35318,12 +35030,6 @@
             {
               "count": 4,
               "id": "cities:tailor_shop",
-              "kind": "building-class",
-              "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:sguildhall",
               "kind": "building-class",
               "param": 1
             }
@@ -35769,12 +35475,6 @@
             {
               "count": 4,
               "id": "cities:caravanserai",
-              "kind": "building-class",
-              "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:sguildhall",
               "kind": "building-class",
               "param": 1
             }
@@ -36690,12 +36390,6 @@
               "id": "cities:port",
               "kind": "building-class",
               "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:vguildhall",
-              "kind": "building-class",
-              "param": 1
             }
           ]
         }
@@ -36922,12 +36616,6 @@
             {
               "count": 3,
               "id": "cities:glasssmith",
-              "kind": "building-class",
-              "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:cguildhall",
               "kind": "building-class",
               "param": 1
             }
@@ -37158,12 +36846,6 @@
               "id": "cities:jewellery",
               "kind": "building-class",
               "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:cguildhall",
-              "kind": "building-class",
-              "param": 1
             }
           ]
         }
@@ -37390,12 +37072,6 @@
             {
               "count": 4,
               "id": "cities:grocer",
-              "kind": "building-class",
-              "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:vguildhall",
               "kind": "building-class",
               "param": 1
             }
@@ -38321,12 +37997,6 @@
               "id": "cities:treadmill_crane",
               "kind": "building-class",
               "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:cguildhall",
-              "kind": "building-class",
-              "param": 1
             }
           ]
         }
@@ -38553,12 +38223,6 @@
             {
               "count": 4,
               "id": "cities:market",
-              "kind": "building-class",
-              "param": 1
-            },
-            {
-              "count": 1,
-              "id": "cities:vguildhall",
               "kind": "building-class",
               "param": 1
             }
@@ -120957,252 +120621,6 @@
     }
   },
   {
-    "advancedStartCost": -1,
-    "advancedStartCostIncrease": 0,
-    "aiWeight": 0,
-    "airModifier": 0,
-    "airUnitCapacity": 0,
-    "allCityDefense": 0,
-    "allowsNuclearStrikes": false,
-    "allowsNukes": false,
-    "anarchyModifier": 0,
-    "areaCleanPower": false,
-    "areaFreeSpecialist": 0,
-    "areaHappiness": 0,
-    "areaHealth": 0,
-    "areaMaintenanceModifier": 0,
-    "bombardDefense": 0,
-    "bonusHappinessChanges": {},
-    "bonusHealthChanges": {},
-    "bonusProductionModifiers": {},
-    "bonusType": null,
-    "bonusYieldChanges": {},
-    "bonusYieldModifiers": {},
-    "buildingClassProductionModifiers": {},
-    "buildingHappinessChanges": {},
-    "buildingOnlyHealthy": false,
-    "capital": false,
-    "capitalExtraCommerce": 0,
-    "captureSurvivalPercent": 0,
-    "cityCountMaintenancePercent": 0,
-    "coastalDistanceMaintenanceModifier": 0,
-    "coastalLocation": false,
-    "commerceChanges": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "commerceModifiers": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "cost": 200,
-    "defaultBuilding": "cities:sguildhall",
-    "defensePercent": 0,
-    "dirtyPower": false,
-    "distanceMaintenanceModifier": 0,
-    "domainFreeExperiences": {},
-    "domainProductionModifiers": {},
-    "era": "foundation:era_medieval",
-    "experience": 0,
-    "extendsBuildingClass": null,
-    "extraFreeBonuses": {},
-    "flavors": {
-      "production": 10,
-      "science": 8
-    },
-    "foodKept": 0,
-    "foundsCorporation": null,
-    "freeBonus": null,
-    "freeBonusCount": 0,
-    "freeBuilding": null,
-    "freePromotion": null,
-    "freeSpecialist": 0,
-    "freeSpecialistCounts": {},
-    "freeTechs": 0,
-    "globalBuildingClassProductionModifiers": {},
-    "globalBuildingExtraCommerces": {},
-    "globalCommerceModifiers": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "globalExperience": 0,
-    "globalFreeSpecialist": 0,
-    "globalGreatPeopleRateModifier": 0,
-    "globalHappiness": 0,
-    "globalHealth": 0,
-    "globalHurryModifier": 0,
-    "globalMaintenanceModifier": 0,
-    "globalSeaPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "globalYieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "goldenAge": false,
-    "governmentCenter": false,
-    "greatPeopleRateChange": 1,
-    "greatPeopleRateModifier": 0,
-    "happiness": 0,
-    "happinessPercentPerPopulation": 0,
-    "healRateChange": 0,
-    "health": 0,
-    "healthPercentPerPopulation": 0,
-    "help": "",
-    "hurryAngerModifier": 0,
-    "hurryCostModifier": 0,
-    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,7",
-    "id": "cities:sguildhall",
-    "limits": {
-      "extraPlayer": 0,
-      "noLimit": false,
-      "player": 1,
-      "team": -1,
-      "world": -1
-    },
-    "maintenanceModifier": 20,
-    "maxLatitude": 90,
-    "militaryProductionModifier": 0,
-    "minAreaSize": -1,
-    "minLatitude": 0,
-    "minimumPopulation": 0,
-    "name": "Servants Guild Hall",
-    "neverCapture": true,
-    "noBonus": null,
-    "noPower": false,
-    "noUnhappiness": false,
-    "noUnhealthyPopulation": false,
-    "nukeExplosionRand": 0,
-    "nukeImmune": false,
-    "nukeModifier": 0,
-    "obsoleteSafeCommerceChanges": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "obsoleteTech": null,
-    "occupationTimeModifier": 0,
-    "pedia": "\tA Guildhall is a building used by guilds for meetings. The town authorities were represented in the guild meetings and thus had a means of controlling the handicraft activities. This was important since towns very often depended on a good reputation for export of a narrow range of products, on which not only the guild\u0027s, but the town\u0027s, reputation depended.",
-    "populationGrowthPercent": 0,
-    "powerBonus": null,
-    "powerYieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "producesPower": false,
-    "religionType": null,
-    "replaceBuildings": {},
-    "requirements": {
-      "all": [
-        {
-          "all": [
-            "research:civil_service"
-          ]
-        },
-        {
-          "all": [
-            {
-              "count": 3,
-              "id": "cities:courthouse",
-              "kind": "building-class",
-              "param": 1
-            }
-          ]
-        },
-        {
-          "all": [
-            {
-              "count": 1,
-              "id": "cities:courthouse",
-              "kind": "building-class",
-              "param": 0
-            }
-          ]
-        },
-        {
-          "all": [
-            {
-              "not": {
-                "id": "foundation:gameoption_realistic_corporations",
-                "kind": "game-option"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "requiresActiveCivics": false,
-    "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
-    "riverLocation": false,
-    "riverPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "seaPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "specialistCommercePercentChanges": {},
-    "specialistExtraCommerces": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "specialistSlots": {},
-    "specialistYieldChanges": {},
-    "strategy": "Increases production in city but the downside is slightly higher maintenance costs.",
-    "teamShare": false,
-    "techCommerceChanges": {},
-    "techSpecialistChanges": {},
-    "techYieldChanges": {},
-    "techYieldModifiers": {},
-    "traitHappinessChanges": {},
-    "traitProductionModifiers": {
-      "peoples:trait_industrious": 100
-    },
-    "unitClassProductionModifiers": {},
-    "unitCombatExtraStrengths": {},
-    "unitCombatFreeExperiences": {},
-    "unsupported": [
-      "Advisor",
-      "ArtDefineTag",
-      "ConstructSound",
-      "SpecialBuildingType",
-      "fVisibilityPriority",
-      "iAsset",
-      "iDCMAirbombMission"
-    ],
-    "vicinityBonusYieldChanges": {},
-    "wonderCapacityIncrement": 0,
-    "workableRadius": 0,
-    "yieldChanges": {
-      "commerce": 10,
-      "food": 0,
-      "production": 0
-    },
-    "yieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    }
-  },
-  {
     "advancedStartCost": 0,
     "advancedStartCostIncrease": 0,
     "aiWeight": 0,
@@ -141780,252 +141198,6 @@
     "yieldChanges": {
       "commerce": 0,
       "food": 0,
-      "production": 0
-    },
-    "yieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    }
-  },
-  {
-    "advancedStartCost": -1,
-    "advancedStartCostIncrease": 0,
-    "aiWeight": 0,
-    "airModifier": 0,
-    "airUnitCapacity": 0,
-    "allCityDefense": 0,
-    "allowsNuclearStrikes": false,
-    "allowsNukes": false,
-    "anarchyModifier": 0,
-    "areaCleanPower": false,
-    "areaFreeSpecialist": 0,
-    "areaHappiness": 0,
-    "areaHealth": 0,
-    "areaMaintenanceModifier": 0,
-    "bombardDefense": 0,
-    "bonusHappinessChanges": {},
-    "bonusHealthChanges": {},
-    "bonusProductionModifiers": {},
-    "bonusType": null,
-    "bonusYieldChanges": {},
-    "bonusYieldModifiers": {},
-    "buildingClassProductionModifiers": {},
-    "buildingHappinessChanges": {},
-    "buildingOnlyHealthy": false,
-    "capital": false,
-    "capitalExtraCommerce": 0,
-    "captureSurvivalPercent": 0,
-    "cityCountMaintenancePercent": 0,
-    "coastalDistanceMaintenanceModifier": 0,
-    "coastalLocation": false,
-    "commerceChanges": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "commerceModifiers": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "cost": 200,
-    "defaultBuilding": "cities:vguildhall",
-    "defensePercent": 0,
-    "dirtyPower": false,
-    "distanceMaintenanceModifier": 0,
-    "domainFreeExperiences": {},
-    "domainProductionModifiers": {},
-    "era": "foundation:era_medieval",
-    "experience": 0,
-    "extendsBuildingClass": null,
-    "extraFreeBonuses": {},
-    "flavors": {
-      "production": 10,
-      "science": 8
-    },
-    "foodKept": 0,
-    "foundsCorporation": null,
-    "freeBonus": null,
-    "freeBonusCount": 0,
-    "freeBuilding": null,
-    "freePromotion": null,
-    "freeSpecialist": 0,
-    "freeSpecialistCounts": {},
-    "freeTechs": 0,
-    "globalBuildingClassProductionModifiers": {},
-    "globalBuildingExtraCommerces": {},
-    "globalCommerceModifiers": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "globalExperience": 0,
-    "globalFreeSpecialist": 0,
-    "globalGreatPeopleRateModifier": 0,
-    "globalHappiness": 0,
-    "globalHealth": 0,
-    "globalHurryModifier": 0,
-    "globalMaintenanceModifier": 0,
-    "globalSeaPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "globalYieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "goldenAge": false,
-    "governmentCenter": false,
-    "greatPeopleRateChange": 1,
-    "greatPeopleRateModifier": 0,
-    "happiness": 0,
-    "happinessPercentPerPopulation": 0,
-    "healRateChange": 0,
-    "health": 0,
-    "healthPercentPerPopulation": 0,
-    "help": "",
-    "hurryAngerModifier": 0,
-    "hurryCostModifier": 0,
-    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,7",
-    "id": "cities:vguildhall",
-    "limits": {
-      "extraPlayer": 0,
-      "noLimit": false,
-      "player": 1,
-      "team": -1,
-      "world": -1
-    },
-    "maintenanceModifier": 20,
-    "maxLatitude": 90,
-    "militaryProductionModifier": 0,
-    "minAreaSize": -1,
-    "minLatitude": 0,
-    "minimumPopulation": 0,
-    "name": "Victuallers Guild Hall",
-    "neverCapture": true,
-    "noBonus": null,
-    "noPower": false,
-    "noUnhappiness": false,
-    "noUnhealthyPopulation": false,
-    "nukeExplosionRand": 0,
-    "nukeImmune": false,
-    "nukeModifier": 0,
-    "obsoleteSafeCommerceChanges": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "obsoleteTech": null,
-    "occupationTimeModifier": 0,
-    "pedia": "\tA Guildhall is a building used by guilds for meetings. The town authorities were represented in the guild meetings and thus had a means of controlling the handicraft activities. This was important since towns very often depended on a good reputation for export of a narrow range of products, on which not only the guild\u0027s, but the town\u0027s, reputation depended.",
-    "populationGrowthPercent": 0,
-    "powerBonus": null,
-    "powerYieldModifiers": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "producesPower": false,
-    "religionType": null,
-    "replaceBuildings": {},
-    "requirements": {
-      "all": [
-        {
-          "all": [
-            "research:crop_rotation"
-          ]
-        },
-        {
-          "all": [
-            {
-              "count": 3,
-              "id": "cities:meeting_hall",
-              "kind": "building-class",
-              "param": 1
-            }
-          ]
-        },
-        {
-          "all": [
-            {
-              "count": 1,
-              "id": "cities:meeting_hall",
-              "kind": "building-class",
-              "param": 0
-            }
-          ]
-        },
-        {
-          "all": [
-            {
-              "not": {
-                "id": "foundation:gameoption_realistic_corporations",
-                "kind": "game-option"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "requiresActiveCivics": false,
-    "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
-    "riverLocation": false,
-    "riverPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "seaPlotYieldChanges": {
-      "commerce": 0,
-      "food": 0,
-      "production": 0
-    },
-    "specialistCommercePercentChanges": {},
-    "specialistExtraCommerces": {
-      "culture": 0,
-      "espionage": 0,
-      "gold": 0,
-      "research": 0
-    },
-    "specialistSlots": {},
-    "specialistYieldChanges": {},
-    "strategy": "Increases production in city but the downside is slightly higher maintenance costs.",
-    "teamShare": false,
-    "techCommerceChanges": {},
-    "techSpecialistChanges": {},
-    "techYieldChanges": {},
-    "techYieldModifiers": {},
-    "traitHappinessChanges": {},
-    "traitProductionModifiers": {
-      "peoples:trait_industrious": 100
-    },
-    "unitClassProductionModifiers": {},
-    "unitCombatExtraStrengths": {},
-    "unitCombatFreeExperiences": {},
-    "unsupported": [
-      "Advisor",
-      "ArtDefineTag",
-      "ConstructSound",
-      "SpecialBuildingType",
-      "fVisibilityPriority",
-      "iAsset",
-      "iDCMAirbombMission"
-    ],
-    "vicinityBonusYieldChanges": {},
-    "wonderCapacityIncrement": 0,
-    "workableRadius": 0,
-    "yieldChanges": {
-      "commerce": 5,
-      "food": 3,
       "production": 0
     },
     "yieldModifiers": {

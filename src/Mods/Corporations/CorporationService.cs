@@ -242,26 +242,7 @@ internal sealed class CorporationService : ICorporationService
         if (Obsolete(sim, player, def)) return ObsoleteReason(sim, def, "your team");
         if (Obsolete(sim, city.Owner, def)) return ObsoleteReason(sim, def, "this city's owner");
         if (Blocked(sim, city, HeadquartersTeam(sim, record))) return "Civics prohibit this corporation";
-        if (MissingBuildingClass(sim, city.Owner, def) is { } missing) return missing;
         return sim.State.Cities.Any(c => c.Owner == player && IsActive(sim, c.Id, corporation)) ? null : "Requires an active owned branch";
-    }
-    /// <summary>Why the city owner's empire lacks the buildings a branch needs (<see cref="CorporationDef.PrereqBuildingClasses"/>),
-    /// or null. As in the source the count is the owner's whole empire, unscaled by world size.</summary>
-    private static string? MissingBuildingClass(Simulation sim, int owner, CorporationDef def)
-    {
-        if (def.PrereqBuildingClasses.Count == 0) return null;
-        foreach (var (building, needed) in def.PrereqBuildingClasses.OrderBy(p => p.Key, StringComparer.Ordinal))
-        {
-            if (BuildingClassCount(sim, owner, building) < needed) return $"Requires {needed} {sim.Content.Find(building)?.Name ?? building} in the city owner's empire";
-        }
-        return null;
-    }
-    /// <summary>How many buildings of the class (<see cref="BuildingDef.DefaultBuilding"/>) the player's cities hold.</summary>
-    internal static int BuildingClassCount(Simulation sim, int owner, string buildingClass)
-    {
-        var buildings = sim.Rules().CityBuildings;
-        return sim.State.Cities.Where(c => c.Owner == owner)
-            .Sum(c => buildings.EffectiveBuildings(sim, c.Id).Count(b => sim.Content.Get<BuildingDef>(b).DefaultBuilding == buildingClass));
     }
     public void Spread(Simulation sim, int player, int city, string corporation)
     {

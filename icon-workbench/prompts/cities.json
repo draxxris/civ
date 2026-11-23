@@ -856,15 +856,6 @@
       "source_batch": "cities-001"
     },
     {
-      "catalog_id": "cities:cguildhall",
-      "path": "src/Ariel.Rules/Cities/art/icons/cguildhall.png",
-      "label": "Crafts Guild Hall",
-      "original_subject": "Medieval crafts guildhall with timbered facade, carved trade emblems, a long meeting table, and tool displays",
-      "subject": "Medieval crafts guildhall with timbered facade, carved trade emblems, a long meeting table, and tool displays",
-      "rejection_reasons": [],
-      "source_batch": "cities-001"
-    },
-    {
       "catalog_id": "cities:picts_crannog",
       "path": "src/Ariel.Rules/Cities/art/icons/picts_crannog.png",
       "label": "Crannog",
@@ -4492,15 +4483,6 @@
       "source_batch": "cities-004"
     },
     {
-      "catalog_id": "cities:sguildhall",
-      "path": "src/Ariel.Rules/Cities/art/icons/sguildhall.png",
-      "label": "Servants Guild Hall",
-      "original_subject": "Servants guildhall with a long timber meeting table, folded linens, household tools, and a carved entry door",
-      "subject": "Servants guildhall with a long timber meeting table, folded linens, household tools, and a carved entry door",
-      "rejection_reasons": [],
-      "source_batch": "cities-004"
-    },
-    {
       "catalog_id": "cities:shantytown",
       "path": "src/Ariel.Rules/Cities/art/icons/shantytown.png",
       "label": "Shanty Town",
@@ -5275,15 +5257,6 @@
       "label": "Versailles",
       "original_subject": "Versailles palace with a long mirrored facade, formal gardens, fountains, sculpted hedges, and grand central axis",
       "subject": "Versailles palace with a long mirrored facade, formal gardens, fountains, sculpted hedges, and grand central axis",
-      "rejection_reasons": [],
-      "source_batch": "cities-004"
-    },
-    {
-      "catalog_id": "cities:vguildhall",
-      "path": "src/Ariel.Rules/Cities/art/icons/vguildhall.png",
-      "label": "Victuallers Guild Hall",
-      "original_subject": "Victuallers guildhall with grain sacks, market scales, wooden serving bowls, and a timbered meeting room",
-      "subject": "Victuallers guildhall with grain sacks, market scales, wooden serving bowls, and a timbered meeting room",
       "rejection_reasons": [],
       "source_batch": "cities-004"
     },

@@ -19,6 +19,7 @@ public sealed class CorporationFieldCoverageTests
         ["MovieFile"] = "presentation: no founding movies",
         ["MovieSound"] = "presentation: no founding movies",
         ["iTGAIndex"] = "presentation: font-atlas glyph index; Ariel has no font atlas",
+        ["PrereqBuildingClasses"] = "owner decision: a guild works like a corporation, so its branches need no group Guild Hall (the only buildings the source lists here); those halls are not built",
         ["iSpread"] = "the realistic-corporations option's automatic spread, decay and founding, which is not built",
     };
 
@@ -36,7 +37,7 @@ public sealed class CorporationFieldCoverageTests
                 $"CorporationInfo.{field} carries data that is neither mapped to CorporationDef nor listed with a reason");
         // The fields this work brought in are mapped, so the rules that read them see the source's data.
         foreach (var field in new[] { "CompetingCorporations", "iHappiness", "iHealth", "iMilitaryProductionModifier", "ObsoleteTech",
-                     "PrereqBuildingClasses", "iSpreadFactor", "BonusProduced" })
+                     "iSpreadFactor", "BonusProduced" })
             Assert.Contains(field, mapped);
     }
 

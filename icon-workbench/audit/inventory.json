@@ -1,6 +1,6 @@
 {
   "root": ".",
-  "image_count": 1180,
+  "image_count": 1174,
   "inventory": [
     {
       "path": "docs/references/civ6-rivers.jpg",
@@ -1640,24 +1640,6 @@
         "description_source": "pedia",
         "data_path": "src/Ariel.Rules/Cities/data/building.json",
         "source_icon_reference": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,2,10"
-      }
-    },
-    {
-      "path": "src/Ariel.Rules/Cities/art/icons/cguildhall.png",
-      "label": "Crafts Guild Hall",
-      "subject": "Crafts Guild Hall icon subject",
-      "category": "icon: building / wonder",
-      "dimensions": {
-        "width": 64,
-        "height": 64
-      },
-      "catalog": {
-        "id": "cities:cguildhall",
-        "kind": "building",
-        "description": "A Guildhall is a building used by guilds for meetings. The town authorities were represented in the guild meetings and thus had a means of controlling the handicraft activities. This was important since towns very often depended on a good reputation for export of a narrow range of products, on which not only the guild's, but the town's, reputation depended.",
-        "description_source": "pedia",
-        "data_path": "src/Ariel.Rules/Cities/data/building.json",
-        "source_icon_reference": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,6"
       }
     },
     {
@@ -8501,24 +8483,6 @@
       }
     },
     {
-      "path": "src/Ariel.Rules/Cities/art/icons/sguildhall.png",
-      "label": "Servants Guild Hall",
-      "subject": "Servants Guild Hall icon subject",
-      "category": "icon: building / wonder",
-      "dimensions": {
-        "width": 64,
-        "height": 64
-      },
-      "catalog": {
-        "id": "cities:sguildhall",
-        "kind": "building",
-        "description": "A Guildhall is a building used by guilds for meetings. The town authorities were represented in the guild meetings and thus had a means of controlling the handicraft activities. This was important since towns very often depended on a good reputation for export of a narrow range of products, on which not only the guild's, but the town's, reputation depended.",
-        "description_source": "pedia",
-        "data_path": "src/Ariel.Rules/Cities/data/building.json",
-        "source_icon_reference": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,7"
-      }
-    },
-    {
       "path": "src/Ariel.Rules/Cities/art/icons/shantytown.png",
       "label": "Shanty Town",
       "subject": "Shanty Town icon subject",
@@ -10046,24 +10010,6 @@
         "description_source": "pedia",
         "data_path": "src/Ariel.Rules/Cities/data/building.json",
         "source_icon_reference": ",Art/Interface/Buttons/Buildings/Versailles.dds,Art/Interface/Buttons/Buildings_Atlas.dds,7,7"
-      }
-    },
-    {
-      "path": "src/Ariel.Rules/Cities/art/icons/vguildhall.png",
-      "label": "Victuallers Guild Hall",
-      "subject": "Victuallers Guild Hall icon subject",
-      "category": "icon: building / wonder",
-      "dimensions": {
-        "width": 64,
-        "height": 64
-      },
-      "catalog": {
-        "id": "cities:vguildhall",
-        "kind": "building",
-        "description": "A Guildhall is a building used by guilds for meetings. The town authorities were represented in the guild meetings and thus had a means of controlling the handicraft activities. This was important since towns very often depended on a good reputation for export of a narrow range of products, on which not only the guild's, but the town's, reputation depended.",
-        "description_source": "pedia",
-        "data_path": "src/Ariel.Rules/Cities/data/building.json",
-        "source_icon_reference": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,7"
       }
     },
     {
@@ -12206,24 +12152,6 @@
         "description_source": "pedia",
         "data_path": "src/Ariel.Rules/Military/data/unit.json",
         "source_icon_reference": ",Art/Interface/Buttons/Units/Bear.dds,Art/Interface/Buttons/Unit_Resource_Atlas.dds,8,5"
-      }
-    },
-    {
-      "path": "src/Ariel.Rules/Military/art/icons/bgmaster.png",
-      "label": "Crafts Master",
-      "subject": "Crafts Master icon subject",
-      "category": "icon: unit",
-      "dimensions": {
-        "width": 64,
-        "height": 64
-      },
-      "catalog": {
-        "id": "military:bgmaster",
-        "kind": "unit",
-        "description": "Corporations Founding a Corporation There are a number of requirements that must be fulfilled before a player can found a Corporation. First they must have researched the Corporations Technology, in addition to another more specific technology required by each Corporation. This second technology varies by Corporation. Once players have researched the proper …",
-        "description_source": "pedia",
-        "data_path": "src/Ariel.Rules/Military/data/unit.json",
-        "source_icon_reference": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,6"
       }
     },
     {
@@ -14708,24 +14636,6 @@
         "description_source": "pedia",
         "data_path": "src/Ariel.Rules/Military/data/unit.json",
         "source_icon_reference": ",Art/Interface/Buttons/Units/Panzer.dds,Art/Interface/Buttons/Unit_Resource_Atlas.dds,3,11"
-      }
-    },
-    {
-      "path": "src/Ariel.Rules/Military/art/icons/ggmaster.png",
-      "label": "Victuallers Master",
-      "subject": "Victuallers Master icon subject",
-      "category": "icon: unit",
-      "dimensions": {
-        "width": 64,
-        "height": 64
-      },
-      "catalog": {
-        "id": "military:ggmaster",
-        "kind": "unit",
-        "description": "Corporations Founding a Corporation There are a number of requirements that must be fulfilled before a player can found a Corporation. First they must have researched the Corporations Technology, in addition to another more specific technology required by each Corporation. This second technology varies by Corporation. Once players have researched the proper …",
-        "description_source": "pedia",
-        "data_path": "src/Ariel.Rules/Military/data/unit.json",
-        "source_icon_reference": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,4,7"
       }
     },
     {
@@ -18866,24 +18776,6 @@
         "description_source": "pedia",
         "data_path": "src/Ariel.Rules/Military/data/unit.json",
         "source_icon_reference": ",art/Wales/Welsh Longbowman/btn_unit_welsh_longbowman.dds,art/Wales/Welsh Longbowman/Wales_Atlas.dds,2,1"
-      }
-    },
-    {
-      "path": "src/Ariel.Rules/Military/art/icons/wgmaster.png",
-      "label": "Servants Master",
-      "subject": "Servants Master icon subject",
-      "category": "icon: unit",
-      "dimensions": {
-        "width": 64,
-        "height": 64
-      },
-      "catalog": {
-        "id": "military:wgmaster",
-        "kind": "unit",
-        "description": "Corporations Founding a Corporation There are a number of requirements that must be fulfilled before a player can found a Corporation. First they must have researched the Corporations Technology, in addition to another more specific technology required by each Corporation. This second technology varies by Corporation. Once players have researched the proper …",
-        "description_source": "pedia",
-        "data_path": "src/Ariel.Rules/Military/data/unit.json",
-        "source_icon_reference": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,2,7"
       }
     },
     {

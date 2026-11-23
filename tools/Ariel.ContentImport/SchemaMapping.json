@@ -5205,15 +5205,7 @@
       { "source": "iMilitaryProductionModifier", "property": "MilitaryProductionPercent", "kind": "int" },
       { "source": "ObsoleteTech", "property": "ObsoleteTech", "kind": "ref", "target": "TechInfo" },
       { "source": "iSpreadFactor", "property": "SpreadFactorPercent", "kind": "int" },
-      { "source": "BonusProduced", "property": "BonusProduced", "kind": "ref", "target": "BonusInfo" },
-      {
-        "source": "PrereqBuildingClasses",
-        "property": "PrereqBuildingClasses",
-        "kind": "mapInt",
-        "target": "BuildingClassInfo",
-        "key": "BuildingClassType",
-        "value": "iNumBuildingNeeded"
-      }
+      { "source": "BonusProduced", "property": "BonusProduced", "kind": "ref", "target": "BonusInfo" }
     ],
     "requirements": []
   },

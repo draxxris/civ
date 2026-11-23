@@ -274,19 +274,15 @@ public sealed class CorporationRulesTests
         Assert.Equal(masons.YieldProducedHundredths.Production / 100 + masons.YieldChanges.Production,
             effects.Where(l => l.Key == "yield.flat.production").Sum(l => l.Amount));
 
-        // The guild's own executive trains in its Master Guild; the crafts master, which spreads five guilds, trains
-        // where the Crafts Guild Hall stands, and both open branches abroad.
+        // The guild's own executive trains in its Master Guild and opens branches abroad, as a corporation's does; no
+        // Guild Hall is asked for anywhere.
         const string Executive = "military:executive_masonguild";
         Assert.Empty(UnitRefusals(sim, city, Executive));
         Assert.Equal(["Requires the Masons Master Guild"], UnitRefusals(sim, branch, Executive));
         P6RulesScenario.Resource(sim, rival, "world:stone");
-        rival.Buildings.Add("cities:cguildhall"); // A guild branch needs its group's hall in the owner's empire.
-        var master = P6RulesScenario.AddUnit(sim, 0, rival, "military:bgmaster");
-        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = master.Id, Mission = CorporationMissions.Spread, Subject = Masons });
+        var executive = P6RulesScenario.AddUnit(sim, 0, rival, Executive);
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Masons });
         Assert.Contains(Masons, Corps(sim).Present(sim, rival.Id));
-        sim.TeamOf(0).Techs.Add("research:juris_prudence");
-        var crafts = sim.State.Cities.First(c => c.Owner == 0 && c.Buildings.Contains("cities:cguildhall"));
-        Assert.Empty(UnitRefusals(sim, crafts, "military:bgmaster"));
     }
 
     [Fact]
@@ -439,11 +435,9 @@ public sealed class CorporationRulesTests
         var entry = new Ariel.Client.GameSession(sim).Pedia.Find("military:executive_1")!;
         Assert.Contains("the headquarters of Cereal Mills", entry.Prerequisites);
         Assert.Contains("a branch of Cereal Mills", entry.Prerequisites);
-        // A guild's executive reads the same way, and the masters never call a founding building a guild hall.
+        // A guild's executive reads the same way.
         var pedia = new Ariel.Client.GameSession(sim).Pedia;
         Assert.Contains("the Masons Master Guild", pedia.Find("military:executive_masonguild")!.Prerequisites);
-        foreach (var master in new[] { "military:bgmaster", "military:ggmaster", "military:wgmaster" })
-            Assert.DoesNotContain(pedia.Find(master)!.Prerequisites, p => p.Contains("guild hall of", StringComparison.OrdinalIgnoreCase));
     }
     [Fact]
     public void Queries_answer_a_stale_city_id_instead_of_throwing()
