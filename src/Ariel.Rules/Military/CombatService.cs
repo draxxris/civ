@@ -8,10 +8,18 @@ internal sealed partial class CombatService : ICombatService
     public int? BestDefender(Simulation sim, int attackerId, Hex target)
     {
         var attacker = sim.State.UnitById(attackerId);
-        return sim.State.UnitsAt(target).Where(u => EligibleDefender(sim, attacker, u))
-            .Where(u => MilitaryData.Constants(sim).MaxHitPoints - u.Health < MilitaryData.Definition(sim, attacker).CombatLimit)
-            .Select(u => (Unit: u, Strength: CombatCalculator.Calculate(sim, attacker, u).DefenseStrength.Current))
-            .OrderByDescending(x => x.Strength).ThenBy(x => x.Unit.Id).Select(x => (int?)x.Unit.Id).FirstOrDefault();
+        int maxHp = MilitaryData.Constants(sim).MaxHitPoints, limit = MilitaryData.Definition(sim, attacker).CombatLimit;
+        // The strongest current defence wins, the lowest id on a tie. Defence reads the attacker's ledger and never
+        // writes it, so one collection serves every candidate.
+        Ariel.Content.ModifierSink? attackerEffects = null;
+        Unit? best = null; int bestStrength = 0;
+        foreach (var u in sim.State.UnitsAt(target))
+        {
+            if (!EligibleDefender(sim, attacker, u) || maxHp - u.Health >= limit) continue;
+            int strength = CombatCalculator.DefenseStrength(sim, attacker, u, attackerEffects ??= MilitaryData.Effects(sim, attacker)).Current;
+            if (best is null || strength > bestStrength || strength == bestStrength && u.Id < best.Id) (best, bestStrength) = (u, strength);
+        }
+        return best?.Id;
     }
     internal static bool EligibleDefender(Simulation sim, Unit attacker, Unit unit) => MilitaryData.VisibleEnemy(sim, attacker.Owner, unit)
         && unit.Health > 0 && MilitaryData.Definition(sim, unit).Strength > 0 && MilitaryData.Definition(sim, unit).Domain != "military:domain_air"

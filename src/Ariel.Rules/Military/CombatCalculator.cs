@@ -31,6 +31,15 @@ internal static class CombatCalculator
         int withdrawal = (1_000_000 - success) * preview.WithdrawalPercent / 100;
         return preview with { SuccessOdds = success, WithdrawalOdds = withdrawal };
     }
+    /// <summary>The defender's strength against this attacker, exactly as <see cref="Calculate"/> reckons it, without the
+    /// attacker's strength or the odds. <paramref name="attackerEffects"/> is the attacker's collected ledger; it is
+    /// only read.</summary>
+    internal static CombatStrength DefenseStrength(Simulation sim, Unit attacker, Unit defender, ModifierSink attackerEffects)
+    {
+        var de = MilitaryData.Effects(sim, defender);
+        AddDefense(sim, attacker, defender, attackerEffects, de);
+        return Strength(sim, defender, de);
+    }
     private static CombatStrength Strength(Simulation sim, Unit unit, ModifierSink sink)
     {
         var def = MilitaryData.Definition(sim, unit);

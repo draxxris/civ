@@ -357,6 +357,23 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(43, units.UpgradePrice(sim, unit.Id, "military:archer"));
     }
     [Fact]
+    public void Best_defender_is_the_strongest_previewed_defence_and_the_lowest_id_on_ties()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        sim.State.SetWar(0, 1, true);
+        var attacker = Add(sim, 0, 39);
+        var tile = sim.State.Grid.Neighbors(new TileId(39)).First();
+        var defenders = new[] { Add(sim, 1, tile.Value), Add(sim, 1, tile.Value, "military:archer"), Add(sim, 1, tile.Value),
+            Add(sim, 1, tile.Value, "military:archer") };
+        defenders[3].Health = 60;
+        var combat = Service<ICombatService>(sim);
+        Assert.All(defenders, d => Assert.True(combat.CanDefend(sim, attacker.Id, d.Id)));
+        var strengths = defenders.Select(d => (d.Id, Strength: combat.Preview(sim, attacker.Id, d.Id).DefenseStrength.Current)).ToArray();
+        Assert.Contains(strengths, x => x.Id != strengths[0].Id && x.Strength == strengths[0].Strength); // A tie exists.
+        var expected = strengths.OrderByDescending(x => x.Strength).ThenBy(x => x.Id).First().Id;
+        Assert.Equal(expected, combat.BestDefender(sim, attacker.Id, sim.State.Grid.HexOf(tile)));
+    }
+    [Fact]
     public void Unit_refresh_heals_a_damaged_unit_and_keeps_a_full_one_at_maximum()
     {
         var sim = GameFactory.Scenario(mods.Content);
