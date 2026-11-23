@@ -730,10 +730,10 @@
   {
     "default": true,
     "era": null,
-    "help": "Corporations will expand and grow dynamically, without player involvement, behaving more like real world Corporations, and not tied to central governments. Corporations can be taxed for a profit, or be subsidized by your nation to help it expand faster. It reduces the tedious micromanagement of corporations, and gives corporate policies real value and meaning.",
+    "help": "Guilds and corporations are founded and spread by themselves. A nation that knows a guild's or corporation's technology and has its resource connected may see it founded in its best city, which becomes the headquarters or Master Guild; branches then open on their own in nearby cities that have the resource, more often where the nation holds more of it, and close when the resource is lost. A headquarters whose nation loses the resource everywhere for long enough closes, and the guild or corporation can be founded anew. Founding buildings and executives are not used. When off, a nation founds a guild or corporation by building its Master Guild or headquarters and spreads it with executives and gold.",
     "icon": "",
     "id": "foundation:gameoption_realistic_corporations",
-    "name": "Realistic Corporations",
+    "name": "Realistic Guilds/Corporations",
     "pedia": "",
     "requirements": null,
     "strategy": "",

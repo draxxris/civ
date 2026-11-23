@@ -14,7 +14,7 @@ public sealed class CivicCorporationsDef : ContentAttachment<CivicDef>, IDescrib
     public bool NoForeignCorporations { get; init; }
     /// <summary>Percent change to corporation maintenance, the player's <c>corporations:maintenance_percent</c>.</summary>
     public int MaintenancePercent { get; init; }
-    /// <summary>The same change when the realistic corporations game option is on; it replaces
+    /// <summary>The same change when the Realistic Guilds/Corporations game option is on; it replaces
     /// <see cref="MaintenancePercent"/>.</summary>
     public int RealisticMaintenancePercent { get; init; }
 
@@ -23,6 +23,6 @@ public sealed class CivicCorporationsDef : ContentAttachment<CivicDef>, IDescrib
         if (NoCorporations) yield return "No corporations";
         if (NoForeignCorporations) yield return "No foreign corporations";
         if (MaintenancePercent != 0) yield return $"{MaintenancePercent:+#;-#}% corporation maintenance";
-        if (RealisticMaintenancePercent != 0) yield return $"{RealisticMaintenancePercent:+#;-#}% corporation maintenance with realistic corporations";
+        if (RealisticMaintenancePercent != 0) yield return $"{RealisticMaintenancePercent:+#;-#}% corporation maintenance with Realistic Guilds/Corporations";
     }
 }
