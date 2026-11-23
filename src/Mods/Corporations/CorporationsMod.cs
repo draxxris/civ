@@ -57,7 +57,7 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterService<IContentCheck>("executives", new ExecutiveTrainingCheck());
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new CorporationAiPlanner(service));
         context.RegisterService<Ariel.Ai.IProductionWishes>("executives", new ExecutiveWishes(service));
-        context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>("civic_valuer", new CorporationCivicValuer(service));
+        context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>("civic_valuer", new CorporationCivicValuer(service, natural));
         context.RegisterCommand<SpreadCorporationCommand>("spread_corporation");
         context.TurnSystems.Register(new CorporationMaintenance(service));
         context.TurnSystems.Register(new NaturalCorporationTurn(natural));

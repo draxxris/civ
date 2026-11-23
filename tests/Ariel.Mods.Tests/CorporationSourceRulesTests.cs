@@ -323,6 +323,9 @@ public sealed class CorporationSourceRulesTests
         Assert.InRange(Value(GameFactory.Headquarters(sim, Masons)), 80, 160);
         // A building of the trade the Master Guild asks for is the city planner's own business.
         Assert.Equal(0, Value("cities:treadmill_crane"));
+        // With Realistic Guilds/Corporations nobody builds a founding building.
+        sim.Settings.GameOptions[CorporationMode.Option] = true;
+        Assert.Equal(0, Value(GameFactory.Headquarters(sim, Masons)));
     }
 
     /// <summary>The source corporation fields with non-default data that no rule reads, each with its reason. The importer

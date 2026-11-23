@@ -288,6 +288,35 @@ public sealed class CorporationModeTests
         Assert.True(Corps(sim).IsActive(sim, branch.Id, Cereal));
     }
 
+    /// <summary>The civic valuer's adjustment of a civic for player 0.</summary>
+    private static int Adjust(Simulation sim, string civic)
+    {
+        var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "corporations:civic_valuer");
+        return valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0), new Ariel.Ai.CivicSubject(sim.Content.Get<CivicDef>(civic)));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void A_ban_costs_the_corporations_a_nation_could_still_get(bool realistic)
+    {
+        var sim = P6RulesScenario.Create(realistic: realistic); var city = sim.State.Cities[0];
+        // Nothing to found and nothing to receive: a ban is free.
+        Assert.Equal(0, Adjust(sim, "government:planned"));
+        GameFactory.GrantFoundingTechs(sim, city, Cereal);
+        P6RulesScenario.Resource(sim, city, "world:corn");
+        // Cereal Mills could be founded now, by building it or on its own: banning it costs.
+        int founding = Adjust(sim, "government:planned");
+        Assert.True(founding < 0, $"planned scores {founding}");
+        // A civic that bans only foreign corporations leaves one the player would found itself.
+        Assert.Equal(0, Adjust(sim, "government:nationalist"));
+        // Founded abroad, the corporation could still come by spread, which a foreign ban stops.
+        var foreign = sim.State.Cities[2];
+        GameFactory.GrantFoundingTechs(sim, foreign, Cereal);
+        CorporationSourceRulesTests.Plant(sim, foreign, Cereal);
+        Assert.True(Adjust(sim, "government:nationalist") < 0);
+    }
+
     [Fact]
     public void Every_corporation_and_guild_has_what_both_modes_need()
     {

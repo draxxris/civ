@@ -7,7 +7,8 @@ namespace Ariel.Mods.Corporations;
 /// <summary>The computer player's spreading of corporations, run inside the standard AI's turn after religion and
 /// before the great people planner (<c>great_people:planner</c>, at <see cref="AiPlannerOrder.Religion"/> + 200).
 /// Founding is production: the city planner builds a headquarters or Master Guild, valued by <see cref="HeadquartersValuer"/>, and
-/// trains executives for foreign spread, wished for by <see cref="ExecutiveWishes"/>.</summary>
+/// trains executives for foreign spread, wished for by <see cref="ExecutiveWishes"/>. With Realistic Guilds/Corporations
+/// guilds and corporations found and spread by themselves, so none of these plan anything there.</summary>
 internal sealed class CorporationAiPlanner(CorporationService service) : IAiPlanner
 {
     public string Id => "corporations:planner";
@@ -28,7 +29,7 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
 
     public void Plan()
     {
-        if (ctx.Sim.Service<ICorporationService>() is null || ctx.Cities.Count == 0) return;
+        if (ctx.Sim.Service<ICorporationService>() is null || ctx.Cities.Count == 0 || CorporationMode.Realistic(ctx.Sim)) return;
         var content = ctx.Sim.Content;
         // An obsolete corporation can be spread nowhere by this team, so it is not planned.
         var spreading = content.Get<CorporationDef>().All.Where(c => service.IsFounded(ctx.Sim, c.Id)
@@ -202,6 +203,8 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
 
     public IEnumerable<ProductionWish> Wishes(AiContext ctx, City city)
     {
+        // Executives are refused with Realistic Guilds/Corporations.
+        if (CorporationMode.Realistic(ctx.Sim)) yield break;
         // Cheapest first: this runs for every city each time it plans, and only a headquarters trains executives.
         var corporations = ctx.Sim.Content.Get<CorporationDef>().All
             .Where(c => service.Headquarters(ctx.Sim, c.Id) == city.Id && CorporationPlanner.Worth(ctx.Sim.Content, c) > 0)
@@ -240,6 +243,8 @@ internal sealed class HeadquartersValuer : IAiValuer<BuildingSubject>
 
     public int Adjust(AiContext ctx, in BuildingSubject subject)
     {
+        // With Realistic Guilds/Corporations founding buildings are refused.
+        if (CorporationMode.Realistic(ctx.Sim)) return 0;
         var content = ctx.Sim.Content;
         return CorporationFounder.Corporation(content, subject.Building) is { } corporation
             ? FoundingValue + (int)Math.Clamp(CorporationPlanner.Worth(content, corporation), 0, FoundingValue)
