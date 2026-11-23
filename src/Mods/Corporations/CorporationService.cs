@@ -72,6 +72,9 @@ internal sealed class CorporationService : ICorporationService
             ?? WorldSizeCorporationsDef.None;
         var handicap = sim.Content.Attachment<HandicapCorporationsDef>(sim.Content.Get<HandicapDef>(sim.Settings.Handicap).Id)
             ?? HandicapCorporationsDef.None;
+        // A city without a corporation owes nothing. Every city calculation asks this, and the player's maintenance
+        // modifier is a whole player calculation, so it is gathered only for a city that has something to pay for.
+        if (cityObj.Extensions.Get<CorporationCityState>(sim.Content) is not { Corporations.Count: > 0 }) return 0;
         long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total(MaintenanceKey);
         int inflation = InflationPercent(sim, cityObj.Owner) + 100;
         bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
