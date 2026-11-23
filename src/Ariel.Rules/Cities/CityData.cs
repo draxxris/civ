@@ -24,9 +24,11 @@ internal static class CityData
     internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
         CityReadScope.Memo(scope.Active, city, () =>
         {
-            bool powered = IsPowered(sim, city);
+            // Power is a whole-area question (clean power anywhere in the team's area, or the city's own sources and
+            // their resources), so it is asked only of a city that holds a building needing it.
+            bool? powered = null;
             var buildings = city.Buildings.Concat(FreeBuildings(sim, city))
-                .Where(id => powered || !sim.Content.Get<S.BuildingDef>(id).RequiresPower);
+                .Where(id => !sim.Content.Get<S.BuildingDef>(id).RequiresPower || (powered ??= IsPowered(sim, city)));
             return CityBuildingRules.Active(sim, city, buildings);
         }));
     // Power sources do not require power. Exclude consumers before resolving sources and their resources.
