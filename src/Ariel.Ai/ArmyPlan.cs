@@ -7,19 +7,23 @@ namespace Ariel.Ai;
 internal sealed class ArmyPlan(AiContext ctx)
 {
     public int Soldiers => ctx.CountUnits(UnitRole.Melee) + ctx.CountUnits(UnitRole.Siege);
-    public int DesiredGarrison(CityView v)
+    public int DesiredGarrison(CityView v) => DesiredGarrisonAt(v.City.Position, v.Threat);
+    /// <summary>The garrison a city at <paramref name="position"/> wants under <paramref name="nearby"/> threat
+    /// (<see cref="CityView.Threat"/>), for a caller that needs no other part of the city's view.</summary>
+    public int DesiredGarrisonAt(Hex position, int nearby)
     {
-        if (ctx.Turn < 8 && v.Threat == 0) return 0;
+        if (ctx.Turn < 8 && nearby == 0) return 0;
         var tuning = ctx.Sim.Content.Get<HexOverridesDef>("foundation:hex_overrides");
         int baseline = ctx.Turn < 20 ? 1 : tuning.AiMinimumGarrison;
         // Foreign troops massed nearby in peacetime count at half weight: they could attack the turn war is declared.
-        int danger = v.Threat + Pressure(v) / 2;
+        int danger = nearby + Pressure(position) / 2;
         int threat = (danger + tuning.AiThreatStrengthPerDefender - 1) / tuning.AiThreatStrengthPerDefender;
         return Math.Clamp(baseline + threat, baseline, tuning.AiMaximumGarrison);
     }
 
     /// <summary>Foreign land strength within two tiles of the city, counted only beyond a small escort's worth.</summary>
-    public int Pressure(CityView v) => Math.Max(0, ctx.PressureAround(v.City.Position, 2) - PressureAllowance);
+    public int Pressure(CityView v) => Pressure(v.City.Position);
+    private int Pressure(Hex position) => Math.Max(0, ctx.PressureAround(position, 2) - PressureAllowance);
     internal const int PressureAllowance = 6;
 
     /// <summary>Field army beyond garrisons: grows with empire size, leader militarism, wartime and a war being prepared.</summary>

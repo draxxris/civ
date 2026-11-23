@@ -15,10 +15,12 @@ internal sealed record CityView(City City, YieldVector Yields, int HappyMargin, 
     {
         var yield = ctx.Service<ICityYieldService>().Calculate(ctx.Sim, city.Id);
         var well = ctx.Service<ICityWellbeingService>().Calculate(ctx.Sim, city.Id);
-        int garrison = ctx.Sim.State.UnitsAt(city.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee);
         return new(city, yield.Yields, well.Happy - well.Unhappy - well.Angry, well.Healthy - well.Unhealthy,
-            ctx.ThreatAround(city.Position, 3), garrison);
+            ThreatOf(ctx, city), GarrisonOf(ctx, city));
     }
+    public static int ThreatOf(AiContext ctx, City city) => ctx.ThreatAround(city.Position, 3);
+    public static int GarrisonOf(AiContext ctx, City city) =>
+        ctx.Sim.State.UnitsAt(city.Position).Count(u => u.Owner == ctx.PlayerId && ctx.Role(u) == UnitRole.Melee);
 }
 
 /// <summary>What a city is best at, from its yields compared with the empire's other cities.</summary>
