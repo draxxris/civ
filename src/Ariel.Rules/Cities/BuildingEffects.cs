@@ -17,8 +17,11 @@ internal sealed class BuildingEffects : IModifierSource
         if (context.Scope == ModifierScope.Player)
         {
             foreach (var ownedCity in CityData.Owned(context.Sim, context.Player))
+            {
+                if (!MayRun(context.Sim, ownedCity, b => b.GlobalHurryModifier != 0)) continue;
                 foreach (var building in CityData.Active(context.Sim, ownedCity))
                     sink.Add(building.Id, "economy:hurry_percent", building.GlobalHurryModifier);
+            }
             return;
         }
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
@@ -27,7 +30,10 @@ internal sealed class BuildingEffects : IModifierSource
         var running = CityData.Active(sim, city).ToArray();
         foreach (var building in running) Local(sim, city, building, running, bonuses, sink);
         foreach (var other in CityData.Owned(sim, city.Owner))
+        {
+            if (other != city && !MayRun(sim, other, ReachesOtherCities)) continue;
             foreach (var building in CityData.Active(sim, other)) Global(sim, city, other, building, running, sink);
+        }
         foreach (var building in CityData.EffectiveBuildings(sim, city))
             if (building.ObsoleteSafeCommerceChanges != default)
                 sink.AddCommerce(building.Id + ":safe", building.ObsoleteSafeCommerceChanges);
@@ -164,6 +170,22 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var pair in b.VicinityBonusYieldChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
             if (VicinityBonuses.Has(sim, city, pair.Key, bonuses)) sink.AddYield(b.Id + ":vicinity:" + pair.Key, pair.Value);
     }
+    /// <summary>Whether any building the city could run (constructed or granted) matches. The running set is a subset of
+    /// these, and resolving it is the expensive part of a calculation that visits every city of an empire, so a city
+    /// where nothing matches is passed over before it is resolved.</summary>
+    private static bool MayRun(Simulation sim, City city, Func<S.BuildingDef, bool> match)
+    {
+        foreach (var id in city.Buildings) if (match(sim.Content.Get<S.BuildingDef>(id))) return true;
+        foreach (var id in CityData.FreeBuildings(sim, city)) if (match(sim.Content.Get<S.BuildingDef>(id))) return true;
+        return false;
+    }
+    /// <summary>Whether <see cref="Global"/> would write any line for the building: every field it reads, global or
+    /// area-wide. A field added to <see cref="Global"/> must be added here too.</summary>
+    private static bool ReachesOtherCities(S.BuildingDef b) =>
+        b.GlobalYieldModifiers != default || b.GlobalCommerceModifiers != default || b.GlobalHappiness != 0 || b.GlobalHealth != 0
+        || b.GlobalFreeSpecialist != 0 || b.GlobalGreatPeopleRateModifier != 0 || b.GlobalMaintenanceModifier != 0
+        || b.GlobalExperience != 0 || !b.GlobalBuildingExtraCommerces.IsEmpty
+        || b.AreaHappiness != 0 || b.AreaHealth != 0 || b.AreaFreeSpecialist != 0 || b.AreaMaintenanceModifier != 0;
     private static void Global(Simulation sim, City city, City origin, S.BuildingDef b, S.BuildingDef[] running, ModifierSink sink)
     {
         if (b.GlobalYieldModifiers != default) sink.AddYield(b.Id + ":global", b.GlobalYieldModifiers, true);
