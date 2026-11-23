@@ -43,18 +43,15 @@ public enum ModifierScope
 /// <summary>Calculation subject. The calculating mod chooses the scope and supplies applicable subject ids.</summary>
 public sealed record ModifierContext(Simulation Sim, ModifierScope Scope, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null, Team? Team = null, Plot? ProposedPlot = null);
 /// <summary>Cross-mod contribution source. Contribute must not change simulation state, and what it adds must depend
-/// only on the context and the state: not on the sink it adds to, nor on anything outside the simulation.</summary>
-public interface IModifierSource
+/// only on the context and the state: not on the sink it adds to, nor on anything outside the simulation.
+/// <para>A source may declare the state domains it never reads (<see cref="IStateReader.UnreadDomains"/>). Inside
+/// kernel work a contribution is kept and used again until something it may read is written
+/// (<see cref="ModifierSink.Collect"/>), so a write confined to those domains leaves it valid. A source that declares
+/// nothing may read everything, and any write makes it compute again.</para></summary>
+public interface IModifierSource : IStateReader
 {
     /// <summary>Append typed effects to a calculation's sink; ignore unsupported scopes.</summary>
     void Contribute(ModifierContext context, ModifierSink sink);
-    /// <summary>The state domains (<see cref="StateDomain"/>) this source never reads, directly or through any rule it
-    /// asks, for any scope. Inside kernel work a contribution is kept and used again until something it may read is
-    /// written (<see cref="ModifierSink.Collect"/>), so a write confined to these domains leaves it valid. Null, the
-    /// default, declares nothing: the source may read everything, and any write makes it compute again. A wrong
-    /// declaration makes the game read stale values; <see cref="Simulation.VerifyWrites"/> catches it where a run
-    /// exercises it.</summary>
-    IReadOnlyList<string>? UnreadDomains => null;
 }
 /// <summary>One explainable contribution to a calculation.</summary>
 public sealed record LedgerLine(string Source, string Key, long Amount);
@@ -210,7 +207,8 @@ public sealed class ModifierSink
     /// callers may add to.
     /// <para>Across writes, inside kernel work, each source's lines for each context are kept in the simulation's
     /// modifier cache with the write stamp they were made at, and used again while nothing the source may read was
-    /// written since: a source declares what it never reads (<see cref="IModifierSource.UnreadDomains"/>), and a
+    /// written since: a source declares what it never reads (<see cref="IStateReader.UnreadDomains"/>), and no source reads a private
+    /// domain (<see cref="StateDomain.Private"/>), and a
     /// writer declares what it writes (<see cref="GameCommand.WriteDomains"/>, <see cref="ITurnSystem.WriteDomains"/>).
     /// An undeclared source is used again only while nothing at all was written. A context with a proposed plot names
     /// a hypothetical plot by reference, so it is never kept.</para></summary>
@@ -266,7 +264,7 @@ public sealed class ModifierSink
     }
     // Each source's unread domains as a mask, for each content database; sources and domains are frozen with it.
     private static ulong[] UnreadMasks(ContentDb content, IReadOnlyList<IModifierSource> sources) =>
-        UnreadMaskTable.GetValue(content, db => new(sources.Select(s => s.UnreadDomains is { } ids ? db.StateDomains.Mask(ids, out _) : 0UL).ToArray())).Masks;
+        UnreadMaskTable.GetValue(content, db => new(sources.Select(s => db.StateDomains.UnreadMask(s, db)).ToArray())).Masks;
     private sealed class UnreadMaskBox(ulong[] masks) { public readonly ulong[] Masks = masks; }
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ContentDb, UnreadMaskBox> UnreadMaskTable = new();
     private static readonly ReadEpochMemo<ModifierContext, ModifierSink> Memo = new();

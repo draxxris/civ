@@ -82,10 +82,14 @@ public sealed class DomainEventBus
     /// dispatch them as if its own command had caused them.</summary>
     public void Publish(DomainEvent message)
     {
-        if (Handled(message.GetType())) _sim.WidenWriteWindow();
+        // A subscriber may write anything: the open write window widens to everything, and an event published
+        // outside any window dispatches inside one of its own, so the subscribers' writes are always stamped.
+        bool handled = Handled(message.GetType());
+        bool widened = handled && _sim.WidenWriteWindow();
         _pending.Enqueue(message);
         if (_dispatching) return;
         _dispatching = true;
+        using var window = handled && !widened ? _sim.OpenWriteWindow(null, "event:" + message.GetType().Name) : default;
         try
         {
             while (_pending.TryDequeue(out var next))

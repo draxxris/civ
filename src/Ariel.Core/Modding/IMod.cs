@@ -33,6 +33,9 @@ public interface IModContext
     /// <see cref="StateDomain"/>), so this mod's commands and turn systems can declare that they write only inside it
     /// and modifier sources can declare that they never read it.</summary>
     void RegisterStateDomain(string name, params string[] paths);
+    /// <summary>Register a private state domain <c>modid:name</c> (<see cref="StateDomain.Private"/>): fields only this
+    /// mod's own planning code reads, never a rule or a modifier source, so every reader counts them as unread.</summary>
+    void RegisterPrivateStateDomain(string name, params string[] paths);
     /// <summary>Subscribe to an event type in deterministic registration order.</summary>
     void Subscribe<TEvent>(string name, Action<Game.Simulation, TEvent> handler) where TEvent : Game.DomainEvent;
     /// <summary>This mod's unqualified id.</summary>

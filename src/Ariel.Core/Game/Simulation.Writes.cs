@@ -141,12 +141,13 @@ public sealed partial class Simulation
     }
 
     /// <summary>The innermost open window may write anything from here on: an event a subscriber handles was
-    /// published inside it.</summary>
-    internal void WidenWriteWindow()
+    /// published inside it. False when no window is open, and the caller must open one.</summary>
+    internal bool WidenWriteWindow()
     {
-        if (_windows.Count == 0) return;
+        if (_windows.Count == 0) return false;
         _windows[^1].Rest = true;
         _openRest = true;
+        return true;
     }
 
     /// <summary>The kernel wrote outside any window (ended turns, the turn order): everything counts as written.</summary>

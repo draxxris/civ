@@ -9,7 +9,22 @@ namespace Ariel.Content;
 /// the field (<c>Cities/*/Worked</c>, <c>Cities/*/Extensions/{module}:{component}/{field}</c>). The paths are used only
 /// to verify declarations; they do not route writes. A field belongs to at most one domain, and everything that no
 /// domain names is the state's remainder, which every reader reads.</summary>
-public sealed record StateDomain(string Id, IReadOnlyList<string> Paths);
+/// <para>A private domain (<see cref="Private"/>) is read only by its own module's planning code, never by a rule or a
+/// modifier source: the computer player's saved intent, for instance. Every reader counts it as unread without naming
+/// it.</para>
+public sealed record StateDomain(string Id, IReadOnlyList<string> Paths, bool Private = false);
+
+/// <summary>A rule that reads the state and can say which state domains it never reads, directly or through any rule
+/// it asks: a modifier source, or a provider another module's rule calls while it computes.</summary>
+public interface IStateReader
+{
+    /// <summary>The state domains (<see cref="StateDomain"/>) this reader never reads, directly or through any rule it
+    /// asks, given the loaded content: a reader that calls other modules' providers must leave out what any of them
+    /// may read (<see cref="StateDomainRegistry.UnreadByAll"/>). Null, the default, declares nothing. A wrong
+    /// declaration makes the game use stale answers; <see cref="Game.Simulation.VerifyWrites"/> catches it where a run
+    /// exercises it. An id no loaded module registered declares nothing.</summary>
+    IReadOnlyList<string>? UnreadDomains(ContentDb content) => null;
+}
 
 /// <summary>The registered state domains, at most <see cref="Capacity"/>, each with a bit in a <see cref="ulong"/>
 /// mask. A declaration names domains by id; the registry resolves a list to its mask once per list instance.</summary>
@@ -26,6 +41,9 @@ public sealed class StateDomainRegistry
 
     /// <summary>Registered domains in registration order; a domain's bit is its index.</summary>
     public IReadOnlyList<StateDomain> All => _domains;
+
+    /// <summary>The mask of the private domains, which every reader counts as unread.</summary>
+    public ulong PrivateMask { get; private set; }
 
     /// <summary>The mask of every registered domain.</summary>
     public ulong AllMask => _domains.Count == Capacity ? ulong.MaxValue : (1UL << _domains.Count) - 1;
@@ -45,6 +63,7 @@ public sealed class StateDomainRegistry
             foreach (var path in domain.Paths)
                 if (other.Paths.Any(p => Overlap(p, path)))
                     throw new ArgumentException($"State domain '{domain.Id}' path '{path}' overlaps '{other.Id}'");
+        if (domain.Private) PrivateMask |= 1UL << _domains.Count;
         _index.Add(domain.Id, _domains.Count);
         _domains.Add(domain);
     }
@@ -68,6 +87,24 @@ public sealed class StateDomainRegistry
         });
         unknown = box.Unknown;
         return box.Value;
+    }
+
+    /// <summary>The domains a reader never reads, as a mask: what it declares, and every private domain.</summary>
+    public ulong UnreadMask(IStateReader reader, ContentDb content) =>
+        (reader.UnreadDomains(content) is { } ids ? Mask(ids, out _) : 0UL) | PrivateMask;
+
+    /// <summary>The ids in <paramref name="own"/> that every one of <paramref name="providers"/> also declares unread:
+    /// what a reader that calls those providers may declare. A provider that is not an <see cref="IStateReader"/>, or
+    /// declares nothing, leaves nothing.</summary>
+    public static IReadOnlyList<string> UnreadByAll(IReadOnlyList<string> own, ContentDb content, IEnumerable<object> providers)
+    {
+        IEnumerable<string> result = own;
+        foreach (var provider in providers)
+        {
+            if ((provider as IStateReader)?.UnreadDomains(content) is not { } theirs) return [];
+            result = result.Intersect(theirs, StringComparer.Ordinal);
+        }
+        return result.ToArray();
     }
 
     /// <summary>Whether a domain id is registered.</summary>

@@ -28,7 +28,8 @@ public sealed class WriteWindowTests
     private sealed class TreasurySource : IModifierSource
     {
         public int Calls;
-        public IReadOnlyList<string>? UnreadDomains { get; init; } = ["probe:culture"];
+        public IReadOnlyList<string>? Unread { get; init; } = ["probe:culture"];
+        public IReadOnlyList<string>? UnreadDomains(ContentDb content) => Unread;
         public void Contribute(ModifierContext context, ModifierSink sink)
         {
             if (context.Scope != ModifierScope.Player) return;
@@ -85,7 +86,7 @@ public sealed class WriteWindowTests
 
     private static (Simulation Sim, TreasurySource Treasury, CultureSource Culture) Game(bool subscribe = false, IReadOnlyList<string>? treasuryUnread = null)
     {
-        var treasury = new TreasurySource { UnreadDomains = treasuryUnread ?? ["probe:culture"] };
+        var treasury = new TreasurySource { Unread = treasuryUnread ?? ["probe:culture"] };
         var culture = new CultureSource();
         var mod = Source("probe", ctx =>
         {
@@ -231,6 +232,38 @@ public sealed class WriteWindowTests
             }
             Assert.True(s.WrittenSince(culture | treasury, stamp));
         }) { Player = 0 }, out _));
+    }
+
+    [Fact]
+    public void Every_reader_counts_a_private_domain_unread_and_a_reader_through_providers_keeps_only_what_all_declare()
+    {
+        var content = Content(Source("a", ctx =>
+        {
+            ctx.RegisterStateDomain("work", "Cities/*/Worked");
+            ctx.RegisterStateDomain("food", "Cities/*/FoodStored");
+            ctx.RegisterPrivateStateDomain("plans", "Players/*/Extensions/a:plans");
+        }));
+        var domains = content.StateDomains;
+        ulong plans = domains.Mask(["a:plans"], out _), work = domains.Mask(["a:work"], out _);
+        Assert.Equal(plans, domains.PrivateMask);
+        Assert.Equal(plans, domains.UnreadMask(new CultureSource(), content)); // declares nothing, still never reads it
+        Assert.Equal(plans | work, domains.UnreadMask(new TreasurySource { Unread = ["a:work"] }, content));
+
+        IReadOnlyList<string> own = ["a:work", "a:food"];
+        Assert.Equal(["a:work"], StateDomainRegistry.UnreadByAll(own, content, [new TreasurySource { Unread = ["a:work", "a:plans"] }]));
+        Assert.Empty(StateDomainRegistry.UnreadByAll(own, content, [new TreasurySource { Unread = own }, new CultureSource()]));
+        Assert.Empty(StateDomainRegistry.UnreadByAll(own, content, ["not a reader"]));
+        Assert.Equal(own, StateDomainRegistry.UnreadByAll(own, content, []));
+    }
+
+    [Fact]
+    public void An_event_published_outside_any_window_dispatches_inside_one()
+    {
+        var (sim, _, _) = Game(subscribe: true);
+        ulong both = sim.Content.StateDomains.AllMask;
+        long stamp = sim.WriteStamp;
+        sim.Events.Publish(new Poked(0));
+        Assert.True(sim.WrittenSince(both, stamp)); // the subscriber may have written anything
     }
 
     [Fact]

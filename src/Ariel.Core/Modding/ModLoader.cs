@@ -173,6 +173,7 @@ internal sealed class ModContext : IModContext
     public void RegisterService<T>(string name, T service) where T : class => _db.Services.Register($"{ModId}:{name}", service, ModId);
     public void RegisterStateComponent<T>(string name) where T : class => _db.StateComponents.Register<T>($"{ModId}:{name}", ModId);
     public void RegisterStateDomain(string name, params string[] paths) => _db.StateDomains.Register(new($"{ModId}:{name}", paths), ModId);
+    public void RegisterPrivateStateDomain(string name, params string[] paths) => _db.StateDomains.Register(new($"{ModId}:{name}", paths, Private: true), ModId);
     public void Subscribe<TEvent>(string name, Action<Game.Simulation, TEvent> handler) where TEvent : Game.DomainEvent =>
         RegisterService<Game.IDomainEventSubscriber>(name, new EventHandler<TEvent>(handler));
     private sealed class EventHandler<TEvent>(Action<Game.Simulation, TEvent> handler) : Game.IDomainEventSubscriber where TEvent : Game.DomainEvent
