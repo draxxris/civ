@@ -449,8 +449,13 @@ public sealed partial class WorldRulesTests(LoadedMods mods) : IClassFixture<Loa
         }
         var connections = Service<ICityConnectionService>(sim);
         Assert.False(connections.Connected(sim, home.Id, foreign.Id));
+        Assert.Equal([true, false], connections.ConnectedFrom(sim, home.Id, [home.Id, foreign.Id]));
         foreach (var tile in road) sim.State.Plots[tile.Value].Revealed.Add(0);
         Assert.True(connections.Connected(sim, home.Id, foreign.Id));
+        Assert.Equal([true, true], connections.ConnectedFrom(sim, home.Id, [home.Id, foreign.Id]));
+        sim.State.SetWar(0, 1, true);
+        Assert.False(connections.Connected(sim, home.Id, foreign.Id));
+        Assert.Equal([true, false], connections.ConnectedFrom(sim, home.Id, [home.Id, foreign.Id]));
     }
 
     [Fact]
