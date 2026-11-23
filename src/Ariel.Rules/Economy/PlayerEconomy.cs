@@ -62,6 +62,24 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
         lines.Add(new("economy:total", "economy:net_gold", income - expenses));
         return new(total, income, expenses, income - expenses, new(lines));
     }
+    public IEconomyForecast Forecast(Simulation sim, int player)
+    {
+        var cities = EconomyData.Cities(sim, player).Select(city => commerce.Read(sim, city.Id)).ToArray();
+        long expenses = RecurringCosts.Calculate(sim, player, []);
+        var (dealIncome, dealExpenses) = DealGold(sim, player);
+        return new Forecaster(cities, dealIncome, expenses + dealExpenses);
+    }
+    /// <summary>Calculate's net gold, from the same per-city arithmetic (<see cref="CityCommerce.Split"/>) and the same
+    /// rate-independent costs: income is the gold hundredths' whole part plus deal income, minus every expense.</summary>
+    private sealed class Forecaster(CityCommerce.Inputs[] cities, long dealIncome, long expenses) : IEconomyForecast
+    {
+        public long NetGold(CommerceVector rates)
+        {
+            long gold = 0;
+            foreach (var city in cities) gold += CityCommerce.Split(city, rates).Result[0];
+            return gold / 100 + dealIncome - expenses;
+        }
+    }
     private static (long Income, long Expenses) DealGold(Simulation sim, int player) =>
         sim.Rules().Diplomacy.GoldPerTurn(sim, player);
     internal void Settle(Simulation sim, int player)

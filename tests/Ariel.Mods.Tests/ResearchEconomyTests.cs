@@ -56,6 +56,32 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         Assert.Equal(before, sim.ComputeHash());
     }
     [Fact]
+    public void The_economy_forecast_equals_calculate_with_the_rates_set_for_many_rates()
+    {
+        var game = GameFactory.CreateAi(mods.Content, seed: 3);
+        for (int i = 0; i < 40; i++) game.AdvanceTurn();
+        var sim = SaveGame.Load(mods.Content, SaveGame.Save(game));
+        var cities = sim.State.Cities.OrderBy(c => c.Id).ToArray();
+        Assert.True(cities.Length >= 3, "The fixture needs a developed game");
+        // A process, a city in disorder and an occupied city exercise every input the rates do not change.
+        cities[0].ProductionQueue.Insert(0, new("economy:process", "economy:process_wealth"));
+        cities[1].Extensions.Set(sim.Content, new CityRuleState { Disorder = true });
+        cities[2].Extensions.Set(sim.Content, new CityRuleState { OccupationTurns = 2 });
+        var economy = Service<IPlayerEconomyService>(sim);
+        var random = new Random(17);
+        foreach (var player in sim.State.Players.Where(p => cities.Any(c => c.Owner == p.Id)))
+        {
+            var forecast = economy.Forecast(sim, player.Id);
+            for (int trial = 0; trial < 60; trial++)
+            {
+                int gold = random.Next(101), research = random.Next(101 - gold), culture = random.Next(101 - gold - research);
+                var rates = new CommerceVector(gold, research, culture, 100 - gold - research - culture);
+                economy.SetRates(sim, player.Id, rates);
+                Assert.Equal(economy.Calculate(sim, player.Id).NetGold, forecast.NetGold(rates));
+            }
+        }
+    }
+    [Fact]
     public void All_prerequisites_and_one_alternative_are_required_with_reasons()
     {
         var sim = Scenario(); var team = sim.TeamOf(0);

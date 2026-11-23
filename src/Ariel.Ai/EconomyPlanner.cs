@@ -4,7 +4,9 @@ using Ariel.Game;
 
 namespace Ariel.Ai;
 
-/// <summary>Commerce sliders: keep income non-negative with a treasury buffer, otherwise maximize research.</summary>
+/// <summary>Commerce sliders: keep income non-negative with a treasury buffer, otherwise maximize research. The search
+/// prices each trial on a forecast of the economy (<see cref="IPlayerEconomyService.Forecast"/>), since the rates
+/// change nothing else, and issues one command for the rates it settles on.</summary>
 internal sealed class EconomyPlanner(AiContext ctx)
 {
     private const int MaxIterations = 100;
@@ -20,14 +22,15 @@ internal sealed class EconomyPlanner(AiContext ctx)
         var rates = economy.Rates(ctx.Sim, ctx.PlayerId);
         rates = LegalStart(economy, Normalize(rates));
         long target = TargetIncome();
-        long net = Net(economy, rates);
+        var forecast = economy.Forecast(ctx.Sim, ctx.PlayerId);
+        long net = forecast.NetGold(rates);
         for (int i = 0; i < MaxIterations; i++)
         {
             var next = Shift(rates, net < target ? Step : -Step);
-            if (!TryShift(economy, rates, next, target, out var nextNet)) break;
+            if (!TryShift(economy, forecast, rates, next, target, out var nextNet)) break;
             rates = next; net = nextNet;
         }
-        rates = WithCulture(economy, rates, target);
+        rates = WithCulture(economy, forecast, rates, target);
         Apply(economy, rates);
     }
 
@@ -35,14 +38,14 @@ internal sealed class EconomyPlanner(AiContext ctx)
 
     /// <summary>Unrest wants culture: while a city is in disorder (not from anarchy or occupation) or has more angry
     /// citizens than content ones, move a little research into culture, keeping income on target.</summary>
-    private CommerceVector WithCulture(IPlayerEconomyService economy, CommerceVector rates, long target)
+    private CommerceVector WithCulture(IPlayerEconomyService economy, IEconomyForecast forecast, CommerceVector rates, long target)
     {
         if (!Unrest()) return rates;
         long culture = Math.Min(rates.Research, (long)Step * CultureSteps);
         if (culture <= 0) return rates;
         var next = new CommerceVector(rates.Gold, rates.Research - culture, culture, 0);
         if (economy.ValidateRates(ctx.Sim, ctx.PlayerId, next) is not null) return rates;
-        return Net(economy, next) >= Math.Min(target, Net(economy, rates)) ? next : rates;
+        return forecast.NetGold(next) >= Math.Min(target, forecast.NetGold(rates)) ? next : rates;
     }
 
     private bool Unrest() => !GovernmentStatus.IsAnarchy(ctx.Sim, ctx.PlayerId) && ctx.Cities.Any(city =>
@@ -56,18 +59,13 @@ internal sealed class EconomyPlanner(AiContext ctx)
         return 0;
     }
 
-    private bool TryShift(IPlayerEconomyService economy, CommerceVector rates, CommerceVector next, long target, out long net)
+    private bool TryShift(IPlayerEconomyService economy, IEconomyForecast forecast, CommerceVector rates, CommerceVector next,
+        long target, out long net)
     {
         net = 0;
         if (economy.ValidateRates(ctx.Sim, ctx.PlayerId, next) is not null) return false;
-        net = Net(economy, next);
+        net = forecast.NetGold(next);
         return next.Gold >= rates.Gold || net >= target;
-    }
-
-    private long Net(IPlayerEconomyService economy, CommerceVector rates)
-    {
-        Apply(economy, rates);
-        return economy.Calculate(ctx.Sim, ctx.PlayerId).NetGold;
     }
 
     private void Apply(IPlayerEconomyService economy, CommerceVector rates)

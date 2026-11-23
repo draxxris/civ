@@ -11,6 +11,16 @@ public interface IPlayerEconomyService
     void SetRates(Simulation sim, int player, CommerceVector rates);
     CityCommerceResult CalculateCity(Simulation sim, int city);
     PlayerEconomyResult Calculate(Simulation sim, int player);
+    /// <summary>The player's economy as it stands, with the commerce rates left open: everything the rates do not
+    /// change is read once. Read-only; valid until the state changes.</summary>
+    IEconomyForecast Forecast(Simulation sim, int player);
+}
+/// <summary>A player's economy at fixed state for hypothetical commerce rates (<see cref="IPlayerEconomyService.Forecast"/>).</summary>
+public interface IEconomyForecast
+{
+    /// <summary>The net gold <see cref="IPlayerEconomyService.Calculate"/> would report with these rates set, without
+    /// setting them. The rates need not be legal.</summary>
+    long NetGold(CommerceVector rates);
 }
 public interface IPlayerEspionageSource
 {

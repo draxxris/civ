@@ -9,31 +9,49 @@ internal sealed class CityCommerce : ICityCultureSource, ICityProcessService
     internal static readonly string[] Types = ["gold", "research", "culture", "espionage"];
     internal static long[] Parts(CommerceVector value) => [value.Gold, value.Research, value.Culture, value.Espionage];
     internal static CommerceVector Vector(IReadOnlyList<long> parts) => new(parts[0], parts[1], parts[2], parts[3]);
-    internal CityCommerceResult Calculate(Simulation sim, int cityId, CommerceVector rates)
+    /// <summary>What a city's commerce is made of besides the slider rates: its commerce yield, direct commerce,
+    /// percent modifiers, process output and disorder. The rates enter only <see cref="Split"/>.</summary>
+    internal sealed record Inputs(CityYieldResult Yields, long Raw, long[] Direct, long[] Modifier, long[] Process, bool Disorder);
+    internal Inputs Read(Simulation sim, int cityId)
     {
         var city = sim.State.CityById(cityId);
         var yields = sim.Rules().CityYields.Calculate(sim, cityId);
-        var lines = yields.Ledger.Lines.ToList();
-        var slider = Parts(rates); var direct = Parts(yields.DirectCommerceHundredths);
-        var modifier = Parts(yields.CommercePercent); var result = new long[4];
-        long raw = yields.Yields.Commerce * 100;
-        var split = slider.Select(p => raw * p / 100).ToArray();
-        split[0] += raw - split.Sum(); // Gold receives every unallocated hundredth.
-        var process = Parts(ProcessCommerce(sim, city, yields.Yields.Production));
-        bool disorder = GovernmentStatus.IsDisorder(sim, city);
+        return new(yields, yields.Yields.Commerce * 100, Parts(yields.DirectCommerceHundredths), Parts(yields.CommercePercent),
+            Parts(ProcessCommerce(sim, city, yields.Yields.Production)), GovernmentStatus.IsDisorder(sim, city));
+    }
+    /// <summary>The city's commerce in hundredths under <paramref name="rates"/>, and the slider split and factor of each
+    /// type, as <see cref="Calculate"/> reports them.</summary>
+    internal static (long[] Result, long[] Split, long[] Percent) Split(Inputs inputs, CommerceVector rates)
+    {
+        var slider = Parts(rates); long raw = inputs.Raw;
+        var split = new long[4];
+        long allocated = 0;
+        for (int i = 0; i < 4; i++) allocated += split[i] = raw * slider[i] / 100;
+        split[0] += raw - allocated; // Gold receives every unallocated hundredth.
+        var result = new long[4]; var percents = new long[4];
         for (int i = 0; i < 4; i++)
         {
-            long baseRate = split[i] + direct[i];
-            long percent = Math.Max(1, 100 + modifier[i]);
+            long baseRate = split[i] + inputs.Direct[i];
+            long percent = percents[i] = Math.Max(1, 100 + inputs.Modifier[i]);
             long modified = baseRate > 0 ? baseRate * percent / 100 : baseRate * 100 / percent;
-            long final = modified + process[i];
+            long final = modified + inputs.Process[i];
             if (i == 1 || i == 2) final = Math.Max(0, final);
-            result[i] = disorder ? 0 : final;
+            result[i] = inputs.Disorder ? 0 : final;
+        }
+        return (result, split, percents);
+    }
+    internal CityCommerceResult Calculate(Simulation sim, int cityId, CommerceVector rates)
+    {
+        var inputs = Read(sim, cityId);
+        var lines = inputs.Yields.Ledger.Lines.ToList();
+        var (result, split, percents) = Split(inputs, rates);
+        for (int i = 0; i < 4; i++)
+        {
             string key = "economy:" + Types[i];
             lines.Add(new("economy:slider", key + "_split_hundredths", split[i]));
-            lines.Add(new("economy:direct", key + "_direct_hundredths", direct[i]));
-            lines.Add(new("economy:modifier", key + "_factor_percent", percent));
-            lines.Add(new("economy:process", key + "_process_hundredths", process[i]));
+            lines.Add(new("economy:direct", key + "_direct_hundredths", inputs.Direct[i]));
+            lines.Add(new("economy:modifier", key + "_factor_percent", percents[i]));
+            lines.Add(new("economy:process", key + "_process_hundredths", inputs.Process[i]));
             lines.Add(new("economy:total", key + "_hundredths", result[i]));
         }
         return new(Vector(result), new(lines));
