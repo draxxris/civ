@@ -102,7 +102,11 @@ public sealed class CorporationRulesTests
         // Corporations carries its copy of the Great People API, so its rows about its buildings load without that mod.
         var loaded = new LoadedMods();
         var corporations = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Corporations"));
-        var without = ModLoader.Build(loaded.Sources.Where(s => s.Manifest.Id != "great_people").Append(corporations));
+        var full = loaded.Sources.Append(corporations).ToArray();
+        ModLoader.Build(full).ValidateReferences(full.Select(s => s.Manifest));
+        var bare = loaded.Sources.Where(s => s.Manifest.Id != "great_people").Append(corporations).ToArray();
+        var without = ModLoader.Build(bare);
+        without.ValidateReferences(bare.Select(s => s.Manifest));
         Assert.NotNull(without.Find("corporations:corporation_1"));
         // The rows are still registered, but without the Great People mod nothing reads them.
         Assert.NotNull(without.Attachment<Ariel.Mods.GreatPeople.BuildingGreatPeopleDef>("corporations:corporation_1"));
