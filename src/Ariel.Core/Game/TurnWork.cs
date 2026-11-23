@@ -93,6 +93,7 @@ public sealed partial class Simulation
         var fork = new Simulation(Content, Settings, State.Clone(), DeterministicRng.Restore(a, b, c, d))
         {
             AiWaveLimit = AiWaveLimit,
+            Profiler = Profiler,
         };
         fork.Events.CopyFrom(Events);
         return new TurnWork(fork, _version);

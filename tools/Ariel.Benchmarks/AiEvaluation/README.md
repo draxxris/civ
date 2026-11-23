@@ -14,6 +14,10 @@ mise run ai:eval -- --output .ai-eval/economy-baseline --seeds 1,42 --turns 100 
 For a short smoke run, use `--turns 2 --players 2 --world duel`. To show the CLI help,
 run `mise run ai:eval -- --help`.
 
+To time the turns as well, set `ARIEL_PROFILE=DIR`: each sample then writes its turn
+system, AI planner, AI seam, command and kernel timings and its per-turn curve to
+`DIR/seed-N` (see "Turn Profiler" in `docs/OPTIMIZE.md`). Timing does not change the game.
+
 The defaults are seeds `1,42`, 100 advances, four players, and a small world. Without
 `--output`, the tool creates a unique directory under `.ai-eval/`. The tool refuses an
 existing output directory, including an empty directory.

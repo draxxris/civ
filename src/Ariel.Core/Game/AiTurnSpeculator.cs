@@ -85,14 +85,17 @@ internal static class AiTurnSpeculator
     /// <summary>Run one wave and return how many leading players ended their turns.</summary>
     private static int RunWave(Simulation sim, int[] players, int wave)
     {
-        var baseline = new WaveBaseline(sim);
+        WaveBaseline baseline;
+        using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:wave_baseline")) baseline = new WaveBaseline(sim);
         // Shared immutable geometry: materialize its lazy cache before threads read it.
         _ = sim.State.Grid.MaximumDistance;
-        var plans = PreparePlans(sim, players, baseline);
+        SpeculativePlan?[] plans;
+        using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:fork")) plans = PreparePlans(sim, players, baseline);
         var first = ExecutePlayers(sim, players, plans, baseline);
         sim.State.PlayerById(players[0]).EndedTurn = true;
         Report(sim, wave, players[0], SpeculationOutcome.Direct);
-        return CommitPlans(sim, players, plans, baseline, first, wave);
+        using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:commit"))
+            return CommitPlans(sim, players, plans, baseline, first, wave);
     }
 
     private static SpeculativePlan?[] PreparePlans(Simulation sim, int[] players, WaveBaseline baseline)
@@ -131,7 +134,11 @@ internal static class AiTurnSpeculator
         for (int i = 1; i < players.Length; i++)
         {
             string? conflict = null;
-            if (plans[i] is { } plan) conflict = plan.Conflict(sim, mutations, acted) ?? commits.Commit(plan);
+            if (plans[i] is { } plan)
+            {
+                using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:conflict_check")) conflict = plan.Conflict(sim, mutations, acted);
+                conflict ??= commits.Commit(plan);
+            }
             else mutations.Absorb(commits.RunInline(players[i], baseline));
             if (conflict is not null)
             {
@@ -291,12 +298,14 @@ internal static class AiTurnSpeculator
 
         public void Before(Simulation sim, GameCommand command)
         {
+            using var scope = sim.Profiler.Measure(ProfileKind.Kernel, "kernel:command_trace");
             _before = new Dictionary<int, TileId>(sim.State.Units.Count);
             foreach (var u in sim.State.Units) _before[u.Id] = sim.State.Grid.TileAt(u.Position);
         }
 
         public void After(Simulation sim, GameCommand command)
         {
+            using var scope = sim.Profiler.Measure(ProfileKind.Kernel, "kernel:command_trace");
             var grid = sim.State.Grid;
             var before = _before ?? new();
             _before = null;
@@ -324,6 +333,7 @@ internal static class AiTurnSpeculator
 
         private void Finish(Simulation sim)
         {
+            using var scope = sim.Profiler.Measure(ProfileKind.Kernel, "kernel:trace_finish");
             UsedRng = sim.Rng.State != _baseline.Rng;
             AllocatedCity = sim.State.NextCityId != _baseline.NextCityId;
             AllocatedUnit = sim.State.NextUnitId != _baseline.NextUnitId;
@@ -372,7 +382,9 @@ internal static class AiTurnSpeculator
         {
             Save();
             var error = plan.Replay(sim);
-            if (error is null && plan.Fingerprint(sim) != plan.Fingerprint(plan.Fork)) error = "replay diverged";
+            if (error is null)
+                using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:fingerprint"))
+                    if (plan.Fingerprint(sim) != plan.Fingerprint(plan.Fork)) error = "replay diverged";
             if (error is null) { _done.Add((plan, plan.Player)); return null; }
             Restore();
             return error;
@@ -381,6 +393,7 @@ internal static class AiTurnSpeculator
         private void Save()
         {
             if (_state is not null) return;
+            using var scope = sim.Profiler.Measure(ProfileKind.Kernel, "kernel:commit_snapshot");
             _state = sim.State.Clone(); _rng = sim.Rng.State; _events = sim.Events.PublishedCount;
         }
 

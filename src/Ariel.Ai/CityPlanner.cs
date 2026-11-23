@@ -157,10 +157,21 @@ internal sealed class CityPlanner(AiContext ctx, SitePlanner sites, ArmyPlan arm
     /// <summary>What mods wish this city to produce (<see cref="IProductionWishes"/>), kept when plausible and legal.</summary>
     private IEnumerable<(string, string, long)> Wished(CityView v)
     {
+        var profiler = ctx.Sim.Profiler;
         foreach (var source in ctx.Catalog.Wishes)
-            foreach (var wish in source.Wishes(ctx, v.City))
+        {
+            // Timed per step of the source's own enumeration, so the plausibility checks between steps stay out of it.
+            using var wishes = source.Wishes(ctx, v.City).GetEnumerator();
+            while (true)
+            {
+                bool more;
+                using (profiler.Measure(ProfileKind.AiSeam, source)) more = wishes.MoveNext();
+                if (!more) break;
+                var wish = wishes.Current;
                 if (Options.IsPlausible(wish.Kind, wish.ContentId) && ctx.CanProduce(v.City.Id, wish.Kind, wish.ContentId))
                     yield return (wish.Kind, wish.ContentId, wish.Score);
+            }
+        }
     }
 
     private int CountRole(UnitRole role) => ctx.CountUnits(role) + ctx.CountQueued(role);

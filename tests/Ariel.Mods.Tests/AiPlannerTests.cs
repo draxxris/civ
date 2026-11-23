@@ -132,6 +132,27 @@ public sealed class AiPlannerTests
         }
     }
 
+    [Fact]
+    public void A_profiled_ai_game_times_every_planner_and_plays_as_an_unprofiled_one()
+    {
+        var content = BaseWithProbe.Value;
+        var plain = GameFactory.CreateAi(content, seed: 5, players: 2);
+        var profiled = GameFactory.CreateAi(content, seed: 5, players: 2);
+        var profiler = profiled.Profiler = new SimulationProfiler();
+        for (int turn = 0; turn < 6; turn++)
+        {
+            plain.AdvanceTurn();
+            profiled.AdvanceTurn();
+            profiler.RecordTurn(profiled);
+        }
+        Assert.Equal(plain.ComputeHash(), profiled.ComputeHash());
+
+        var planners = profiler.Entries().Where(e => e.Kind == ProfileKind.AiPlanner).Select(e => e.Id).ToHashSet();
+        Assert.Superset(content.Services.Get<IAiPlanner>().Select(p => p.Id).ToHashSet(), planners);
+        Assert.Contains(profiler.Entries(), e => e.Kind == ProfileKind.Kernel && e.Id == SimulationProfiler.AiWaves && e.Calls == 6);
+        Assert.All(profiler.Turns, t => Assert.True(t.AiMs > 0 && t.AiMs <= t.WallMs, $"turn {t.Turn}: AI {t.AiMs} ms of {t.WallMs} ms"));
+    }
+
     private static JsonElement Log(Simulation sim, Player player)
     {
         // The probe's state type lives in the test mod's own load context, so read it as saved.

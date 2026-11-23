@@ -12,7 +12,8 @@ namespace Ariel.SyncCheck;
 /// and reloads its game every N turns, which must not change the hashes either; a rejoining peer starts from a save.
 /// With <c>--background</c> every turn rolls over as a front end runs it: as turn work on a copy of the game, on another
 /// thread, taken back afterwards. With <c>--save PATH</c> the run writes the final game as a save, for inspecting
-/// what the AIs did.
+/// what the AIs did. With <c>--profile DIR</c> (or <c>ARIEL_PROFILE=DIR</c>) it times every turn system, AI planner,
+/// AI seam, command and kernel step, prints the table sorted by cost to stderr and writes it with per-turn CSVs to DIR.
 /// </summary>
 internal static class HashTrace
 {
@@ -26,8 +27,11 @@ internal static class HashTrace
         var mode = Enum.Parse<TurnMode>(Option(args, "--turn-mode") ?? nameof(TurnMode.Simultaneous), ignoreCase: true);
         bool background = args.Contains("--background");
         string? save = Option(args, "--save");
+        var profiler = SimulationProfiler.FromEnvironment(out string? profileDir);
+        if (Option(args, "--profile") is { } dir) (profiler, profileDir) = (profiler ?? new SimulationProfiler(), dir);
 
         var sim = GameFactory.CreateAi(content, seed, players, world, mode);
+        sim.Profiler = profiler;
         Console.Error.WriteLine($"hash-trace seed={seed} players={players} turns={turns} turn-mode={mode} reload-every={reload} background={background} " +
                                 $"processors={Environment.ProcessorCount} content={content.ContentHash}");
         Console.WriteLine($"{sim.State.Turn} {sim.ComputeHash():x16}");
@@ -35,8 +39,17 @@ internal static class HashTrace
         {
             if (background) Background(sim);
             else sim.AdvanceTurn();
-            if (reload > 0 && i % reload == 0) sim = SaveGame.Load(content, SaveGame.Save(sim));
-            Console.WriteLine($"{sim.State.Turn} {sim.ComputeHash():x16}");
+            if (reload > 0 && i % reload == 0) (sim = SaveGame.Load(content, SaveGame.Save(sim))).Profiler = profiler;
+            ulong hash;
+            using (profiler.Measure(ProfileKind.Kernel, "kernel:state_hash")) hash = sim.ComputeHash();
+            Console.WriteLine($"{sim.State.Turn} {hash:x16}");
+            profiler?.RecordTurn(sim);
+        }
+        if (profiler is not null)
+        {
+            profiler.Write(profileDir!);
+            Console.Error.WriteLine(profiler.Report());
+            Console.Error.WriteLine($"profile written to {Path.GetFullPath(profileDir!)}");
         }
         if (save is not null) File.WriteAllText(save, SaveGame.Save(sim));
         return 0;

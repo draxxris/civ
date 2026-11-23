@@ -20,12 +20,19 @@ internal sealed class EvaluationGame(RunFiles files, EvaluationConfig config, ul
         try
         {
             var sim = GameFactory.CreateAi(content, seed, config.Players, config.World);
+            // ARIEL_PROFILE=DIR times each sample's turn systems, planners and turns into DIR/seed-N.
+            sim.Profiler = SimulationProfiler.FromEnvironment(out string? profileDir);
             recordSettings(sim.Settings);
             var totals = new CommerceVector[config.Players];
             workerActivity = Enumerable.Range(0, config.Players).Select(_ => new WorkerActivityHistory()).ToArray();
             DrainEvents(sim);
             Capture(sim, totals);
-            for (int advance = 0; advance < config.Turns; advance++) Advance(sim, totals);
+            for (int advance = 0; advance < config.Turns; advance++)
+            {
+                Advance(sim, totals);
+                sim.Profiler?.RecordTurn(sim);
+            }
+            sim.Profiler?.Write(Path.Combine(profileDir!, $"seed-{seed}"));
             cancellation.ThrowIfCancellationRequested();
             files.Progress("sample_completed", seed, sim.State.Turn);
         }

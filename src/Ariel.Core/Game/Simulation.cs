@@ -67,6 +67,9 @@ public sealed partial class Simulation
     /// <summary>Deterministic rule notification bus and non-authoritative presentation events.</summary>
     public DomainEventBus Events { get; }
     private readonly List<ITurnSystem> _systems;
+    /// <summary>Optional timing of turn systems, AI planners, commands and kernel steps, for diagnostics. Not part of
+    /// the rules: not saved or hashed, and copied by reference into the forks AI turns are planned on.</summary>
+    public SimulationProfiler? Profiler { get; set; }
 
     /// <summary>Create a new game, generate plots, initialize teams, then let AI players act.</summary>
     public Simulation(ContentDb content, SimulationSettings settings)
@@ -124,7 +127,10 @@ public sealed partial class Simulation
         // AI commands are the players' own top-level commands, even when an end-turn command advanced the turn.
         int depth = _commandDepth;
         _commandDepth = 0;
-        try { AiTurnSpeculator.Run(this, players); }
+        try
+        {
+            using (Profiler.Measure(ProfileKind.Kernel, SimulationProfiler.AiWaves)) AiTurnSpeculator.Run(this, players);
+        }
         finally { _commandDepth = depth; }
     }
     /// <summary>Plan the new turn's segments and start the first.</summary>
@@ -185,6 +191,7 @@ public sealed partial class Simulation
         return new Simulation(Content, Settings, State.Clone(), DeterministicRng.Restore(a, b, c, d))
         {
             _recordedCommands = new(),
+            Profiler = Profiler,
         };
     }
     /// <summary>Top-level commands applied since recording started, with the RNG state before validation and after application.</summary>
@@ -222,7 +229,9 @@ public sealed partial class Simulation
             error = cmd.Validate(this);
             if (error != null) { observer?.Rejected(this, cmd); return false; }
             observer?.Before(this, cmd);
-            cmd.Apply(this);
+            if (top && Profiler is { } profiler)
+                using (profiler.Measure(ProfileKind.Command, cmd.GetType().Name)) cmd.Apply(this);
+            else cmd.Apply(this);
         }
         finally { _commandDepth--; }
         if (top) { _recordedCommands?.Add((cmd, preRng, Rng.State)); _version++; }
@@ -232,11 +241,14 @@ public sealed partial class Simulation
     /// <summary>Run ordered rules, end the old turn, clear presentation events, start the new turn, and run AI.</summary>
     public void AdvanceTurn()
     {
-        foreach (var system in _systems.Where(s => s.Order < TurnPhase.PlayerBegin)) system.Run(this);
+        foreach (var system in _systems.Where(s => s.Order < TurnPhase.PlayerBegin))
+            using (Profiler.Measure(ProfileKind.TurnSystem, system)) system.Run(this);
         var playerSystems = _systems.Where(s => s.Order >= TurnPhase.PlayerBegin && s.Order < TurnPhase.Map).ToArray();
         foreach (var player in State.Players.OrderBy(p => p.Id))
-            foreach (var system in playerSystems.Cast<IPlayerTurnSystem>()) system.Run(this, player.Id);
-        foreach (var system in _systems.Where(s => s.Order >= TurnPhase.Map)) system.Run(this);
+            foreach (var system in playerSystems.Cast<IPlayerTurnSystem>())
+                using (Profiler.Measure(ProfileKind.TurnSystem, system)) system.Run(this, player.Id);
+        foreach (var system in _systems.Where(s => s.Order >= TurnPhase.Map))
+            using (Profiler.Measure(ProfileKind.TurnSystem, system)) system.Run(this);
         Events.Publish(new TurnEnded(State.Turn));
         State.Turn++;
         foreach (var player in State.Players) player.EndedTurn = false;

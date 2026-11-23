@@ -19,7 +19,8 @@ public sealed class StandardAi : IPlayerAI
         if (ctx.Self.Extensions.Get<AiPlayerState>(sim.Content) is not null)
             ctx.Issue(new PruneAiIntentCommand { Player = playerId });
         if (ctx.Cities.Count == 0 && ctx.Units.Count == 0) return [];
-        foreach (var planner in ctx.Catalog.Planners) planner.Plan(ctx);
+        foreach (var planner in ctx.Catalog.Planners)
+            using (sim.Profiler.Measure(ProfileKind.AiPlanner, planner)) planner.Plan(ctx);
         return [];
     }
 }

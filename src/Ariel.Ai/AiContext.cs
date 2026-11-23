@@ -235,7 +235,9 @@ public sealed class AiContext
     {
         if (valuers.Length == 0) return 0;
         long total = 0;
-        foreach (var valuer in valuers) total += valuer.Adjust(this, in subject);
+        var profiler = Sim.Profiler;
+        foreach (var valuer in valuers)
+            using (profiler.Measure(ProfileKind.AiSeam, valuer)) total += valuer.Adjust(this, in subject);
         return (int)Math.Clamp(total, -AiValuation.Limit, AiValuation.Limit);
     }
 
