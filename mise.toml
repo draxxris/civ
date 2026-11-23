@@ -175,6 +175,11 @@ description = "Play one headless AI game and write the final save, for inspectin
 depends = ["cool"]
 run = "tools/ai-play.sh"
 
+[tasks."ai:corporations"]
+description = "Play one headless AI game (or continue a save) and report which corporations and guilds the computer players founded and when, and the state of each AI player's founding buildings: mise run ai:corporations -- [--seed N] [--players N] [--turns N] [--world ID] [--era ID] [--optional A,B] [--game-option ID=BOOL] [--load SAVE [--force]] [--save PATH]"
+depends = ["cool"]
+run = "tools/ai-corporations.sh"
+
 [tasks."ai:eval"]
 description = "Run repeatable headless AI economic evaluation without AI edits"
 depends = ["cool"]

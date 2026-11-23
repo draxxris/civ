@@ -2403,6 +2403,37 @@ categories:
     area IDs requested by active free-soldier theaters in `AttackPlanner`; areas without
     free soldiers drop saved goals.
 
+### Do computer players found corporations and guilds?
+
+`mise run ai:corporations -- [--seed N] [--players N] [--turns N] [--era ID] [--game-option ID=BOOL]
+[--load SAVE [--force]] [--save PATH]` plays an all-AI game (or continues a save) and reports each
+founding with its turn and founder, then for every AI player the civics that ban corporations and,
+for each founding building whose technology the player knows, in how many of its cities production
+can build it, why it cannot in the others, and in how many it is queued. `--force` loads a save made
+by other content. The findings of the first run (cost 490 and 910 for headquarters, 210 for Master
+Guilds; 5 players, small world; in the industrial and modern starts no AI knew a corporation or guild
+technology at turn 1, so the techs below were researched):
+
+- Headquarters are founded, late and rarely. Where a city may build one (population 4 or more
+  and production x 40 at least the cost, the wonder gate), the city planner rates it 205 to 374
+  against 290 to 450 for the best ordinary building, and several cities queued one. The first AI
+  reaches the first headquarters technologies (East West Traders, Mining Inc) around turn 136 to
+  150 and founds one within about ten turns. In eight 150-turn games, six founded one corporation
+  (turns 142 to 150) and none a guild. Continued for 100 turns, three of four games founded two
+  or three corporations (turns 150 to 241) and the fourth none.
+- The civic planner moves the AIs to civics that ban corporations (Hive, Planned, Marxist): at
+  turn 151, 3 of 71 players with cities ran a civic that bans all corporations; at turn 251, 21
+  of 37. A ban costs nothing until branches exist (`CorporationCivicValuer`), so nothing resists
+  it. In the game whose major AIs all ran such civics, nothing was founded in 250 turns.
+- No Master Guild can be founded in a default game. Each needs one Guild Hall of its group
+  (`cities:cguildhall`, `sguildhall`, `vguildhall`), and those halls are forbidden by the
+  `foundation:gameoption_realistic_corporations` option, which defaults to on. No AI held a hall
+  in any default-option run; with the option off the AIs do build halls, and still founded no
+  guild in 150 turns, because the guild also needs four to five buildings of its trade class.
+- The saved late games (`ai450.json`, turn 451, and `p14/t550.json`, turn 552) show nothing: the
+  AIs there know the 15 guild technologies but none of the 21 corporation technologies
+  (Combustion, Explosives and others), and none found anything in 30 more turns.
+
 ## Relations
 
 Contact, war and peace between teams, and what players remember of each other, are the

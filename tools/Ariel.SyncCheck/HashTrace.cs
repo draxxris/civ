@@ -77,7 +77,7 @@ internal static class HashTrace
         sim.CompleteTurnWork(work);
     }
 
-    private static string? Option(string[] args, string name)
+    internal static string? Option(string[] args, string name)
     {
         int i = Array.IndexOf(args, name);
         return i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
