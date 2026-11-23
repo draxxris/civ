@@ -964,6 +964,12 @@ City commerce keeps hundredths through allocation, direct contributions, percent
 modifiers, and process conversion. Gold settlement saves a commerce snapshot.
 `IPlayerResearchSource` supplies that snapshot to Research. `ICityCultureSource`
 supplies final culture to Cities. Queries never mutate state or consume RNG.
+`IPlayerEconomyService.Forecast` returns an `IEconomyForecast` that reads every
+rate-independent input once (each city's commerce inputs through `CityCommerce.Read`,
+recurring costs, deal gold) and prices any rates with `NetGold(rates)`, through the same
+`CityCommerce.Split` that `Calculate` uses, so the two cannot drift. The AI economy
+planner searches its slider trials on it and issues one `SetCommerceRatesCommand` for
+the rates it settles on.
 
 `ICityProcessService` supplies eligibility and conversion for infinite `economy:process`
 queue items. Processes use current production. Stored overflow remains available for

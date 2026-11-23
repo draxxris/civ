@@ -1729,6 +1729,188 @@ from turn 451:
    turn 451), against 8% before. Allocation fell tenfold, from 48.9 to 4.7 GiB per turn,
    but the AI threads still pause together.
 
+### Pass 15: Turn Processing from Two Analyses
+
+- **Date**: 2026-11-23
+- **Commits**: `2e12f467`, `c0fc4b74`, `e2628324`, `08bd2df9`, `bb8398f1`, `61a2c023`,
+  `274bd64c`, `0e6e067e`, `1ee3383f`, `db6640c6`, `312b2397`
+
+The owner's priority was faster turns. Two independent analyses of the Pass 14 tree
+proposed 32 candidates: fifteen from one (F1 to F15) and seventeen from the other (N1 to
+N17). This pass checked each claim in the code, built the ones that held, and measured
+each one on its own. Every accepted change leaves every final state byte-identical.
+
+#### Method, Saves and Hashes
+
+- Same machine as Pass 14, Release builds, other agents sharing it (load average 0 to 2).
+  One heavy run at a time.
+- Each step was measured with `mise run ai:play -- --load SAVE --turns 4 --profile DIR`.
+  The figure is the mean wall time of the later turns, leaving out the first, which
+  compiles. The same binary varies by about 5% on this machine, and by up to 20% when one
+  turn is an outlier: same-binary runs from turn 451 spanned 1,498 to 1,868 ms. Small
+  gains were therefore judged on the profiler entry they target, and on repeat runs.
+- "451" continues `ai450.json` (Pass 14's save) for 4 turns. "552" continues the turn-551
+  save from Pass 14 for 4 turns. "New game" is `--seed 3 --players 6 --turns 100`.
+- Each `mod.json` bump changes the content hash, which a save must match to load. The
+  measurement saves were therefore copied with the current tree's `ContentHash` and
+  `Mods` header after every bump (a scratch script, not committed). Their game state was
+  not touched.
+- Reference hashes, unchanged by every commit: 451 + 4 turns `975963b591c0c71e`; 451 + 20
+  turns `6eedba278a9d2381`; 552 + 4 turns `11d283f0b52d0e80`; new game `9bf38cf7bc3e5245`.
+  On the final tree, `--verify-read-epochs` printed the same hashes for 451, 552 (with
+  `--background`) and the new game. Pass 14's synthetic save with corporation branches
+  (`ai450corp.json` + 4 turns, reheaded) printed Pass 14's `24a7278a6d3bddb2` with it,
+  which covers active branches under the kernel memos.
+
+#### Accepted
+
+Turn walls are per later turn. Entries are processor time summed over threads, per 4
+turns. Each "before" is the previous row's tree.
+
+| Commit     | Candidate | Change                                                                      | 451 turn (ms)          | 552 turn (ms)   | Entry evidence                                                    |
+| :--------- | :-------- | :-------------------------------------------------------------------------- | ---------------------: | --------------: | :---------------------------------------------------------------- |
+| (baseline) |           | Pass 14 tree, `main` at `43c616cf`                                          |                  4,148 |           7,837 | 5,030 / 9,626 MiB per turn; collector 676 / 1,027 ms               |
+| `2e12f467` | F1        | AI players run in turn by default (`AiWaveLimit = 1`)                       |                  2,506 |           5,011 | new game 22.2 → 14.7 s                                            |
+| `c0fc4b74` | F2 (N8 step 2) | No heal rate for a unit already at full health                              |                  2,411 |           4,169 | `military:units` 755 → 172 (451), 5,182 → 610 (552)                 |
+| `e2628324` | F4 (N2)   | Cached `Ledger`, lazy totals, `ModifierSink.Total`                          |                  2,277 |           3,956 |                                                                   |
+| `08bd2df9` | F5        | A movement query derives per-unit step inputs once                          |                  2,254 |           3,388 | `ai:military` 5,987 → 3,613 (552)                                  |
+| `bb8398f1` | F8 (N4 steps 1-2) | Best defender from defence strength alone                                   |                  2,258 |           3,319 | `ai:military` 3,613 → 3,294; collections 46,623 → 42,537 (552)      |
+| `61a2c023` | F3        | Kernel read epochs; one city read scope per AI segment                      |                  1,804 |           2,621 | `ai:cities` 2,709 → 1,113 (451)                                    |
+| `274bd64c` | N3        | Modifier sums kept per read epoch (generalised to every scope)              |          1,655 to 1,818 |           2,484 | collections 18,867 → 12,128 (451), 42,537 → 23,171 (552)             |
+| `0e6e067e` | F7 (N5)   | Commerce sliders priced on an economy forecast                              |                  1,661 |           2,273 | `ai:economy` 991 → 254 (451), 1,078 → 255 (552)                      |
+| `1ee3383f` | N6        | City groups with one flood per group; deals scanned once                    |  1,763 → 1,518 to 1,584 | 2,302 → 2,099 | 1,197 → 1,069 MiB (451)                                            |
+| `db6640c6` | (new)     | Connected resource counts kept per read epoch (`ReadEpochMemo`)             |         1,498 to 1,553 |           1,990 | exporter path inside epochs 1,226 → 711 (451)                      |
+| `312b2397` | N11 (half)| The citizen planner asks garrison and threat without a full city view       |         1,502 to 1,616 |           1,976 | `ai:citizens` 946 to 1,108 → 794 to 847 (451), 880 to 958 → 707 (552) |
+
+The `1ee3383f` row is measured against a fresh run of `0e6e067e`, taken back to back,
+which explains why its "before" differs from the row above. Those notes:
+
+- **F1.** The speculative waves cost more than they saved at every size measured
+  (seed 3, 100 turns, total wall, equal hashes in every pair):
+
+  | Game                      | Max waves | Width 1 | Width 2 |
+  | :------------------------ | --------: | ------: | ------: |
+  | 2 players                 |    11.9 s |  11.7 s |         |
+  | 4 players                 |    15.6 s |  13.2 s |         |
+  | 6 players                 |    22.2 s |  14.7 s |  17.6 s |
+  | 8 players                 |    29.7 s |  16.8 s |         |
+  | 8 players, standard world |    31.1 s |  16.9 s |  22.2 s |
+
+  On the final tree the gap remains: 6 players 14.0 to 14.5 s at width 1 against 20.0 s
+  at max, 8 players 15.8 s against 27.9 s, 451 1,541 to 1,564 ms per turn against
+  2,339 ms. Waves stay available as a setting, and the lockstep tools still exercise
+  them. `hash-trace --waves N|max` selects the width, and `mise run check:sync` runs a
+  fifth process with `--waves max`. Tests that are about waves pin
+  `AiWaveLimit = int.MaxValue`.
+- **F3 and N3.** The first analysis wanted one read scope per AI segment, held by the
+  kernel. The second wanted a city sink cached in the Cities read scope. Both are built on
+  one kernel seam, the read epoch (see DESIGN.md), which knows no rules. A debug guard,
+  `Simulation.VerifyReadEpochs` (`hash-trace --verify-read-epochs`), hashes the state at
+  each end of an epoch and throws on a difference. Its first run found that AI planners
+  draw RNG outside commands, so an epoch promises the state and not the RNG stream.
+- **F7.** The risks the first analysis left unchecked were checked: no subscriber reacts
+  to a commerce-rate command, the recorded command list is compared nowhere, and
+  `ResearchEconomyTests` checks that the forecast equals `Calculate` for 60 random rate
+  vectors per player, with a process city, a city in disorder and an occupied city.
+- **N6 and the epoch memo.** A temporary probe at 451 put `AvailableResourceCounts` at
+  5.1 s of processor time per 4 turns over 7,508 calls, 2.2 s of it in group building.
+  N6 made group membership one flood per group, through a default method on
+  `ICityConnectionService` that a replacement service still answers pair by pair, and
+  scanned the deals once. The remaining cost was each group member's own flood, which
+  the epoch memo now shares within an AI segment. A memo of the whole group layout was
+  tried on top and dropped: it reused 756 of 1,357 builds at about 0.1 ms each.
+
+#### Rejected and Deferred
+
+Every candidate that was not accepted, with its numbers. "Deferred" means measured only
+as an upper bound, or not attempted.
+
+| Candidate                      | Verdict  | Evidence                                                                                                                                                                                                                                             |
+| :----------------------------- | :------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| N1 (trade routes)              | Rejected | Premise false. `MAX_TRADE_ROUTES` is `"0"` in the Foundation rule constants, so `TradeRouteService.Calculate` returns on its first line. City `TradeEffects` took 13 to 16 ms per 4 turns at 552 over 4,306 to 6,545 calls.                    |
+| N7 (`MayRun` for free promotions) | Rejected | 552: 2,302 → 2,280 ms; 451: 1,763 → 1,870 ms (noise). This matches the first analysis's prototype. Unit `BuildingMilitaryEffects` is now 625 ms per 4 turns at 552, and the running set it needs is already in the read scope.          |
+| F6 (batched eligibility)       | Rejected | F3 absorbed it. `ValidateBatch` only shares the city read scope, which epochs already share. A prototype that primed each city's buildings through it before scoring took `ai:cities` from 900 to 950 up to 1,195 ms at 451, because it serialised validation that `ParallelScoring` spreads. |
+| N9 (`ProvidesPower` early exit) | Rejected | `ai:cities` 945 → 900 ms (451) and 612 → 657 ms (552); walls within noise. The resource answer it skips is already kept in the read scope.                                                                                                       |
+| N13 (maintenance)              | Rejected | 451 wall 1,657 ms (one 2,340 ms outlier), 552 wall 2,009 against 1,990 ms. `economy:gold` 472 to 495 → 501 (451) and 638 → 612 (552); `ai:civics` 530 to 574 → 531 and 503 → 444; `ai:economy` 199 to 212 → 227 and 176 → 189. Mixed, within noise. |
+| N17a (`Array.IndexOf` in naval entry) | Rejected | `ai:military` 1,225 to 1,356 → 1,267 ms (451), 2,419 to 2,674 → 2,317 ms (552); walls 1,677 and 2,005 ms. Within noise: naval units rarely test a land tile.                                                                                |
+| N11, second half               | Not taken | Skipping the automatic assignment when production is emphasised changes which commands are issued.                                                                                                                                                |
+| F9, N2 steps 3-4 (zero-value keys) | Deferred | Not measured. It spans building lines, `CityYields.AddPlot` and `PlotYieldService.AddThresholds`; the building lines alone took 416 ms per 4 turns at 451 in the probe.                                                                 |
+| N4 step 3 (one preview for the chosen defender) | Deferred | Not measured. F8 took defender choice off the full calculation; `UnitOrders.Odds` still previews the chosen defender once more.                                                                                         |
+| F10 (promotion keys)           | Deferred | Unit `PromotionEffects`: 53 ms per 4 turns at 552.                                                                                                                                                                                                   |
+| F11 (scripted wonders per unit) | Deferred | Unit `ScriptedWonderService`: 427 ms per 4 turns at 552 over 16,230 calls.                                                                                                                                                                        |
+| F12 (yes/no eligibility)       | Deferred | Not measured. Part of `ai:cities`: 587 ms per 4 turns at 552.                                                                                                                                                                                        |
+| F13 (combat preview lookups)   | Deferred | Not measured. Inside `ai:military`.                                                                                                                                                                                                                  |
+| F14 (wave traces)              | Moot     | Waves are off by default (F1).                                                                                                                                                                                                                       |
+| F15 (kernel linear scans)      | Deferred | Not measured.                                                                                                                                                                                                                                        |
+| N8 step 1 (unit effects once)  | Deferred | F2 took `military:units` to 172 ms (451) and 610 ms (552). This step is bounded by that.                                                                                                                                                        |
+| N10 (civic effects)            | Deferred | City `CivicEffects`: 308 ms per 4 turns at 552.                                                                                                                                                                                                      |
+| N12 (great person planner)     | Deferred | `great_people:planner`: 177 ms (451) and 194 ms (552) per 4 turns, from 2,370 and 6,331 ms before this pass.                                                                                                                                         |
+| N14 (`UInt128` combat odds)    | Deferred | Not measured. F8 removed odds from defender choice.                                                                                                                                                                                                  |
+| N15 (sea yields, state religion) | Deferred | City `ReligionEffects`: 277 ms per 4 turns at 552.                                                                                                                                                                                                 |
+| N16 (corporation branches)     | Deferred | No corporation exists in the measured saves (Pass 14), so nothing could show a gain.                                                                                                                                                                 |
+| N17b (culture anger players)   | Deferred | Not measured.                                                                                                                                                                                                                                        |
+
+#### Where the Analyses Disagreed
+
+- **Waves.** Only the first analysis measured the speculative waves, and it found that
+  they cost more than they save (F1). The second analysis measured with waves on
+  throughout. The first was right at every size tried.
+- **Trade routes (N1).** The second analysis ranked this "very high". The first
+  analysis's per-source timing showed it at 16 ms. The content switches trade routes off,
+  so the first was right.
+- **Free promotions (N7).** The second analysis expected a medium-high gain, and the first
+  had prototyped it with none. Measured here with none.
+- **Where the reuse lives (F3 against N3).** The first analysis wanted a kernel span and
+  the second a Cities-scope cache. Both were built on the kernel span, so that World
+  (connected resource counts) and Core (modifier sums) reuse it without a dependency on
+  Cities.
+
+#### Results
+
+Final tree, three runs each, per later turn:
+
+| Run                  | Before (Pass 14 tree) | After               | Systems before / after | AI before / after   | Allocated per turn before / after | Collector per turn before / after |
+| :------------------- | --------------------: | ------------------: | ---------------------: | ------------------: | --------------------------------: | --------------------------------: |
+| 451, 4 turns         |              4,148 ms | 1,541 to 1,564 ms   |         740 / 722-762 ms | 3,393 / 740-758 ms |                 5,030 / 1,008 MiB |                      676 / 76-88 ms |
+| 552, 4 turns         |              7,837 ms | 1,981 to 2,066 ms   |       2,042 / 886-915 ms | 5,779 / 1,042-1,095 ms |               9,626 / 1,536 MiB |                   1,027 / 120-125 ms |
+| 451, 20 turns        |              3,765 ms | 1,154 to 1,168 ms   |           810 / 565-584 ms |   2,943 / 560-564 ms |           4,710 / 1,018-1,049 MiB |                      604 / 75-78 ms |
+| New game, 100 turns  |        22.2 s (total) | 13.4 to 14.5 s (total) |                      |                     |                       161 / 41 MiB |                          45 / 4 ms |
+
+A turn at 451 is 2.7 times faster and a turn at 552 is 3.9 times faster. Turn systems
+are now half of a late turn.
+
+`mise run benchmark`, Pass 14 tree against the final tree:
+
+| Benchmark                                         | Before      | After       |
+| :------------------------------------------------ | ----------: | ----------: |
+| World generation, seeds 1, 42, 987654             | 283.6, 190.8, 258.2 ms | 258.6, 182.0, 227.9 ms |
+| Fifty-city turn                                   | 324 ms      | 262 ms      |
+| Eight-player preparation (99 turns, save/load)    | 31,366 ms   | 13,192 ms   |
+| Eight-player AI decisions at turn 100             | 192 ms      | 52 ms       |
+
+#### Still Slow, Ranked
+
+From the final tree, 4 turns at 451 and at 552 (processor time per 4 turns):
+
+1. **City building effects outside read epochs.** `modifiers:collect` is 4.4 s (451) and
+   5.9 s (552). City `BuildingEffects` made up 84% of it at 451 in the probe after N6, and
+   68% at 552 on the final tree (4,006 of 5,912 ms). Most of that is a city's
+   available resources while its owner exports one. Turn systems collect outside any epoch
+   (2,600 of 3,971 calls at 451, 1.2 to 1.4 s), and every one floods each member of each
+   group ahead of the city. One flood per group would need proof that the network's edges
+   are symmetric. `RiverEdge` is not written symmetrically, which is why the group copies
+   take the largest count over members. A read epoch around each turn system's read phase
+   would need those systems split into a read pass and a write pass.
+2. **AI military with large armies.** `ai:military` is 1.3 s (451) and 2.5 s (552), the
+   largest planner. It still previews combat per hunter, tile and defender (F13, N14).
+3. **City turn systems.** `cities:growth` (0.8 to 1.1 s), `cities:production` (0.6 to
+   0.9 s), `economy:gold` (0.5 to 0.7 s) and `cities:assign_work` (0.5 to 0.6 s) run
+   outside epochs, so each recalculates its city's ledgers.
+4. **AI city and citizen planners.** `ai:cities` (1.0 and 0.6 s) and `ai:citizens` (0.9
+   and 0.7 s). F12 and the second half of N11 would trim them.
+5. **Unit-scope sources.** `BuildingMilitaryEffects` (625 ms) and `ScriptedWonderService`
+   (427 ms) at 552, over 16,230 unit collections (F11).
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -1786,3 +1968,8 @@ passes:
 |                                         |                      | Same, per turn at turns 452-471                            | Managed bytes per turn   |           48,883 MiB |         4,709 MiB |                                **-90.4%** |
 |                                         |                      | Turn-451 save with 101 corporation branches, 4 turns       | Wall time (profiled)     |              287.9 s |            26.2 s |                                **-90.9%** |
 |                                         |                      | 450-turn six-player game (estimated from four anchors)     | Wall time                |         about 48 min |     about 7.5 min |                                  **-84%** |
+| **Pass 15: Turn Processing**            | `2e12f467`..`312b2397` | Six-player AI game, per turn at turns 452-455 (saved game) | Wall time (profiled)     |             4,148 ms |    1,541–1,564 ms |                                **-62.7%** |
+|                                         |                      | Same, per turn at turns 553-556 (saved game)               | Wall time (profiled)     |             7,837 ms |    1,981–2,066 ms |                                **-74.1%** |
+|                                         |                      | Same, per turn at turns 452-471 (saved game)               | Managed bytes per turn   |            4,710 MiB |         1,049 MiB |                                **-77.7%** |
+|                                         |                      | 100-turn six-player AI game, ancient start (seed 3)        | Wall time (profiled)     |               22.2 s |      13.4–14.5 s |                       **-35% to -40%** |
+|                                         |                      | Eight-player preparation (`mise run benchmark`)            | Wall time                |            31,366 ms |         13,192 ms |                                **-57.9%** |

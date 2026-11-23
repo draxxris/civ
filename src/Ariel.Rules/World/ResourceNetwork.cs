@@ -4,7 +4,8 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Rules.World;
 
-/// <summary>Plot group connectivity. Recomputed per query, so tech, route and ownership edits never leave stale caches.</summary>
+/// <summary>Plot group connectivity. Recomputed per query outside a read epoch, so tech, route and ownership edits never
+/// leave stale caches; inside one, where nothing can change, a city's counts are kept (<see cref="ConnectedCounts"/>).</summary>
 internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
 {
     public int ConnectedCount(Simulation sim, int player, int city, string bonus) => ConnectedCounts(sim, player, city).GetValueOrDefault(bonus);
