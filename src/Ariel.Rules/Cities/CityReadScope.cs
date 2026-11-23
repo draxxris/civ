@@ -6,9 +6,11 @@ namespace Ariel.Rules.Cities;
 /// <summary>Per-thread memo for one read-only city query. Building activity, power and grants depend on every city
 /// of the team, so nested queries would otherwise repeat whole-empire work for each city they visit. A scope only
 /// lives inside a read-only call, so the state cannot change while it is open; it is never saved or shared.
-/// <para>While the simulation holds a read epoch (<see cref="Simulation.ReadEpoch"/>), whose opener promises no
-/// writes and which the kernel ends before any, every query on a thread shares one scope for that epoch instead, so
-/// an AI segment's many queries resolve each city once.</para></summary>
+/// <para>The outermost query opens a kernel read span (<see cref="Simulation.OpenReadSpan"/>) for its duration, so
+/// the modifier sums and connected resource counts it asks again are kept too. While the simulation holds a read
+/// epoch (<see cref="Simulation.ReadEpoch"/>), whose opener promises no writes and which the kernel ends before any,
+/// every query on a thread shares one scope for that epoch instead, so an AI segment's many queries resolve each city
+/// once.</para></summary>
 internal sealed class CityReadScope
 {
     [ThreadStatic] private static CityReadScope? t_current;
@@ -34,15 +36,17 @@ internal sealed class CityReadScope
     {
         if (t_current is { } current && ReferenceEquals(current._sim, sim)) return query(current);
         var previous = t_current;
-        t_current = ForEpoch(sim) ?? new CityReadScope(sim, 0);
+        // The query only reads, so it runs in a read span: what it derives (this scope, the modifier sums, connected
+        // resource counts) is shared by everything it asks, unless an epoch or span already shares more.
+        using var span = sim.OpenReadSpan();
+        t_current = ForEpoch(sim);
         try { return query(t_current); }
         finally { t_current = previous; }
     }
 
-    private static CityReadScope? ForEpoch(Simulation sim)
+    private static CityReadScope ForEpoch(Simulation sim)
     {
         long epoch = sim.ReadEpoch;
-        if (epoch == 0) return null;
         if (t_epoch is not { } scope || !ReferenceEquals(scope._sim, sim) || scope._epoch != epoch) t_epoch = scope = new(sim, epoch);
         return scope;
     }
