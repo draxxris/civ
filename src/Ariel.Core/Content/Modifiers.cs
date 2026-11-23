@@ -159,14 +159,47 @@ public sealed class ModifierSink
         _lines.Add(new(source, key, amount));
         _ledger = null; _totals = null;
     }
-    /// <summary>Sum all registered sources in their deterministic registration order.</summary>
+    /// <summary>A sink with the same lines and totals, which later additions to either leave apart.</summary>
+    private ModifierSink Copy()
+    {
+        var copy = new ModifierSink { FlatYield = FlatYield, PercentYield = PercentYield, FlatCommerce = FlatCommerce,
+            PercentCommerce = PercentCommerce, _ledger = _ledger, _totals = _totals };
+        copy._lines.AddRange(_lines);
+        return copy;
+    }
+    /// <summary>Sum all registered sources in their deterministic registration order. Sources only read the state
+    /// (<see cref="IModifierSource"/>), so while the simulation holds a read epoch (<see cref="Simulation.ReadEpoch"/>)
+    /// the same context sums to the same sink: each thread keeps the sums of the open epoch and hands out copies, which
+    /// callers may add to.</summary>
     public static ModifierSink Collect(ModifierContext context)
     {
-        using var scope = context.Sim.Profiler.Measure(ProfileKind.Rule, "modifiers:collect");
-        var sink = new ModifierSink();
-        foreach (var source in context.Sim.Content.Services.Get<IModifierSource>()) source.Contribute(context, sink);
+        var sim = context.Sim;
+        long epoch = sim.ReadEpoch;
+        Dictionary<ModifierContext, ModifierSink>? memo = null;
+        if (epoch != 0)
+        {
+            if (!ReferenceEquals(t_memoSim, sim) || t_memoEpoch != epoch)
+            {
+                (t_memoSim, t_memoEpoch) = (sim, epoch);
+                (t_memo ??= new()).Clear();
+            }
+            memo = t_memo!;
+            if (memo.TryGetValue(context, out var known)) return known.Copy();
+        }
+        ModifierSink sink;
+        using (sim.Profiler.Measure(ProfileKind.Rule, "modifiers:collect"))
+        {
+            sink = new ModifierSink();
+            foreach (var source in sim.Content.Services.Get<IModifierSource>()) source.Contribute(context, sink);
+        }
+        if (memo is not null) memo[context] = sink.Copy();
         return sink;
     }
+    // One epoch's sums per thread. A simulation never reuses an epoch value, so a stale table never matches; it is
+    // cleared, not reallocated, when the epoch moves on.
+    [ThreadStatic] private static Simulation? t_memoSim;
+    [ThreadStatic] private static long t_memoEpoch;
+    [ThreadStatic] private static Dictionary<ModifierContext, ModifierSink>? t_memo;
 }
 
 /// <summary>One data-driven modifier: a definition that carries it adds <see cref="Amount"/> under <see cref="Key"/> to

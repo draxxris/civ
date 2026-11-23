@@ -68,6 +68,25 @@ public sealed class ReadEpochTests
         Assert.Throws<InvalidOperationException>(() => sim.TryApply(new WritingRejection { Player = 0 }, out _));
     }
 
+    [Fact]
+    public void A_collection_inside_an_epoch_hands_out_independent_copies_of_the_same_sums()
+    {
+        var sim = TestGame.Sim(5);
+        var context = new Ariel.Content.ModifierContext(sim, Ariel.Content.ModifierScope.City, 0);
+        var outside = Ariel.Content.ModifierSink.Collect(context);
+        using (sim.OpenReadEpoch())
+        {
+            var first = Ariel.Content.ModifierSink.Collect(context);
+            first.Add("test", "test:extra", 5);
+            var second = Ariel.Content.ModifierSink.Collect(context);
+            Assert.NotSame(first, second);
+            Assert.Equal(0, second.Total("test:extra"));
+            Assert.Equal(outside.Ledger.Lines, second.Ledger.Lines);
+            Assert.Equal(outside.FlatYield, second.FlatYield);
+            Assert.Equal(outside.FlatCommerce, second.FlatCommerce);
+        }
+    }
+
     private sealed class WritingRejection : GameCommand
     {
         public override string? Validate(Simulation sim) { sim.State.Turn++; return "no"; }

@@ -2127,7 +2127,10 @@ Several query paths avoid redundant traversal:
   reused. A planning `AiContext` (`AiContext.ForTurn`) holds one epoch per segment and
   renews it after each command it issues, so `CityReadScope` keeps one scope per thread
   per epoch and an AI segment resolves each city's buildings, power and grants once
-  instead of once per query. `Simulation.VerifyReadEpochs` hashes the state at an
+  instead of once per query. `ModifierSink.Collect` likewise keeps, per thread, the
+  sums of the open epoch by `ModifierContext` (value equality, entities by reference)
+  and hands out copies, which callers may add to; modifier sources only read the state,
+  so the same context sums the same. `Simulation.VerifyReadEpochs` hashes the state at an
   epoch's start and end and throws on a difference, and also throws when a rejected
   command changed the state or the RNG; `hash-trace --verify-read-epochs` turns it on
   for a whole game.
