@@ -538,6 +538,11 @@ Mods register these contracts through `ctx.RegisterService<T>()`:
   screen displays checkboxes for implemented simulation options. Remaining option
   definitions in `src/Ariel.Rules/Foundation/data/game-option.json` remain deferred as a future
   pending item.
+- Settings that only change how fast this computer runs a game are not game options.
+  `ClientPreferences` (`user://preferences.json`) keeps them outside saves, the state hash
+  and lobbies, and the setup screen shows them under "This computer". The only one is the
+  experimental "Parallel AI planning" (see the AI waves section); each peer of a networked
+  game chooses it independently, since it cannot change a result.
 - `IProductionKind` supplies a queue-kind id, tab label, continuous-production flag,
   content candidates, and definition lookup. It also supplies base costs, eligibility
   visibility, validation, and production calculations. The client builds tabs and
@@ -2176,7 +2181,15 @@ overhead:
 `Simulation.RunAi()` delegates turn execution to `AiTurnSpeculator.Run(this)`. Waves are
 opt-in: `Simulation.AiWaveLimit` caps a wave's width and defaults to 1, which runs every
 AI player in turn on the authoritative simulation, each planner scoring its candidates
-in parallel (`ParallelScoring`). Wider waves were slower on every game measured in
+in parallel (`ParallelScoring`). The width is a per-process setting, not state: it is
+not saved, not hashed and not synchronised, so each peer of a networked game may choose
+its own. The game client offers it as the experimental "Parallel AI planning"
+preference (`ClientPreferences`, `user://preferences.json`, shown on the setup screen
+under "This computer", off by default). `GameSession` and `MultiplayerGame.Create` apply
+it to every simulation they run, including a loaded save, and
+`Simulation.AiWaveLimitFor` maps it to a width: a quarter of the processors, from two to
+four. `hash-trace --waves N|max` (so `mise run ai:play -- --waves N`) sets it in the
+tools. Wider waves were slower on every game measured in
 Pass 15 of `docs/OPTIMIZE.md`, from a 2-player 100-turn game to a 14-player turn-552
 save: most later plans conflicted and were discarded, and forks score serially. A wave
 equals sequential play by specification, so the width changes wall time only.

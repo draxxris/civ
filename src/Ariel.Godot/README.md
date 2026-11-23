@@ -95,6 +95,20 @@ run, use a separate Godot user-data directory through `XDG_DATA_HOME` on Linux.
 - `ARIEL_MODS`: optional additional mod discovery root.
 - `ARIEL_TRACE_STARTUP`: set to `1` to output startup phase timings on stderr.
 
+## Preferences of this computer
+
+`user://preferences.json` in the Godot user-data directory holds choices about how this
+computer runs the game. They are not game options: they never enter a save, the state hash or
+a multiplayer lobby, so peers of one game may differ. A missing or damaged file means the
+defaults. The setup screen shows them under "This computer":
+
+- **Parallel AI planning (experimental)**, off by default (`"ParallelAiPlanning": true`).
+  It plans several AI players at once in speculative waves (`Simulation.AiWaveLimit`, a
+  quarter of the processors from two to four wide) and keeps the plans that do not
+  conflict. It can be faster on a machine with many cores but is usually slower (see
+  `docs/OPTIMIZE.md`, Pass 15), and it never changes the outcome of a game. It applies to
+  games you start or load afterwards, in single player and as a host or guest.
+
 ## Controls
 
 - WASD or arrow keys: move the camera across the ground, relative to the view. W moves

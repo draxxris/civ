@@ -1798,8 +1798,12 @@ which explains why its "before" differs from the row above. Those notes:
 
   On the final tree the gap remains: 6 players 14.0 to 14.5 s at width 1 against 20.0 s
   at max, 8 players 15.8 s against 27.9 s, 451 1,541 to 1,564 ms per turn against
-  2,339 ms. Waves stay available as a setting, and the lockstep tools still exercise
-  them. `hash-trace --waves N|max` selects the width, and `mise run check:sync` runs a
+  2,339 ms. Waves stay available as an experimental, off-by-default preference,
+  "Parallel AI planning (experimental)" on the setup screen under "This computer"
+  (`"ParallelAiPlanning": true` in `user://preferences.json`; it asks for a quarter of
+  the processors, two to four, so not the unlimited width measured above). The
+  preference is per machine and never enters saves, hashes or lobbies. The lockstep
+  tools still exercise waves. `hash-trace --waves N|max` selects the width, and `mise run check:sync` runs a
   fifth process with `--waves max`. Tests that are about waves pin
   `AiWaveLimit = int.MaxValue`.
 - **F3 and N3.** The first analysis wanted one read scope per AI segment, held by the
