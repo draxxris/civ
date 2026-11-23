@@ -14,10 +14,12 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
     {
         // Capture before clearing: visible edits since acquisition are still observations,
         // even when the observer has just moved, died, or lost its city.
-        foreach (var tile in sim.State.Grid.Tiles)
+        var plots = sim.State.Plots;
+        for (int i = 0; i < plots.Length; i++)
         {
-            var plot = sim.State.Plots[tile.Value];
-            foreach (int team in plot.Visible) plot.RevealedSnapshots[team] = Capture(sim, tile, team);
+            var plot = plots[i];
+            if (plot.Visible.IsEmpty) continue;
+            foreach (int team in plot.Visible) plot.RevealedSnapshots[team] = Capture(sim, new TileId(i), team);
             plot.Visible.Clear();
         }
         var tuning = Geography.Tuning(sim.Content);
@@ -192,8 +194,12 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         var origin = sim.State.Grid.TileAt(position);
         foreach (var tile in sim.State.Grid.Range(origin, radius + (aerial ? 0 : 1)))
         {
+            // Another observer of the team already saw this plot in this recompute, and revealed and captured it from
+            // the same unchanged state, so testing and capturing it again cannot change anything.
+            var plot = sim.State.Plots[tile.Value];
+            if (plot.Visible.Contains(team)) continue;
             if (!CanSeePlot(sim, origin, tile, team, radius, aerial, levels)) continue;
-            sim.State.Plots[tile.Value].Visible.Add(team);
+            plot.Visible.Add(team);
             RevealPlot(sim, tile, team);
         }
     }

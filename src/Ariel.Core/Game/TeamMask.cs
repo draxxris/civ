@@ -14,6 +14,8 @@ public sealed class TeamMask : IEnumerable<int>
     internal IReadOnlyList<ulong> Words => _words;
     /// <summary>Number of teams in this set.</summary>
     public int Count => _words.Sum(w => BitOperations.PopCount(w));
+    /// <summary>Whether no team is present, without enumerating.</summary>
+    public bool IsEmpty => _words.Count == 0;
     /// <summary>Whether a nonnegative team id is present.</summary>
     public bool Contains(int team) => team >= 0 && team / 64 < _words.Count && (_words[team / 64] & (1UL << (team % 64))) != 0;
     /// <summary>Add a team id. Return true if membership changed.</summary>
