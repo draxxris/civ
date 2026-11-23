@@ -24,9 +24,10 @@ internal sealed class BuildingEffects : IModifierSource
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
         var sim = context.Sim;
         var bonuses = Bonuses(sim, city);
-        foreach (var building in CityData.Active(sim, city)) Local(sim, city, building, bonuses, sink);
+        var running = CityData.Active(sim, city).ToArray();
+        foreach (var building in running) Local(sim, city, building, running, bonuses, sink);
         foreach (var other in CityData.Owned(sim, city.Owner))
-            foreach (var building in CityData.Active(sim, other)) Global(sim, city, other, building, sink);
+            foreach (var building in CityData.Active(sim, other)) Global(sim, city, other, building, running, sink);
         foreach (var building in CityData.EffectiveBuildings(sim, city))
             if (building.ObsoleteSafeCommerceChanges != default)
                 sink.AddCommerce(building.Id + ":safe", building.ObsoleteSafeCommerceChanges);
@@ -87,7 +88,7 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var (bonus, copies) in supplied) result[bonus] = result.GetValueOrDefault(bonus) + (int)copies;
         return result;
     }
-    private static void Local(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
+    private static void Local(Simulation sim, City city, S.BuildingDef b, S.BuildingDef[] running, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
         sink.AddYield(b.Id, b.YieldChanges); sink.AddYield(b.Id, b.YieldModifiers, true);
         if (b.PowerYieldModifiers != default && CityData.IsPowered(sim, city))
@@ -95,7 +96,7 @@ internal sealed class BuildingEffects : IModifierSource
         sink.AddCommerce(b.Id, b.CommerceChanges); sink.AddCommerce(b.Id, b.CommerceModifiers, true);
         sink.Add(b.Id, "cities:hurry_anger_percent", b.HurryAngerModifier);
         AddNumbers(b, sink);
-        AddMaps(sim, city, b, bonuses, sink);
+        AddMaps(b, running, bonuses, sink);
         AddVicinity(sim, city, b, bonuses, sink);
         if (b.TechYieldChanges.IsEmpty && b.TechYieldModifiers.IsEmpty && b.TechCommerceChanges.IsEmpty && b.TechSpecialistChanges.IsEmpty)
             return;
@@ -133,31 +134,37 @@ internal sealed class BuildingEffects : IModifierSource
         sink.Add(b.Id, "cities:building_only_healthy", b.BuildingOnlyHealthy ? 1 : 0);
         sink.Add(b.Id, HealthKeys.Building, b.Health);
     }
-    private static void AddMaps(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
+    private static void AddMaps(S.BuildingDef b, S.BuildingDef[] running, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
-        foreach (var bonus in bonuses.Keys.Order(StringComparer.Ordinal))
+        // The per-bonus and per-building maps are empty for most buildings, and each is looked up for every bonus or
+        // running building of the city, so an empty map is passed over: it would add only zero lines.
+        if (!b.BonusYieldChanges.IsEmpty || !b.BonusYieldModifiers.IsEmpty || !b.BonusHappinessChanges.IsEmpty || !b.BonusHealthChanges.IsEmpty)
         {
-            var yields = b.BonusYieldChanges.GetValueOrDefault(bonus);
-            var percent = b.BonusYieldModifiers.GetValueOrDefault(bonus);
-            if (yields != default || percent != default)
+            foreach (var bonus in bonuses.Keys.Order(StringComparer.Ordinal))
             {
-                string source = b.Id + ":" + bonus;
-                sink.AddYield(source, yields);
-                sink.AddYield(source, percent, true);
+                var yields = b.BonusYieldChanges.GetValueOrDefault(bonus);
+                var percent = b.BonusYieldModifiers.GetValueOrDefault(bonus);
+                if (yields != default || percent != default)
+                {
+                    string source = b.Id + ":" + bonus;
+                    sink.AddYield(source, yields);
+                    sink.AddYield(source, percent, true);
+                }
+                sink.Add(b.Id, "cities:happiness", b.BonusHappinessChanges.GetValueOrDefault(bonus));
+                sink.Add(b.Id, HealthKeys.Bonus, b.BonusHealthChanges.GetValueOrDefault(bonus));
             }
-            sink.Add(b.Id, "cities:happiness", b.BonusHappinessChanges.GetValueOrDefault(bonus));
-            sink.Add(b.Id, HealthKeys.Bonus, b.BonusHealthChanges.GetValueOrDefault(bonus));
         }
         foreach (var slot in b.SpecialistSlots.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:slots:" + slot.Key, slot.Value);
         foreach (var free in b.FreeSpecialistCounts.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:free:" + free.Key, free.Value);
-        foreach (var other in CityData.Active(sim, city)) sink.Add(b.Id, "cities:happiness", b.BuildingHappinessChanges.GetValueOrDefault(other.DefaultBuilding));
+        if (!b.BuildingHappinessChanges.IsEmpty)
+            foreach (var other in running) sink.Add(b.Id, "cities:happiness", b.BuildingHappinessChanges.GetValueOrDefault(other.DefaultBuilding));
     }
     private static void AddVicinity(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
         foreach (var pair in b.VicinityBonusYieldChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
             if (VicinityBonuses.Has(sim, city, pair.Key, bonuses)) sink.AddYield(b.Id + ":vicinity:" + pair.Key, pair.Value);
     }
-    private static void Global(Simulation sim, City city, City origin, S.BuildingDef b, ModifierSink sink)
+    private static void Global(Simulation sim, City city, City origin, S.BuildingDef b, S.BuildingDef[] running, ModifierSink sink)
     {
         if (b.GlobalYieldModifiers != default) sink.AddYield(b.Id + ":global", b.GlobalYieldModifiers, true);
         if (b.GlobalCommerceModifiers != default) sink.AddCommerce(b.Id + ":global", b.GlobalCommerceModifiers, true);
@@ -166,7 +173,9 @@ internal sealed class BuildingEffects : IModifierSource
         sink.Add(b.Id, "cities:great_people_percent", b.GlobalGreatPeopleRateModifier);
         sink.Add(b.Id, "cities:maintenance_percent", b.GlobalMaintenanceModifier);
         sink.Add(b.Id, "cities:experience", b.GlobalExperience);
-        foreach (var local in CityData.Active(sim, city)) sink.AddCommerce(b.Id, b.GlobalBuildingExtraCommerces.GetValueOrDefault(local.DefaultBuilding));
+        // Every building of the owner's cities reaches here, and few have extra commerce for buildings elsewhere.
+        if (!b.GlobalBuildingExtraCommerces.IsEmpty)
+            foreach (var local in running) sink.AddCommerce(b.Id, b.GlobalBuildingExtraCommerces.GetValueOrDefault(local.DefaultBuilding));
         if (sim.State.PlotAt(city.Position).AreaId != sim.State.PlotAt(origin.Position).AreaId) return;
         sink.Add(b.Id, "cities:happiness", b.AreaHappiness); sink.Add(b.Id, HealthKeys.Building, b.AreaHealth);
         sink.Add(b.Id, "cities:free_specialists", b.AreaFreeSpecialist);
