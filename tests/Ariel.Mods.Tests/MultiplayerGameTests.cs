@@ -31,7 +31,8 @@ public sealed class MultiplayerGameTests(LoadedMods mods) : IClassFixture<Loaded
     }
 
     /// <summary>Host and guest seated in a duel world with one AI, started, built.</summary>
-    private (InProcessHub Hub, MultiplayerGame Host, MultiplayerGame Guest) Started(Func<Lobby, string?>? prepare = null, int timer = 0)
+    private (InProcessHub Hub, MultiplayerGame Host, MultiplayerGame Guest) Started(Func<Lobby, string?>? prepare = null, int timer = 0,
+        int hostWaves = Simulation.SequentialAiWaveLimit, int guestWaves = Simulation.SequentialAiWaveLimit)
     {
         var hub = new InProcessHub();
         var setup = LobbySetup.Default(Catalog) with { WorldSize = "foundation:worldsize_duel", Seed = 4, TurnTimerSeconds = timer };
@@ -44,8 +45,8 @@ public sealed class MultiplayerGameTests(LoadedMods mods) : IClassFixture<Loaded
         Settle(host, guest);
         Assert.Null(host.Start());
         Settle(host, guest);
-        var a = MultiplayerGame.Create(Catalog, host.Release(), host.Starting!, host.Chat);
-        var b = MultiplayerGame.Create(Catalog, guest.Release(), guest.Starting!, guest.Chat);
+        var a = MultiplayerGame.Create(Catalog, host.Release(), host.Starting!, host.Chat, hostWaves);
+        var b = MultiplayerGame.Create(Catalog, guest.Release(), guest.Starting!, guest.Chat, guestWaves);
         return (hub, a, b);
     }
 
@@ -55,6 +56,18 @@ public sealed class MultiplayerGameTests(LoadedMods mods) : IClassFixture<Loaded
         int turn = games[0].Session.Sim.State.Turn;
         foreach (var g in games) g.Session.EndTurn();
         Run(() => games.All(g => g.Session.Sim.State.Turn > turn), games);
+    }
+
+    [Fact]
+    public void Peers_may_choose_different_AI_wave_widths_without_desyncing()
+    {
+        var (_, host, guest) = Started(hostWaves: 1, guestWaves: 4);
+        Assert.Equal(1, host.Session.Sim.AiWaveLimit);
+        Assert.Equal(4, guest.Session.Sim.AiWaveLimit);
+        for (int i = 0; i < 3; i++) EndTurns(host, guest);
+        Assert.Equal(host.Session.Sim.ComputeHash(), guest.Session.Sim.ComputeHash());
+        Assert.Null(host.Session.ConnectionProblem);
+        Assert.Null(guest.Session.ConnectionProblem);
     }
 
     [Fact]
