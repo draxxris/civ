@@ -31,18 +31,30 @@ internal sealed class RelationsService : IRelationsService
     public void DiscoverContacts(Simulation sim)
     {
         // Current sight, not revealed history. Occupants and owned borders both count as contact targets.
-        foreach (var tile in sim.State.Grid.Tiles)
+        // Movement asks after every step, so the sets are reused across tiles, and a tile with neither a unit nor an
+        // owner, which has no target to meet, is passed over before any of them is built.
+        var state = sim.State;
+        var grid = state.Grid;
+        SortedSet<int>? occupants = null, observers = null;
+        for (int i = 0; i < grid.Count; i++)
         {
-            var plot = sim.State.Plots[tile.Value];
-            var occupants = new SortedSet<int>(sim.State.UnitsAt(sim.State.Grid.HexOf(tile)).Select(u => sim.TeamOf(u.Owner).Id));
+            var tile = new TileId(i);
+            var plot = state.Plots[i];
+            bool units = state.HasUnitsAt(tile);
+            if (!units && plot.Owner is null) continue;
+            occupants ??= new(); observers ??= new();
+            occupants.Clear(); observers.Clear();
+            if (units) foreach (var unit in state.UnitsAt(grid.HexOf(tile))) occupants.Add(sim.TeamOf(unit.Owner).Id);
             if (plot.Owner is { } owner) occupants.Add(sim.TeamOf(owner).Id);
-            var observers = new SortedSet<int>(occupants);
-            foreach (var team in sim.State.Teams.Where(t => plot.Visible.Contains(t.Id))) observers.Add(team.Id);
-            foreach (var neighbor in sim.State.Grid.Neighbors(tile))
+            observers.UnionWith(occupants);
+            foreach (var team in state.Teams)
+                if (plot.Visible.Contains(team.Id)) observers.Add(team.Id);
+            foreach (var neighbor in grid.Neighbors(tile))
             {
-                var adjacent = sim.State.Plots[neighbor.Value];
+                var adjacent = state.Plots[neighbor.Value];
                 if (adjacent.Owner is { } p) observers.Add(sim.TeamOf(p).Id);
-                foreach (var unit in sim.State.UnitsAt(sim.State.Grid.HexOf(neighbor))) observers.Add(sim.TeamOf(unit.Owner).Id);
+                if (state.HasUnitsAt(neighbor))
+                    foreach (var unit in state.UnitsAt(grid.HexOf(neighbor))) observers.Add(sim.TeamOf(unit.Owner).Id);
             }
             foreach (int target in occupants)
                 foreach (int observer in observers) EstablishContact(sim, observer, target);

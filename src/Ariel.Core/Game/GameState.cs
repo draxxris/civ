@@ -257,6 +257,8 @@ public sealed class GameState
     /// <summary>Whether this plot is worked by any city.</summary>
     public bool IsPlotWorked(TileId tile) => WorkingCity(tile) is not null;
     /// <summary>Units on a plot, in ascending id order.</summary>
+    /// <summary>Whether any unit stands on <paramref name="tile"/>, without enumerating them.</summary>
+    public bool HasUnitsAt(TileId tile) => _unitPlots.ContainsKey(tile);
     public IEnumerable<Unit> UnitsAt(Hex pos) => Grid.TryTile(pos, out var t) && _unitPlots.TryGetValue(t, out var units) ? units.Values : [];
     /// <summary>Mutable plot at a valid axial coordinate.</summary>
     public Plot PlotAt(Hex pos) => Plots[Grid.TileAt(pos).Value];
