@@ -107,34 +107,54 @@ internal sealed partial class DiplomacyService
     private static bool EmbargoBy(Simulation sim, int team, int target) => Read(sim).Deals.Any(d => Live(sim, d)
         && d.Items.Any(i => i.Kind == TradeItemKind.Embargo && sim.TeamOf(i.FromPlayer).Id == team && sim.TeamOf(i.Against).Id == target));
     public bool HasEmbargo(Simulation sim, int teamA, int teamB) => EmbargoBy(sim, teamA, teamB) || EmbargoBy(sim, teamB, teamA);
-    /// <summary>One connected group of the player's cities, counted once.</summary>
-    private sealed class CityGroup(City representative, long copies)
+    /// <summary>The player's connected city groups, members in city id order, the capital's group last so exports drain
+    /// the other groups first. Membership does not depend on the resource, so one layout answers several resources, and
+    /// each member's connected copies are gathered once, when first asked.</summary>
+    private sealed class CityGroups
     {
-        public City Representative { get; } = representative;
-        public long Copies { get; private set; } = copies;
-        public List<City> Members { get; } = [representative];
-        /// <summary>Adds a city that the peaceful-passage connection links to the group. Members may sit on different tiles, so the largest count stands in for the group.</summary>
-        public void Add(City city, long count) { Members.Add(city); Copies = Math.Max(Copies, count); }
-    }
-    /// <summary>The player's connected city groups. The capital's group is last, so exports drain the other groups first.</summary>
-    private static List<CityGroup> Groups(Simulation sim, int player, string resource)
-    {
-        var network = sim.Rules().Resources;
-        var connections = sim.Rules().CityConnections;
-        if (network is null || connections is null) return [];
-        var groups = new List<CityGroup>();
-        foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id))
+        private readonly Simulation _sim;
+        private readonly int _player;
+        private readonly IResourceNetwork? _network;
+        private readonly Dictionary<int, IReadOnlyDictionary<string, int>> _counts = new();
+        private readonly List<List<City>> _groups = [];
+
+        public CityGroups(Simulation sim, int player)
         {
-            long count = network.ConnectedCount(sim, player, city.Id, resource);
-            var group = groups.FirstOrDefault(g => connections.Connected(sim, g.Representative.Id, city.Id));
-            if (group is null) groups.Add(new(city, count));
-            else group.Add(city, count);
+            (_sim, _player, _network) = (sim, player, sim.Rules().Resources);
+            var connections = sim.Rules().CityConnections;
+            if (_network is null || connections is null) return;
+            foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id))
+            {
+                var group = _groups.FirstOrDefault(g => connections.Connected(sim, g[0].Id, city.Id));
+                if (group is null) _groups.Add([city]);
+                else group.Add(city);
+            }
+            var capital = Root(sim, player);
+            _groups = _groups.OrderBy(g => capital is not null && g.Contains(capital) ? 1 : 0).ToList();
         }
-        var capital = Root(sim, player);
-        return groups.OrderBy(g => capital is not null && g.Members.Contains(capital) ? 1 : 0).ToList();
+
+        public IReadOnlyList<List<City>> Groups => _groups;
+
+        /// <summary>A group's copies. Members may sit on different tiles, so the largest count stands in for the group.</summary>
+        public long Copies(List<City> group, string resource)
+        {
+            long copies = 0;
+            foreach (var city in group) copies = Math.Max(copies, Count(city, resource));
+            return copies;
+        }
+
+        private int Count(City city, string resource)
+        {
+            if (!_counts.TryGetValue(city.Id, out var counts))
+                _counts[city.Id] = counts = _network!.ConnectedCounts(_sim, _player, city.Id);
+            return counts.GetValueOrDefault(resource);
+        }
     }
-    /// <summary>Distinct physical copies across all of the player's networks. Cities that share a network count once.</summary>
-    private static long PhysicalCopies(Simulation sim, int player, string resource) => Groups(sim, player, resource).Sum(g => g.Copies);
+    private static long PhysicalCopies(Simulation sim, int player, string resource)
+    {
+        var layout = new CityGroups(sim, player);
+        return layout.Groups.Sum(g => layout.Copies(g, resource));
+    }
     /// <summary>Imports arrive from the other side of each live deal the player takes part in.</summary>
     private static long Imports(Simulation sim, int player, string resource) => Read(sim).Deals
         .Where(d => Live(sim, d) && (d.Proposer == player || d.Recipient == player)).SelectMany(d => d.Items)
@@ -309,10 +329,12 @@ internal sealed partial class DiplomacyService
         var connected = sim.Rules().Resources?.ConnectedCounts(sim, player, city)
             ?? new Dictionary<string, int>();
         bool rooted = false;
+        CityGroups? groups = null;
         foreach (var resource in resources.Distinct(StringComparer.Ordinal))
         {
             long own = connected.GetValueOrDefault(resource);
-            long physical = Exports(sim, player, resource) == 0 ? own : Math.Min(own, Remaining(sim, player, target, resource));
+            long physical = Exports(sim, player, resource) == 0 ? own
+                : Math.Min(own, Remaining(sim, player, target, resource, groups ??= new CityGroups(sim, player)));
             long imports = Imports(sim, player, resource);
             if (imports == 0) { result[resource] = physical; continue; }
             if (!rooted) rooted = ConnectedToRoot(sim, player, target);
@@ -321,14 +343,15 @@ internal sealed partial class DiplomacyService
         return result;
     }
     /// <summary>Exports leave the empire pool in group order. Returns the copies that stay in the target's group.</summary>
-    private static long Remaining(Simulation sim, int player, City target, string resource)
+    private static long Remaining(Simulation sim, int player, City target, string resource, CityGroups layout)
     {
         long pending = Exports(sim, player, resource);
-        foreach (var group in Groups(sim, player, resource))
+        foreach (var group in layout.Groups)
         {
-            long taken = Math.Min(group.Copies, pending);
+            long copies = layout.Copies(group, resource);
+            long taken = Math.Min(copies, pending);
             pending -= taken;
-            if (group.Members.Contains(target)) return group.Copies - taken;
+            if (group.Contains(target)) return copies - taken;
         }
         return 0;
     }
