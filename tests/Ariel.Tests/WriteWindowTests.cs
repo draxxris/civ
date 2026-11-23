@@ -168,7 +168,7 @@ public sealed class WriteWindowTests
     }
 
     [Fact]
-    public void Verification_catches_a_writer_outside_its_domains()
+    public void Verification_catches_a_writer_outside_its_domains_and_a_source_that_reads_what_it_declares_unread()
     {
         var (sim, _, _) = Game();
         sim.VerifyWrites = true;
@@ -176,6 +176,16 @@ public sealed class WriteWindowTests
         var error = Assert.Throws<InvalidOperationException>(() => sim.TryApply(new Sneaky { Player = 0 }, out _));
         Assert.Contains("Sneaky", error.Message);
 
+        // A source claiming not to read the treasury keeps a stale line across a treasury write.
+        var (liar, _, _) = Game(treasuryUnread: ["probe:treasury"]);
+        liar.VerifyWrites = true;
+        var stale = Assert.Throws<InvalidOperationException>(() => liar.TryApply(new Script(s =>
+        {
+            Player(s);
+            Assert.True(s.TryApply(new SetTreasury { Player = 0, Value = 99 }, out _));
+            Player(s);
+        }) { Player = 0 }, out _));
+        Assert.Contains("TreasurySource", stale.Message);
     }
 
     [Fact]

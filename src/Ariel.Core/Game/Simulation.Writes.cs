@@ -58,7 +58,8 @@ public sealed partial class Simulation
     private readonly long[] _domainStamps = new long[StateDomainRegistry.Capacity];
     private int _kernelDepth;
 
-    /// <summary>When set, every window that declared its writes is checked, by hashing the state without its declared domains before and
+    /// <summary>When set, every remembered modifier contribution is computed again where it is used and compared, and
+    /// every window that declared its writes is checked, by hashing the state without its declared domains before and
     /// after, to have written nothing else. A difference throws. Very slow: for tests and verification runs. Not
     /// saved.</summary>
     public bool VerifyWrites { get; set; }

@@ -240,6 +240,7 @@ public sealed class ModifierSink
             if (sim.WritingNow(mask)) { sources[i].Contribute(context, sink); continue; }
             if (cache.TryGet(i, context, out var entry) && !sim.WrittenSince(mask, entry.Stamp))
             {
+                if (sim.VerifyWrites) Verify(sources[i], context, entry.Lines);
                 sink.Append(entry.Lines);
                 sim.Profiler?.Add(ProfileKind.Rule, "modifiers:reused", 0);
                 continue;
@@ -249,6 +250,19 @@ public sealed class ModifierSink
             sources[i].Contribute(context, sink);
             cache.Set(i, context, new(sink._lines.GetRange(start, sink._lines.Count - start).ToArray(), stamp));
         }
+    }
+    private static void Verify(IModifierSource source, ModifierContext context, LedgerLine[] kept)
+    {
+        var fresh = new ModifierSink();
+        source.Contribute(context, fresh);
+        if (fresh._lines.SequenceEqual(kept)) return;
+        int at = 0;
+        while (at < kept.Length && at < fresh._lines.Count && kept[at] == fresh._lines[at]) at++;
+        throw new InvalidOperationException($"Modifier source {source.GetType().Name} kept a stale contribution for a "
+            + $"{context.Scope} calculation (player {context.Player}, city {context.City?.Id}, unit {context.Unit?.Id}) on turn "
+            + $"{context.Sim.State.Turn}: line {at} kept {(at < kept.Length ? kept[at] : null)}, now "
+            + $"{(at < fresh._lines.Count ? fresh._lines[at] : null)}. A writer wrote what the source reads without declaring "
+            + "it, or the source reads a domain it declares unread.");
     }
     // Each source's unread domains as a mask, for each content database; sources and domains are frozen with it.
     private static ulong[] UnreadMasks(ContentDb content, IReadOnlyList<IModifierSource> sources) =>
