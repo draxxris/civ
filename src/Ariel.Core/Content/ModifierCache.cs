@@ -26,19 +26,25 @@ internal sealed class ModifierCache
     }
 
     private readonly ConcurrentDictionary<(int Source, ModifierContext Context), Entry> _entries = new();
+    // Entries added since the last clear. ConcurrentDictionary.Count takes every lock, which stalled the AI's parallel
+    // scoring threads, so the bound is kept by counting additions instead.
+    private int _count;
 
     internal bool TryGet(int source, ModifierContext context, out Entry entry) => _entries.TryGetValue((source, context), out entry!);
 
     internal void Set(int source, ModifierContext context, Entry entry)
     {
-        if (_entries.Count >= Capacity) _entries.Clear();
-        _entries[(source, context)] = entry;
+        if (Volatile.Read(ref _count) >= Capacity) Clear();
+        if (_entries.TryAdd((source, context), entry)) Interlocked.Increment(ref _count);
+        else _entries[(source, context)] = entry;
     }
 
-    internal int Count => _entries.Count;
+    internal int Count => Volatile.Read(ref _count);
 
     internal void Clear()
     {
-        if (!_entries.IsEmpty) _entries.Clear();
+        if (_entries.IsEmpty) return;
+        _entries.Clear();
+        Volatile.Write(ref _count, 0);
     }
 }
