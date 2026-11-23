@@ -41,6 +41,9 @@ public sealed class AiContext
         public readonly ConcurrentDictionary<(int City, string Kind, string Id), Lazy<bool>> Production = new();
         public readonly ConcurrentDictionary<string, Lazy<object>> Derived = new(StringComparer.Ordinal);
         private readonly Dictionary<(int Unit, TileId Goal, bool Attack), Lazy<UnitPath?>> _paths = new();
+        /// <summary>Per unit, everything it can reach without attacking, learned from a search that found no path: a
+        /// later destination outside it fails without searching the same tiles again.</summary>
+        private readonly Dictionary<int, IReadOnlySet<TileId>> _reach = new();
         private readonly object _pathsLock = new();
 
         public Segment(AiContext ctx)
@@ -78,10 +81,16 @@ public sealed class AiContext
         {
             // This segment fixes the entire unit and world state, not a partial movement fingerprint.
             var key = (unit.Id, goal, attack);
-            UnitPath? Search() => ctx.Service<IPathfindingService>().FindPath(ctx.Sim, unit.Id, ctx.Grid.HexOf(goal), attack);
+            UnitPath? Search()
+            {
+                var found = ctx.Service<IPathfindingService>().FindPath(ctx.Sim, unit.Id, ctx.Grid.HexOf(goal), attack, out var reach);
+                if (reach is not null) lock (_pathsLock) _reach.TryAdd(unit.Id, reach);
+                return found;
+            }
             Lazy<UnitPath?>? path;
             lock (_pathsLock)
             {
+                if (!attack && _reach.TryGetValue(unit.Id, out var reach) && !reach.Contains(goal)) return null;
                 // Retain only queried destinations: eight per owned unit, capped at 256 per segment.
                 int limit = (int)Math.Min(256L, Math.Max(1L, Units.Value.Count) * 8);
                 if (!_paths.TryGetValue(key, out path) && _paths.Count < limit)

@@ -4,8 +4,12 @@ namespace Ariel.Rules.Military;
 
 internal sealed class PathfindingService(MovementService movement) : IPathfindingService
 {
-    public UnitPath? FindPath(Simulation sim, int unit, Hex destination, bool attack = false)
+    public UnitPath? FindPath(Simulation sim, int unit, Hex destination, bool attack = false) =>
+        FindPath(sim, unit, destination, attack, out _);
+
+    public UnitPath? FindPath(Simulation sim, int unit, Hex destination, bool attack, out IReadOnlySet<TileId>? reach)
     {
+        reach = null;
         var grid = sim.State.Grid;
         if (!grid.TryTile(destination, out var goal)) return null;
         var start = grid.TileAt(sim.State.UnitById(unit).Position);
@@ -30,6 +34,9 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
                 open.Enqueue(next, (cost + minimumStep * grid.Distance(next, goal), cost, next.Value));
             }
         }
+        // The search ran out of tiles. Without an attack the goal changes no step, so what it reached is everything the
+        // unit can reach.
+        if (!attack) reach = new HashSet<TileId>(reached.Keys);
         return null;
     }
     private static bool SeparateLandAreas(Simulation sim, int unit, TileId start, TileId goal)

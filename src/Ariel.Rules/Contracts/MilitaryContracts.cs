@@ -25,6 +25,14 @@ public sealed record UnitPath(IReadOnlyList<Hex> Steps, long Cost, IReadOnlyList
 public interface IPathfindingService
 {
     UnitPath? FindPath(Simulation sim, int unit, Hex destination, bool attack = false);
+    /// <summary>The same search. When a move that does not attack finds no path, <paramref name="reach"/> is every tile
+    /// the unit can reach by such moves, so until the state changes no destination outside it has a path either;
+    /// otherwise, or when the service cannot tell, it is null.</summary>
+    UnitPath? FindPath(Simulation sim, int unit, Hex destination, bool attack, out IReadOnlySet<TileId>? reach)
+    {
+        reach = null;
+        return FindPath(sim, unit, destination, attack);
+    }
 }
 public sealed record CombatStrength(int Maximum, int Current, int Firepower, Ledger Ledger);
 /// <summary>Odds are millionths. Success includes reaching the combat damage limit, not withdrawal.</summary>
