@@ -222,10 +222,13 @@ internal sealed class UnitTurnSystem(IUnitService units) : IPlayerTurnSystem
         units.Initialize(sim, unit.Id);
         var state = MilitaryData.Edit(sim, unit);
         bool active = state.Moved || state.Attacked || unit.MovesLeft < units.MaximumMoves(sim, unit.Id);
-        bool alwaysHeal = MilitaryData.Effect(MilitaryData.Effects(sim, unit), "always_heal") > 0;
         if (state.CreatedTurn != sim.State.Turn)
         {
-            if (!active || alwaysHeal) unit.Health = Math.Min(MilitaryData.Constants(sim).MaxHitPoints, unit.Health + units.HealRate(sim, unit.Id));
+            // A unit exactly at full health stays there (the rate is never negative and the result is capped), so its
+            // heal rate, which reads every friendly unit's ledger nearby, is not asked. Pure reads only are skipped.
+            int maxHp = MilitaryData.Constants(sim).MaxHitPoints;
+            if (unit.Health != maxHp && (!active || MilitaryData.Effect(MilitaryData.Effects(sim, unit), "always_heal") > 0))
+                unit.Health = Math.Min(maxHp, unit.Health + units.HealRate(sim, unit.Id));
             if (!active && state.TransportId is null && state.Activity == UnitActivity.Fortify && CombatCalculator.Fortifiable(MilitaryData.Definition(sim, unit)))
                 state.FortifyTurns = Math.Min(MilitaryData.Raw(sim, "MAX_FORTIFY_TURNS", 5), state.FortifyTurns + 1);
         }

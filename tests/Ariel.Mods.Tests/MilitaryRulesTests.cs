@@ -357,6 +357,20 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(43, units.UpgradePrice(sim, unit.Id, "military:archer"));
     }
     [Fact]
+    public void Unit_refresh_heals_a_damaged_unit_and_keeps_a_full_one_at_maximum()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var damaged = Add(sim, 0, 39); var full = Add(sim, 0, 39);
+        sim.State.Turn++; // Units created this turn do not heal.
+        int max = full.Health;
+        damaged.Health = max - 40;
+        int rate = Service<IUnitService>(sim).HealRate(sim, damaged.Id);
+        Assert.True(rate > 0);
+        sim.Content.TurnSystems.Get("military:units").Run(sim);
+        Assert.Equal(max - 40 + rate, damaged.Health);
+        Assert.Equal(max, full.Health);
+    }
+    [Fact]
     public void Barbarian_spawning_and_next_turn_behavior_survive_save_replay()
     {
         var sim = GameFactory.Scenario(mods.Content);
