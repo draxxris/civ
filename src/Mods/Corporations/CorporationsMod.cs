@@ -58,18 +58,20 @@ public sealed class CorporationsMod : IPreparableMod
         context.Subscribe<TechDiscovered>("corporations:obsolete", (sim, e) => service.Obsolete(sim, e.Team, e.Tech));
     }
 }
-internal sealed class CorporationEffects(ICorporationService service) : IModifierSource
+internal sealed class CorporationEffects(CorporationService service) : IModifierSource
 {
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope == ModifierScope.Player) { CivicMaintenance(context.Sim, context.Player, sink); return; }
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;
         var sim = context.Sim;
-        foreach (var corporation in service.Present(sim, city.Id))
+        // The branches' outputs and their maintenance read the same resource counts, gathered once for the city.
+        IReadOnlyList<CorporationDef> active = service.Present(sim, city.Id).Count == 0 ? [] : service.ActiveIn(sim, city);
+        var counts = CorporationService.ConsumedCounts(sim, city, active);
+        foreach (var def in active)
         {
-            if (!service.IsActive(sim, city.Id, corporation)) continue;
-            var def = sim.Content.Get<CorporationDef>(corporation);
-            var (yields, commerce) = CorporationService.BranchOutput(def, service.ConsumedBonusCount(sim, city.Id, corporation));
+            string corporation = def.Id;
+            var (yields, commerce) = CorporationService.BranchOutput(def, CorporationService.Consumed(def, counts));
             sink.AddYield(def.Id, yields);
             sink.AddCommerce(def.Id, commerce);
             // The source's branch happiness and health, and its military production modifier. The keys are Cities'
@@ -85,7 +87,7 @@ internal sealed class CorporationEffects(ICorporationService service) : IModifie
         }
         // One key: the city maintenance service folds flat costs into its own total. A second corporate key
         // would be skipped there as the same source and would suggest a settlement that never happens.
-        sink.Add("corporations:maintenance", "cities:maintenance_flat_hundredths", service.MaintenanceHundredths(sim, city.Id));
+        sink.Add("corporations:maintenance", "cities:maintenance_flat_hundredths", CorporationService.MaintenanceHundredths(sim, city, active, counts));
     }
 
     /// <summary>The player's civics' change to corporation maintenance, with the realistic corporations option choosing

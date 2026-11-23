@@ -61,34 +61,52 @@ internal sealed class CorporationService : ICorporationService
     public long ConsumedBonusCount(Simulation sim, int city, string corporation)
     {
         if (sim.State.FindCity(city) is not { } cityObj) return 0;
-        var owner = cityObj.Owner;
-        var prerequisites = sim.Content.Get<CorporationDef>(corporation).PrereqBonuses;
-        if (prerequisites.Length == 0) return 0;
-        // One connectivity query for the city, then a lookup per prerequisite.
-        var available = ResourceAccess.Counts(sim, owner, city, prerequisites);
-        return prerequisites.Distinct(StringComparer.Ordinal).Sum(b => Math.Max(0, available.GetValueOrDefault(b)));
+        var def = sim.Content.Get<CorporationDef>(corporation);
+        return Consumed(def, ConsumedCounts(sim, cityObj, [def]));
     }
+    /// <summary>The copies the city can use of every resource the corporations consume, in one query: the city's
+    /// connectivity and deals are gathered once, and each resource's count does not depend on the others asked.</summary>
+    internal static IReadOnlyDictionary<string, long> ConsumedCounts(Simulation sim, City city, IReadOnlyCollection<CorporationDef> corporations)
+    {
+        var wanted = corporations.SelectMany(c => c.PrereqBonuses).Distinct(StringComparer.Ordinal).ToArray();
+        return wanted.Length == 0 ? NoCounts : ResourceAccess.Counts(sim, city.Owner, city.Id, wanted);
+    }
+    private static readonly IReadOnlyDictionary<string, long> NoCounts = new Dictionary<string, long>();
+    /// <summary>The copies of its consumed resources a branch uses, read from <see cref="ConsumedCounts"/>.</summary>
+    internal static long Consumed(CorporationDef def, IReadOnlyDictionary<string, long> counts) => def.PrereqBonuses.Length == 0 ? 0
+        : def.PrereqBonuses.Distinct(StringComparer.Ordinal).Sum(b => Math.Max(0, counts.GetValueOrDefault(b)));
+    /// <summary>The corporations with an active branch in the city, in id order.</summary>
+    internal IReadOnlyList<CorporationDef> ActiveIn(Simulation sim, City city) =>
+        Present(sim, city.Id).Where(c => IsActive(sim, city.Id, c)).Select(sim.Content.Get<CorporationDef>).ToArray();
     public long MaintenanceHundredths(Simulation sim, int city)
     {
         var cityObj = sim.State.CityById(city);
+        // A city without a corporation owes nothing; only one with a branch resolves which are active.
+        bool any = cityObj.Extensions.Get<CorporationCityState>(sim.Content) is { Corporations.Count: > 0 };
+        IReadOnlyList<CorporationDef> active = any ? ActiveIn(sim, cityObj) : [];
+        return MaintenanceHundredths(sim, cityObj, active, active.Count == 0 ? NoCounts : ConsumedCounts(sim, cityObj, active));
+    }
+    /// <summary>The city's maintenance for its active branches, given their consumed resource counts
+    /// (<see cref="ConsumedCounts"/>), so the city's effects and its maintenance can share one resource query.</summary>
+    internal static long MaintenanceHundredths(Simulation sim, City cityObj, IReadOnlyList<CorporationDef> active, IReadOnlyDictionary<string, long> counts)
+    {
         // Look the ids up as before, so an unknown world size or handicap still fails loudly.
         var world = sim.Content.Attachment<WorldSizeCorporationsDef>(sim.Content.Get<WorldSizeDef>(sim.Settings.WorldSize!).Id)
             ?? WorldSizeCorporationsDef.None;
         var handicap = sim.Content.Attachment<HandicapCorporationsDef>(sim.Content.Get<HandicapDef>(sim.Settings.Handicap).Id)
             ?? HandicapCorporationsDef.None;
-        // A city without a corporation owes nothing. Every city calculation asks this, and the player's maintenance
-        // modifier is a whole player calculation, so it is gathered only for a city that has something to pay for.
-        if (cityObj.Extensions.Get<CorporationCityState>(sim.Content) is not { Corporations.Count: > 0 }) return 0;
+        // Every city calculation asks this, and the player's maintenance modifier is a whole player calculation, so it
+        // is gathered only for a city with an active branch to pay for.
+        if (active.Count == 0) return 0;
         long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total(MaintenanceKey);
         int inflation = InflationPercent(sim, cityObj.Owner) + 100;
         bool realistic = sim.IsOptionEnabled("foundation:gameoption_realistic_corporations");
         long total = 0;
-        foreach (var corporation in Present(sim, city).Where(c => IsActive(sim, city, c)))
+        foreach (var def in active)
         {
-            var def = sim.Content.Get<CorporationDef>(corporation);
             var hq = def.HeadquartersCommerce;
             long maintenance = 100L * (hq.Gold + hq.Research + hq.Culture + hq.Espionage);
-            long bonusMaintenance = (long)def.MaintenanceHundredths * ConsumedBonusCount(sim, city, corporation);
+            long bonusMaintenance = (long)def.MaintenanceHundredths * Consumed(def, counts);
             maintenance += bonusMaintenance * world.CorporationMaintenancePercent / 100;
             maintenance = maintenance * (cityObj.Population + 17) / 18;
             maintenance = maintenance * handicap.CorporationMaintenancePercent / 100;
