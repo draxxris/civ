@@ -22,7 +22,7 @@ internal sealed class PathfindingService(MovementService movement) : IPathfindin
             if (current == goal) return Build(sim, unit, start, goal, reached, priority.Cost);
             foreach (var next in grid.Neighbors(current))
             {
-                if (query.CanEnter(current, next, attack && next == goal) is not null) continue;
+                if (!query.CanStep(current, next, attack && next == goal)) continue;
                 long cost = priority.Cost + query.StepCost(current, next);
                 if (reached.TryGetValue(next, out var previous) && previous.Cost <= cost) continue;
                 reached[next] = (cost, current);
