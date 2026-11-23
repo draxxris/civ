@@ -32,6 +32,9 @@ public static class CityBuildingRules
     private sealed class Selection(Simulation sim, City city, IEnumerable<string> ids)
     {
         private readonly B[] _buildings = ids.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).Select(sim.Content.Get<B>).ToArray();
+        // Only a building that names replacements can replace another, so the replacement scan, which every building
+        // of the set makes, visits these alone, in the same order.
+        private B[]? _replacers;
         private readonly Dictionary<string, bool> _active = new(StringComparer.Ordinal);
         private readonly HashSet<string> _visiting = new(StringComparer.Ordinal);
 
@@ -59,6 +62,12 @@ public static class CityBuildingRules
         private bool HasBase(B building) => building.ExtendsBuildingClass is not { Length: > 0 } category
             || _buildings.Any(b => b.Id != building.Id && (b.DefaultBuilding == category || b.Id == category) && IsActive(b));
 
-        private bool HasReplacer(B building) => _buildings.Any(b => Replaces(b, building) && IsActive(b));
+        private bool HasReplacer(B building)
+        {
+            _replacers ??= Array.FindAll(_buildings, b => !b.ReplaceBuildings.IsEmpty);
+            foreach (var replacer in _replacers)
+                if (Replaces(replacer, building) && IsActive(replacer)) return true;
+            return false;
+        }
     }
 }
