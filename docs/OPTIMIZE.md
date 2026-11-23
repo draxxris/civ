@@ -2102,6 +2102,181 @@ From the final tree, per 8 turns at 451 and 552:
    candidate. In multiplayer, `kernel:state_hash` (34.5 ms per turn in new8) is larger
    than any of them.
 
+### Pass 17: City Ledgers Kept Across Writes
+
+- **Date**: 2026-11-23
+- **Commits**: `19663fc5`, `88d9b563`, `d1f2ea0b`, `aae3eca6`, `f3c8cc3f`, `71d661a2`,
+  `258f53d1`, `aafb69ee`
+
+This pass addresses item 1 of the Pass 16 "Still Slow" list: every turn system and AI
+planner rebuilt each city's modifier ledger. The fix is structural. The kernel records
+what may have been written, modules declare what writers write and what readers never
+read, and `ModifierSink.Collect` keeps each source's lines across writes that cannot
+affect them. The contract is in DESIGN.md under "Modifiers and ledgers", in the
+subsection "Kept contributions, state domains and write windows". Every final state is
+byte-identical.
+
+#### Method, Saves and Hashes
+
+- Same machine, saves and subjects as Pass 16. Other agents shared the machine, with a
+  load average of 2 to 13 during the runs. The base tree (`8a86ce03`, extracted with
+  `git archive`) and the final tree were run alternately, one subject at a time. Figures
+  are the mean wall time of the last 6 of 8 turns ("skip2"), plus profile entries summed
+  over 8 turns. Under this load, single runs vary by 10 to 20%. Only differences that
+  repeat across pairs are reported as changes.
+- Reference hashes on the final code: 451 + 4 `975963b591c0c71e`, 451 + 20
+  `6eedba278a9d2381`, 552 + 4 `11d283f0b52d0e80`, new game `9bf38cf7bc3e5245`,
+  corporations save + 4 `24a7278a6d3bddb2`, 451 + 8 `f8a688851542c921`, 552 + 8
+  `b26ccf369976e5e1`, new8 `a9ba4f3b5780707a`. All eight match.
+
+#### Choosing the Design
+
+The candidates were tested by probes on the base tree at 451 + 8. Each probe compared the
+ledger a collection produced with the previous one for the same context:
+
+- 4,968 of 5,695 city collections (4.3 s) produced the same ledger as the previous one;
+  81 differed. The repeated work was real.
+- A single kernel write revision, which keeps a ledger only until the next write of any
+  kind, would have served 5% of that time. Writes are too frequent: citizen
+  reassignment, queue edits, AI intent commits and unit moves happen between almost any
+  two reads.
+- Declaring the cheap, frequent writers (work assignment, culture, production, gold,
+  rates, AI intent) would serve 49%. Adding growth, moves and military units would serve
+  62%, and every timer system 78%. The benefit depends on which writes a source may
+  ignore, so the invalidation has to be per source and per state domain.
+- So the kernel tracks named state domains with a stamp each, plus a stamp for the
+  undeclared remainder, and keeps lines per source and context. Declarations are opt-in
+  and conservative: an undeclared writer writes everything, and an undeclared source
+  reads everything. Correctness never depends on a module declaring anything. Turn
+  systems were not split into read and write passes; that would change every system's
+  structure and still miss the AI's interleaved commands.
+
+#### What Was Built
+
+1. **Write windows and state domains** (`19663fc5`). Domains are registered paths of
+   canonical state fields. Windows open around every command `Apply`, every turn system
+   `Run`, and the kernel's own bookkeeping, and stamp what they declare. Handled events
+   widen a window; nested and suspended windows compose. Kernel spans bound the reuse,
+   so host edits between calls are always seen.
+2. **The per-source cache** (`88d9b563`, `71d661a2`, `aafb69ee`). A
+   `ConcurrentDictionary` keyed by (source index, context), shared by AI scoring
+   threads, with immutable entries. Bounded at 32,768 entries and emptied when full, on
+   state replacement, and at the end of the outermost kernel span. Two fixes followed
+   measurement:
+   - `ConcurrentDictionary.Count` takes every bucket lock, so reading it on each store
+     serialised the parallel scoring threads. Modifier collection rose from 3.5 to
+     23.0 s over new8, and from 5.9 to 7.4 s per 8 turns at 451, until the cache
+     counted its own additions.
+   - Unit and plot calculations, mostly one-off combat and placement previews, cost
+     more to keep than they saved: `ai:military` took 3.5 s at 552 on the base tree and
+     6.5 s with them kept. Only city, player and team calculations are kept now.
+3. **Verify mode** (`d1f2ea0b`). `Simulation.VerifyWrites`, exposed as
+   `--verify-modifier-cache` on `hash-trace` and `ai:play`, recomputes every reused
+   contribution and compares it line by line. It also checks every declared window, by
+   hashing the state without its declared domains, to have written nothing else.
+   `WriteWindowTests` use it to catch a lying writer and a lying source.
+4. **Declarations through providers** (`aae3eca6`). `IStateReader.UnreadDomains(ContentDb)`
+   lets a source that calls other modules' providers declare only what all of them
+   declare (`UnreadByAll`). Private domains are counted unread by every reader. An event
+   published outside any window now dispatches inside one, which closed a stamping gap
+   found in review.
+5. **The first declaration batch** (`f3c8cc3f`). `cities:work` and `cities:queue` cover
+   the most frequent city writes. `ai:intent` (private) covers the AI's planning
+   commits. `BuildingEffects`, the most expensive source, declares both city domains
+   unread. It calls the resource suppliers and building-grant providers, so those seams
+   (`ICityResourceSupply`, `IFreeBuildingGrants`) now bound their implementations to
+   the same promise by default. The Corporations supplier meets it by inspection, and
+   the verify mode checks it. Corporations' own source, `CorporationEffects`, stays
+   undeclared.
+
+Probe at 451 + 2, with miss reasons split, after each step:
+
+| Step | Source time | Stale (written since) | Computed while a window wrote |
+| :-- | --: | --: | --: |
+| Cache, nothing declared | 2,649 ms | 849 ms | 1,689 ms |
+| Work, queue and intent declared, Corporations supplier blocking | 2,623 ms | 753 ms | 1,761 ms |
+| With the seam contracts | 2,360 ms | 474 ms | 1,656 ms |
+
+`BuildingEffects` fell from 1,985 to 1,537 ms per 2 turns. Most of what remains is
+reads inside undeclared turn systems: `cities:growth` 390 ms, `great_people:births`
+244, `global_warming:warming` 179, `cities:culture` 166, `revolution:instability` 158,
+`cities:production` 145 and `economy:gold` 101. A source that reads what an open window
+may write is computed directly.
+
+#### Results
+
+Paired runs on the final tree (load 2 to 6):
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| 451, wall per turn (pairs 3, 4, 6) | 1,178 / 1,221 / 1,218 ms | 1,088 / 1,161 / 1,116 ms | −5 to −8% |
+| 451, `modifiers:collect` per 8 turns | 5,632 / 6,076 / 6,081 ms | 4,390 / 4,499 / 5,081 ms | −16 to −26% |
+| 451, allocation per turn | 803 MiB | 762 to 766 MiB | −5% |
+| 552, wall per turn (pair 6) | 1,819 ms | 1,488 ms | −18% |
+| 552, `modifiers:collect` per 8 turns | 8,909 ms | 7,417 ms | −17% |
+| 552, allocation per turn | 1,218 MiB | 1,171 MiB | −4% |
+| Corporations save, wall per turn (2 turns) | 1,287 ms | 1,313 ms | within noise |
+| New game, total | 14.9 s (load 3.8) | 13.9 s (load 1.7) | within noise |
+| New8, total | 23.9 s | 25.0 s | +4%, within noise |
+
+The early game gains nothing: few cities, and most of its writes come from undeclared
+systems and unit moves. The 552 figure comes from one pair; the earlier pairs ran
+before the scope fix and showed the `ai:military` regression described above.
+
+`mise run benchmark` ran alternately on both trees at load 8 to 10. The single samples
+varied by up to a factor of two between base runs (fifty-city turn 354 and 794 ms;
+eight-player preparation 14.1 and 17.4 s), and the final tree fell within that spread
+(277 and 261 ms; 20.7 and 14.2 s). No change can be read from it.
+
+Memory: the cache holds at most 32,768 entries of a key, a stamp and an array of
+references to existing ledger lines, a few megabytes at most. It is emptied at the end
+of every outermost kernel call, so nothing survives between turns or AI players.
+Allocation per turn fell, because reused contributions allocate no new lines.
+
+#### Network Floods
+
+The resource network's edges are symmetric. Route and water modes, city nodes, access
+and blockades are properties of a single plot. `RiverEdge(from, to)` reads the shared
+edge from `from` only (bit `d`), and the corner edges at both shared vertices from both
+plots. The reverse query reads bit `d + 3` of `to` instead, and `GameState.SetRiver`
+always sets both bits. The only way to break the mirroring is the public
+`Plot.RiverEdges` setter, which the rules use only on detached copies.
+`RiverGenerationTests.Generated_river_edges_are_mirrored_on_both_plots` checks every
+generator. Reachability for one player and one query is therefore an equivalence, and
+one flood could serve every city it reaches. That sharing was not built: with ledgers
+kept, floods are no longer the leading cost.
+
+#### Verification
+
+- The verify mode printed the reference hashes, with no difference or undeclared write,
+  for 451 + 4 (47 s), 552 + 4 (77 s), the corporations save + 4 (38 s) and the new game
+  (130 s). It was rerun on 451 + 4 and the new game after the final scope change.
+- `mise run test`, `mise run test:worldgen`, `mise run check:sync` and
+  `mise run build:game` pass.
+
+#### Still Slow, Ranked
+
+From the final tree at 552, per 8 turns:
+
+1. **Ledgers read inside undeclared turn systems.** `modifiers:collect` is still 7.4 s.
+   Most of the remaining misses are reads by growth, great-people births, global
+   warming, culture, revolution, production and gold while their own undeclared window
+   is open. The next step is declaring those systems:
+   - culture (`Culture` and the city state's culture fields);
+   - production and gold (`Treasury` and the settlement fields);
+   - growth (`FoodStored`, `Population`).
+
+   Each needs a domain and a reader-side audit. Building effects read population and
+   culture levels through grants and requirements, so the audit decides which
+   declarations pay.
+2. **AI military.** 4.0 s at 552, unchanged by this pass.
+3. **Unit moves.** `MoveUnitPathCommand` writes units, sight and revealed plots, and
+   the resource flood reads `Revealed`. A narrower domain for unit positions alone would
+   keep ledgers across most moves.
+4. **Corporations.** `CorporationEffects` is undeclared, so in a game with corporations
+   every write recomputes it. Its module can declare it when its rework settles.
+5. The Pass 16 items 2 to 7 are unchanged.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
