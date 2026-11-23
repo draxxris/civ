@@ -118,40 +118,46 @@ internal sealed class MovementService : IMovementService
     private static bool HasControl(Simulation sim, Unit unit, Unit other) => MilitaryData.VisibleEnemy(sim, unit.Owner, other)
         && MilitaryData.Effect(MilitaryData.Effects(sim, other), "zone_control") > 0;
     public int StepCost(Simulation sim, int unitId, TileId from, TileId to) => Query(sim, unitId).StepCost(from, to);
-    private int StepCost(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects, TileId from, TileId to)
+    private static int StepCost(MovementQuery q, TileId from, TileId to)
     {
-        int denominator = MilitaryData.Constants(sim).MoveDenominator;
-        if (def.FlatMovementCost || def.Domain == "military:domain_air") return denominator;
-        int regular = RegularCost(sim, unit, def, sim.State.Plots[to.Value], effects);
-        return Math.Max(1, Math.Min(regular, RouteCost(sim, unit, def, from, to, effects)));
+        if (q.Def.FlatMovementCost || q.Def.Domain == "military:domain_air") return q.Denominator;
+        int regular = RegularCost(q, q.Sim.State.Plots[to.Value]);
+        return Math.Max(1, Math.Min(regular, RouteCost(q, from, to)));
     }
-    private static int RegularCost(Simulation sim, Unit unit, S.UnitDef def, Plot plot, Ariel.Content.ModifierSink effects)
+    private static int RegularCost(MovementQuery q, Plot plot)
     {
-        int denominator = MilitaryData.Constants(sim).MoveDenominator;
-        if (def.IgnoreTerrainCost) return denominator;
+        var sim = q.Sim;
+        if (q.Def.IgnoreTerrainCost) return q.Denominator;
         int cost = plot.Feature is { } f ? sim.Content.Get<S.FeatureDef>(f).MovementCost : sim.Content.Get<S.TerrainDef>(plot.Terrain).MovementCost;
-        if (plot.Kind == PlotKind.Hills) cost += MilitaryData.Raw(sim, "HILLS_EXTRA_MOVEMENT", 1);
-        if (plot.Kind == PlotKind.Peak) cost += MilitaryData.Raw(sim, "PEAK_EXTRA_MOVEMENT", 1);
-        cost = Math.Min(BaseMoves(sim, unit, def, effects), Math.Max(1, cost - MilitaryData.Effect(effects, "move_discount"))) * denominator;
-        if (DoubleMove(sim, unit, plot)) cost /= 2;
+        if (plot.Kind == PlotKind.Hills) cost += q.HillsExtra;
+        if (plot.Kind == PlotKind.Peak) cost += q.PeakExtra;
+        cost = Math.Min(q.BaseMoves, Math.Max(1, cost - q.MoveDiscount)) * q.Denominator;
+        if (DoubleMove(q.Promotions, plot)) cost /= 2;
         return cost;
     }
     internal static int BaseMoves(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects) => Math.Max(1,
         def.Moves + MilitaryData.Effect(effects, "moves") + MilitaryData.Techs(sim, unit.Owner).Sum(t => t.DomainExtraMoves.GetValueOrDefault(def.Domain ?? "")));
-    private static bool DoubleMove(Simulation sim, Unit unit, Plot plot) => MilitaryData.Promotions(sim, unit).Any(p =>
-        plot.Kind == PlotKind.Hills && p.HillsDoubleMove || (plot.Feature is { } f ? p.FeatureDoubleMoves.GetValueOrDefault(f) : p.TerrainDoubleMoves.GetValueOrDefault(plot.Terrain)));
-    private static int RouteCost(Simulation sim, Unit unit, S.UnitDef def, TileId from, TileId to, Ariel.Content.ModifierSink effects)
+    private static bool DoubleMove(S.PromotionDef[] promotions, Plot plot)
     {
+        foreach (var p in promotions)
+            if (plot.Kind == PlotKind.Hills && p.HillsDoubleMove
+                || (plot.Feature is { } f ? p.FeatureDoubleMoves.GetValueOrDefault(f) : p.TerrainDoubleMoves.GetValueOrDefault(plot.Terrain)))
+                return true;
+        return false;
+    }
+    private static int RouteCost(MovementQuery q, TileId from, TileId to)
+    {
+        var sim = q.Sim;
         var a = sim.State.Plots[from.Value]; var b = sim.State.Plots[to.Value];
-        if (!ValidRoute(sim, unit, a, effects) || !ValidRoute(sim, unit, b, effects)) return int.MaxValue;
-        if (MilitaryData.CrossesRiver(sim, from, to) && !MilitaryData.Techs(sim, unit.Owner).Any(t => t.BridgeBuilding)) return int.MaxValue;
+        if (!ValidRoute(q, a) || !ValidRoute(q, b)) return int.MaxValue;
+        if (MilitaryData.CrossesRiver(sim, from, to) && !q.BridgeBuilding) return int.MaxValue;
         var x = sim.Content.Get<S.RouteDef>(a.Route!); var y = sim.Content.Get<S.RouteDef>(b.Route!);
         int cost = Math.Max(x.MovementCost, y.MovementCost);
-        int flat = Math.Max(x.FlatMovement, y.FlatMovement) * BaseMoves(sim, unit, def, effects);
+        int flat = Math.Max(x.FlatMovement, y.FlatMovement) * q.BaseMoves;
         return Math.Min(cost, flat);
     }
-    private static bool ValidRoute(Simulation sim, Unit unit, Plot plot, Ariel.Content.ModifierSink effects) => plot.Route is not null
-        && (plot.Owner is null || !MilitaryData.Enemy(sim, unit.Owner, plot.Owner.Value) || MilitaryData.Effect(effects, "enemy_route") > 0);
+    private static bool ValidRoute(MovementQuery q, Plot plot) => plot.Route is not null
+        && (plot.Owner is null || !MilitaryData.Enemy(q.Sim, q.Unit.Owner, plot.Owner.Value) || q.EnemyRoute);
     public string? ValidatePath(Simulation sim, int player, int unitId, IReadOnlyList<Hex> path)
     {
         var unit = sim.State.FindUnit(unitId);
@@ -235,27 +241,50 @@ internal sealed class MovementService : IMovementService
         if (sim.Content.Get<S.TerrainDef>(sim.State.Plots[from.Value].Terrain).IsWater
             && MilitaryData.Effect(MilitaryData.Effects(sim, unit), "amphibious") == 0) unit.MovesLeft = 0;
     }
-    /// <summary>Read-only context scoped to one path query. Modifier ledgers and control checks are reused across edges,
-    /// never cached across commands or games.</summary>
+    /// <summary>Read-only context scoped to one path query. The unit's ledger, the per-unit step-cost inputs derived
+    /// from it, its technologies and promotions, and control checks are reused across edges, never cached across
+    /// commands or games.</summary>
     internal sealed class MovementQuery
     {
         private readonly MovementService movement;
-        private readonly Simulation sim;
-        private readonly Unit unit;
-        private readonly S.UnitDef def;
+        internal readonly Simulation Sim;
+        internal readonly Unit Unit;
+        internal readonly S.UnitDef Def;
         private readonly Ariel.Content.ModifierSink effects;
         private readonly Dictionary<int, bool> control = new();
+        private StepInputs? _step;
         internal MovementQuery(MovementService movement, Simulation sim, Unit unit)
         {
-            this.movement = movement; this.sim = sim; this.unit = unit;
-            def = MilitaryData.Definition(sim, unit); effects = MilitaryData.Effects(sim, unit);
+            this.movement = movement; Sim = sim; Unit = unit;
+            Def = MilitaryData.Definition(sim, unit); effects = MilitaryData.Effects(sim, unit);
         }
-        internal string? CanEnter(TileId from, TileId to, bool attack) => movement.CanEnter(sim, unit, def, effects, from, to, attack, Controls);
-        internal int StepCost(TileId from, TileId to) => movement.StepCost(sim, unit, def, effects, from, to);
+        internal string? CanEnter(TileId from, TileId to, bool attack) => movement.CanEnter(Sim, Unit, Def, effects, from, to, attack, Controls);
+        internal int StepCost(TileId from, TileId to) => MovementService.StepCost(this, from, to);
+        private StepInputs Step => _step ??= new(Sim, Unit, Def, effects);
+        internal int Denominator => Step.Denominator;
+        internal int BaseMoves => Step.BaseMoves;
+        internal int MoveDiscount => Step.MoveDiscount;
+        internal int HillsExtra => Step.HillsExtra;
+        internal int PeakExtra => Step.PeakExtra;
+        internal bool EnemyRoute => Step.EnemyRoute;
+        internal bool BridgeBuilding => Step.BridgeBuilding;
+        internal S.PromotionDef[] Promotions => Step.Promotions;
         private bool Controls(Unit other)
         {
-            if (!control.TryGetValue(other.Id, out var value)) control[other.Id] = value = HasControl(sim, unit, other);
+            if (!control.TryGetValue(other.Id, out var value)) control[other.Id] = value = HasControl(Sim, Unit, other);
             return value;
+        }
+        /// <summary>What every edge's cost reads that depends only on the unit, its owner and the rules.</summary>
+        private sealed class StepInputs(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects)
+        {
+            public readonly int Denominator = MilitaryData.Constants(sim).MoveDenominator;
+            public readonly int BaseMoves = MovementService.BaseMoves(sim, unit, def, effects);
+            public readonly int MoveDiscount = MilitaryData.Effect(effects, "move_discount");
+            public readonly int HillsExtra = MilitaryData.Raw(sim, "HILLS_EXTRA_MOVEMENT", 1);
+            public readonly int PeakExtra = MilitaryData.Raw(sim, "PEAK_EXTRA_MOVEMENT", 1);
+            public readonly bool EnemyRoute = MilitaryData.Effect(effects, "enemy_route") > 0;
+            public readonly bool BridgeBuilding = MilitaryData.Techs(sim, unit.Owner).Any(t => t.BridgeBuilding);
+            public readonly S.PromotionDef[] Promotions = MilitaryData.Promotions(sim, unit).ToArray();
         }
     }
 
