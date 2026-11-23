@@ -288,13 +288,16 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   diplomatic victory vote; members may defy a resolution and lose full membership.
   Free trade lets members trade without open borders; it carries no commerce bonus.
 - **Corporations**: all 36 source corporations (21 corporations and 15 guilds, a guild
-  founded by its Master Guild), founding by building the imported headquarters or
-  Master Guild, branch spread (via gold, executives or guild masters), headquarters protection,
+  founded by its Master Guild), in two modes chosen by the Realistic Guilds/Corporations
+  option (on by default): founding, spread and decay on their own (a mean-time founding
+  per nation, the source's distance and influence spread raised by the nation's supply,
+  branches and headquarters closing after losing their resource), or founding by building
+  the imported headquarters or Master Guild and branch spread via gold or executives
+  (guilds are corporations of older eras, with the same rules). Headquarters protection,
   branch revenue (per resource copy and flat), resource consumption, and maintenance.
   Competing corporations, branch happiness, health and military production, produced
-  resources, guild obsolescence, Guild Hall prerequisites, and the source's spread cost
-  and executive spread chance also run. Not yet run: the realistic-corporations option's
-  automatic spread, decay and founding (`iSpread`).
+  resources, guild obsolescence, and the source's spread cost
+  and executive spread chance also run.
 - **Espionage & Intelligence**: Rival-team point allocation, bilateral spending ratios,
   passive visibility/investigation unlocks, full rival intelligence screen
   (demographics, city yields/buildings, production queues, treasury reserves) with

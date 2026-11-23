@@ -418,7 +418,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 
 | Seam | `GameRules` | Asked by | Answered by | Without an answer |
 | --- | --- | --- | --- | --- |
-| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf (a branch in the city, or with parameter 2 the city being the corporation's headquarters, where executives are trained), and how it names that seat (`SeatPhrase`: "the headquarters of Cereal Mills", "the Masons Master Guild") | Corporations | no corporations and no headquarters; the leaf fails and reads "the headquarters of" the corporation |
+| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf (a branch in the city, or with parameter 2 the city being the corporation's headquarters, where executives are trained), and how it names that seat (`SeatPhrase`: "the headquarters of Cereal Mills", "the Masons Master Guild"); production eligibility, for why a city may not train a unit (`RefuseUnit`: executives with Realistic Guilds/Corporations) | Corporations | no corporations and no headquarters; the leaf fails and reads "the headquarters of" the corporation; no unit is refused |
 | `IAirOperations` | `AirOperations` | production eligibility (aircraft), the intercept activity | AirCombat | aircraft are refused with "Air operations are unavailable"; no unit can stand on intercept |
 | `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
 | `IDealAppraiser` | `DealAppraiser` | the Diplomacy screen, to predict a computer leader's answer to a deal | the computer player (`ai`) | no prediction is shown |
@@ -431,7 +431,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
-| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders), Corporations (the imported headquarters and guild halls) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
+| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders), Corporations (the imported headquarters and Master Guilds) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
 | `IContentCheck` | (list, run once by `GameRules.Bind`) | the load, once content freezes, for invariants that read other mods' rows | Corporations (one founding building per corporation, no building or unit naming an undefined corporation, every executive trainable) | nothing is checked |
 | `ICityResourceSupply` | (list, read by `ResourceAccess.Supplied`) | `ResourceAccess.Counts` and Cities' city bonus set, for every city use of a resource (never for trade: `ResourceAccess.TradeCounts`) | Corporations (a branch's produced resource) | a city has only its network and deal copies |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
@@ -993,8 +993,8 @@ elapsed turn boundaries based on game speed and civic `HurryInflationModifier`.
 base headquarter commerce (100 per gold, research, culture, and espionage), resource
 consumption scaled by world size (`WorldSizeCorporationsDef`), population scaling
 `(population + 17) / 18`, handicap scaling (`HandicapCorporationsDef`), player civic modifier (`corporations:maintenance_percent`, from the civic's
-`CivicCorporationsDef`, selecting `RealisticMaintenancePercent` when realistic
-corporations is active), inflation
+`CivicCorporationsDef`, selecting `RealisticMaintenancePercent` when Realistic
+Guilds/Corporations is on), inflation
 pre-division `* 100 / (100 + inflation)` to balance subsequent economy inflation, and
 realistic handicap scaling. `CityMaintenanceResult.CorporateHundredths` exposes the
 uninflated base corporate cost, while `RecurringCosts` records
@@ -1635,17 +1635,24 @@ rest of the content uses; a guild differs only in data, its `Kind`. Before the i
 only seven hand-written rows existed, so the other 29 identities' headquarters,
 executives and follow-up buildings were inert.
 
-A corporation is founded in two steps. Its founding building becomes available, and
-completing it in a city founds the corporation there. The founding building is the
+Guilds and corporations work in one of two modes, chosen by the game option
+`foundation:gameoption_realistic_corporations`, shown as "Realistic Guilds/Corporations"
+and on by default (`CorporationMode.Realistic`). With it on (the realistic mode) they are
+founded, spread and closed by the game itself; with it off (the manual mode) players found
+them by building and spread them with executives and gold. The paragraphs below describe
+the manual mode first, then the realistic mode. A guild is a corporation of an older
+era and follows exactly the same rules; only its founding building's name differs.
+
+In the manual mode a corporation is founded in two steps. Its founding building becomes
+available, and completing it in a city founds the corporation there. The founding building is the
 imported building whose `BuildingDef.FoundsCorporation` names the identity: a
 headquarters for a corporation, the Master Guild for a guild. "Guild Hall" stays the name
-of the common building (the Crafts, Servants and Victuallers Guild Halls). What a
+of the common building that the Guilds civic allows, which has nothing to do with them. What a
 corporation calls its founding building is data: `CorporationDef.Seat`, "headquarters" or
 "Master Guild", which the importer sets from the source's special building type and the
 corporations screen, city panel, notices and encyclopedia read. Its own requirements say
 when: a technology, and for a guild also a number of buildings of its trade across the
-empire and the Guild Hall of its group (Crafts, Servants or Victuallers). Its world limit
-is one. The source's Master Guilds cost 300; the source left the 21 headquarters to a great person (cost -1), so the importer
+empire. Its world limit is one. The source's Master Guilds cost 300; the source left the 21 headquarters to a great person (cost -1), so the importer
 prices them at the median national wonder of their era, 700 industrial and 1300 modern. Ariel takes 70% of each: a
 Master Guild costs 210, an industrial headquarters 490 and a modern one 910.
 The mod is their `IBuildingFounder` (`CorporationFounder`): beyond the building's
@@ -1655,9 +1662,8 @@ can build it once the corporation is founded. Great people do not construct a fo
 building, though the source lists headquarters among their buildings: founding is
 production only, as with a religion's founding wonder. An executive's training
 requirement names its corporation's headquarters (the `corporation` leaf with parameter
-2), the city that completed the founding building, so executives are trained there; a
-guild master (`bgmaster`, `ggmaster`, `wgmaster`) spreads the five guilds of its group
-and is trained where its group's Guild Hall stands. Load checks (`IContentCheck`) refuse
+2), the city that completed the founding building, so executives are trained there; each
+guild has its own executive, trained in its Master Guild. Load checks (`IContentCheck`) refuse
 a corporation without exactly one buildable, technology-gated founding building, a
 building or unit row that names an identity no corporation defines, and an executive no
 city could ever train.
@@ -1672,15 +1678,23 @@ headquarters commerce per branch, and resource-based maintenance. It also gives 
 the corporation's `Happiness` and `Health` (`cities:happiness`, the general
 `cities:health`) and its `MilitaryProductionPercent` (`cities:military_production_percent`,
 Ultimate Soldiers' +15%). Civics can prohibit local or foreign corporations. A branch
-requires an active branch owned by the spreading player.
+requires an active branch owned by the spreading player. In either mode a branch whose
+city can use no copy of the resources its corporation consumes does nothing: no output,
+no headquarters income and no maintenance (`ICorporationService.IsActive`). In the manual
+mode it stays, and works again when the resource returns; a headquarters survives the
+loss of its resource and its capture.
 
 Two corporations compete when either names the other in `CompetingCorporations` (the
-guilds of one Guild Hall group) or they consume a common resource
+guilds of one trade group) or they consume a common resource
 (`CorporationService.Competes`): a new branch evicts its rivals' branches from the city
 (`CorporationDisplaced`), and nobody opens a branch of, or founds, a rival in a
-competitor's headquarters city. A guild branch also needs `PrereqBuildingClasses`, its
-group's Guild Hall, somewhere in the city owner's empire (counted as the source does,
-unscaled by world size). A corporation is obsolete for a team that knows its
+competitor's headquarters city. A guild branch needs nothing more than a corporation's.
+The source asked a guild branch for its group's Guild Hall (Crafts, Servants or
+Victuallers) in the city owner's empire, spread guilds with three guild masters (one per
+group, trained at that hall) and forbade the halls with the realistic option; the owner
+decided guilds are plain corporations of older eras, so the three halls, the three
+masters and the hall prerequisite are not in Ariel (`PrereqBuildingClasses` is left
+unread). A corporation is obsolete for a team that knows its
 `ObsoleteTech` (Corporation, for every guild): its branches there stop working at once,
 and the team can neither found it nor spread it nor receive it. When the team learns the
 technology its branches close (`CorporationObsolete`), and a headquarters in the team
@@ -1705,8 +1719,91 @@ obsolete. It does so through the base seam `ICityResourceSupply`: `ResourceAcces
 adds supplied copies for every city use (happiness, health, building and unit
 prerequisites, other corporations, so the Equestrians' horse feeds Adventure Tours), and
 `ResourceAccess.TradeCounts` leaves them out for trade, since they are not on the network.
-The source's realistic-corporations automatic spread, decay and founding (`iSpread`) are
-not built; the field stays unread for that reason.
+Production of an executive is refused through the base seam
+`ICityCorporations.RefuseUnit` in the realistic mode.
+
+**The realistic mode** (`NaturalCorporations`, the `corporations:natural` turn system in the
+Environment phase) replaces founding buildings, executives and paid spreads
+with three steps each turn, in a fixed order, drawing from the simulation RNG in a stable
+order (corporations by id, players and cities by id):
+
+1. Decay. A branch outside the headquarters whose city can use no copy of the
+   corporation's resources starts a `corporations:branch_decay` timer (Timers) of
+   `BranchDecayTurns`; when it runs out and the city still has none, the branch closes
+   (`CorporationWithdrawn`). A headquarters whose nation has no city that can use a copy
+   starts a `corporations:headquarters_decay` timer of `HeadquartersDecayTurns`; when it
+   runs out and the nation still has none, the corporation dissolves (its founding
+   building is removed with its branches, `CorporationDissolved`), and that nation may not
+   found it again for `FoundingCooldownTurns` (`corporations:founding_cooldown`, so a
+   resource that comes and goes does not found and dissolve it over and over). Access that
+   comes back cancels a running timer. Every turn count scales with the game pace.
+2. Founding. A nation can found an unfounded corporation
+   (`ICorporationService.NaturalFoundingCity`) when it knows the technologies of the
+   founding building, the corporation is not obsolete for it, its civics allow
+   corporations, it waits out no cooldown, and one of its cities can use a copy of a
+   resource the corporation consumes and is no competitor's headquarters. Each such nation
+   founds it with chance 1/M a turn, M being `FoundingMeanTurns` (30) scaled to the pace:
+   the wait is geometric with mean M. Nations are tried in player order and the first
+   success founds it, so it has one founder. The headquarters is the nation's city that
+   can use the most copies of its resources, then the most populous, then the lowest id;
+   it gets the founding building (`CorporationFounded`, no `BuildingCompleted`, nothing to
+   pay), and earns the headquarters income as in the manual mode.
+3. Spread (`ICorporationService.NaturalSpreadOdds`). A city of a nation can take a branch
+   when it has none, the corporation is founded and not obsolete for the owner, the
+   owner's civics do not ban it (all corporations, or foreign ones when the headquarters
+   is another team's), the city can use a copy of a resource it consumes and it is no
+   competitor's headquarters. Each city holding an active branch reaches it with the
+   source's influence (100, plus each usable copy, plus `CORPORATION_RESOURCE_BASE_INFLUENCE`
+   (25) divided among the consumed resources, for each consumed resource it has; divided
+   by `CompetitorInfluenceDivisor` (10) per active competitor there, zero in a
+   competitor's headquarters) times the corporation's `NaturalSpreadPercent`, plus
+   `FREE_TRADE_CORPORATION_SPREAD_MOD` (25%) across a free-trade border, divided by
+   max(1, `CORPORATION_SPREAD_DISTANCE_DIVISOR` (100) x distance / the map's longest
+   distance - `SpreadDistanceFloor` (5)); the strongest reach counts. That is raised by
+   `SupplyPercentPerCopy` (50%) per copy the city can use, up to `SupplyCopiesCap` (10)
+   copies, and divided by 1 + corporations already in the city / `CrowdingDivisor` (2).
+   The branch opens when a draw in [0, `CORPORATION_SPREAD_RAND` (2500) x pace percent /
+   100) falls below that. A city takes at most one branch a turn. For example, a Cereal
+   Mills (`NaturalSpreadPercent` 60) headquarters with one corn has influence 107 and
+   reach 64; a city with one corn a tenth of the map's longest distance away (divisor 5)
+   gets 64 / 5 x 150% = 18 in 2500, about 0.7% a turn at normal pace, and one within six
+   hundredths of it (divisor 1) 96, about 3.8%.
+
+A guild that consumes no resource (Apothecaries', Artists', Carpenters' and Clerks')
+cannot be gated by a resource, so its `FoundingBuildingClasses` names the buildings of its
+trade its Master Guild asks for (four apothecaries, theatres, siege workshops or
+libraries, counted across the empire as that requirement counts them): a nation with the
+technology and those buildings may found it, and lose it when it no longer holds them. Its branches spread to every city of a nation whose civics allow it.
+
+No founding building can be built in this mode, and production says why
+("Founded automatically with Realistic Guilds/Corporations: a nation with Organic
+Chemistry and Wheat or Corn or Rice or Potatoes connected"). A paid spread and an
+executive's mission are refused with "Guilds and corporations spread on their own with
+Realistic Guilds/Corporations". Maintenance reads `RealisticMaintenancePercent` as before.
+
+The mode follows the source's realistic corporations (`CvGame::doFoundCorporation`,
+`CvCity::doCorporation`) where the owner's design allows, and differs where it decides:
+
+- The source checks every third turn (scaled to the pace) whether more than two teams
+  know the technology and founds in the world's best city by influence and a random term. Ariel tries each nation
+  with a mean wait instead, so one nation can found alone and founding is not a race of
+  the whole world's cities.
+- The source spreads from every city connected to the corporation; Ariel from each city
+  holding an active branch, with no trade-network requirement, and multiplies by the
+  nation's supply of the resource where the source multiplies by the player's corporate
+  influence (which the source raises with civics Ariel models as maintenance).
+- The source decays a branch whose influence falls below the corporation's average.
+  Ariel closes branches and headquarters for lost resources, after a grace, instead.
+- The source gives Mapster no `iSpread`, so it could never spread on its own; Ariel
+  gives it 50, the value of Red Curtains, which consumes the same resources.
+- The source gives a guild that consumes no resource full influence in every city, so
+  it may be founded anywhere once enough teams know the technology (the founder need not
+  know it) and spreads everywhere. Ariel asks the founding nation for the technology and
+  for the trade buildings its Master Guild names.
+
+The source constants the mode reads are checked at load (`SourceConstantCheck`); the
+numbers it adds are `data/corporation-rules.json` (`CorporationRulesDef`), validated when
+the mod loads.
 
 Espionage allocates whole points from saved commerce output across met rival teams by
 player-set weights. An unset weight is zero, and unspent points stay held and visible.
@@ -1874,7 +1971,8 @@ Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
 `revolution:planner`. The Corporations mod runs `corporations:planner` at
 `Religion + 100` (walks executives to foreign cities, as the religion planner walks
 missionaries once its own cities have the faith, and pays for branches in its own cities,
-one branch a turn either way and none while income is negative) and the GreatPeople mod runs
+one branch a turn either way and none while income is negative; in the realistic mode it
+does nothing, as there are no executives or paid spreads) and the GreatPeople mod runs
 `great_people:planner` at `Religion + 200`, so corporations spread before
 the great people planner looks at the empire's units, and both act before cities choose
 production (where a headquarters, which founds a corporation, competes). That ordering lives in those two numbers; a mod that must run
@@ -1945,7 +2043,8 @@ plus 1000 over their cost, one per six cities once a rival is known. The Corpora
 mod's `corporations:executives` asks a headquarters the player holds for one executive at
 a time, rated like a building whose yield is one more branch's headquarters income (about
 125), and only while the player can afford a branch and a foreign city it may enter, on
-the same landmass within ten tiles, could take one. A wish source keeps
+the same landmass within ten tiles, could take one; in the realistic mode it wishes for
+none, and a founding building is worth nothing to the city planner. A wish source keeps
 no mutable fields, never issues a command and never draws from the RNG.
 
 ### Valuers
@@ -2001,8 +2100,17 @@ The base game registers no valuer. The Corporations mod values its own civic dat
 (`corporations:civic_valuer`): a civic that bans corporations or foreign corporations
 costs what the affected branches in the player's cities produce, and a change to
 `corporations:maintenance_percent` (from the `CivicCorporationsDef` attachment or a civic
-effect) gains or costs that share of their maintenance. Before any corporation is founded
-it adds nothing, so games without corporations play as before.
+effect) gains or costs that share of their maintenance. A ban also costs the corporations
+the player could still get, in either mode: for each corporation not obsolete for it and
+not already in all its cities, half (`ProspectPercent`) of what a branch is worth
+(`CorporationPlanner.Worth`) in each of its cities that could hold one (one that can use
+a copy of its resources; every city for a guild that consumes none). An unfounded
+corporation counts when the player could found it: in the realistic mode when it could be
+founded there apart from its civics (`NaturalFoundingCity`'s test), in the manual mode
+when the player knows the founding technologies, or at half that again
+(`ResearchablePercent`) when it can research them now. A foreign ban costs only the
+prospects headquartered in another team. All of it is gathered once per AI segment
+(`AiContext.Derived`), the same for every civic weighed.
 
 The Trade mod (`trade:civic_valuer`) runs the real route selection for each of the
 player's cities twice: with the civic in its option, and with that option empty. It adds
@@ -2069,10 +2177,7 @@ Specialized planners handle empire governance and military campaigns:
   happiness and health at the civic planner's weights (8 and 6), its military production
   percent as production of a ten-production city, and its produced resource's happiness
   and health; spreads are only paid when the treasury covers the city's real
-  `SpreadCost`, and an obsolete corporation is not spread. A Guild Hall (any building a
-  live corporation's `PrereqBuildingClasses` names) the empire holds too few of is worth
-  half a founding building, since without it the guild is neither founded nor spread
-  there. `CorporationCivicValuer`
+  `SpreadCost`, and an obsolete corporation is not spread. `CorporationCivicValuer`
   weighs a ban by the same terms.
 - **Espionage (`EspionagePlanner`, contributed by the Espionage mod)**: Points the
   espionage weights at an enemy, else the nearest known rival, walks spies to its
@@ -2432,29 +2537,38 @@ categories:
 founding with its turn and founder, then for every AI player the civics that ban corporations and,
 for each founding building whose technology the player knows, in how many of its cities production
 can build it, why it cannot in the others, and in how many it is queued. `--force` loads a save made
-by other content. The findings of the first run (cost 490 and 910 for headquarters, 210 for Master
-Guilds; 5 players, small world; in the industrial and modern starts no AI knew a corporation or guild
-technology at turn 1, so the techs below were researched):
+by other content.
 
-- Headquarters are founded, late and rarely. Where a city may build one (population 4 or more
-  and production x 40 at least the cost, the wonder gate), the city planner rates it 205 to 374
-  against 290 to 450 for the best ordinary building, and several cities queued one. The first AI
-  reaches the first headquarters technologies (East West Traders, Mining Inc) around turn 136 to
-  150 and founds one within about ten turns. In eight 150-turn games, six founded one corporation
-  (turns 142 to 150) and none a guild. Continued for 100 turns, three of four games founded two
-  or three corporations (turns 150 to 241) and the fourth none.
-- The civic planner moves the AIs to civics that ban corporations (Hive, Planned, Marxist): at
-  turn 151, 3 of 71 players with cities ran a civic that bans all corporations; at turn 251, 21
-  of 37. A ban costs nothing until branches exist (`CorporationCivicValuer`), so nothing resists
-  it. In the game whose major AIs all ran such civics, nothing was founded in 250 turns.
-- No Master Guild can be founded in a default game. Each needs one Guild Hall of its group
-  (`cities:cguildhall`, `sguildhall`, `vguildhall`), and those halls are forbidden by the
-  `foundation:gameoption_realistic_corporations` option, which defaults to on. No AI held a hall
-  in any default-option run; with the option off the AIs do build halls, and still founded no
-  guild in 150 turns, because the guild also needs four to five buildings of its trade class.
-- The saved late games (`ai450.json`, turn 451, and `p14/t550.json`, turn 552) show nothing: the
-  AIs there know the 15 guild technologies but none of the 21 corporation technologies
-  (Combustion, Explosives and others), and none found anything in 30 more turns.
+Findings with both modes (5 players, small world, seeds 1 to 4, industrial and modern starts, 150
+turns, then seeds 1 industrial and 2 modern continued 100 turns; no AI knows a corporation or guild
+technology at turn 1). "Before" is the tree without the realistic mode, guild simplification and
+prospect valuation; "players" counts AI players with cities, minors included:
+
+| Run | Founded in 8 games, before | Founded in 8 games, after | Banning all corporations at turn 151, before / after |
+| --- | --- | --- | --- |
+| Realistic (default) | 5 corporations, no guild (turns 142 to 150) | 80: 66 guilds, 14 corporations (first at turns 60 to 84), 13 to 30 branches (headquarters included) a game | 3 of 71 / 1 of 71 |
+| Manual | 4 corporations, no guild (turns 139 to 150) | 7: 4 guilds, 3 corporations (turns 106 to 149) | 4 of 71 / 0 of 64 |
+
+At turn 251 the realistic continuations hold 21 (7 guilds, 14 corporations; 46 branches) and 18
+corporations (the guilds are obsolete there; 51 branches), against 2 and 0 before; 1 of 8 and 5 of
+9 players ban all corporations, against 5 of 11 and 7 of 9. The manual continuations found 5 and
+6 corporations (before 1 and 0), with 2 of 11 and 4 of 11 players banning, against 6 of 11 and 9
+of 10.
+
+- In the realistic mode guilds appear about ten turns after the first AI learns their
+  technology (Masons and Carpenters around turn 61), corporations as their technologies come.
+  Spread is slow, as the source's: a game holds one to three branches per founded corporation
+  after 150 turns, two to three after 250.
+- In the manual mode guilds need no Guild Hall any more, and the AIs built four Master Guilds
+  in eight games; the wonder gate (population 4 and production x 40 at least the cost) and the
+  trade buildings still keep founding late.
+- A ban now costs the corporations a player could still found or receive
+  (`CorporationCivicValuer`, half a branch's worth per city that could hold one), so the drift to
+  Hive, Planned and Marxist civics is weaker: no 150-turn game lost its corporations to it, but
+  in the modern continuation 5 of 9 players still ban by turn 251, where those civics are worth
+  more to them.
+- The saved late games (`ai450.json`, turn 451, and `p14/t550.json`, turn 552) predate this work
+  and show nothing founded.
 
 ## Relations
 

@@ -147,10 +147,32 @@ an active branch. `BonusProduced` names a resource each active branch supplies t
 own city, one copy per consumed copy (one when it consumes nothing), while the owner's
 team can trade the resource; supplied copies count for city use but not for trade.
 `ObsoleteTech` names the technology that closes the team's branches and dissolves a
-headquarters in the team. `PrereqBuildingClasses` maps a building to the count the city
-owner's empire must hold before a branch may open there. `SpreadFactorPercent` raises
-the spread cost by that percent for each active branch of a competitor in the target
-city.
+headquarters in the team. The source's `PrereqBuildingClasses` (a guild's group Guild
+Hall) is left unread: a guild branch needs what a corporation's does. `SpreadFactorPercent` raises the spread cost by that percent for each
+active branch of a competitor in the target city.
+
+Two fields serve the Realistic Guilds/Corporations mode. `NaturalSpreadPercent` (the
+source's `iSpread`, at least 1) scales how far a branch reaches on its own; Mapster, which
+the source leaves without one, has 50. `FoundingBuildingClasses` maps a building to the
+count the nation must hold across its empire (counted as the Master Guild's own
+`building-class` requirement counts it) to found a guild that consumes no resource on its
+own; it is required, with counts of at least 1, exactly when `PrereqBonuses` is empty.
+The four such guilds name what their Master Guilds ask for: four siege workshops,
+theatres, apothecaries or libraries.
+
+`CorporationRulesDef` (`data/corporation-rules.json`, one object, hand-written) holds the
+realistic mode's numbers the source does not define, each checked when the mod loads:
+`foundingMeanTurns` (30, at least 1: mean turns before a nation that can found a
+corporation does), `foundingCooldownTurns` (20, at least 0: turns before a nation that
+lost a corporation may found it again), `branchDecayTurns` (5) and
+`headquartersDecayTurns` (10), at least 1 (turns without the resource before a branch
+closes or a headquarters dissolves), `supplyPercentPerCopy` (50) and `supplyCopiesCap`
+(10), at least 0 (the spread bonus per usable copy and the copies it counts), `spreadDistanceFloor` (5, at least 0: subtracted from the distance divisor, as
+the source does), `competitorInfluenceDivisor` (10, at least 1) and `crowdingDivisor` (2,
+at least 1). All turn counts scale with the game pace. The spread also reads the source's
+`CORPORATION_SPREAD_RAND`, `CORPORATION_SPREAD_DISTANCE_DIVISOR`,
+`CORPORATION_RESOURCE_BASE_INFLUENCE` and `FREE_TRADE_CORPORATION_SPREAD_MOD` rule
+constants, which a load check requires.
 
 ### Event fields
 
