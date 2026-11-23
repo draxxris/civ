@@ -137,7 +137,12 @@ is the AI waves as a whole (`kernel:ai_turns`, wall time), their parallel planni
 `kernel:state_hash`, which is the harness hashing each turn (lockstep peers pay it too).
 Entries are inclusive and summed over every thread they ran on: AI planners, seams and
 the commands AI players issue also run on parallel forks, and a wave's commit replays
-those commands, so those sums are processor time and can exceed the wall time.
+those commands, so those sums are processor time and can exceed the wall time. A `Rule`
+entry can also nest inside itself: a city's `modifiers:collect` that gathers a player
+ledger counts the inner collection twice under the same id, so a `Rule` total is an upper
+bound on that step's own cost.
+
+`mise run benchmark` has no profiler switch. Profile with `ai:play` or `ai:eval`.
 
 ### Controlled Measurement Methodology
 
@@ -1115,8 +1120,8 @@ subjects below, and `mise run check:sync -- --seed 3 --players 4 --turns 100` ma
 
 - AMD Ryzen AI 5 PRO 340 (12 threads), Release builds through `mise run ai:play`.
 - Main subject: seed 3, four AI players, small world, ancient start, default mod set (the
-  main mods and every optional feature mod), 100 turns. No 300-turn run was made: the
-  owner already knows it is intolerable, so the 100-turn curve is the evidence.
+  main mods and every optional feature mod), 100 turns. No 300-turn run was made. The
+  300-turn figures below are extrapolated from the 100-turn curves.
 - Supplementary subjects, same seed and 100 turns: an industrial-era start
   (`--era foundation:era_industrial`), which reaches 30 cities and late-game rules, and
   eight players on a standard world.
@@ -1143,9 +1148,13 @@ and 71 units at turn 100. A turn at turn 100 costs about 0.3 s.
 |     100 |   368.1 |            84.4 |       273.6 |         527.7 |       102.3 |     19 |    71 |
 
 Row 2 is the first advance and includes compiling. Turn time follows the game's size,
-not the turn number. The growth shows in the industrial start: fitting its turn time to
-cities and units gives R² 0.69 with linear terms and 0.93 once squared terms are added.
-Four costs grow faster than the game:
+not the turn number. The curves alone say little about the shape of that growth. A fit
+of turn time (advances 10 to 101) to cities and units goes from R² 0.68 with linear
+terms to 0.93 with squared terms in the industrial start. It goes only from 0.83 to 0.85
+for eight players, and from 0.65 to 0.69 for the ancient start, where single turns are
+mostly noise. The four costs below grow faster than the game. That conclusion comes
+from the code's structure, read from the code and confirmed by call counts. It does
+not come from the curve:
 
 1. **Sight and contacts per move step.** Every step of every move recomputed every
    team's sight from every unit and city (units × observers). It then scanned every plot
@@ -1190,8 +1199,46 @@ Top entries of the industrial start (82.4 s, 145 GiB):
 | `relations:discover_contacts`      | 6,531 |    7,977 |         6,600 |
 | `world:sight_recompute`            | 6,986 |    4,387 |         2,683 |
 
-A diagnostic run timed each modifier source; that timing was not committed. It put 73 s
-of the game's processor time in modifier collection. The largest sources were
+Turn systems are not in these lists, because each system is smaller than the largest AI
+entries. Together they are the largest share of a late industrial turn: 490 of 850 ms at
+turn 100, against 351 ms of AI waves (253 of 532 ms after this pass). Over the whole
+industrial game they took 20.9 s and allocated 29.5 GiB, and over the ancient game 5.0 s
+and 4.7 GiB. The top systems, before
+and after this pass (time on the turn's own thread):
+
+| Industrial start          | Calls | Before ms | Before MiB | After ms | After MiB |
+| :------------------------ | ----: | --------: | ---------: | -------: | --------: |
+| `cities:production`       |   425 |     3,797 |      5,620 |    1,839 |     2,262 |
+| `cities:growth`           |   425 |     3,213 |      5,496 |    1,998 |     2,390 |
+| `global_warming:warming`  |   100 |     2,180 |      3,218 |      760 |       975 |
+| `cities:assign_work`      |   425 |     2,089 |      3,058 |    1,175 |     1,329 |
+| `great_people:births`     |   425 |     1,955 |      2,827 |      666 |       810 |
+| `economy:gold`            |   425 |     1,316 |      1,964 |    1,131 |     1,221 |
+| `military:units`          |   425 |     1,161 |      1,789 |    1,169 |     1,780 |
+| `economy:reconcile_gold`  |   100 |     1,064 |      1,641 |      777 |       857 |
+| All turn systems          |       |    20,875 |     30,165 |   13,005 |    14,791 |
+
+| Ancient start            | Calls | Before ms | Before MiB | After ms | After MiB |
+| :----------------------- | ----: | --------: | ---------: | -------: | --------: |
+| `barbarians:behavior`    |   100 |       919 |      1,054 |      424 |       363 |
+| `cities:production`      |   472 |       656 |        753 |      460 |       353 |
+| `world:improvements`     |   100 |       570 |        147 |      608 |       110 |
+| `cities:growth`          |   472 |       509 |        611 |      486 |       355 |
+| `cities:assign_work`     |   472 |       314 |        338 |      266 |       182 |
+| `military:units`         |   472 |       249 |        317 |      312 |       313 |
+| `economy:gold`           |   472 |       270 |        249 |      291 |       191 |
+| `global_warming:warming` |   100 |       283 |        344 |      148 |       124 |
+| All turn systems         |       |     4,995 |      4,820 |    3,868 |     2,455 |
+
+The city systems read city ledgers throughout, so the modifier commits below cut the
+industrial ones by 40 to 50%. `barbarians:behavior` moves units, so it most likely gains from the sight
+and contact commits. Its time was not broken down further. Single ancient-start
+systems below 400 ms are within run-to-run noise.
+
+A diagnostic run timed each modifier source; that timing was not committed. Its
+per-source times sum to 70 s of the game's processor time in modifier collection, an
+upper bound, because a city collection that gathers a player ledger counts the player
+sources inside it as well. The largest sources were
 `BuildingEffects` (30.5 s, 40 GiB), `CivicEffects` (17.5 s), `CorporationEffects` (8.7 s,
 in a game with no corporation) and `BuildingMilitaryEffects` (5.8 s). Only 23 of 658
 great-person evaluations led to an action. The rest scored every city and stayed idle.
@@ -1210,6 +1257,15 @@ over threads, from the subject named.
 | `604af14` | Building effects name only non-zero lines                    | industrial | 30.5 s, 40.0 GiB        | 25.6 s, 21.2 GiB        |
 | `708d2bc` | Civic effects resolve running buildings once per calculation | industrial | 17.5 s, 23.0 GiB        | 12.5 s, 15.9 GiB        |
 | `8c23637` | No player ledger for a city without corporations             | industrial | 730,615 ledgers, 60.5 s | 589,093 ledgers, 39.4 s |
+
+The first three rows come from a temporary scope that timed only the calls made inside
+moves (4,656 per game). That scope was not committed, so its call counts differ from the
+committed `Rule` entries in the baseline tables (4,895 contact scans and 5,053 sight
+recomputes). Those also count callers outside movement: combat, cargo, upgrades,
+missions and city capture. The `8c23637` times are
+`modifiers:collect` totals, which nest (see "Turn Profiler"). Before the commit, each city
+collection held a player collection that counted twice, so the 60.5 s overstates the real
+cost. The drop of 141,522 nested player collections is exact.
 
 One change was measured and dropped. It asked each city only for the great-person actions
 that depend on going there, which skips the technology choice. It saved nothing
@@ -1252,6 +1308,27 @@ Top entries after, industrial start:
 | `MoveUnitPathCommand`              |   2,535 |    2,209 |           772 |
 | `world:sight_recompute`            |   4,451 |    2,071 |           591 |
 
+Top entries after, ancient start (one run, 16.7 s):
+
+| Entry                              |   Calls | Total ms | Allocated MiB |
+| :--------------------------------- | ------: | -------: | ------------: |
+| `kernel:ai_turns` (AI waves, wall) |     100 |    9,718 |         3,842 |
+| `modifiers:collect`                | 114,049 |    6,178 |         3,886 |
+| `ai:military`                      |     709 |    4,031 |         1,679 |
+| `ai:citizens`                      |     709 |    2,860 |         1,141 |
+| `ai:economy`                       |     709 |    2,323 |         1,534 |
+| `ai:cities`                        |     709 |    2,021 |           978 |
+| `ai:civics`                        |     709 |    1,972 |           459 |
+| `ai:settlers`                      |     709 |    1,771 |           626 |
+| `SetCityAssignmentsCommand`        |   2,626 |    1,372 |           570 |
+| `MoveUnitPathCommand`              |   1,796 |    1,359 |           350 |
+| `world:sight_recompute`            |   3,007 |    1,181 |           320 |
+| `relations:discover_contacts`      |   2,849 |      447 |           138 |
+
+The baseline ancient table has no `modifiers:collect` row because that scope (`202e187`)
+came after it. Fewer contact scans run after `9d88c13`, because a path that just renewed
+sight no longer renews it again.
+
 `mise run benchmark` (single samples), at the start of the pass (`b424234`) and on the
 final tree:
 
@@ -1264,13 +1341,57 @@ final tree:
 
 World generation is untouched by this pass. Its difference is machine noise.
 
+#### Extrapolation to 300 Turns
+
+These are extrapolations, not measurements. Each per-turn cost is anchored at the mean
+of advances 92 to 101. Cities are assumed to keep growing at their turn 51 to 101 rate.
+The first table caps them at 7.5 cities per player. That is where the small-world
+industrial game stopped growing (30 cities from turn 75 on), so the cap is 30 cities on
+the small world and 60 on the standard world. The linear bound scales turn cost with
+cities, and the squared bound with cities squared. Units are left out. The industrial
+game ended its wars and fell from 79 to 30 units, so no unit trend can be read from these
+curves.
+
+| Subject                         | 100 turns, measured | 300 turns, linear | 300 turns, squared | Turn 300, squared |
+| :------------------------------ | ------------------: | ----------------: | -----------------: | ----------------: |
+| Ancient, 4 players, before      |              20.4 s |             115 s |              165 s |            770 ms |
+| Ancient, 4 players, after       |              16.7 s |              76 s |              108 s |            482 ms |
+| Industrial, 4 players, before   |              82.4 s |             247 s |              247 s |            820 ms |
+| Industrial, 4 players, after    |              57.4 s |             159 s |              159 s |            506 ms |
+| Standard, 8 players, before     |              53.2 s |             380 s |              622 s |          3,163 ms |
+| Standard, 8 players, after      |              34.0 s |             209 s |              337 s |          1,688 ms |
+
+The industrial game has already reached its cap, so both of its bounds equal its flat
+rate.
+
+The cap is the assumption that decides the answer. The eight-player standard game was
+still gaining 0.5 cities per turn at turn 100, at 33 cities, so nothing measured shows
+where it stops. Without a cap, at that rate (132 cities at turn 300, 232 at turn 500):
+
+| Subject, no cap             | 300 turns, linear | 300 turns, squared | 500 turns, linear | 500 turns, squared |
+| :-------------------------- | ----------------: | -----------------: | ----------------: | -----------------: |
+| Standard, 8 players, before |             9 min |             24 min |            27 min |              2.1 h |
+| Standard, 8 players, after  |             5 min |             13 min |            14 min |              1.1 h |
+| Ancient, 4 players, before  |             3 min |              8 min |             9 min |             43 min |
+| Ancient, 4 players, after   |             2 min |              5 min |             6 min |             27 min |
+
+The uncapped ancient rows assume 79 cities on a small world at turn 300, more than the
+industrial game ever held there, so they are a loose ceiling. With the cap, the worst
+case is about 10 minutes for 300 turns before this pass and under 6
+after. No run reproduced games that take hours. They do fit squared growth wherever
+cities keep growing past turn 100: an uncapped eight-player game reaches about 2 hours
+over 500 turns before this pass and 1 hour after. Long wars would add unit-driven sight
+costs on top. Active corporations are a cost these games never triggered.
+
 #### Corporation Branch (Unmerged) Compared
+
+No corporation was founded in any of these games, so this compares only the paths that
+run while no corporation exists. The cost of active corporations is not measured here.
 
 The corporation rules on `worktree-agent-a1512cf58901b57f1` (tip `449a89e`) were measured
 with the same profiler patches, in a separate worktree. Each game ran with Corporations
 loaded (the default set) and without it (`--optional` naming the other six feature
-mods). Neither the ancient nor the industrial game founded a corporation within 100
-turns, so the branch's per-branch-city rules ran only on their empty paths.
+mods). The branch's per-branch-city rules ran only on their empty paths.
 
 | Game (100 turns, seed 3)    | Main, with Corporations | Branch, with | Branch, without |
 | :-------------------------- | ----------------------: | -----------: | --------------: |
@@ -1284,9 +1405,17 @@ and the games are identical. The corporation entries themselves (planner, valuer
 maintenance) total under 70 ms per game. Loading Corporations at all cost about 8 s and
 16 GiB per industrial game, on main and on the branch alike. That cost was
 `CorporationEffects` gathering a player ledger for every city calculation. Commit
-`8c23637` removes it here, and the corporation branch would inherit the fix on merge:
-the branch leaves `MaintenanceHundredths` unchanged. The cost of active corporations,
-per branch city per turn, is still unmeasured: it needs a game that founds some.
+`8c23637` removes it here.
+
+The branch and this pass both change `BuildingEffects.cs`, `CorporationService.cs` and
+`AiContext.cs`, but their hunks do not overlap. `git merge-tree` merges the two tips
+without conflict. The branch's `BuildingEffects` change adds resources a city's own rules
+supply (`ResourceAccess.Supplied`) to `Available`, which `604af14` does not touch. Its
+`MaintenanceHundredths` still sums only the corporations in
+`CorporationCityState.Corporations` (through `Present`). The early return of `8c23637`
+for a city with none therefore stays correct after a merge. The cost of active
+corporations, per branch city per turn, is still unmeasured. It needs a game that founds
+some.
 
 #### Still Slow, Ranked
 
@@ -1297,22 +1426,31 @@ per branch city per turn, is still unmeasured: it needs a game that founds some.
    structural fix is a ledger cached per city and invalidated by a state revision
    (buildings, civics, techs, ownership, population). A smaller step is a read scope
    spanning one turn system or one AI segment. Either needs every source's inputs named
-   for invalidation, which is more than one clean commit. The measured ceiling is most
-   of the 38 s above.
-2. **Great-person planning** (20 s). An idle great person scores every city on the map
+   for invalidation, which is more than one clean commit. The 38 s is the ceiling of the
+   gain. `8c23637` removed the one known nested collection for cities without
+   corporations. A source that reaches a player calculation some other way would still
+   be counted twice.
+2. **Turn systems on the turn's own thread.** They take 13 s of the industrial game and
+   253 of 532 ms of a turn at turn 100, the largest part of a late turn. Unlike AI
+   planning, they run on one thread and nothing overlaps them. `cities:growth`,
+   `cities:production`, `cities:assign_work`, `military:units` and `economy:gold` lead,
+   at 1.1 to 2.0 s each. The city systems spend their time mostly in city ledgers, so
+   item 1 would shrink them. Running independent players' city systems in parallel
+   would need the rules to show that those players' cities never read one another.
+3. **Great-person planning** (20 s). An idle great person scores every city on the map
    every turn, and each foreign city's trade profit gathers three ledgers. Caching the
    trade profit per partner within one evaluation would remove most of it. Scoring
    trade missions only for the few best partners would remove more, but it changes AI
    choices.
-3. **Sight per move step.** `world:sight_recompute` takes 2 s and grows with units
+4. **Sight per move step.** `world:sight_recompute` takes 2 s and grows with units
    squared. An incremental recompute for the moving team alone would make it linear.
    Every team's plot memories must still refresh at each recompute, though, so it needs
    per-team observer counts per plot. Not attempted.
-4. **AI planners' fixed cost.** `ai:military`, `ai:citizens`, `ai:cities` and
+5. **AI planners' fixed cost.** `ai:military`, `ai:citizens`, `ai:cities` and
    `ai:economy` each take 3 to 15 ms per player per turn. The economy planner tries
    slider settings by issuing commands and recalculating, and each issued command renews
    the AI context's cached views.
-5. **Allocation in general.** The industrial game still allocates 0.7 GiB per turn at 30
+6. **Allocation in general.** The industrial game still allocates 0.7 GiB per turn at 30
    cities, and collector pauses are still 10 to 20% of a turn.
 
 ______________________________________________________________________
