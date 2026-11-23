@@ -94,4 +94,32 @@ public sealed class RiverGenerationTests(LoadedMods mods) : IClassFixture<Loaded
             }
         }
     }
+
+    /// <summary>Every river bit is mirrored on the neighbouring plot, and no bit faces off the map. The resource
+    /// network's edge test reads the shared edge from one side only (the plot it floods from); with mirrored masks its
+    /// answer is the same from both sides, so connectivity is symmetric and one flood serves every node it reaches.</summary>
+    [Theory]
+    [InlineData("world:continents")]
+    [InlineData("world:inland_sea")]
+    [InlineData("world:king_of_the_hill")]
+    [InlineData("world:new_world")]
+    [InlineData("world:twin_continents")]
+    [InlineData("world:great_plains")]
+    [Trait("Category", "WorldGen")]
+    public void Generated_river_edges_are_mirrored_on_both_plots(string generator)
+    {
+        foreach (ulong seed in new ulong[] { 1, 42 })
+        {
+            var sim = new Simulation(mods.Content, GameFactory.Settings(seed) with { MapGenerator = generator });
+            var grid = sim.State.Grid;
+            foreach (var tile in grid.Tiles)
+                for (int d = 0; d < 6; d++)
+                {
+                    bool here = sim.State.Plots[tile.Value].HasRiverEdge(d);
+                    string where = $"{generator} seed {seed} tile {grid.OffsetOf(tile)} direction {d}";
+                    if (grid.Neighbor(tile, d) is not { } neighbor) { Assert.False(here, $"river bit off the map at {where}"); continue; }
+                    Assert.True(here == sim.State.Plots[neighbor.Value].HasRiverEdge((d + 3) % 6), $"unmirrored river bit at {where}");
+                }
+        }
+    }
 }
