@@ -223,6 +223,10 @@ ______________________________________________________________________
        ▼
 [Pass 13: Nov 22, 2026] Turn Profiler and Long AI Game Costs
                         (Commits: 5016ba5 .. 8c23637)
+       │
+       ▼
+[Pass 17: Nov 23, 2026] City Ledgers Kept Across Writes
+                        (Commits: 19663fc5 .. b2f834ca)
 ```
 
 ______________________________________________________________________
@@ -2205,33 +2209,45 @@ may write is computed directly.
 
 #### Results
 
-Paired runs on the final tree (load 2 to 6):
+All figures are from the final code (`b2f834ca`), with base and final run alternately in
+three pairs. The third pair ran at load 8 to 11 and is left out. The first two ran at
+load 2 to 5:
 
-| Subject | Base | Final | Change |
+| Subject, per 8 turns unless stated | Base (pairs 1, 2) | Final (pairs 1, 2) | Change |
 | :-- | --: | --: | --: |
-| 451, wall per turn (pairs 3, 4, 6) | 1,178 / 1,221 / 1,218 ms | 1,088 / 1,161 / 1,116 ms | −5 to −8% |
-| 451, `modifiers:collect` per 8 turns | 5,632 / 6,076 / 6,081 ms | 4,390 / 4,499 / 5,081 ms | −16 to −26% |
-| 451, allocation per turn | 803 MiB | 762 to 766 MiB | −5% |
-| 552, wall per turn (pair 6) | 1,819 ms | 1,488 ms | −18% |
-| 552, `modifiers:collect` per 8 turns | 8,909 ms | 7,417 ms | −17% |
-| 552, allocation per turn | 1,218 MiB | 1,171 MiB | −4% |
-| Corporations save, wall per turn (2 turns) | 1,287 ms | 1,313 ms | within noise |
-| New game, total | 14.9 s (load 3.8) | 13.9 s (load 1.7) | within noise |
-| New8, total | 23.9 s | 25.0 s | +4%, within noise |
+| 451, `modifiers:collect` (summed over threads) | 5,384 / 5,417 ms | 3,829 / 4,321 ms | −20 to −29% |
+| 451, wall per turn | 1,015 / 1,037 ms | 1,026 / 1,011 ms | none measurable |
+| 451, allocation per turn | 805 MiB | 767 MiB | −5% |
+| 552, `modifiers:collect` (summed over threads) | 8,254 / 7,677 ms | 6,140 / 6,322 ms | −18 to −26% |
+| 552, wall per turn | 1,494 / 1,514 ms | 1,462 / 1,487 ms | −2% |
+| 552, allocation per turn | 1,221 MiB | 1,176 MiB | −4% |
+| Corporations save, wall per turn (2 turns, before the scope fix) | 1,287 ms | 1,313 ms | within noise |
+| New game, total (before the scope fix) | 14.9 s | 13.9 s | within noise |
+| New8, total (before the scope fix) | 23.9 s | 25.0 s | within noise |
 
-The early game gains nothing: few cities, and most of its writes come from undeclared
-systems and unit moves. The 552 figure comes from one pair; the earlier pairs ran
-before the scope fix and showed the `ai:military` regression described above.
+Collection time is summed over the AI's scoring threads, so much of the saving was
+parallel time. Wall time per late turn moved by 2% or less, which is inside this
+machine's noise. The pass cut work and allocation; it did not make late turns visibly
+faster. The early game gains nothing either: it has few cities, and most of its writes
+come from undeclared systems and unit moves.
 
-`mise run benchmark` ran alternately on both trees at load 8 to 10. The single samples
-varied by up to a factor of two between base runs (fifty-city turn 354 and 794 ms;
-eight-player preparation 14.1 and 17.4 s), and the final tree fell within that spread
-(277 and 261 ms; 20.7 and 14.2 s). No change can be read from it.
+`mise run benchmark` ran alternately on both trees at load 8 to 10, on `71d661a2`
+(before the scope fix). Its single samples varied by up to a factor of two between the
+two base runs: fifty-city turn 354 and 794 ms, eight-player preparation 14.1 and 17.4 s.
+The final tree fell within that spread, at 277 and 261 ms and 20.7 and 14.2 s. No change
+can be read from it.
 
-Memory: the cache holds at most 32,768 entries of a key, a stamp and an array of
-references to existing ledger lines, a few megabytes at most. It is emptied at the end
-of every outermost kernel call, so nothing survives between turns or AI players.
-Allocation per turn fell, because reused contributions allocate no new lines.
+Memory: the cache is emptied at the end of every outermost kernel call (a command, a
+turn, one AI player's turn), so it never outlives one of them. A temporary counter on
+the final code recorded the process-wide peak:
+
+- fewer than 1,024 entries at 451 + 8 and at 552 + 8;
+- fewer than 1,536 entries over new8;
+- the 32,768-entry bound never reached in any of them.
+
+Each entry is a key, a stamp and an array of references to existing ledger lines, so
+the cache stays well under a megabyte. Allocation per turn fell, because reused
+contributions allocate no new lines.
 
 #### Network Floods
 
@@ -2240,25 +2256,34 @@ and blockades are properties of a single plot. `RiverEdge(from, to)` reads the s
 edge from `from` only (bit `d`), and the corner edges at both shared vertices from both
 plots. The reverse query reads bit `d + 3` of `to` instead, and `GameState.SetRiver`
 always sets both bits. The only way to break the mirroring is the public
-`Plot.RiverEdges` setter, which the rules use only on detached copies.
+`Plot.RiverEdges` setter. The rules use it only on detached copies, but loading a save or
+a scenario also goes through it, so a hand-edited save could carry an unmirrored bit.
 `RiverGenerationTests.Generated_river_edges_are_mirrored_on_both_plots` checks every
 generator. Reachability for one player and one query is therefore an equivalence, and
-one flood could serve every city it reaches. That sharing was not built: with ledgers
-kept, floods are no longer the leading cost.
+one flood could serve every city it reaches. That sharing was not built in this pass.
+It is a candidate for the collection cost that remains.
 
 #### Verification
 
-- The verify mode printed the reference hashes, with no difference or undeclared write,
-  for 451 + 4 (47 s), 552 + 4 (77 s), the corporations save + 4 (38 s) and the new game
-  (130 s). It was rerun on 451 + 4 and the new game after the final scope change.
-- `mise run test`, `mise run test:worldgen`, `mise run check:sync` and
-  `mise run build:game` pass.
+All on the final code (`b2f834ca`) unless stated:
+
+- The eight reference hashes, as listed under "Method, Saves and Hashes".
+- The verify mode printed the reference hashes, with no difference and no undeclared
+  write:
+  - 451 + 20: 118 s.
+  - 552 + 8: 69 s.
+  - The corporations save + 4: 37 s.
+  - New8, 150 turns: 489 s.
+  - Before the scope fix, also on 451 + 4, 552 + 4 and the new game.
+- `mise run test`, `mise run test:worldgen`, `mise run test:e2e`, `mise run check:sync`
+  and `mise run build:game` pass.
 
 #### Still Slow, Ranked
 
 From the final tree at 552, per 8 turns:
 
-1. **Ledgers read inside undeclared turn systems.** `modifiers:collect` is still 7.4 s.
+1. **Ledgers read inside undeclared turn systems.** `modifiers:collect` is still 6.1 to
+   6.3 s.
    Most of the remaining misses are reads by growth, great-people births, global
    warming, culture, revolution, production and gold while their own undeclared window
    is open. The next step is declaring those systems:
@@ -2343,3 +2368,7 @@ passes:
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |    1,736–1,755 ms |    1,434–1,473 ms |                                  **-17%** |
 |                                         |                      | Same, per turn at turns 454-459 (saved game)               | Managed bytes per turn   |              985 MiB |           805 MiB |                                **-18.3%** |
 |                                         |                      | Eight-player preparation (`mise run benchmark`)            | Wall time                |            14,481 ms |         12,548 ms |                                **-13.3%** |
+| **Pass 17: Kept City Ledgers**          | `19663fc5`..`b2f834ca` | Six-player AI game, 8 turns from turn 451 (saved game)     | `modifiers:collect` CPU  |      5,384–5,417 ms |    3,829–4,321 ms |                              **-20 to -29%** |
+|                                         |                      | Same, 8 turns from turn 552 (saved game)                   | `modifiers:collect` CPU  |      7,677–8,254 ms |    6,140–6,322 ms |                              **-18 to -26%** |
+|                                         |                      | Same, per turn at turns 454-459 (saved game)               | Managed bytes per turn   |              805 MiB |           767 MiB |                                 **-4.7%** |
+|                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |    1,494–1,514 ms |    1,462–1,487 ms |                         -2% (within noise) |

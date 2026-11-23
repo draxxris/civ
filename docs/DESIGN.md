@@ -2651,7 +2651,8 @@ declare both sides.
   the typed vectors exactly. Only city, player and team calculations without a
   `ProposedPlot` are kept. Unit and plot calculations come from combat and placement
   previews, often of a probe unit asked about once, so they are summed directly. An
-  undeclared source is still kept, but any write invalidates it. Memory is bounded at 32,768 entries: a full table is emptied and
+  undeclared source is still kept, but any write outside the private domains
+  invalidates it. Memory is bounded at 32,768 entries: a full table is emptied and
   refills. It is also emptied on state replacement and at the end of the outermost
   kernel span.
 - **Thread model.** Writes, windows and stamps happen only on the thread that runs the
@@ -2672,7 +2673,14 @@ declare both sides.
   (`cities:queue`), and the AI's planning, forget, prune and war-preparation commands
   (`ai:intent`). Readers: `BuildingEffects` and `ScriptedWonderService` never read
   `cities:work` or `cities:queue`. Every other source is undeclared and conservative,
-  including the Corporations mod's `CorporationEffects` and Trade's `TradeEffects`.
+  including the Corporations mod's `CorporationEffects` and Trade's `TradeEffects`. An
+  undeclared source still counts private domains as unread, so it survives AI intent
+  commits. The Corporations resource supplier (`CorporationResourceSupply`) declares
+  nothing itself, but the `ICityResourceSupply` seam's default binds it to never
+  reading `cities:work` or `cities:queue`. It meets that by inspection, and
+  `--verify-modifier-cache` passes on the corporations save. If a supplier ever needs
+  those fields, it must override the default with null; building effects then fall
+  back to recomputing after every write.
   `TradeEffects` calls every other source's `Contribute` directly, so it never uses the
   cache. A new source or writer needs no declaration to be correct; a declaration only
   lets its answers survive more writes.
