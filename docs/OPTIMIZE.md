@@ -227,6 +227,10 @@ ______________________________________________________________________
        ▼
 [Pass 17: Nov 23, 2026] City Ledgers Kept Across Writes
                         (Commits: 19663fc5 .. b2f834ca)
+       │
+       ▼
+[Pass 18: Nov 23, 2026] The Per-Player Turn Chain Declared
+                        (Commits: bbdb6759 .. e3f3b182)
 ```
 
 ______________________________________________________________________
@@ -2304,6 +2308,172 @@ From the final tree at 552, per 8 turns:
 
 ______________________________________________________________________
 
+### Pass 18: The Per-Player Turn Chain Declared
+
+- **Date**: 2026-11-23
+- **Commits**: `bbdb6759`, `e3f3b182`
+
+This pass takes item 1 of the Pass 17 "Still Slow" list. A city ledger read inside an
+undeclared turn system was computed fresh and not kept, because the system's open
+window could write anything. The per-player turn systems now declare what they write,
+and the expensive readers declare what they never read. The kernel gained one call,
+`Simulation.WidenWriteWindow()`, so a writer can declare its usual narrow work and
+still make a rare broad write correctly. The contract is in DESIGN.md under
+"Kept contributions, state domains and write windows". Every final state is
+byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- Base: local main `6ef62fa9`, extracted with `git archive`. Final: `e3f3b182`. Both ran
+  through `mise run ai:play`, with the Pass 17 saves re-headed for each tree's mod
+  versions (the saves carry the mod list and content hash, nothing else changes).
+- **The reference hashes changed before this pass.** On `6ef62fa9`, the 451 and 552
+  saves give different hashes from those Pass 17 recorded. Re-heading the same saves
+  for `ce3ebee0` (the Pass 17 final) reproduces `975963b591c0c71e` for 451 + 4, so the
+  corporations rework merged after Pass 17 changed the game, not this pass. The new
+  game and new8 hashes did not move. The base tree's hashes are the reference here:
+
+  | Run | Hash |
+  | :-- | :-- |
+  | 451 + 4 | `cdbaae3fdd3dcf9f` |
+  | 552 + 4 | `1c63057a8c1acaae` |
+  | 451 + 8 | `76141f26f69a16bb` |
+  | 552 + 8 | `b6c0b5d1882915c7` |
+  | 451 + 20 | `d5550242b8b66104` |
+  | Corporations save (turn 161, from the game below) + 4 | `ff5dd4ff155114ef` |
+  | New game (seed 3, 6 players, 100 turns) | `9bf38cf7bc3e5245` |
+  | New8 (seed 3, 8 players, standard world, 150 turns) | `a9ba4f3b5780707a` |
+  | Corporation-heavy game (seed 3, 4 players, industrial era, 160 turns) | `8018d1530a207f69` |
+
+- Load average 1 to 2.5 during every timed run. Wall figures are the mean of the last 6
+  of 8 turns. Base and final ran alternately, one subject at a time.
+- `perf` is not available on this machine, so the profile is the built-in `--profile`
+  plus temporary probes in `Modifiers.cs` and the write-window code, never committed.
+  The probes count source time by miss reason: computed while an open window declared
+  a domain the source reads ("open"), written since it was kept ("stale"), and never
+  kept this span ("cold").
+
+#### Where the Misses Were
+
+Probe at 451, per turn, on the base tree and on the final tree. The probe adds its own
+overhead, so only the split matters:
+
+| Miss reason | Base | Final |
+| :-- | --: | --: |
+| Open window | 240 ms | 51 ms |
+| Stale | 85 ms | 80 ms |
+| Cold | 27 ms | 51 ms |
+| **Total source time on a miss** | **352 ms** | **182 ms** |
+
+"Cold" rose because ledgers that used to miss as "open" are now first computed, and
+kept, in a later system. The cache is emptied at the end of every outermost kernel
+span, so a cold miss once per span is inherent. The base's largest "open" misses were
+the systems Pass 17 listed: growth, great-people births, global warming, culture,
+revolution, production and gold.
+
+A second probe timed the resource network flood inside `BuildingEffects`. It was about
+13% of that source's cost at 451. Sharing one flood per connected group (Pass 17,
+"Network Floods") would save less than the declarations, so declarations came first and
+the flood sharing was not built.
+
+#### What Was Built
+
+1. **Widening a declared window** (`bbdb6759`). `Simulation.WidenWriteWindow()` turns the
+   open window into an undeclared one from that point on, so its close stamps
+   everything. Event dispatch already did this internally; the call makes it public.
+   A test covers a command that writes culture, widens and then writes the treasury.
+2. **Domains and writer declarations** (`e3f3b182`). New public domains:
+   `cities:growth`, `cities:culture`, `cities:plot_culture`, `cities:production`,
+   `cities:conscript_anger`, `economy:treasury` and `economy:hurry_anger`. New private
+   domains, which no modifier source reads: `cities:occupation`, `government:timers`,
+   `research:progress`, `great_people:progress`, `revolution:instability`,
+   `religion:conversion`, `scripted_wonders:progress`, `espionage:points` and
+   `corporations:maintenance` (declaration only; no Corporations rule or data changed).
+   Each per-player turn system declares its domains. Rare broad writes widen first:
+   - an order completing (`cities:completion`);
+   - a technology discovered (and research while a selection policy is loaded);
+   - a great person born, or a city that has no great-people state yet;
+   - a faith spreading or decaying;
+   - a scripted wonder completing or spawning a unit;
+   - a conquered city leaving occupation.
+3. **Thresholds** (`e3f3b182`). Some readers see a domain only through a derived value.
+   Building effects see culture only as the culture level, and plot culture only as the
+   plot owner. Revolution's source sees instability only as the mutiny tier. Readers see
+   the government timers only as whether anarchy lasts. They count those domains as
+   unread, and the writers widen before the derived value changes:
+   - `CityCulture.Accumulate` computes the level index before and after and widens when
+     it moves.
+   - `CityCulture.Resolve` widens before it changes a plot's owner.
+   - `RevolutionService.Update` widens when the tier flips.
+   - The government timers widen on the last anarchy turn.
+4. **Reader declarations** (`e3f3b182`). `CityStateDomains.Tallies` lists the nine city
+   and economy domains above. `BuildingEffects`, `TraitEffects`, `ReligionEffects` and
+   `ScriptedWonderService` declare all of them unread. `CityHurry` reads only hurry
+   anger. `CivicEffects` reads population, so it leaves out growth and both anger
+   domains. Each goes through `CityStateDomains.UnreadThroughBuildings`, which
+   intersects the list with what the resource suppliers and building-grant providers
+   declare. Those seams now default to `Tallies`.
+
+`CorporationEffects` stays undeclared. It reads population and collects a nested player
+ledger, so its audit needs its module's owner. `MoveUnitPathCommand` stays undeclared
+too: the resource flood reads `Revealed`, and a unit-position domain needs that read
+separated first. `global_warming:warming`, a global system, also stays undeclared. It
+is now the largest "open" miss (28 ms per turn at 451).
+
+#### Results
+
+Final code `e3f3b182`. Base and final ran alternately at load 1 to 2.5:
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| 552 + 8, wall per turn (three pairs) | 1,465 / 1,537 / 1,575 ms | 1,386 / 1,421 / 1,467 ms | −5 to −7% |
+| 552 + 8, turn systems per turn | 649 / 682 / 701 ms | 584 / 605 / 613 ms | −10 to −13% |
+| 552 + 8, `modifiers:collect` per turn (summed over threads) | 558 / 603 / 613 ms | 410 / 421 / 429 ms | −27 to −30% |
+| 552 + 8, allocation per turn | 1,204 MiB | 1,119 MiB | −7% |
+| 451 + 8, wall per turn (two pairs) | 1,051 / 1,002 ms | 1,007 / 1,013 ms | none measurable |
+| 451 + 8, `modifiers:collect` per turn | 322 ms | 229 ms | −29% |
+| 451 + 8, allocation per turn | 795 MiB | 727 MiB | −9% |
+| Corporations save + 4, wall per turn (one pair) | 714 ms | 681 ms | within noise |
+| New game, 100 turns, wall per turn (two pairs) | 132 / 142 ms | 140 / 145 ms | within noise |
+
+At 552 the systems that changed most per turn were growth (128 to 104 ms), culture (42
+to 21 ms) and gold (28 to 16 ms). AI time did not move. The early game gains nothing:
+it has few cities, and most of its ledger reads follow unit moves, which stay
+undeclared.
+
+#### Verification
+
+All on the final code:
+
+- The nine reference hashes under `--verify-modifier-cache` match the base tree: 451 + 4,
+  + 8 and + 20; 552 + 4 and + 8; the corporations save + 4; the new game; new8; and the
+  fresh corporation-heavy game (seed 3, 4 players, industrial era, 160 turns). No
+  reused contribution differed and no declared window wrote outside its domains. New8
+  under verify now takes over 20 minutes: every declared window hashes the state twice.
+- `mise run test`, `mise run test:e2e`, `mise run test:worldgen` and
+  `mise run check:sync` pass.
+
+#### Still Slow, Ranked
+
+From the final tree at 552, per turn:
+
+1. **AI military.** `ai:military` is about 330 ms per turn and the largest planner.
+   It was not changed in this pass.
+2. **Ledgers still missed.** `modifiers:collect` is about 420 ms per turn summed over
+   threads. The largest misses left:
+   - `global_warming:warming` (open window, undeclared global system);
+   - `MoveUnitPathCommand` (stale, needs `Revealed` separated from the flood);
+   - `cities:completion` (it widens on most turns, because some city completes an
+     order);
+   - `cities:growth` (open: building effects are not the only reader of population).
+3. **Corporations.** `CorporationEffects` is undeclared. In a corporation game, every
+   write outside the private domains recomputes it.
+4. **Network floods.** One flood per connected group instead of one per city remains a
+   candidate. It is worth about 13% of `BuildingEffects`.
+5. The Pass 16 items 2 to 7 are unchanged.
+
+______________________________________________________________________
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization
@@ -2372,3 +2542,7 @@ passes:
 |                                         |                      | Same, 8 turns from turn 552 (saved game)                   | `modifiers:collect` CPU  |      7,677–8,254 ms |    6,140–6,322 ms |                              **-18 to -26%** |
 |                                         |                      | Same, per turn at turns 454-459 (saved game)               | Managed bytes per turn   |              805 MiB |           767 MiB |                                 **-4.7%** |
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |    1,494–1,514 ms |    1,462–1,487 ms |                         -2% (within noise) |
+| **Pass 18: Turn Chain Declared**        | `bbdb6759`..`e3f3b182` | Six-player AI game, per turn at turns 555-560 (saved game) | Wall time (profiled)     |    1,465–1,575 ms |    1,386–1,467 ms |                               **-5 to -7%** |
+|                                         |                      | Same, per turn at turns 555-560 (saved game)               | `modifiers:collect` CPU  |        558–613 ms |        410–429 ms |                             **-27 to -30%** |
+|                                         |                      | Same, per turn at turns 555-560 (saved game)               | Managed bytes per turn   |          1,204 MiB |         1,119 MiB |                                 **-7.1%** |
+|                                         |                      | Same, per turn at turns 454-459 (saved game)               | Managed bytes per turn   |            795 MiB |           727 MiB |                                 **-8.6%** |

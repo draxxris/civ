@@ -2728,9 +2728,13 @@ declare both sides.
   `ManualWork` and `AvoidGrowth`. A path uses `*` for every array element or object
   property. A field belongs to at most one domain; overlapping registrations are
   rejected. Everything no domain names is the remainder. At most 64 domains, one bit
-  each. A **private** domain (`RegisterPrivateStateDomain`) holds fields only its own
-  module's planning code reads, never a rule or a modifier source, so every reader
-  counts it as unread without naming it. The AI's saved intent (`ai:intent`) is one.
+  each. A **private** domain (`RegisterPrivateStateDomain`) holds fields that no
+  modifier source reads, nor anything a source asks: only its own module's turn
+  systems, commands and planners read them. Every reader therefore counts it as unread
+  without naming it. Examples are the AI's saved intent (`ai:intent`), research progress
+  (`research:progress`), the government timers (`government:timers`), revolution
+  instability (`revolution:instability`) and great-people points
+  (`great_people:progress`).
 - **Writers declare what they write.** `GameCommand.WriteDomains` and
   `ITurnSystem.WriteDomains` name the domains a command's `Apply` or a system's `Run`
   writes. Null, the default, means anything.
@@ -2739,11 +2743,32 @@ declare both sides.
   any rule it calls. Null, the default, declares nothing. A source that calls other
   modules' providers may declare only what every provider declares too
   (`StateDomainRegistry.UnreadByAll`). The seams it calls bound what their
-  implementations read: `ICityResourceSupply` and `IFreeBuildingGrants` default to
-  never reading `cities:work` or `cities:queue`. An id no loaded module registered
+  implementations read: `ICityResourceSupply` and `IFreeBuildingGrants` default to never reading
+  `CityStateDomains.Tallies`: work, queue, growth, culture, plot culture, production,
+  conscript anger, hurry anger and the treasury. `CityStateDomains.UnreadThroughBuildings`
+  intersects a source's own list with those providers' lists. An id no loaded module registered
   declares nothing. That is why the Cities module's building effects can name the AI's
   domain, and the Cities and ScriptedWonders sources can name Cities domains, without
   depending on those modules being loaded.
+- **Widening before a rare broad write.** A declared writer whose usual work stays in
+  its domains, but which now and then writes more, calls `Simulation.WidenWriteWindow()`
+  just before the broad write. From then on the window counts as writing everything,
+  exactly as an undeclared one. A city that completes an order, a team that discovers a
+  technology, a great person born, a faith that spreads or decays and a wonder that
+  completes all widen this way. Widening outside any window does nothing.
+- **Thresholds that readers see.** A source may read a domain only through a value
+  derived from it and still count the domain unread, if every declared writer of that
+  domain widens before the derived value changes. Each such contract is written on the
+  domain's constant in `CityStateDomains` or on the writer:
+  - `cities:culture`: readers see the culture level (the work-area radius, culture-level
+    requirements). `CityCulture.Accumulate` widens when the level index changes.
+  - `cities:plot_culture`: readers see the plot owner. `CityCulture.Resolve` widens
+    before it changes an owner.
+  - `revolution:instability`: readers see the mutiny tier. `RevolutionService.Update`
+    widens when the tier flips.
+  - `government:timers`: readers see whether anarchy lasts, and the timer system widens
+    on its last turn. `cities:occupation`: readers see whether the city is in occupation
+    or disorder, and `SettleConquest` widens when that ends.
 - **Write windows.** The kernel opens a window around each command's `Apply`, each
   turn system's `Run`, and its own bookkeeping: start, turn order and rollover. Closing a
   window stamps the domains it declared, or the remainder if it declared nothing, with
@@ -2782,22 +2807,46 @@ declare both sides.
   written nothing else. Either side of a wrong declaration then fails loudly where a run
   exercises it. The check costs about three times the normal turn time; a 451 + 4 run
   takes under a minute.
-- **Declared today.** Writers: `SetCityAssignmentsCommand` and `cities:assign_work`
-  (`cities:work`), `SetCityProductionCommand` and `MoveCityQueueCommand`
-  (`cities:queue`), and the AI's planning, forget, prune and war-preparation commands
-  (`ai:intent`). Readers: `BuildingEffects` and `ScriptedWonderService` never read
-  `cities:work` or `cities:queue`. Every other source is undeclared and conservative,
-  including the Corporations mod's `CorporationEffects` and Trade's `TradeEffects`. An
-  undeclared source still counts private domains as unread, so it survives AI intent
-  commits. The Corporations resource supplier (`CorporationResourceSupply`) declares
-  nothing itself, but the `ICityResourceSupply` seam's default binds it to never
-  reading `cities:work` or `cities:queue`. It meets that by inspection, and
-  `--verify-modifier-cache` passes on the corporations save. If a supplier ever needs
-  those fields, it must override the default with null; building effects then fall
-  back to recomputing after every write.
-  `TradeEffects` calls every other source's `Contribute` directly, so it never uses the
-  cache. A new source or writer needs no declaration to be correct; a declaration only
-  lets its answers survive more writes.
+- **Declared today.**
+  - Writers (commands): `SetCityAssignmentsCommand` (`cities:work`),
+    `SetCityProductionCommand` and `MoveCityQueueCommand` (`cities:queue`), and the AI's
+    planning, forget, prune and war-preparation commands (`ai:intent`).
+  - Writers (the per-player turn chain):
+    - `cities:assign_work` writes `cities:work`, and `cities:growth` writes
+      `cities:growth` and `cities:work`.
+    - `cities:culture` writes `cities:culture`, and `cities:borders` writes
+      `cities:plot_culture` and `cities:work`.
+    - `cities:production` and `cities:completion` write `cities:production`,
+      `cities:queue` and `economy:treasury`; completion widens once an order completes.
+    - `cities:conquest_timers` writes `cities:occupation`, and `cities:conscript_anger`
+      writes `cities:conscript_anger`.
+    - `economy:gold`, `economy:inflation` and `economy:espionage` write
+      `economy:treasury`, and `economy:anger` writes `economy:hurry_anger`.
+    - The `research:progress` and `government:timers` systems write the private
+      domains of the same names.
+    - Each mod's turn system writes its own private domain: `corporations:maintenance`
+      (with `economy:treasury`), `espionage:allocation`, `great_people:births`,
+      `revolution:instability`, Religion's city turns and `scripted_wonders:city_turns`.
+  - Readers:
+    - `BuildingEffects`, `TraitEffects`, `ReligionEffects` and `ScriptedWonderService`
+      never read any of `CityStateDomains.Tallies`.
+    - `CityHurry` reads only the hurry anger among them.
+    - `CivicEffects` reads population, so it leaves out growth and both anger domains.
+  - Undeclared:
+    - Readers: the Corporations mod's `CorporationEffects` (it reads population and
+      collects a nested player ledger) and Trade's `TradeEffects`.
+    - Writers: unit moves (`MoveUnitPathCommand`), because the resource flood reads
+      `Revealed` and a narrower domain needs that first; `global_warming:warming` and
+      the other global systems; and every command not listed.
+  - An undeclared source still counts private domains as unread, so it survives their
+    writes. The Corporations resource supplier (`CorporationResourceSupply`) declares
+    nothing itself, but the `ICityResourceSupply` seam's default binds it. It meets that
+    by inspection, and `--verify-modifier-cache` passes on a fresh corporation-heavy
+    game. If a supplier ever needs those fields, it must override the default with
+    null; building effects then fall back to recomputing after every such write.
+  - `TradeEffects` calls every other source's `Contribute` directly, so it never uses
+    the cache. A new source or writer needs no declaration to be correct; a declaration
+    only lets its answers survive more writes.
 
 ### Timers
 
