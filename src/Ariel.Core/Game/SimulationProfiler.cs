@@ -19,6 +19,8 @@ public enum ProfileKind
     /// <summary>One top-level command by type, its application with the event callbacks. AI players issue theirs on
     /// parallel forks too, and the wave commit replays them, so the kind's sum is processor time.</summary>
     Command,
+    /// <summary>A rules step that several commands and systems share, such as a sight recompute; nested inside them.</summary>
+    Rule,
     /// <summary>Kernel work around the rules: the AI waves as a whole and the speculation bookkeeping inside them.</summary>
     Kernel,
 }
@@ -122,6 +124,9 @@ public sealed class SimulationProfiler
         if (_turns.Count > 0)
         {
             sb.AppendLine();
+            sb.AppendLine("Each row is one advance: the rollover into this turn and the AI moves of this turn. The first");
+            sb.AppendLine("row includes compiling the code it ran.");
+            sb.AppendLine();
             sb.AppendLine("  turn    wall ms  systems ms     ai ms  alloc MiB  gc ms  gen2  cities  units");
             foreach (var t in CurveTurns())
                 sb.AppendLine(inv, $"{t.Turn,6} {t.WallMs,10:F1} {t.SystemsMs,11:F1} {t.AiMs,9:F1} {t.AllocatedBytes / 1048576.0,10:F1} {t.GcPauseMs,6:F1} {t.Gen2Collections,5} {t.Cities,7} {t.Units,6}");
@@ -129,7 +134,8 @@ public sealed class SimulationProfiler
         sb.AppendLine();
         sb.AppendLine("Inclusive time by entry, summed over every thread it ran on. Turn systems and the kernel's wave");
         sb.AppendLine("steps run on the turn's own thread; AI planners and seams, and the commands AI players issue, also");
-        sb.AppendLine("run on parallel forks, so their sums are processor time and can exceed the wall time.");
+        sb.AppendLine("run on parallel forks, so their sums are processor time and can exceed the wall time. Rule entries");
+        sb.AppendLine("are nested inside the commands and systems that call them.");
         sb.AppendLine();
         sb.AppendLine("  kind        total ms      calls    mean us   alloc MiB  id");
         foreach (var e in Entries().Take(top))
@@ -137,11 +143,11 @@ public sealed class SimulationProfiler
         return sb.ToString();
     }
 
-    // Turn 1, 10, 25, then every 25th, and the last recorded turn.
+    // The first recorded turn (which carries the JIT's warm-up), turn 10, every 25th, and the last.
     private IEnumerable<TurnSample> CurveTurns()
     {
-        int last = _turns[^1].Turn;
-        return _turns.Where(t => t.Turn is 1 or 10 || t.Turn % 25 == 0 || t.Turn == last);
+        int first = _turns[0].Turn, last = _turns[^1].Turn;
+        return _turns.Where(t => t.Turn == first || t.Turn == 10 || t.Turn % 25 == 0 || t.Turn == last);
     }
 
     /// <summary>Write the report (<c>report.txt</c>), the totals (<c>totals.csv</c>), the per-turn samples

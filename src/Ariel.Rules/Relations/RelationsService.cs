@@ -30,6 +30,7 @@ internal sealed class RelationsService : IRelationsService
 
     public void DiscoverContacts(Simulation sim)
     {
+        using var scope = sim.Profiler.Measure(ProfileKind.Rule, "relations:discover_contacts");
         // Current sight, not revealed history. Occupants and owned borders both count as contact targets.
         // Movement asks after every step, so the sets are reused across tiles, and a tile with neither a unit nor an
         // owner, which has no target to meet, is passed over before any of them is built.

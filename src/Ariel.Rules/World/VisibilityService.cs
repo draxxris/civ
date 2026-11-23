@@ -12,6 +12,7 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
     public void Run(Simulation sim) => Recompute(sim);
     public void Recompute(Simulation sim)
     {
+        using var scope = sim.Profiler.Measure(ProfileKind.Rule, "world:sight_recompute");
         // Capture before clearing: visible edits since acquisition are still observations,
         // even when the observer has just moved, died, or lost its city.
         var plots = sim.State.Plots;
