@@ -113,10 +113,10 @@ public sealed class CorporationRulesTests
             if (corporation.Seat == "Master Guild")
                 Assert.Contains(ContentReferences.Leaves(building.Requirements!), l => l.Kind == "building-class");
         }
-        // The source's prices: Master Guilds 300; headquarters, which it left to a great person, by era.
-        Assert.Equal(300, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, Masons)).Cost);
-        Assert.Equal(700, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, Cereal)).Cost);
-        Assert.Equal(1300, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, "corporations:7")).Cost);
+        // 70% of the source's prices: Master Guilds 210; headquarters, which it left to a great person, by era.
+        Assert.Equal(210, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, Masons)).Cost);
+        Assert.Equal(490, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, Cereal)).Cost);
+        Assert.Equal(910, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, "corporations:7")).Cost);
     }
 
     /// <summary>Each corporation and guild in a game of its own (two in one game could compete for a resource): its

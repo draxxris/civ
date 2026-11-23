@@ -8,6 +8,7 @@
     <ProjectReference Include="../../src/Ariel.Composition/Ariel.Composition.csproj" />
     <ProjectReference Include="../../src/Ariel.Client.Core/Ariel.Client.Core.csproj" />
     <ProjectReference Include="../../src/Ariel.Net/Ariel.Net.csproj" />
+    <ProjectReference Include="../../src/Mods/Corporations/Api/Ariel.Mods.Corporations.Api.csproj" />
   </ItemGroup>
   <!-- Every shipped mod, main and optional, staged as the game ships them. Sync checks never render. -->
   <PropertyGroup>
