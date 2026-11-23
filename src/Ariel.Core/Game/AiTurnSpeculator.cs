@@ -43,7 +43,7 @@ internal static class AiTurnSpeculator
             int width = WaveWidth(sim, remaining);
             if (width <= 1)
             {
-                RunDirect(sim, remaining[0]);
+                using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:direct_turn")) RunDirect(sim, remaining[0]);
                 Report(sim, wave, remaining[0], SpeculationOutcome.Direct);
                 remaining = remaining[1..];
                 continue;
@@ -91,7 +91,8 @@ internal static class AiTurnSpeculator
         _ = sim.State.Grid.MaximumDistance;
         SpeculativePlan?[] plans;
         using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:fork")) plans = PreparePlans(sim, players, baseline);
-        var first = ExecutePlayers(sim, players, plans, baseline);
+        PlayerTrace first;
+        using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:wave_plan")) first = ExecutePlayers(sim, players, plans, baseline);
         sim.State.PlayerById(players[0]).EndedTurn = true;
         Report(sim, wave, players[0], SpeculationOutcome.Direct);
         using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:commit"))

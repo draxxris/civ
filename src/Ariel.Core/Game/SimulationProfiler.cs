@@ -16,7 +16,8 @@ public enum ProfileKind
     AiPlanner,
     /// <summary>One AI valuer, wish source or similar seam a planner asks; nested inside its planner.</summary>
     AiSeam,
-    /// <summary>One top-level command by type, validation and application with its event callbacks.</summary>
+    /// <summary>One top-level command by type, its application with the event callbacks. AI players issue theirs on
+    /// parallel forks too, and the wave commit replays them, so the kind's sum is processor time.</summary>
     Command,
     /// <summary>Kernel work around the rules: the AI waves as a whole and the speculation bookkeeping inside them.</summary>
     Kernel,
@@ -122,8 +123,9 @@ public sealed class SimulationProfiler
                 sb.AppendLine(inv, $"{t.Turn,6} {t.WallMs,10:F1} {t.SystemsMs,11:F1} {t.AiMs,9:F1} {t.AllocatedBytes / 1048576.0,10:F1} {t.Gen2Collections,5} {t.Cities,7} {t.Units,6}");
         }
         sb.AppendLine();
-        sb.AppendLine("Inclusive time by entry. TurnSystem, Command and Kernel are wall time on the turn's own thread;");
-        sb.AppendLine("AiPlanner and AiSeam sum every thread, so with parallel AI waves they can exceed the wall time.");
+        sb.AppendLine("Inclusive time by entry, summed over every thread it ran on. Turn systems and the kernel's wave");
+        sb.AppendLine("steps run on the turn's own thread; AI planners and seams, and the commands AI players issue, also");
+        sb.AppendLine("run on parallel forks, so their sums are processor time and can exceed the wall time.");
         sb.AppendLine();
         sb.AppendLine("  kind        total ms      calls    mean us   alloc MiB  id");
         foreach (var e in Entries().Take(top))
