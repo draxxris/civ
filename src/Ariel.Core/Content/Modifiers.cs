@@ -138,6 +138,7 @@ public sealed class ModifierSink
     /// <summary>Sum all registered sources in their deterministic registration order.</summary>
     public static ModifierSink Collect(ModifierContext context)
     {
+        using var scope = context.Sim.Profiler.Measure(ProfileKind.Rule, "modifiers:collect");
         var sink = new ModifierSink();
         foreach (var source in context.Sim.Content.Services.Get<IModifierSource>()) source.Contribute(context, sink);
         return sink;
