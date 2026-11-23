@@ -7,6 +7,20 @@ namespace Ariel.Ai;
 /// mutate simulation state or draw from the simulation RNG.</summary>
 internal static class ParallelScoring
 {
+    /// <summary>Whether <paramref name="test"/> holds for every item. In parallel the items left unasked once one fails
+    /// are skipped; the answer does not depend on which, or on how many threads asked.</summary>
+    public static bool All<TSource>(Simulation sim, IReadOnlyList<TSource> items, int threshold, Func<TSource, bool> test)
+    {
+        if (sim.IsParallelAiTurn || items.Count < threshold)
+        {
+            for (int i = 0; i < items.Count; i++)
+                if (!test(items[i])) return false;
+            return true;
+        }
+        // Stopping only ever follows a failed test, and every test runs when none fails.
+        return Parallel.For(0, items.Count, (i, loop) => { if (!test(items[i])) loop.Stop(); }).IsCompleted;
+    }
+
     public static TResult[] Select<TSource, TResult>(Simulation sim, IReadOnlyList<TSource> items, int threshold, Func<TSource, TResult> select) =>
         For(sim, items.Count, threshold, i => select(items[i]));
 

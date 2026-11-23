@@ -6,7 +6,7 @@ namespace Ariel.Ai;
 /// <summary>One army per landmass. Gather first, advance at the slowest unit's pace, then prepare and assault.</summary>
 internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
 {
-    private const int ParallelTiles = 2;
+    private const int ParallelUnits = 2;
     private readonly CampaignTargets _targets = new(ctx);
 
     public List<Unit> Plan(List<Unit> free, IReadOnlyList<CityView> views)
@@ -129,15 +129,16 @@ internal sealed class AttackPlanner(AiContext ctx, UnitOrders orders)
         return FirstReachable(tiles, force, CanReachThisTurn);
     }
 
-    /// <summary>The first tile in the given order that every unit of the force can reach. Tiles are checked in parallel;
-    /// the selection still follows the original order.</summary>
+    /// <summary>The first tile in the given order that every unit of the force can reach. Tiles are tried in that
+    /// order, so no tile after the chosen one is searched; the units of one tile are checked in parallel.</summary>
     private Hex? FirstReachable(TileId[] tiles, List<Unit> force, Func<Unit, Hex, bool> reaches)
     {
-        var hexes = tiles.Select(ctx.Grid.HexOf).ToArray();
-        int threshold = force.Count > 1 ? ParallelTiles : int.MaxValue;
-        var reachable = ParallelScoring.Select(ctx.Sim, hexes, threshold, hex => force.All(u => reaches(u, hex)));
-        int index = Array.IndexOf(reachable, true);
-        return index < 0 ? null : hexes[index];
+        foreach (var tile in tiles)
+        {
+            var hex = ctx.Grid.HexOf(tile);
+            if (ParallelScoring.All(ctx.Sim, force, ParallelUnits, u => reaches(u, hex))) return hex;
+        }
+        return null;
     }
 
     private bool CanReachThisTurn(Unit unit, Hex hex)
