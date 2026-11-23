@@ -11,7 +11,8 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
     public bool IsActive(Simulation sim, int cityId, string building)
     {
         var city = sim.State.CityById(cityId);
-        return CityBuildingRules.Active(sim, city, city.Buildings).Any(b => b.Id == building);
+        // Activity only narrows the constructed set, so a city without the building is not resolved.
+        return city.Buildings.Contains(building) && CityBuildingRules.Active(sim, city, city.Buildings).Any(b => b.Id == building);
     }
 
     /// <summary>Building classes granted while an owned or team-shared constructed wonder is active.</summary>
