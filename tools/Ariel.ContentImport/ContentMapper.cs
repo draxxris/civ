@@ -139,8 +139,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
         NoteAmbiguousReligion(record, requirements);
         if (record.Class == "BuildingInfo" && values.GetValueOrDefault("foundsCorporation") is string founded && founded.Length > 0
-            && values.GetValueOrDefault("cost") is int cost && cost < 0)
-            values["cost"] = HeadquartersCost(record, values.GetValueOrDefault("era") as string, cost);
+            && values.GetValueOrDefault("cost") is int cost)
+            values["cost"] = FoundingCost(record, values.GetValueOrDefault("era") as string, cost);
         if (mapping.DefinitionType == typeof(Ariel.Mods.Corporations.CorporationDef)) values["seat"] = CorporationSeat(record);
         if ((string)values["id"]! != ids[(record.Class, record.Type)]) values["identity"] = ids[(record.Class, record.Type)];
         FoldClass(record, values, mapped);
@@ -153,21 +153,25 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         return (GameContentDef)JsonSerializer.Deserialize(json, mapping.DefinitionType, Json)!;
     }
 
-    /// <summary>The production cost of a founding headquarters the source leaves to a great person (cost -1). Ariel
-    /// founds every corporation and guild by building its headquarters or Master Guild in a city, and great people do
-    /// not found them. The source prices its Master Guilds at 300, the median cost of a medieval national wonder, so a
-    /// headquarters costs the median national wonder of its era, measured over the imported buildings with a player
-    /// limit of one.</summary>
-    private int HeadquartersCost(EffectiveRecord record, string? era, int sourceCost)
+    /// <summary>The production cost of a building that founds a corporation or guild. Ariel founds every one of them by
+    /// building its headquarters or Master Guild in a city, and great people do not found them. The source leaves the
+    /// 21 corporate headquarters to a great person (cost -1), so each costs 70% of the median national wonder of its
+    /// era (700 industrial, 1300 modern), measured over the imported buildings with a player limit of one. The
+    /// source's Master Guilds cost 300, the medieval median, and take the same 70%. The cost is set by era rather than
+    /// scaled from the source value, so a re-import cannot drift. Only a headquarters, whose source cost is missing,
+    /// is an <c>iCost</c> data issue; the guild discount is a balance rule.</summary>
+    private int FoundingCost(EffectiveRecord record, string? era, int sourceCost)
     {
         int cost = era switch
         {
-            "foundation:era_industrial" => 700,
-            "foundation:era_modern" => 1300,
-            _ => throw new InvalidDataException($"{record.Type}: a founding headquarters of era '{era}' has no cost; add one to HeadquartersCost"),
+            "foundation:era_medieval" => 210,
+            "foundation:era_industrial" => 490,
+            "foundation:era_modern" => 910,
+            _ => throw new InvalidDataException($"{record.Type}: a founding building of era '{era}' has no cost; add one to FoundingCost"),
         };
-        Issues.Add(new(ids[(record.Class, record.Type)], "iCost", sourceCost.ToString(CultureInfo.InvariantCulture),
-            $"Set to {cost}, the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."));
+        if (sourceCost < 0)
+            Issues.Add(new(ids[(record.Class, record.Type)], "iCost", sourceCost.ToString(CultureInfo.InvariantCulture),
+                $"Set to {cost}, 70% of the median national wonder cost of its era: Ariel founds corporations by building the headquarters, not with a great person."));
         return cost;
     }
 

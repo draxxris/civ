@@ -99,11 +99,11 @@ public sealed class TypedMappingTests
     {
         // The executive is trained in the corporation's headquarters city: the city that completed the headquarters, or
         // the one that captured it, which a building requirement could not follow.
-        var mapper = Mapper(Record("CorporationInfo", "CORPORATION_1"),
+        var mapper = Mapper(Record("CorporationInfo", "CORPORATION_1"), Record("EraInfo", "ERA_MODERN"),
             Record("BuildingClassInfo", "BUILDINGCLASS_CORPORATION_1", DataNode.Leaf("DefaultBuilding", "BUILDING_CORPORATION_1")),
             Record("BuildingInfo", "BUILDING_CORPORATION_1", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_CORPORATION_1"),
                 DataNode.Leaf("FoundsCorporation", "CORPORATION_1"), DataNode.Leaf("SpecialBuildingType", "SPECIALBUILDING_CORPORATION_HQ"),
-                DataNode.Leaf("iCost", "200")),
+                DataNode.Leaf("iCost", "-1")) with { Era = "ERA_MODERN" },
             Record("BuildingClassInfo", "BUILDINGCLASS_PLAIN", DataNode.Leaf("DefaultBuilding", "BUILDING_PLAIN")),
             Record("BuildingInfo", "BUILDING_PLAIN", DataNode.Leaf("BuildingClass", "BUILDINGCLASS_PLAIN")),
             Record("UnitClassInfo", "UNITCLASS_EXECUTIVE_1", DataNode.Leaf("DefaultUnit", "UNIT_EXECUTIVE_1")),

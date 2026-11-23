@@ -279,10 +279,11 @@ gameplay effects. Their evaluators fail closed. Prerequisites retain these ident
 instead of silently disappearing. A prerequisite on a building that founds a corporation
 (an executive's headquarters) becomes a `corporation` leaf with parameter 2, the
 corporation's headquarters city, which a city that captures it takes over. The imported
-headquarters and Master Guilds are the founding buildings. The Master Guilds keep the
-source's cost of 300; the source leaves the 21 corporate headquarters to a great person
-(cost -1), so the importer prices them at the median national wonder of their era (700
-industrial, 1300 modern) and lists each as an `iCost` data issue. A text value that is
+headquarters and Master Guilds are the founding buildings. The source leaves the 21
+corporate headquarters to a great person (cost -1), so the importer prices them at 70% of
+the median national wonder of their era (490 industrial, 910 modern) and lists each as an
+`iCost` data issue. The Master Guilds, which cost 300 in the source, take the same 70%
+(210) as a balance rule. A text value that is
 a renamed key, such as `CHANGED_TXT_KEY_CORPORATION_2`, resolves through the text table
 as other keys do. Four
 native unit-AI roles absent from the XML inventory receive explicit military identities.

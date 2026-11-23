@@ -1641,7 +1641,8 @@ corporations screen, city panel, notices and encyclopedia read. Its own requirem
 when: a technology, and for a guild also a number of buildings of its trade across the
 empire and the Guild Hall of its group (Crafts, Servants or Victuallers). Its world limit
 is one. The source's Master Guilds cost 300; the source left the 21 headquarters to a great person (cost -1), so the importer
-prices them at the median national wonder of their era, 700 industrial and 1300 modern.
+prices them at the median national wonder of their era, 700 industrial and 1300 modern. Ariel takes 70% of each: a
+Master Guild costs 210, an industrial headquarters 490 and a modern one 910.
 The mod is their `IBuildingFounder` (`CorporationFounder`): beyond the building's
 requirements, the city needs a connected prerequisite resource when the corporation
 consumes any, civics that allow corporations and no competing headquarters, and nobody

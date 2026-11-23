@@ -57,10 +57,10 @@ future rule mods implement these mechanics.
 
 The source founds its 21 corporations with a great person, so their headquarters cost
 -1. Ariel founds every corporation and guild by building its headquarters or Master Guild
-in a city, so the importer prices these 21 headquarters at the median cost of a national
-wonder of their era: 700 for an industrial headquarters and 1300 for a modern one. The
-source's 15 Master Guilds keep their own cost of 300, which is the medieval median. Each
-priced headquarters is an `iCost` diagnostic.
+in a city, so the importer prices these 21 headquarters at 70% of the median cost of a national
+wonder of their era: 490 for an industrial headquarters and 910 for a modern one. The
+source's 15 Master Guilds cost 300, the medieval median, and take the same 70% (210), a
+balance rule rather than a data issue. Each priced headquarters is an `iCost` diagnostic.
 
 The era filter removes every reference dependent, including text links and future
 upgrades. It can remove an early building that refers to later replacement content. The

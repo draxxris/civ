@@ -169,14 +169,14 @@ public sealed class ExtractionSmokeTests
         Assert.Equal(50, cereal.SpreadCost);
         Assert.Equal(4, cereal.HeadquartersCommerce.Gold);
 
-        // The founding buildings keep the source's Master Guild cost; the headquarters it left to a great person are priced
-        // by era, and each such price is a data issue.
+        // Every founding building costs 70% of the source's price or of the median national wonder of its era (the source left the
+        // headquarters to a great person, and each such price is a data issue).
         var buildings = definitions.OfType<Ariel.Content.Schema.BuildingDef>().Where(b => b.FoundsCorporation is not null).ToArray();
         Assert.Equal(36, buildings.Length);
         Assert.All(buildings, b => Assert.True(b.Cost > 0, b.Id));
-        Assert.Equal(300, buildings.Single(b => b.Id == "cities:corporation_masonguild").Cost);
-        Assert.Equal(700, buildings.Single(b => b.Id == "cities:corporation_1").Cost);
-        Assert.Equal(1300, buildings.Single(b => b.Id == "cities:corporation_7").Cost);
+        Assert.Equal(210, buildings.Single(b => b.Id == "cities:corporation_masonguild").Cost);
+        Assert.Equal(490, buildings.Single(b => b.Id == "cities:corporation_1").Cost);
+        Assert.Equal(910, buildings.Single(b => b.Id == "cities:corporation_7").Cost);
         Assert.Equal(21, result.Issues.Count(i => i.Field == "iCost"));
     }
 
