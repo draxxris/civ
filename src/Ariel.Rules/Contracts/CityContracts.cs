@@ -225,8 +225,21 @@ public sealed class FoundCityWithSettlerCommand : GameCommand
     public override string? Validate(Simulation sim) => sim.Rules().CityCommands.ValidateFound(sim, Player, Settler);
     public override void Apply(Simulation sim) => sim.Rules().CityCommands.Found(sim, Player, Settler);
 }
+/// <summary>The Cities module's state domains (<see cref="Ariel.Content.StateDomain"/>): what its writers declare and
+/// what readers that never read them may name.</summary>
+public static class CityStateDomains
+{
+    /// <summary>Who works a city's plots: its worked plots, its specialists and its manual and growth settings.</summary>
+    public const string Work = "cities:work";
+    /// <summary>A city's production orders: its queue, the next order id and the progress kept for paused orders.</summary>
+    public const string Queue = "cities:queue";
+    /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
+    public static readonly IReadOnlyList<string> WorkOnly = [Work], QueueOnly = [Queue], WorkAndQueue = [Work, Queue];
+}
+
 public sealed class SetCityAssignmentsCommand : GameCommand
 {
+    public override IReadOnlyList<string>? WriteDomains => CityStateDomains.WorkOnly;
     public int CityId { get; init; }
     public TileId[] Tiles { get; init; } = [];
     public Hex[]? Hexes { get; init; }
@@ -278,6 +291,7 @@ public sealed class SetCityAssignmentsCommand : GameCommand
 }
 public sealed class MoveCityQueueCommand : GameCommand
 {
+    public override IReadOnlyList<string>? WriteDomains => CityStateDomains.QueueOnly;
     public int CityId { get; init; }
     public int From { get; init; }
     public int To { get; init; }
@@ -301,6 +315,7 @@ public sealed class ConscriptCityCommand : GameCommand
 }
 public sealed class SetCityProductionCommand : GameCommand
 {
+    public override IReadOnlyList<string>? WriteDomains => CityStateDomains.QueueOnly;
     public int CityId { get; init; }
     public string Kind { get; init; } = "";
     public string ContentId { get; init; } = "";

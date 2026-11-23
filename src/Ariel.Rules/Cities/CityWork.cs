@@ -117,6 +117,7 @@ internal sealed class AssignWorkPhase(CityWork work) : IPlayerTurnSystem
 {
     public string Id => "cities:assign_work";
     public int Order => TurnPhase.AssignWork;
+    public IReadOnlyList<string>? WriteDomains => CityStateDomains.WorkOnly;
     public void Run(Simulation sim, int player) => work.AssignPlayer(sim, player);
     public void Run(Simulation sim) { foreach (var p in sim.State.Players.OrderBy(p => p.Id)) Run(sim, p.Id); }
 }
