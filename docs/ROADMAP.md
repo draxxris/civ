@@ -354,7 +354,7 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
   saves. Each turn is checked by state hash, and `check:desync-diff` shows where two
   saves differ.
 - **Checks**: `check:multiplayer` plays a host and a guest over localhost TCP;
-  `check:sync` plays one AI game in four processes and fails on any hash mismatch.
+  `check:sync` plays one AI game in five processes and fails on any hash mismatch.
 
 ### Client, Presentation & 3D Art
 

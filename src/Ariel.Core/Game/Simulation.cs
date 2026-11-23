@@ -202,9 +202,12 @@ public sealed partial class Simulation
     /// <summary>Whether this simulation is planning a player in a concurrent AI wave. Read-only planners should
     /// score serially in this scope to avoid nesting parallel work inside the wave. Not authoritative or saved.</summary>
     public bool IsParallelAiTurn { get; internal set; }
-    /// <summary>Most AI players planned together in one wave; one runs every AI strictly in turn. Part of the
-    /// deterministic rules, so it must never depend on the machine.</summary>
-    internal int AiWaveLimit { get; set; } = int.MaxValue;
+    /// <summary>Most AI players planned together in one speculative wave. The default, one, runs every AI strictly in
+    /// turn, each planner scoring its candidates in parallel; wider waves plan later players on forks instead. A wave
+    /// is specified to equal sequential play, so the width changes wall time, never results. One is the default
+    /// because it was faster on every measured game (docs/OPTIMIZE.md, Pass 15): later plans conflicted and were
+    /// thrown away too often. Not saved: a host that sets it sets it again after loading.</summary>
+    public int AiWaveLimit { get; set; } = 1;
     /// <summary>Optional diagnostic sink for AI wave decisions.</summary>
     internal Action<SpeculationEvent>? SpeculationObserver { get; set; }
     /// <summary>Apply a command a player issued, from a front end or the network: it must also be that player's move.

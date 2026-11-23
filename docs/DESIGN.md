@@ -2143,7 +2143,15 @@ overhead:
 
 ### Wave-based speculative parallel turns (`AiTurnSpeculator`)
 
-`Simulation.RunAi()` delegates turn execution to `AiTurnSpeculator.Run(this)`:
+`Simulation.RunAi()` delegates turn execution to `AiTurnSpeculator.Run(this)`. Waves are
+opt-in: `Simulation.AiWaveLimit` caps a wave's width and defaults to 1, which runs every
+AI player in turn on the authoritative simulation, each planner scoring its candidates
+in parallel (`ParallelScoring`). Wider waves were slower on every game measured in
+Pass 15 of `docs/OPTIMIZE.md`, from a 2-player 100-turn game to a 14-player turn-552
+save: most later plans conflicted and were discarded, and forks score serially. A wave
+equals sequential play by specification, so the width changes wall time only.
+`mise run check:sync` keeps one run at unlimited width (`hash-trace --waves max`) to
+hold the speculator to that. When waves are enabled:
 
 - **Speculative waves**: uncommitted AI players are partitioned into waves. Players on
   the same team or at war with earlier players in the wave are excluded from the same
@@ -2744,7 +2752,7 @@ A command applies some ticks after it is issued, so every `EndTurnCommand` the c
 sends names its `Turn`. A copy that arrives after the turn rolled over, such as a second
 press, is refused instead of ending the next turn.
 `mise run check:sync` checks determinism across processes, thread counts,
-save/reload and background turns. `mise run check:multiplayer` plays a host and a guest
+save/reload, background turns and speculative AI waves. `mise run check:multiplayer` plays a host and a guest
 client against each other over localhost. Each side reports its hash in chat when it
 reaches the target turn and leaves only after the other side has reported.
 

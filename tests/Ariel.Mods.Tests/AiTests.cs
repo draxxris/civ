@@ -116,15 +116,16 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     [Trait("Category", "E2E")]
     public void Speculative_games_and_midrun_save_match_sequential_hashes_for_twenty_turns()
     {
-        var a = GameFactory.CreateAi(mods.Content, seed: 23);
-        var b = GameFactory.CreateAi(mods.Content, seed: 23);
+        // Waves are opt-in: run both speculative games with unlimited waves against the sequential default.
+        var a = GameFactory.CreateAi(mods.Content, seed: 23); a.AiWaveLimit = int.MaxValue;
+        var b = GameFactory.CreateAi(mods.Content, seed: 23); b.AiWaveLimit = int.MaxValue;
         var sequential = SaveGame.Load(mods.Content, SaveGame.Save(a));
-        sequential.AiWaveLimit = 1;
+        Assert.Equal(1, sequential.AiWaveLimit);
         for (int turn = 0; turn <= 20; turn++)
         {
             Assert.Equal(sequential.ComputeHash(), a.ComputeHash());
             Assert.Equal(a.ComputeHash(), b.ComputeHash());
-            if (turn == 10) b = SaveGame.Load(mods.Content, SaveGame.Save(b));
+            if (turn == 10) { b = SaveGame.Load(mods.Content, SaveGame.Save(b)); b.AiWaveLimit = int.MaxValue; }
             Assert.Equal(a.ComputeHash(), b.ComputeHash());
             if (turn == 20) break;
             a.AdvanceTurn(); b.AdvanceTurn(); sequential.AdvanceTurn();
@@ -156,7 +157,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
                 foreach (var plot in game.State.Plots) { plot.Revealed.Add(0); plot.Revealed.Add(1); }
                 game.Rules().Relations.EstablishContact(game, 0, 1); // A war needs contact.
             });
-        var sequential = SaveGame.Load(mods.Content, SaveGame.Save(sim)); sequential.AiWaveLimit = 1;
+        var sequential = SaveGame.Load(mods.Content, SaveGame.Save(sim)); sim.AiWaveLimit = int.MaxValue;
         Assert.Empty(sim.TeamOf(0).Wars);
         bool declared = false;
         for (int i = 0; i < 20; i++)
@@ -164,7 +165,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
             sim.AdvanceTurn(); sequential.AdvanceTurn();
             Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
             declared |= sim.TeamOf(0).Wars.Contains(1);
-            if (i == 9) sim = SaveGame.Load(mods.Content, SaveGame.Save(sim));
+            if (i == 9) { sim = SaveGame.Load(mods.Content, SaveGame.Save(sim)); sim.AiWaveLimit = int.MaxValue; }
         }
         Assert.True(declared, "The fixture must exercise war target selection and the declaration roll after turn 45");
     }

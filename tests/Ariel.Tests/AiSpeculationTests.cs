@@ -103,6 +103,19 @@ public sealed class AiSpeculationTests
     }
 
     [Fact]
+    public void A_new_simulation_runs_every_ai_player_in_turn_without_waves()
+    {
+        var waves = Game(2, (game, player) => [Move(game, player)]);
+        var sim = Copy(waves);
+        Assert.Equal(1, sim.AiWaveLimit);
+        var events = Observe(sim);
+        sim.RunAi();
+        Assert.Equal(new[] { (1, 0, SpeculationOutcome.Direct), (2, 1, SpeculationOutcome.Direct) },
+            events.Select(e => (e.Wave, e.Player, e.Outcome)));
+        waves.RunAi(); Assert.Equal(waves.ComputeHash(), sim.ComputeHash());
+    }
+
+    [Fact]
     public void Nearby_active_moves_relaunch_all_remaining_players_concurrently_from_post_commit_state()
     {
         using var rendezvous = new CountdownEvent(3);
@@ -317,7 +330,8 @@ public sealed class AiSpeculationTests
             state.Units.Add(unit);
         }
         state.RebuildIndexes();
-        return new(content, new() { Seed = 71, PlayerCount = players, Map = state.Map }, state, new(71));
+        // Waves are opt-in; these tests compare unlimited waves with sequential play.
+        return new(content, new() { Seed = 71, PlayerCount = players, Map = state.Map }, state, new(71)) { AiWaveLimit = int.MaxValue };
     }
 
     private static Simulation Copy(Simulation sim)

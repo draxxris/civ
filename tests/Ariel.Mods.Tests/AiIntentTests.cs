@@ -504,7 +504,7 @@ public sealed class AiIntentTests(LoadedMods mods) : IClassFixture<LoadedMods>
             FarmTile(sim, 13, 2, owner: 1);
             distant.Worked.Add(tile);
         }
-        var sequential = SaveGame.Load(content, SaveGame.Save(sim)); sequential.AiWaveLimit = 1;
+        var sequential = SaveGame.Load(content, SaveGame.Save(sim)); sim.AiWaveLimit = int.MaxValue;
         var events = new List<SpeculationEvent>(); sim.SpeculationObserver = events.Add;
         sim.RunAi(); sequential.RunAi();
         Assert.Equal(sequential.ComputeHash(), sim.ComputeHash());
