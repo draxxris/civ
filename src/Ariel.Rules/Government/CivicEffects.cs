@@ -21,7 +21,11 @@ internal sealed class CivicEffects : IModifierSource
             CivicAnger(context.Sim, affectedCity, sink);
         if (context.Scope != ModifierScope.Player) return;
         foreach (var city in context.Sim.State.Cities.Where(city => city.Owner == context.Player))
+        {
+            // Few buildings change anarchy, and resolving every city's running buildings is most of a player calculation.
+            if (!CityBuildingRules.MayRun(context.Sim, city, b => b.AnarchyModifier != 0)) continue;
             foreach (var building in ActiveBuildings(context.Sim, city)) sink.Add(building.Id, "government:anarchy_percent", building.AnarchyModifier);
+        }
     }
     private static void Contribute(ModifierContext context, CivicDef civic, IReadOnlyList<BuildingDef>? buildings, ModifierSink sink)
     {

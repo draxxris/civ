@@ -8,6 +8,8 @@ internal sealed class CityBuildingService : ICityBuildingService
         CityData.EffectiveBuildings(sim, sim.State.CityById(city)).Select(b => b.Id).ToArray();
     public IReadOnlyList<string> ActiveBuildings(Simulation sim, int city) =>
         CityData.Active(sim, sim.State.CityById(city)).Select(b => b.Id).ToArray();
+    public IReadOnlyList<string> CandidateBuildings(Simulation sim, int city) =>
+        CityData.Candidates(sim, sim.State.CityById(city)).ToArray();
     public bool IsPowered(Simulation sim, int city) => CityData.IsPowered(sim, sim.State.CityById(city));
     public bool IsDirtyPower(Simulation sim, int city) => CityData.IsDirtyPower(sim, sim.State.CityById(city));
     public bool ProvidesPower(Simulation sim, int cityId, string building)

@@ -18,7 +18,7 @@ internal sealed class BuildingEffects : IModifierSource
         {
             foreach (var ownedCity in CityData.Owned(context.Sim, context.Player))
             {
-                if (!MayRun(context.Sim, ownedCity, b => b.GlobalHurryModifier != 0)) continue;
+                if (!CityBuildingRules.MayRun(context.Sim, ownedCity, b => b.GlobalHurryModifier != 0)) continue;
                 foreach (var building in CityData.Active(context.Sim, ownedCity))
                     sink.Add(building.Id, "economy:hurry_percent", building.GlobalHurryModifier);
             }
@@ -31,7 +31,7 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var building in running) Local(sim, city, building, running, bonuses, sink);
         foreach (var other in CityData.Owned(sim, city.Owner))
         {
-            if (other != city && !MayRun(sim, other, ReachesOtherCities)) continue;
+            if (other != city && !CityBuildingRules.MayRun(sim, other, ReachesOtherCities)) continue;
             foreach (var building in CityData.Active(sim, other)) Global(sim, city, other, building, running, sink);
         }
         foreach (var building in CityData.EffectiveBuildings(sim, city))
@@ -169,15 +169,6 @@ internal sealed class BuildingEffects : IModifierSource
     {
         foreach (var pair in b.VicinityBonusYieldChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
             if (VicinityBonuses.Has(sim, city, pair.Key, bonuses)) sink.AddYield(b.Id + ":vicinity:" + pair.Key, pair.Value);
-    }
-    /// <summary>Whether any building the city could run (constructed or granted) matches. The running set is a subset of
-    /// these, and resolving it is the expensive part of a calculation that visits every city of an empire, so a city
-    /// where nothing matches is passed over before it is resolved.</summary>
-    private static bool MayRun(Simulation sim, City city, Func<S.BuildingDef, bool> match)
-    {
-        foreach (var id in city.Buildings) if (match(sim.Content.Get<S.BuildingDef>(id))) return true;
-        foreach (var id in CityData.FreeBuildings(sim, city)) if (match(sim.Content.Get<S.BuildingDef>(id))) return true;
-        return false;
     }
     /// <summary>Whether <see cref="Global"/> would write any line for the building: every field it reads, global or
     /// area-wide. A field added to <see cref="Global"/> must be added here too.</summary>

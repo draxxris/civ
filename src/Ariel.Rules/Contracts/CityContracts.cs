@@ -57,6 +57,9 @@ public interface ICityBuildingService
 {
     IReadOnlyList<string> EffectiveBuildings(Simulation sim, int city);
     IReadOnlyList<string> ActiveBuildings(Simulation sim, int city);
+    /// <summary>What the city has constructed and what empire grants give it: every building it could run, before
+    /// power, activity and replacement narrow it to <see cref="ActiveBuildings"/>.</summary>
+    IReadOnlyList<string> CandidateBuildings(Simulation sim, int city);
     bool IsPowered(Simulation sim, int city);
     bool IsDirtyPower(Simulation sim, int city);
     /// <summary>Checks whether a candidate building supplies power with the city's current resources.</summary>

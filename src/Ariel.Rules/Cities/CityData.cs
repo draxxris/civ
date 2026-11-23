@@ -21,19 +21,22 @@ internal static class CityData
     internal static S.RuleConstants Constants(Simulation sim) => sim.Content.Get<S.RuleConstantsDef>().All.Single().Values;
     internal static int Raw(Simulation sim, string key, int fallback) => sim.Content.Get<S.RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var value) && int.TryParse(value, out var n) ? n : fallback;
     internal static IEnumerable<City> Owned(Simulation sim, int player) => sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id);
+    /// <summary>Constructed and granted buildings: every building the city could run. The running sets below only
+    /// narrow it.</summary>
+    internal static IEnumerable<string> Candidates(Simulation sim, City city) => city.Buildings.Concat(FreeBuildings(sim, city));
     internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
         CityReadScope.Memo(scope.Active, city, () =>
         {
             // Power is a whole-area question (clean power anywhere in the team's area, or the city's own sources and
             // their resources), so it is asked only of a city that holds a building needing it.
             bool? powered = null;
-            var buildings = city.Buildings.Concat(FreeBuildings(sim, city))
+            var buildings = Candidates(sim, city)
                 .Where(id => !sim.Content.Get<S.BuildingDef>(id).RequiresPower || (powered ??= IsPowered(sim, city)));
             return CityBuildingRules.Active(sim, city, buildings);
         }));
     // Power sources do not require power. Exclude consumers before resolving sources and their resources.
     internal static IReadOnlyList<S.BuildingDef> ActiveWithoutPower(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
-        CityReadScope.Memo(scope.ActiveWithoutPower, city, () => CityBuildingRules.Active(sim, city, city.Buildings.Concat(FreeBuildings(sim, city))
+        CityReadScope.Memo(scope.ActiveWithoutPower, city, () => CityBuildingRules.Active(sim, city, Candidates(sim, city)
             .Where(id => !sim.Content.Get<S.BuildingDef>(id).RequiresPower))));
     internal static bool IsAreaCleanPower(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
     {

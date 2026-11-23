@@ -13,6 +13,17 @@ public static class CityBuildingRules
         sim.Rules().CityBuildings.ActiveBuildings(sim, city.Id)
             .Order(StringComparer.Ordinal).Select(sim.Content.Get<B>).ToArray();
 
+    /// <summary>Whether any building the city could run (<see cref="ICityBuildingService.CandidateBuildings"/>) matches.
+    /// <see cref="Running"/> only narrows those, so a rule that adds something for matching buildings can pass over a
+    /// city where this is false without resolving its running set, the expensive part of visiting every city of an
+    /// empire.</summary>
+    public static bool MayRun(Simulation sim, City city, Func<B, bool> match)
+    {
+        foreach (var id in sim.Rules().CityBuildings.CandidateBuildings(sim, city.Id))
+            if (match(sim.Content.Get<B>(id))) return true;
+        return false;
+    }
+
     public static IReadOnlyList<B> Active(Simulation sim, City city, IEnumerable<string> buildings) =>
         new Selection(sim, city, buildings).Active();
 
