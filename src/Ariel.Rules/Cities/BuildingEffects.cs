@@ -10,6 +10,10 @@ namespace Ariel.Rules.Cities;
 /// drops zero amounts, and most buildings have nothing for most techs, resources and global effects.</para></summary>
 internal sealed class BuildingEffects : IModifierSource
 {
+    /// <summary>Building effects follow the city's buildings, techs, power, resources and grants, never who works its
+    /// plots or what it is building, as long as every resource supplier and building grant provider says the same.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => StateDomainRegistry.UnreadByAll(CityStateDomains.WorkAndQueue,
+        content, content.Services.Get<ICityResourceSupply>().Concat<object>(content.Services.Get<IFreeBuildingGrants>()));
     public void Contribute(ModifierContext context, ModifierSink sink) =>
         CityReadScope.Run(context.Sim, _ => { ContributeScoped(context, sink); return true; });
     private static void ContributeScoped(ModifierContext context, ModifierSink sink)

@@ -22,6 +22,7 @@ public sealed class AiModule : IMod
         context.RegisterService<IDealAppraiser>("deal_appraiser", new DealAppraiser());
         context.RegisterStateComponent<AiPlayerState>("player_state");
         context.RegisterStateComponent<AiTeamState>("team_state");
+        context.RegisterPrivateStateDomain("intent", "Players/*/Extensions/ai:player_state");
         context.RegisterCommand<ReviewCivicGoalCommand>("review_civic_goal");
         context.RegisterCommand<ReviewCampaignGoalsCommand>("review_campaign_goals");
         context.RegisterCommand<PrepareSettlerMissionsCommand>("prepare_settler_missions");

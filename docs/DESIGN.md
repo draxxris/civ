@@ -2267,6 +2267,17 @@ Several query paths avoid redundant traversal:
   and `IPlayerEconomyService.Calculate`, so a turn system's or a command's city
   calculation gathers each modifier sum and connected resource count once. Verification
   hashes spans like epochs (about 100 s per turn at turn 451, so verify short runs).
+- Kept modifier contributions: across writes, inside kernel work, each modifier
+  source's lines are kept until a write it may read, from writers' and readers' state
+  domain declarations (Modifiers and ledgers, "Kept contributions, state domains and
+  write windows").
+- Resource network symmetry: an edge between two plots answers the same from either
+  side. Route and water modes, city nodes, access and blockades are properties of a
+  single plot. The river test reads the shared edge from the plot it floods from and the
+  corner edges from both, and `GameState.SetRiver` mirrors every bit onto the neighbour.
+  `RiverGenerationTests` checks the mirroring on every generator. Reachability is
+  therefore an equivalence for one player and one query, so one flood could serve every
+  city it reaches.
 - Lazy `ResourceNetwork.Modes`: route and transport mode checks are resolved lazily per
   query on first access rather than traversed upfront.
 - `INavalBlockadeService.BlockadedTiles`: computes and caches the complete set of
@@ -2702,6 +2713,91 @@ a target on an untargeted key or a typed key, a missing target on a targeted key
 key whose provider the content's mod does not reference. Effects are part of their
 definition, so they are in the content hash. A key nobody reads is legal and inert; the
 computer player values only the keys it knows (Computer players).
+
+### Kept contributions, state domains and write windows
+
+Every turn system and AI planner sums a city's ledger again, and almost always from the
+same inputs. Inside kernel work, `ModifierSink.Collect` therefore keeps each source's
+lines for each context and uses them again until something that source may read is
+written. The kernel knows no module: it tracks named parts of the state, and modules
+declare both sides.
+
+- **State domains.** A module registers a domain over fields of the canonical state
+  (`IModContext.RegisterStateDomain(name, paths)`, id `module:name`), for example
+  `cities:work` over `Cities/*/Worked`, `Cities/*/Specialists` and the city state's
+  `ManualWork` and `AvoidGrowth`. A path uses `*` for every array element or object
+  property. A field belongs to at most one domain; overlapping registrations are
+  rejected. Everything no domain names is the remainder. At most 64 domains, one bit
+  each. A **private** domain (`RegisterPrivateStateDomain`) holds fields only its own
+  module's planning code reads, never a rule or a modifier source, so every reader
+  counts it as unread without naming it. The AI's saved intent (`ai:intent`) is one.
+- **Writers declare what they write.** `GameCommand.WriteDomains` and
+  `ITurnSystem.WriteDomains` name the domains a command's `Apply` or a system's `Run`
+  writes. Null, the default, means anything.
+- **Readers declare what they never read.** `IStateReader.UnreadDomains(ContentDb)`, which
+  `IModifierSource` extends, names the domains a source never reads, directly or through
+  any rule it calls. Null, the default, declares nothing. A source that calls other
+  modules' providers may declare only what every provider declares too
+  (`StateDomainRegistry.UnreadByAll`). The seams it calls bound what their
+  implementations read: `ICityResourceSupply` and `IFreeBuildingGrants` default to
+  never reading `cities:work` or `cities:queue`. An id no loaded module registered
+  declares nothing. That is why the Cities module's building effects can name the AI's
+  domain, and the Cities and ScriptedWonders sources can name Cities domains, without
+  depending on those modules being loaded.
+- **Write windows.** The kernel opens a window around each command's `Apply`, each
+  turn system's `Run`, and its own bookkeeping: start, turn order and rollover. Closing a
+  window stamps the domains it declared, or the remainder if it declared nothing, with
+  a new write stamp. While a window is open, a source that reads what the window
+  declares is computed fresh and not kept. An event that any subscriber handles widens
+  the open window to everything, because a subscriber may write anything. An event
+  published outside any window dispatches inside an undeclared window of its own.
+  Ended turns, turn-order moves and wholesale state replacement (`CompleteTurnWork`, a
+  speculative restore) count as writing everything. A nested window adds what it wrote
+  to the outer window. `AdvanceTurn` or `RunAi` inside a command sets the open windows
+  aside and counts as writing everything on both sides.
+- **Kernel spans.** Contributions are kept only inside kernel work: `TryApply`,
+  `AdvanceTurn`, `RunAi`, `RunAiPlayer`, `StartGame` and pending turn work. A host may
+  edit the state directly between calls, so entering and leaving the outermost span
+  counts as writing everything, and leaving it empties the cache.
+- **The cache.** `Simulation.ModifierCache` maps (source index, `ModifierContext`) to the
+  source's lines and the write stamp they were made at. An entry is used while no domain
+  the source may read, and not the remainder, was stamped later. Reused lines rebuild
+  the typed vectors exactly. Only city, player and team calculations without a
+  `ProposedPlot` are kept. Unit and plot calculations come from combat and placement
+  previews, often of a probe unit asked about once, so they are summed directly. An
+  undeclared source is still kept, but any write outside the private domains
+  invalidates it. Memory is bounded at 32,768 entries: a full table is emptied and
+  refills. It is also emptied on state replacement and at the end of the outermost
+  kernel span.
+- **Thread model.** Writes, windows and stamps happen only on the thread that runs the
+  kernel. AI scoring threads (`ParallelScoring`) read one simulation inside a read epoch,
+  when no window opens or closes. They share the cache, which is a
+  `ConcurrentDictionary` of immutable entries published whole, so a reader sees an entry
+  or nothing. Two threads that compute the same entry store equal lines. Speculative
+  forks have caches of their own.
+- **Verification.** `Simulation.VerifyWrites` (`hash-trace --verify-modifier-cache`,
+  `mise run ai:play -- --verify-modifier-cache`) computes every reused contribution
+  again where it is used and throws on any difference. It also checks every declared
+  window, by hashing the state without its declared domains before and after, to have
+  written nothing else. Either side of a wrong declaration then fails loudly where a run
+  exercises it. The check costs about three times the normal turn time; a 451 + 4 run
+  takes under a minute.
+- **Declared today.** Writers: `SetCityAssignmentsCommand` and `cities:assign_work`
+  (`cities:work`), `SetCityProductionCommand` and `MoveCityQueueCommand`
+  (`cities:queue`), and the AI's planning, forget, prune and war-preparation commands
+  (`ai:intent`). Readers: `BuildingEffects` and `ScriptedWonderService` never read
+  `cities:work` or `cities:queue`. Every other source is undeclared and conservative,
+  including the Corporations mod's `CorporationEffects` and Trade's `TradeEffects`. An
+  undeclared source still counts private domains as unread, so it survives AI intent
+  commits. The Corporations resource supplier (`CorporationResourceSupply`) declares
+  nothing itself, but the `ICityResourceSupply` seam's default binds it to never
+  reading `cities:work` or `cities:queue`. It meets that by inspection, and
+  `--verify-modifier-cache` passes on the corporations save. If a supplier ever needs
+  those fields, it must override the default with null; building effects then fall
+  back to recomputing after every write.
+  `TradeEffects` calls every other source's `Contribute` directly, so it never uses the
+  cache. A new source or writer needs no declaration to be correct; a declaration only
+  lets its answers survive more writes.
 
 ### Timers
 

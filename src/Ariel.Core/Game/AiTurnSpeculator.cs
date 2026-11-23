@@ -77,6 +77,7 @@ internal static class AiTurnSpeculator
     {
         sim.RunAiPlayer(player);
         sim.State.PlayerById(player).EndedTurn = true;
+        sim.NoteKernelWrite();
     }
 
     private static void Report(Simulation sim, int wave, int player, SpeculationOutcome outcome, string? reason = null) =>
@@ -94,6 +95,7 @@ internal static class AiTurnSpeculator
         PlayerTrace first;
         using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:wave_plan")) first = ExecutePlayers(sim, players, plans, baseline);
         sim.State.PlayerById(players[0]).EndedTurn = true;
+        sim.NoteKernelWrite();
         Report(sim, wave, players[0], SpeculationOutcome.Direct);
         using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:commit"))
             return CommitPlans(sim, players, plans, baseline, first, wave);
@@ -147,6 +149,7 @@ internal static class AiTurnSpeculator
                 return i;
             }
             sim.State.PlayerById(players[i]).EndedTurn = true;
+            sim.NoteKernelWrite();
             acted.Add(players[i]);
             Report(sim, wave, players[i], plans[i] is null ? SpeculationOutcome.Direct : SpeculationOutcome.Committed);
             if (plans[i] is { } done) mutations.Absorb(done.Trace!);
@@ -403,6 +406,7 @@ internal static class AiTurnSpeculator
         {
             sim.EndReadEpoch();
             sim.State.RestoreFrom(_state!);
+            sim.NoteStateReplaced();
             sim.Rng.Set(_rng);
             sim.Events.Truncate(_events);
             _state = null;
@@ -411,6 +415,7 @@ internal static class AiTurnSpeculator
                 if (plan is null) sim.RunAiPlayer(player);
                 else if (plan.Replay(sim) is { } error) throw new InvalidOperationException($"Speculative replay is not repeatable: {error}");
                 sim.State.PlayerById(player).EndedTurn = true;
+                sim.NoteKernelWrite();
             }
         }
     }

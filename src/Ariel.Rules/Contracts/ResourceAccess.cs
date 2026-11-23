@@ -54,9 +54,14 @@ public static class ResourceAccess
 
 /// <summary>Copies of resources a city's own rules give it beyond the trade network: a corporation branch that
 /// produces a resource from the ones it consumes, for instance. They count wherever the city uses resources
-/// (<see cref="ResourceAccess.Counts"/>) and never for trade.</summary>
-public interface ICityResourceSupply
+/// (<see cref="ResourceAccess.Counts"/>) and never for trade.
+/// <para>A rule that counts resources asks every supplier, so the contract bounds what a supplier reads: it answers
+/// from the city's buildings, holdings, techs and resource counts, never from who works the city's plots or what the
+/// city is building (<see cref="CityStateDomains.Work"/>, <see cref="CityStateDomains.Queue"/>). That is the default
+/// declaration (<see cref="Ariel.Content.IStateReader"/>); a supplier that reads less may say so.</para></summary>
+public interface ICityResourceSupply : Ariel.Content.IStateReader
 {
+    IReadOnlyList<string>? Ariel.Content.IStateReader.UnreadDomains(Ariel.Content.ContentDb content) => CityStateDomains.WorkAndQueue;
     /// <summary>The copies supplied to the city, by resource. <paramref name="networkCounts"/> answers the city's network
     /// and deal copies of the resources asked for; a supplier must read resources through it, never through
     /// <see cref="ResourceAccess.Counts"/>, which would ask the suppliers again. Read-only.</summary>

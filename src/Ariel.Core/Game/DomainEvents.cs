@@ -25,6 +25,10 @@ public interface IDomainEventSubscriber
 {
     /// <summary>Handle a notification. Any state changes must be deterministic.</summary>
     void Handle(Simulation sim, DomainEvent message);
+    /// <summary>Whether this subscriber may act on events of <paramref name="eventType"/>. An event that some subscriber
+    /// handles widens the write window it is published in to everything (<see cref="Simulation"/>, "Write windows"),
+    /// since the subscriber may write anything. The default, true, is the safe answer.</summary>
+    bool Handles(Type eventType) => true;
 }
 /// <summary>Per-simulation dispatch bus. Nested publishes are queued, not recursively dispatched.
 /// Presentation events are not saved or hashed.</summary>
@@ -35,6 +39,7 @@ public sealed class DomainEventBus
     private readonly List<DomainEvent> _turnEvents = new();
     private readonly Queue<DomainEvent> _pending = new();
     private bool _dispatching;
+    private readonly Dictionary<Type, bool> _handled = new();
     internal DomainEventBus(Simulation sim)
     {
         _sim = sim; _subscribers = sim.Content.Services.Get<IDomainEventSubscriber>();
@@ -65,14 +70,26 @@ public sealed class DomainEventBus
         PreviousTurn = Array.AsReadOnly(_turnEvents.ToArray());
         _turnEvents.Clear();
     }
+    private bool Handled(Type type)
+    {
+        if (_handled.TryGetValue(type, out bool handled)) return handled;
+        handled = _subscribers.Any(s => s.Handles(type));
+        _handled[type] = handled;
+        return handled;
+    }
     /// <summary>Publish and dispatch to all subscribers in mod registration order. If a subscriber throws, the
     /// events still queued behind the failing one are dropped with it, so the next unrelated publish does not
     /// dispatch them as if its own command had caused them.</summary>
     public void Publish(DomainEvent message)
     {
+        // A subscriber may write anything: the open write window widens to everything, and an event published
+        // outside any window dispatches inside one of its own, so the subscribers' writes are always stamped.
+        bool handled = Handled(message.GetType());
+        bool widened = handled && _sim.WidenWriteWindow();
         _pending.Enqueue(message);
         if (_dispatching) return;
         _dispatching = true;
+        using var window = handled && !widened ? _sim.OpenWriteWindow(null, "event:" + message.GetType().Name) : default;
         try
         {
             while (_pending.TryDequeue(out var next))

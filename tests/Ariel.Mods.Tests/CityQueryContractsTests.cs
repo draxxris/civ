@@ -92,6 +92,8 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
         }
         public ModRegistry<T> Content<T>() where T : ContentDef => inner.Content<T>();
         public void RegisterStateComponent<T>(string name) where T : class => inner.RegisterStateComponent<T>(name);
+        public void RegisterStateDomain(string name, params string[] paths) => inner.RegisterStateDomain(name, paths);
+        public void RegisterPrivateStateDomain(string name, params string[] paths) => inner.RegisterPrivateStateDomain(name, paths);
         public void Subscribe<T>(string name, Action<Simulation, T> handler) where T : DomainEvent => inner.Subscribe(name, handler);
         public void RegisterCommand<T>(string name) where T : GameCommand => inner.RegisterCommand<T>(name);
         public string ModId => inner.ModId;

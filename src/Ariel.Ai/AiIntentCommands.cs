@@ -5,6 +5,8 @@ namespace Ariel.Ai;
 
 internal static class IntentCommandRules
 {
+    /// <summary>The AI's saved intent, a private domain no rule reads (<see cref="AiModule"/>).</summary>
+    internal static readonly IReadOnlyList<string> IntentOnly = ["ai:intent"];
     internal static string? Validate(Simulation sim, int player) =>
         !sim.State.Players.Any(p => p.Id == player) ? "Unknown player" :
         sim.State.PlayerById(player).EndedTurn ? "Player has ended the turn" : null;
@@ -16,6 +18,9 @@ public abstract class AiPlanningCommand : GameCommand
     // The first application binds the result. Later applications must reproduce that decision, even if a later
     // command completes and removes the mission before the simulation's final commit fingerprint is compared.
     [JsonInclude] public string? ExpectedIntent { get; private set; }
+    /// <summary>Planning commits only the AI's intent; a commit that issues a rules command (adopting civics) runs it
+    /// in that command's own window.</summary>
+    public override IReadOnlyList<string>? WriteDomains => IntentCommandRules.IntentOnly;
     private string? _evaluated;
 
     public sealed override string? Validate(Simulation sim)
@@ -89,6 +94,7 @@ public sealed class PrepareWorkerMissionsCommand : AiPlanningCommand
 /// <summary>Remove intent after a task completes or movement fails.</summary>
 public sealed class ForgetUnitMissionCommand : GameCommand
 {
+    public override IReadOnlyList<string>? WriteDomains => IntentCommandRules.IntentOnly;
     public int Unit { get; init; }
     public override string? Validate(Simulation sim) => IntentCommandRules.Validate(sim, Player);
     public override void Apply(Simulation sim)
@@ -102,6 +108,7 @@ public sealed class ForgetUnitMissionCommand : GameCommand
 /// <summary>Remove intent for expired, dead, captured or role-changed units, including an eliminated empire.</summary>
 public sealed class PruneAiIntentCommand : GameCommand
 {
+    public override IReadOnlyList<string>? WriteDomains => IntentCommandRules.IntentOnly;
     public override string? Validate(Simulation sim) => IntentCommandRules.Validate(sim, Player);
     public override void Apply(Simulation sim)
     {
@@ -115,6 +122,7 @@ public sealed class PruneAiIntentCommand : GameCommand
 /// game's <see cref="DeclareWarCommand"/>, issued once the army stands at the border.</summary>
 public sealed class PrepareWarCommand : GameCommand
 {
+    public override IReadOnlyList<string>? WriteDomains => IntentCommandRules.IntentOnly;
     public int? Target { get; init; }
     public override string? Validate(Simulation sim) => IntentCommandRules.Validate(sim, Player)
         ?? (Target is { } target ? sim.Rules().Relations.ValidateWar(sim, Player, target) : null);

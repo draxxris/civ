@@ -42,8 +42,13 @@ public enum ModifierScope
 }
 /// <summary>Calculation subject. The calculating mod chooses the scope and supplies applicable subject ids.</summary>
 public sealed record ModifierContext(Simulation Sim, ModifierScope Scope, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null, Team? Team = null, Plot? ProposedPlot = null);
-/// <summary>Cross-mod contribution source. Contribute must not change simulation state.</summary>
-public interface IModifierSource
+/// <summary>Cross-mod contribution source. Contribute must not change simulation state, and what it adds must depend
+/// only on the context and the state: not on the sink it adds to, nor on anything outside the simulation.
+/// <para>A source may declare the state domains it never reads (<see cref="IStateReader.UnreadDomains"/>). Inside
+/// kernel work a contribution is kept and used again until something it may read is written
+/// (<see cref="ModifierSink.Collect"/>), so a write confined to those domains leaves it valid. A source that declares
+/// nothing may read everything, and any write makes it compute again.</para></summary>
+public interface IModifierSource : IStateReader
 {
     /// <summary>Append typed effects to a calculation's sink; ignore unsupported scopes.</summary>
     void Contribute(ModifierContext context, ModifierSink sink);
@@ -167,10 +172,46 @@ public sealed class ModifierSink
         copy._lines.AddRange(_lines);
         return copy;
     }
+    /// <summary>Add lines another sink made, updating the typed vectors exactly as the calls that made them did: a
+    /// typed line carries one component of the vector its call added, and calls never add a zero line.</summary>
+    private void Append(LedgerLine[] lines)
+    {
+        if (lines.Length == 0) return;
+        foreach (var line in lines)
+        {
+            _lines.Add(line);
+            long a = line.Amount;
+            switch (line.Key)
+            {
+                case "yield.flat.food": FlatYield += new YieldVector(a, 0, 0); break;
+                case "yield.flat.production": FlatYield += new YieldVector(0, a, 0); break;
+                case "yield.flat.commerce": FlatYield += new YieldVector(0, 0, a); break;
+                case "yield.percent.food": PercentYield += new YieldVector(a, 0, 0); break;
+                case "yield.percent.production": PercentYield += new YieldVector(0, a, 0); break;
+                case "yield.percent.commerce": PercentYield += new YieldVector(0, 0, a); break;
+                case "commerce.flat.gold": FlatCommerce += new CommerceVector(a, 0, 0, 0); break;
+                case "commerce.flat.research": FlatCommerce += new CommerceVector(0, a, 0, 0); break;
+                case "commerce.flat.culture": FlatCommerce += new CommerceVector(0, 0, a, 0); break;
+                case "commerce.flat.espionage": FlatCommerce += new CommerceVector(0, 0, 0, a); break;
+                case "commerce.percent.gold": PercentCommerce += new CommerceVector(a, 0, 0, 0); break;
+                case "commerce.percent.research": PercentCommerce += new CommerceVector(0, a, 0, 0); break;
+                case "commerce.percent.culture": PercentCommerce += new CommerceVector(0, 0, a, 0); break;
+                case "commerce.percent.espionage": PercentCommerce += new CommerceVector(0, 0, 0, a); break;
+            }
+        }
+        _ledger = null; _totals = null;
+    }
     /// <summary>Sum all registered sources in their deterministic registration order. Sources only read the state
     /// (<see cref="IModifierSource"/>), so while the simulation holds a read epoch (<see cref="Simulation.ReadEpoch"/>)
     /// the same context sums to the same sink: each thread keeps the sums of the open epoch and hands out copies, which
-    /// callers may add to.</summary>
+    /// callers may add to.
+    /// <para>Across writes, inside kernel work, each source's lines for each context are kept in the simulation's
+    /// modifier cache with the write stamp they were made at, and used again while nothing the source may read was
+    /// written since: a source declares what it never reads (<see cref="IStateReader.UnreadDomains"/>), and no source reads a private
+    /// domain (<see cref="StateDomain.Private"/>), and a
+    /// writer declares what it writes (<see cref="GameCommand.WriteDomains"/>, <see cref="ITurnSystem.WriteDomains"/>).
+    /// An undeclared source is used again only while nothing at all was written. Only city, player and team
+    /// calculations are kept (<see cref="Kept"/>).</para></summary>
     public static ModifierSink Collect(ModifierContext context)
     {
         var sim = context.Sim;
@@ -179,11 +220,59 @@ public sealed class ModifierSink
         using (sim.Profiler.Measure(ProfileKind.Rule, "modifiers:collect"))
         {
             sink = new ModifierSink();
-            foreach (var source in sim.Content.Services.Get<IModifierSource>()) source.Contribute(context, sink);
+            var sources = sim.Content.Services.Get<IModifierSource>();
+            if (!sim.KeepsAnswers || !Kept(context))
+                foreach (var source in sources) source.Contribute(context, sink);
+            else Contribute(sim, sources, context, sink);
         }
         Memo.Set(sim, context, sink.Copy());
         return sink;
     }
+    /// <summary>Whether a calculation's contributions are kept across writes: city, player and team calculations, which
+    /// every turn system and planner asks again. Unit and plot calculations are not: combat and placement previews ask
+    /// them once each, often of a probe unit or a proposed plot that is never asked again, so keeping them only filled
+    /// and emptied the table.</summary>
+    private static bool Kept(ModifierContext context) => context.ProposedPlot is null
+        && context.Scope is ModifierScope.City or ModifierScope.Player or ModifierScope.Team;
+    private static void Contribute(Simulation sim, IReadOnlyList<IModifierSource> sources, ModifierContext context, ModifierSink sink)
+    {
+        var unread = UnreadMasks(sim.Content, sources);
+        var cache = sim.ModifierCache;
+        for (int i = 0; i < sources.Count; i++)
+        {
+            ulong mask = unread[i];
+            if (sim.WritingNow(mask)) { sources[i].Contribute(context, sink); continue; }
+            if (cache.TryGet(i, context, out var entry) && !sim.WrittenSince(mask, entry.Stamp))
+            {
+                if (sim.VerifyWrites) Verify(sources[i], context, entry.Lines);
+                sink.Append(entry.Lines);
+                sim.Profiler?.Add(ProfileKind.Rule, "modifiers:reused", 0);
+                continue;
+            }
+            long stamp = sim.WriteStamp;
+            int start = sink._lines.Count;
+            sources[i].Contribute(context, sink);
+            cache.Set(i, context, new(sink._lines.GetRange(start, sink._lines.Count - start).ToArray(), stamp));
+        }
+    }
+    private static void Verify(IModifierSource source, ModifierContext context, LedgerLine[] kept)
+    {
+        var fresh = new ModifierSink();
+        source.Contribute(context, fresh);
+        if (fresh._lines.SequenceEqual(kept)) return;
+        int at = 0;
+        while (at < kept.Length && at < fresh._lines.Count && kept[at] == fresh._lines[at]) at++;
+        throw new InvalidOperationException($"Modifier source {source.GetType().Name} kept a stale contribution for a "
+            + $"{context.Scope} calculation (player {context.Player}, city {context.City?.Id}, unit {context.Unit?.Id}) on turn "
+            + $"{context.Sim.State.Turn}: line {at} kept {(at < kept.Length ? kept[at] : null)}, now "
+            + $"{(at < fresh._lines.Count ? fresh._lines[at] : null)}. A writer wrote what the source reads without declaring "
+            + "it, or the source reads a domain it declares unread.");
+    }
+    // Each source's unread domains as a mask, for each content database; sources and domains are frozen with it.
+    private static ulong[] UnreadMasks(ContentDb content, IReadOnlyList<IModifierSource> sources) =>
+        UnreadMaskTable.GetValue(content, db => new(sources.Select(s => db.StateDomains.UnreadMask(s, db)).ToArray())).Masks;
+    private sealed class UnreadMaskBox(ulong[] masks) { public readonly ulong[] Masks = masks; }
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ContentDb, UnreadMaskBox> UnreadMaskTable = new();
     private static readonly ReadEpochMemo<ModifierContext, ModifierSink> Memo = new();
 }
 

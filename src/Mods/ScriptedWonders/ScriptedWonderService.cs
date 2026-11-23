@@ -8,6 +8,10 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
 {
     private static IEnumerable<WonderScriptDef> Rules(Simulation sim) => sim.Content.Get<WonderScriptDef>().All;
 
+    /// <summary>Wonder scripts follow buildings, culture and units, never who works a city's plots or what it is
+    /// building, as a modifier source and as a building grant provider.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.WorkAndQueue;
+
     public bool IsActive(Simulation sim, int cityId, string building)
     {
         var city = sim.State.CityById(cityId);

@@ -172,11 +172,14 @@ internal sealed class ModContext : IModContext
     public ModRegistry<T> Content<T>() where T : ContentDef => new(_db.Get<T>(), ModId);
     public void RegisterService<T>(string name, T service) where T : class => _db.Services.Register($"{ModId}:{name}", service, ModId);
     public void RegisterStateComponent<T>(string name) where T : class => _db.StateComponents.Register<T>($"{ModId}:{name}", ModId);
+    public void RegisterStateDomain(string name, params string[] paths) => _db.StateDomains.Register(new($"{ModId}:{name}", paths), ModId);
+    public void RegisterPrivateStateDomain(string name, params string[] paths) => _db.StateDomains.Register(new($"{ModId}:{name}", paths, Private: true), ModId);
     public void Subscribe<TEvent>(string name, Action<Game.Simulation, TEvent> handler) where TEvent : Game.DomainEvent =>
         RegisterService<Game.IDomainEventSubscriber>(name, new EventHandler<TEvent>(handler));
     private sealed class EventHandler<TEvent>(Action<Game.Simulation, TEvent> handler) : Game.IDomainEventSubscriber where TEvent : Game.DomainEvent
     {
         public void Handle(Game.Simulation sim, Game.DomainEvent message) { if (message is TEvent typed) handler(sim, typed); }
+        public bool Handles(Type eventType) => typeof(TEvent).IsAssignableFrom(eventType);
     }
     public string ModId { get; }
     public IModData Data { get; }

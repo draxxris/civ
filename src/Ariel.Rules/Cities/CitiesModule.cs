@@ -24,6 +24,10 @@ public sealed class CitiesModule : IPreparableMod
         context.RegisterService<IRequirementEvaluator>("class_requirements", new BuildingRequirement("building-class"));
         context.RegisterStateComponent<CityRuleState>("city_state");
         context.RegisterStateComponent<CityPlayerState>("player_state");
+        context.RegisterStateDomain("work", "Cities/*/Worked", "Cities/*/Specialists",
+            "Cities/*/Extensions/cities:city_state/ManualWork", "Cities/*/Extensions/cities:city_state/AvoidGrowth");
+        context.RegisterStateDomain("queue", "Cities/*/ProductionQueue", "Cities/*/NextOrderId",
+            "Cities/*/Extensions/cities:city_state/PausedProduction");
         context.RegisterService<ICityAppearanceService>("city_appearance", new CityAppearanceService());
         context.RegisterService<ICityBuildingService>("building_state", new CityBuildingService());
         context.RegisterService<IModifierSource>("buildings", new BuildingEffects());

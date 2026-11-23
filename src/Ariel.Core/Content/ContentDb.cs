@@ -86,6 +86,8 @@ public sealed class ContentDb
     public ServiceRegistry Services { get; } = new();
     /// <summary>Typed extension state identities.</summary>
     public StateComponentRegistry StateComponents { get; } = new();
+    /// <summary>Named parts of the state that write and read declarations refer to (<see cref="StateDomain"/>).</summary>
+    public StateDomainRegistry StateDomains { get; } = new();
     /// <summary>The loaded game's answers to the kernel. Resolved when content freezes; exactly one must be registered.</summary>
     public IRuleset Ruleset => _ruleset ?? throw new InvalidOperationException("Content is not frozen, or no mod registered an IRuleset");
     private IRuleset? _ruleset;
@@ -180,7 +182,7 @@ public sealed class ContentDb
         _legacyHash = LegacyHashLazy();
         using var freezeTrace = Modding.StartupTrace.Phase("registry freeze");
         foreach (var entry in _registries.Values) entry.Freeze();
-        MapGenerators.Freeze(); PlayerAIs.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze(); Services.Freeze(); StateComponents.Freeze();
+        MapGenerators.Freeze(); PlayerAIs.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze(); Services.Freeze(); StateComponents.Freeze(); StateDomains.Freeze();
         _frozen = true;
         _ruleset?.Bind(this);
     }
@@ -311,4 +313,8 @@ public interface ITurnSystem : IHasId
     int Order { get; }
     /// <summary>Run the rule step.</summary>
     void Run(Simulation sim);
+    /// <summary>The state domains (<see cref="StateDomain"/>) one run of this step writes, everything it calls,
+    /// applies or publishes included. Null, the default, declares nothing: the step may write anything. Same
+    /// contract as <see cref="GameCommand.WriteDomains"/>.</summary>
+    IReadOnlyList<string>? WriteDomains => null;
 }

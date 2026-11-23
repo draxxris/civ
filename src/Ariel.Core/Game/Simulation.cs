@@ -101,7 +101,8 @@ public sealed partial class Simulation
     }
     private void StartGame()
     {
-        Events.Publish(new TurnStarted(State.Turn));
+        using var kernel = EnterKernel();
+        using (OpenWriteWindow(null, "kernel:start")) Events.Publish(new TurnStarted(State.Turn));
         BeginTurnOrder();
     }
     /// <summary>The one service a loaded mod registered under <typeparamref name="T"/>, typically an interface of a mod's
@@ -118,7 +119,11 @@ public sealed partial class Simulation
     public bool KnowsTech(int playerId, string tech) => TeamOf(playerId).Techs.Contains(tech);
     /// <summary>Let every AI that has yet to move act and end its turn, in id order, ignoring turn segments. Independent
     /// players may plan concurrently, but the result is the same on every peer.</summary>
-    public void RunAi() => RunAi(State.Players.OrderBy(p => p.Id).Where(p => p.Ai != null && !p.EndedTurn).Select(p => p.Id).ToArray());
+    public void RunAi()
+    {
+        using var kernel = EnterKernel();
+        RunAi(State.Players.OrderBy(p => p.Id).Where(p => p.Ai != null && !p.EndedTurn).Select(p => p.Id).ToArray());
+    }
     /// <summary>Let the given AI players act and end their turns, with the same result as running them one by one in
     /// the given order.</summary>
     private void RunAi(int[] players)
@@ -127,6 +132,7 @@ public sealed partial class Simulation
         // AI commands are the players' own top-level commands, even when an end-turn command advanced the turn.
         int depth = _commandDepth;
         _commandDepth = 0;
+        using var suspended = SuspendWriteWindows();
         try
         {
             using (Profiler.Measure(ProfileKind.Kernel, SimulationProfiler.AiWaves)) AiTurnSpeculator.Run(this, players);
@@ -136,7 +142,8 @@ public sealed partial class Simulation
     /// <summary>Plan the new turn's segments and start the first.</summary>
     private void BeginTurnOrder()
     {
-        State.TurnOrder = new TurnOrder { Segments = TurnOrder.Plan(State, Settings.TurnMode) };
+        using (OpenWriteWindow(null, "kernel:turn_order"))
+            State.TurnOrder = new TurnOrder { Segments = TurnOrder.Plan(State, Settings.TurnMode) };
         Proceed(mayAdvance: false, defer: false);
     }
     /// <summary>A player ended its turn or passed to the AI: move the turn on, or, with <see cref="DeferTurnWork"/>,
@@ -158,7 +165,9 @@ public sealed partial class Simulation
                 if (defer) return;
                 RunAi(ai);
             }
+            int active = order.Active;
             while (!order.Finished && order.Segments[order.Active].All(id => State.PlayerById(id).EndedTurn)) order.Active++;
+            if (order.Active != active) NoteKernelWrite();
             if (!order.Finished && order.Active <= last) return; // Humans of this segment still have to move.
         }
         if (mayAdvance && !defer && State.Players.All(p => p.EndedTurn)) AdvanceTurn();
@@ -181,6 +190,7 @@ public sealed partial class Simulation
     /// <summary>Run one AI player's turn in place: its decisions, then any returned commands. Does not end its turn.</summary>
     internal void RunAiPlayer(int playerId)
     {
+        using var kernel = EnterKernel();
         var player = State.PlayerById(playerId);
         List<GameCommand> decided;
         // An AI's read epochs end with its decisions, so nothing after them reads through a promise it made.
@@ -197,6 +207,7 @@ public sealed partial class Simulation
             _recordedCommands = new(),
             Profiler = Profiler,
             VerifyReadEpochs = VerifyReadEpochs,
+            VerifyWrites = VerifyWrites,
         };
     }
     /// <summary>Top-level commands applied since recording started, with the RNG state before validation and after application.</summary>
@@ -236,6 +247,7 @@ public sealed partial class Simulation
     {
         // Only top-level commands are recorded; commands applied from inside another command replay with it.
         bool top = _commandDepth == 0;
+        using var kernel = EnterKernel();
         // A command may write, so it ends any read epoch before it validates.
         EndReadEpoch();
         // A command applies after the turn work its predecessors left, exactly as if that work had not been deferred.
@@ -255,6 +267,7 @@ public sealed partial class Simulation
                 observer?.Rejected(this, cmd); return false;
             }
             observer?.Before(this, cmd);
+            using var window = OpenWriteWindow(cmd.WriteDomains, cmd.GetType().Name);
             if (top && Profiler is { } profiler)
                 using (profiler.Measure(ProfileKind.Command, cmd.GetType().Name)) cmd.Apply(this);
             else cmd.Apply(this);
@@ -268,19 +281,28 @@ public sealed partial class Simulation
     public void AdvanceTurn()
     {
         EndReadEpoch();
+        using var kernel = EnterKernel();
+        // Inside an end-turn command, the rollover's systems open their own windows.
+        using var suspended = SuspendWriteWindows();
         foreach (var system in _systems.Where(s => s.Order < TurnPhase.PlayerBegin))
-            using (Profiler.Measure(ProfileKind.TurnSystem, system)) system.Run(this);
+            using (Profiler.Measure(ProfileKind.TurnSystem, system))
+            using (OpenWriteWindow(system.WriteDomains, system.Id)) system.Run(this);
         var playerSystems = _systems.Where(s => s.Order >= TurnPhase.PlayerBegin && s.Order < TurnPhase.Map).ToArray();
         foreach (var player in State.Players.OrderBy(p => p.Id))
             foreach (var system in playerSystems.Cast<IPlayerTurnSystem>())
-                using (Profiler.Measure(ProfileKind.TurnSystem, system)) system.Run(this, player.Id);
+                using (Profiler.Measure(ProfileKind.TurnSystem, system))
+                using (OpenWriteWindow(system.WriteDomains, system.Id)) system.Run(this, player.Id);
         foreach (var system in _systems.Where(s => s.Order >= TurnPhase.Map))
-            using (Profiler.Measure(ProfileKind.TurnSystem, system)) system.Run(this);
-        Events.Publish(new TurnEnded(State.Turn));
-        State.Turn++;
-        foreach (var player in State.Players) player.EndedTurn = false;
-        Events.BeginTurn();
-        Events.Publish(new TurnStarted(State.Turn));
+            using (Profiler.Measure(ProfileKind.TurnSystem, system))
+            using (OpenWriteWindow(system.WriteDomains, system.Id)) system.Run(this);
+        using (OpenWriteWindow(null, "kernel:rollover"))
+        {
+            Events.Publish(new TurnEnded(State.Turn));
+            State.Turn++;
+            foreach (var player in State.Players) player.EndedTurn = false;
+            Events.BeginTurn();
+            Events.Publish(new TurnStarted(State.Turn));
+        }
         BeginTurnOrder();
     }
     /// <summary>Hash all authoritative fields and RNG state; presentation events and caches are excluded.</summary>
