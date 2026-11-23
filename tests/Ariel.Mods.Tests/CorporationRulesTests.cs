@@ -95,6 +95,32 @@ public sealed class CorporationRulesTests
         city.ProductionQueue[0] = city.ProductionQueue[0] with { Progress = Production(sim).Calculate(sim, city.Id, "cities:building", building).Cost };
     }
     [Fact]
+    public void The_founding_buildings_keep_their_great_people_rows_and_load_without_the_Great_People_mod()
+    {
+        var with = P6RulesScenario.Create().Content;
+        Assert.Equal("military:merchant", with.Attachment<Ariel.Mods.GreatPeople.BuildingGreatPeopleDef>("corporations:corporation_1")?.GreatPersonUnit);
+        // Corporations carries its copy of the Great People API, so its rows about its buildings load without that mod.
+        var loaded = new LoadedMods();
+        var corporations = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Corporations"));
+        var without = ModLoader.Build(loaded.Sources.Where(s => s.Manifest.Id != "great_people").Append(corporations));
+        Assert.NotNull(without.Find("corporations:corporation_1"));
+        // The rows are still registered, but without the Great People mod nothing reads them.
+        Assert.NotNull(without.Attachment<Ariel.Mods.GreatPeople.BuildingGreatPeopleDef>("corporations:corporation_1"));
+        Assert.Empty(without.Services.Get<Ariel.Mods.GreatPeople.IGreatPeopleService>());
+    }
+
+    [Fact]
+    public void The_founding_buildings_and_executives_find_their_art_in_the_mod()
+    {
+        var loaded = new LoadedMods();
+        var corporations = ModLoader.FromDirectory(Path.Combine(AppContext.BaseDirectory, "optional-mods", "Corporations"));
+        var catalog = new Ariel.Client.GameCatalog(loaded.Sources.Append(corporations).ToArray());
+        Assert.NotNull(catalog.IconPath("corporations:corporation_1"));
+        Assert.NotNull(catalog.IconPath("corporations:executive_1"));
+        Assert.NotNull(catalog.ModelPath("corporations:executive_1"));
+    }
+
+    [Fact]
     public void The_source_corporations_and_guilds_are_all_defined_each_with_one_imported_founding_building()
     {
         var sim = P6RulesScenario.Create();

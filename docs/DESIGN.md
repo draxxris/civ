@@ -418,7 +418,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 
 | Seam | `GameRules` | Asked by | Answered by | Without an answer |
 | --- | --- | --- | --- | --- |
-| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf (a branch in the city, or with parameter 2 the city being the corporation's headquarters, where executives are trained), and how it names that seat (`SeatPhrase`: "the headquarters of Cereal Mills", "the Masons Master Guild"); production eligibility, for why a city may not train a unit (`RefuseUnit`: executives with Realistic Guilds/Corporations) | Corporations | no corporations and no headquarters; the leaf fails and reads "the headquarters of" the corporation; no unit is refused |
+| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf (a branch in the city, or with parameter 2 the city being the corporation's headquarters, where executives are trained), and how it names that seat (`SeatPhrase`: "the headquarters of Cereal Mills", "the Masons Master Guild"); production eligibility, for why a city may not train a unit (`RefuseUnit`: executives with Realistic Guilds/Corporations, and an executive the training civilization's `CivilizationCorporationsDef` replaces or removes) | Corporations | no corporations and no headquarters; the leaf fails and reads "the headquarters of" the corporation; no unit is refused |
 | `IAirOperations` | `AirOperations` | production eligibility (aircraft), the intercept activity | AirCombat | aircraft are refused with "Air operations are unavailable"; no unit can stand on intercept |
 | `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
 | `IDealAppraiser` | `DealAppraiser` | the Diplomacy screen, to predict a computer leader's answer to a deal | the computer player (`ai`) | no prediction is shown |
@@ -1650,7 +1650,8 @@ and generals no longer list the headquarters among their `ConstructibleBuildings
 never built them anyway). The rows other vocabularies keep about the mod's records are
 the mod's own. `data/building-great-people.json` holds the great person each founding
 building's points count towards. It is the Great People mod's attachment type, which this
-mod carries a copy of, so it loads with or without that mod. `data/unit-corporations.json`
+mod carries a copy of. So it loads with or without that mod, and without it the rows are
+registered but nothing reads them. `data/unit-corporations.json`
 holds the executives' spreads, and `data/civilization-corporations.json` holds the
 barbarians' class overrides of seven executives (`CivilizationCorporationsDef`). The
 mod's `RefuseUnit` applies those overrides with the city's training civilization
