@@ -95,6 +95,19 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     }
 
     [Fact]
+    public void Ai_turns_write_nothing_inside_their_read_epochs_and_play_as_without_verification()
+    {
+        var verified = GameFactory.CreateAi(mods.Content, seed: 9); verified.VerifyReadEpochs = true;
+        var plain = GameFactory.CreateAi(mods.Content, seed: 9);
+        for (int turn = 0; turn < 6; turn++)
+        {
+            verified.AdvanceTurn(); plain.AdvanceTurn(); // Verification throws on a write inside an epoch.
+            Assert.Equal(plain.ComputeHash(), verified.ComputeHash());
+            Assert.Equal(0, verified.ReadEpoch);
+        }
+    }
+
+    [Fact]
     [Trait("Category", "E2E")]
     public void Identical_games_and_a_midgame_save_have_equal_hashes_at_every_turn()
     {
@@ -219,6 +232,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
             GameFactory.Settings(71) with { PlayerAis = [probe.Id, probe.Id] }, new(60, 12),
             Enumerable.Range(0, 720).Select(_ => new Plot { Terrain = "world:grass" }).ToArray(), game =>
             {
+                game.AiWaveLimit = int.MaxValue; // Waves are opt-in; this test needs both players in one.
                 game.State.Turn = 50;
                 GameFactory.NeutralPolitics(game);
                 foreach (int owner in new[] { 0, 1 })

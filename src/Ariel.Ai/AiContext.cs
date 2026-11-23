@@ -174,12 +174,36 @@ public sealed class AiContext
     public static AiContext Observe(Simulation sim, int player) => new(sim, player) { _observer = true };
 
     private bool _observer;
+    // A planning turn holds a read epoch for each segment: the segment already promises no authoritative writes, so the
+    // rules may reuse what they derive (CityReadScope) until the next command, which ends the epoch in the kernel.
+    private bool _planning;
+    private ReadEpochScope _epoch;
+
+    /// <summary>The context one player's turn of planning runs on (<see cref="StandardAi.Decide"/>), holding a read
+    /// epoch per segment. End it with <see cref="EndTurn"/>.</summary>
+    internal static AiContext ForTurn(Simulation sim, int player)
+    {
+        var ctx = new AiContext(sim, player) { _planning = true };
+        ctx._epoch = sim.OpenReadEpoch();
+        return ctx;
+    }
+
+    /// <summary>End the turn's last read epoch, before anything else may write the state.</summary>
+    internal void EndTurn() => _epoch.Dispose();
 
     /// <summary>Discard every derived entity view and query after a mutation, including direct service calls.</summary>
     public void Refresh()
     {
         _segment = new(this);
         Revision++;
+        RenewEpoch();
+    }
+
+    private void RenewEpoch()
+    {
+        if (!_planning) return;
+        _epoch.Dispose();
+        _epoch = Sim.OpenReadEpoch();
     }
 
     public HexGrid Grid => Sim.State.Grid;
@@ -265,6 +289,8 @@ public sealed class AiContext
             // Command application includes synchronous event callbacks (capture, culture, assignments, war).
             Refresh();
         }
+        // A rejected command changed nothing (the kernel's contract), so the segment stands; only its epoch ended.
+        else RenewEpoch();
         return ok;
     }
 

@@ -401,6 +401,7 @@ internal static class AiTurnSpeculator
         // Rebuild the state before the failed plan: the copy, then the plans that already matched, replayed again.
         private void Restore()
         {
+            sim.EndReadEpoch();
             sim.State.RestoreFrom(_state!);
             sim.Rng.Set(_rng);
             sim.Events.Truncate(_events);

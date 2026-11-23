@@ -2117,6 +2117,20 @@ Several query paths avoid redundant traversal:
   city calculations (such as citizen specialist and tile assignments in
   `CitizenPlanner`). It provides zero-overhead memoization without mutating game state
   or leaking across threads.
+- Read epochs (`Simulation.OpenReadEpoch`, `Simulation.ReadEpoch`): a kernel seam with
+  no rules knowledge. The caller that opens one promises not to write the game state
+  until it disposes the handle; drawing from the RNG stream is allowed, since rules
+  derive nothing from it. The kernel ends the open epoch before every write it makes:
+  each `TryApply` (before validation), each `AdvanceTurn`, each wholesale state
+  replacement (`CompleteTurnWork`, a speculative commit's restore), and when an AI
+  player's `Decide` returns. No epoch opens inside a command. Epoch values are never
+  reused. A planning `AiContext` (`AiContext.ForTurn`) holds one epoch per segment and
+  renews it after each command it issues, so `CityReadScope` keeps one scope per thread
+  per epoch and an AI segment resolves each city's buildings, power and grants once
+  instead of once per query. `Simulation.VerifyReadEpochs` hashes the state at an
+  epoch's start and end and throws on a difference, and also throws when a rejected
+  command changed the state or the RNG; `hash-trace --verify-read-epochs` turns it on
+  for a whole game.
 - Lazy `ResourceNetwork.Modes`: route and transport mode checks are resolved lazily per
   query on first access rather than traversed upfront.
 - `INavalBlockadeService.BlockadedTiles`: computes and caches the complete set of

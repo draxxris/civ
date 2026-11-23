@@ -10,4 +10,6 @@ public static class StateHasher
         var (a, b, c, d) = rng.State;
         return CanonicalJson.Fnv1a64(new { State = state, Rng = new[] { a, b, c, d } });
     }
+    /// <summary>Hash the state alone, without the RNG words.</summary>
+    public static ulong Hash(GameState state) => CanonicalJson.Fnv1a64(new { State = state });
 }

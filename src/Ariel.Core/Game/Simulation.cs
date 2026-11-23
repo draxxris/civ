@@ -182,7 +182,11 @@ public sealed partial class Simulation
     internal void RunAiPlayer(int playerId)
     {
         var player = State.PlayerById(playerId);
-        foreach (var cmd in Content.PlayerAIs.Get(player.Ai!).Decide(this, player.Id).ToList()) TryApply(cmd, out _);
+        List<GameCommand> decided;
+        // An AI's read epochs end with its decisions, so nothing after them reads through a promise it made.
+        try { decided = Content.PlayerAIs.Get(player.Ai!).Decide(this, player.Id).ToList(); }
+        finally { EndReadEpoch(); }
+        foreach (var cmd in decided) TryApply(cmd, out _);
     }
     /// <summary>Isolated copy of the state and RNG for speculative planning. It records its top-level commands.</summary>
     internal Simulation ForkSpeculative()
@@ -192,6 +196,7 @@ public sealed partial class Simulation
         {
             _recordedCommands = new(),
             Profiler = Profiler,
+            VerifyReadEpochs = VerifyReadEpochs,
         };
     }
     /// <summary>Top-level commands applied since recording started, with the RNG state before validation and after application.</summary>
@@ -222,15 +227,24 @@ public sealed partial class Simulation
     {
         // Only top-level commands are recorded; commands applied from inside another command replay with it.
         bool top = _commandDepth == 0;
+        // A command may write, so it ends any read epoch before it validates.
+        EndReadEpoch();
         // A command applies after the turn work its predecessors left, exactly as if that work had not been deferred.
         if (top && DeferTurnWork && HasPendingTurnWork) RunPendingTurnWork();
         var observer = top ? CommandObserver : null;
         var preRng = Rng.State;
+        // A reader may reopen its epoch after a rejection, so verification also holds rejections to their contract.
+        ulong? before = VerifyReadEpochs && top ? ComputeHash() : null;
         _commandDepth++;
         try
         {
             error = cmd.Validate(this);
-            if (error != null) { observer?.Rejected(this, cmd); return false; }
+            if (error != null)
+            {
+                if (before is { } hash && ComputeHash() != hash)
+                    throw new InvalidOperationException($"Rejected command {cmd.GetType().Name} changed the state");
+                observer?.Rejected(this, cmd); return false;
+            }
             observer?.Before(this, cmd);
             if (top && Profiler is { } profiler)
                 using (profiler.Measure(ProfileKind.Command, cmd.GetType().Name)) cmd.Apply(this);
@@ -244,6 +258,7 @@ public sealed partial class Simulation
     /// <summary>Run ordered rules, end the old turn, clear presentation events, start the new turn, and run AI.</summary>
     public void AdvanceTurn()
     {
+        EndReadEpoch();
         foreach (var system in _systems.Where(s => s.Order < TurnPhase.PlayerBegin))
             using (Profiler.Measure(ProfileKind.TurnSystem, system)) system.Run(this);
         var playerSystems = _systems.Where(s => s.Order >= TurnPhase.PlayerBegin && s.Order < TurnPhase.Map).ToArray();

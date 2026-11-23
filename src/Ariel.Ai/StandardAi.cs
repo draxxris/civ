@@ -15,12 +15,16 @@ public sealed class StandardAi : IPlayerAI
 
     public IEnumerable<GameCommand> Decide(Simulation sim, int playerId)
     {
-        var ctx = new AiContext(sim, playerId);
-        if (ctx.Self.Extensions.Get<AiPlayerState>(sim.Content) is not null)
-            ctx.Issue(new PruneAiIntentCommand { Player = playerId });
-        if (ctx.Cities.Count == 0 && ctx.Units.Count == 0) return [];
-        foreach (var planner in ctx.Catalog.Planners)
-            using (sim.Profiler.Measure(ProfileKind.AiPlanner, planner)) planner.Plan(ctx);
-        return [];
+        var ctx = AiContext.ForTurn(sim, playerId);
+        try
+        {
+            if (ctx.Self.Extensions.Get<AiPlayerState>(sim.Content) is not null)
+                ctx.Issue(new PruneAiIntentCommand { Player = playerId });
+            if (ctx.Cities.Count == 0 && ctx.Units.Count == 0) return [];
+            foreach (var planner in ctx.Catalog.Planners)
+                using (sim.Profiler.Measure(ProfileKind.AiPlanner, planner)) planner.Plan(ctx);
+            return [];
+        }
+        finally { ctx.EndTurn(); }
     }
 }

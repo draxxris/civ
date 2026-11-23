@@ -93,6 +93,7 @@ public sealed partial class Simulation
         var fork = new Simulation(Content, Settings, State.Clone(), DeterministicRng.Restore(a, b, c, d))
         {
             AiWaveLimit = AiWaveLimit,
+            VerifyReadEpochs = VerifyReadEpochs,
             Profiler = Profiler,
         };
         fork.Events.CopyFrom(Events);
@@ -105,6 +106,7 @@ public sealed partial class Simulation
     {
         if (!work.Done) throw new InvalidOperationException("Turn work has not run");
         if (work.Version != _version) throw new InvalidOperationException("The simulation changed while its turn work ran");
+        EndReadEpoch();
         State.RestoreFrom(work.Fork.State);
         Rng.Set(work.Fork.Rng.State);
         Events.CopyFrom(work.Fork.Events);
