@@ -19,7 +19,7 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         {
             var plot = plots[i];
             if (plot.Visible.IsEmpty) continue;
-            foreach (int team in plot.Visible) plot.RevealedSnapshots[team] = Capture(sim, new TileId(i), team);
+            foreach (int team in plot.Visible) Remember(sim, plot, new TileId(i), team);
             plot.Visible.Clear();
         }
         var tuning = Geography.Tuning(sim.Content);
@@ -142,21 +142,45 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
     {
         var plot = sim.State.Plots[tile.Value];
         plot.Revealed.Add(team);
-        plot.RevealedSnapshots[team] = Capture(sim, tile, team);
+        Remember(sim, plot, tile, team);
     }
 
-    private static RevealedPlotSnapshot Capture(Simulation sim, TileId tile, int team)
+    /// <summary>Store what the team sees of the plot now. Sight recomputes after every move step, and most plots look
+    /// as they did at the last one, so a memory that already holds exactly this is kept rather than copied again;
+    /// memories are immutable records, compared and saved by value.</summary>
+    private static void Remember(Simulation sim, Plot plot, TileId tile, int team)
+    {
+        var previous = plot.RevealedSnapshots.GetValueOrDefault(team);
+        var now = Capture(sim, tile, team, previous);
+        if (!ReferenceEquals(now, previous)) plot.RevealedSnapshots[team] = now;
+    }
+
+    /// <summary>What the team sees of the plot now; <paramref name="previous"/> itself when it holds exactly that.</summary>
+    private static RevealedPlotSnapshot Capture(Simulation sim, TileId tile, int team, RevealedPlotSnapshot? previous = null)
     {
         var plot = sim.State.Plots[tile.Value];
         var city = sim.State.CityAt(sim.State.Grid.HexOf(tile));
-        var memory = city is null ? null : new RevealedCitySnapshot(city.Id, city.Owner, city.Name,
-            city.Population, city.Buildings.ToImmutableArray(),
-            sim.State.PlayerById(city.Owner).Extensions.TryGet<CityPlayerState>(sim.Content)?.CurrentEra);
+        var memory = city is null ? null : CityMemory(sim, city, previous?.City);
         string? bonus = plot.Bonus;
         if (bonus is { } id && sim.Content.Get<S.BonusDef>(id).RevealTech is { } tech
             && !sim.State.TeamById(team).Techs.Contains(tech)) bonus = null;
+        byte lifts = sim.State.CliffLifts(tile);
+        if (previous is not null && ReferenceEquals(previous.City, memory) && previous.Terrain == plot.Terrain
+            && previous.Kind == plot.Kind && previous.IsLake == plot.IsLake && previous.Height == plot.Height
+            && previous.Feature == plot.Feature && previous.Bonus == bonus && previous.Improvement == plot.Improvement
+            && previous.Route == plot.Route && previous.Owner == plot.Owner && previous.RiverEdges == plot.RiverEdges
+            && previous.CliffEdges == plot.CliffEdges && previous.CliffLiftEdges == lifts) return previous;
         return new(plot.Terrain, plot.Kind, plot.IsLake, plot.Height, plot.Feature, bonus,
-            plot.Improvement, plot.Route, plot.Owner, plot.RiverEdges, memory, plot.CliffEdges, sim.State.CliffLifts(tile));
+            plot.Improvement, plot.Route, plot.Owner, plot.RiverEdges, memory, plot.CliffEdges, lifts);
+    }
+
+    private static RevealedCitySnapshot CityMemory(Simulation sim, City city, RevealedCitySnapshot? previous)
+    {
+        string? era = sim.State.PlayerById(city.Owner).Extensions.TryGet<CityPlayerState>(sim.Content)?.CurrentEra;
+        if (previous is not null && previous.Id == city.Id && previous.Owner == city.Owner && previous.Name == city.Name
+            && previous.Population == city.Population && previous.Era == era && previous.Buildings.SequenceEqual(city.Buildings))
+            return previous;
+        return new(city.Id, city.Owner, city.Name, city.Population, city.Buildings.ToImmutableArray(), era);
     }
 
     public bool IsUnitVisible(Simulation sim, int unitId, int observerTeam)
