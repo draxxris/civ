@@ -84,6 +84,8 @@ internal static class CityData
         foreach (var source in sim.State.Cities.Where(c => sim.TeamOf(c.Owner).Id == team).OrderBy(c => c.Id))
         {
             // Only constructed sources initiate grants. This keeps grant cycles from creating their own sources.
+            // Activity only narrows the constructed set, so a city that built no granting building is not resolved.
+            if (!source.Buildings.Any(id => sim.Content.Get<S.BuildingDef>(id).FreeBuilding is { Length: > 0 })) continue;
             foreach (var building in CityBuildingRules.Active(sim, source, source.Buildings))
                 if (building.FreeBuilding is { Length: > 0 } category && (source.Owner == owner || building.TeamShare))
                     categories.Add(category);
