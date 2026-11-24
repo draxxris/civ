@@ -5534,7 +5534,8 @@
     "mod": "religion",
     "fields": [
       { "source": "Buildings", "property": "BuildingOverrides", "kind": "civilization", "owned": true },
-      { "source": "Units", "property": "UnitOverrides", "kind": "civilization", "owned": true }
+      { "source": "Units", "property": "UnitOverrides", "kind": "civilization", "owned": true },
+      { "source": "InitialCivics", "property": "StartingCivics", "kind": "civilization", "owned": true }
     ],
     "requirements": []
   },
@@ -5844,7 +5845,8 @@
       { "source": "iDifferentReligionAttitudeChangeLimit", "property": "DifferentReligionAttitudeChangeLimit", "kind": "int", "default": 0 },
       { "source": "iDifferentReligionAttitudeDivisor", "property": "DifferentReligionAttitudeDivisor", "kind": "int", "default": 0 },
       { "source": "MemoryAttitudePercents", "property": "MemoryAttitudePercents", "kind": "mapInt", "key": "MemoryType", "value": "iMemoryAttitudePercent", "onlyKeys": [ "accepted_religion", "denied_religion" ] },
-      { "source": "MemoryDecays", "property": "MemoryDecays", "kind": "mapInt", "key": "MemoryType", "value": "iMemoryRand", "onlyKeys": [ "accepted_religion", "denied_religion" ] }
+      { "source": "MemoryDecays", "property": "MemoryDecays", "kind": "mapInt", "key": "MemoryType", "value": "iMemoryRand", "onlyKeys": [ "accepted_religion", "denied_religion" ] },
+      { "source": "FavoriteCivic", "property": "FavoriteCivic", "kind": "ref", "target": "CivicInfo", "owned": true }
     ],
     "requirements": []
   }

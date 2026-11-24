@@ -1,0 +1,14 @@
+[
+  {
+    "defaultCivic": "religion:folklore",
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "religion:civicoption_religion",
+    "name": "Religion",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": []
+  }
+]

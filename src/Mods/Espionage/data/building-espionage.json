@@ -312,15 +312,6 @@
     }
   },
   {
-    "id": "espionage:propaganda_office",
-    "name": "",
-    "requirements": null,
-    "target": "cities:propaganda_office",
-    "specialistSlots": {
-      "espionage:specialist_spy": 2
-    }
-  },
-  {
     "id": "espionage:reichstag",
     "name": "",
     "requirements": null,

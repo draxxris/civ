@@ -1,5 +1,60 @@
 [
   {
+    "buildingOverrides": {},
+    "id": "religion:america",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:america",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:arabia",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:arabia",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:assyria",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:assyria",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:aztec",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:aztec",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:babylon",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:babylon",
+    "unitOverrides": {}
+  },
+  {
     "buildingOverrides": {
       "religion:abu_simbel": null,
       "religion:alhambra": null,
@@ -73,6 +128,7 @@
     "id": "religion:barbarian",
     "name": "",
     "requirements": null,
+    "startingCivics": [],
     "target": "peoples:barbarian",
     "unitOverrides": {
       "religion:buddhist_missionary": null,
@@ -90,13 +146,377 @@
     }
   },
   {
+    "buildingOverrides": {},
+    "id": "religion:byzantium",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:byzantium",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:carthage",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:carthage",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:celt",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:celt",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:china",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:china",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:egypt",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:egypt",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:england",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:england",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:ethiopia",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:ethiopia",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:france",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:france",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:germany",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:germany",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:greece",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:greece",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:hittites",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:hittites",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:inca",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:inca",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:india",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:india",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:iroquois",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:iroquois",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:japan",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:japan",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:khmer",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:khmer",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:korea",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:korea",
+    "unitOverrides": {}
+  },
+  {
     "buildingOverrides": {
       "religion:scriptorium": "religion:lombard_cloister"
     },
     "id": "religion:lombard",
     "name": "",
     "requirements": null,
+    "startingCivics": [],
     "target": "peoples:lombard",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:mali",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:mali",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:maya",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:maya",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:minor",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:minor",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:mongol",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:mongol",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:native_america",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:native_america",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:netherlands",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:netherlands",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:ottoman",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:ottoman",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:persia",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:persia",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:portugal",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:portugal",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:rome",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:rome",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:russia",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:russia",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:siam",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:siam",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:spain",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:spain",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:sumeria",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:sumeria",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:viking",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:viking",
+    "unitOverrides": {}
+  },
+  {
+    "buildingOverrides": {},
+    "id": "religion:zulu",
+    "name": "",
+    "requirements": null,
+    "startingCivics": [
+      "religion:folklore"
+    ],
+    "target": "peoples:zulu",
     "unitOverrides": {}
   }
 ]

@@ -86,13 +86,13 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
     {
         var sim = P7ModFixture.Scenario(mods.Revolution);
         var city = P7ModFixture.City(sim);
-        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:state_church";
         sim.State.PlayerById(0).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = "religion:buddhism" });
         city.Extensions.Set(sim.Content, new ReligionCityState { Religions = new(StringComparer.Ordinal) { "religion:buddhism", "religion:christianity" } });
         var mild = Service(sim).DescribeCityStability(sim, city.Id);
         Assert.Equal(Round(10), Contribution(mild, "revolution:non_state_religion"));
         Assert.Equal(Round(-10), Contribution(mild, "revolution:state_religion"));
-        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:intolerant";
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:intolerant";
         var intolerant = Service(sim).DescribeCityStability(sim, city.Id);
         Assert.Equal(Round(20), Contribution(intolerant, "revolution:non_state_religion"));
         city.Extensions.Get<ReligionCityState>(sim.Content)!.Religions.Remove("religion:buddhism");

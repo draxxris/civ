@@ -1,0 +1,34 @@
+[
+  {
+    "assignCity": false,
+    "cityVoting": false,
+    "civVoting": false,
+    "defensivePact": false,
+    "era": null,
+    "forceCivics": {
+      "religion:secular": true
+    },
+    "forceNoTrade": false,
+    "forcePeace": false,
+    "forceWar": false,
+    "freeTrade": false,
+    "help": "",
+    "icon": "",
+    "id": "votes:vote_free_religion",
+    "minVoters": 3,
+    "name": "U.N. Resolution #427 (Global Civic - Secular)",
+    "noNukes": false,
+    "openBorders": false,
+    "pedia": "",
+    "populationThreshold": 51,
+    "requirements": null,
+    "secretaryGeneral": false,
+    "sources": {
+      "votes:diplovote_un": true
+    },
+    "stateReligionVotePercent": 0,
+    "strategy": "",
+    "unsupported": [],
+    "victory": false
+  }
+]

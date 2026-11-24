@@ -11,16 +11,12 @@ namespace Ariel.Mods.Tests;
 
 /// <summary>The Religion mod is self-contained: the base game and the other main mods load, play and save without it,
 /// and say nothing of religion beyond the leftovers docs/DESIGN.md lists under "Religion" (prose, source tags and the
-/// AI's religion flavour) and the open item there, the Government module's religion civic category.</summary>
+/// AI's religion flavour).</summary>
 public sealed class ReligionAbsenceTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     private static readonly Lazy<ContentDb> WithoutReligion = new(() =>
         ModLoader.Build(new LoadedMods().Sources.Where(s => s.Manifest.Id != "religion")));
     private static readonly Regex Religious = new("religio", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-    /// <summary>The civic category the Government module keeps for its faith civics (Folklore to Free Church). It is the
-    /// one open item of the split: renaming it needs an importer id override and a product name (docs/DESIGN.md,
-    /// "Religion").</summary>
-    private const string CivicOption = "government:civicoption_religion";
 
     [Fact]
     public void Without_the_mod_no_definition_leaf_kind_or_setup_option_is_religions()
@@ -37,6 +33,8 @@ public sealed class ReligionAbsenceTests(LoadedMods mods) : IClassFixture<Loaded
         Assert.DoesNotContain(content.Services.Get<ISetupPolicy>().SelectMany(p => p.GameOptions(content)), o => Religious.IsMatch(o.Id));
         Assert.All(content.Get<LeaderDef>().All, leader =>
             Assert.DoesNotContain(leader.MemoryAttitudePercents.Keys.Concat(leader.MemoryDecays.Keys), Religious.IsMatch));
+        Assert.DoesNotContain(content.Get<CivicOptionDef>().All, o => Religious.IsMatch(o.Id));
+        Assert.DoesNotContain(content.Get<CivicDef>().All, c => Religious.IsMatch(c.Id + c.Option));
     }
 
     [Fact]
@@ -49,6 +47,18 @@ public sealed class ReligionAbsenceTests(LoadedMods mods) : IClassFixture<Loaded
         Assert.False(WithoutReligion.Value.Get<LeaderDef>(leader.Id).MemoryAttitudePercents.ContainsKey("accepted_religion"));
         Assert.Contains(with.Get<GameOptionDef>().All, o => o.Id == "religion:gameoption_religion_decay");
         Assert.Equal(1000, with.Attachment<RuleConstantsReligionDef>("foundation:rule_constants")!.SpreadRange);
+        // The religion civic category and its civics are the mod's, under the same player-visible name.
+        Assert.Equal(("Religion", "religion:folklore"), (with.Get<CivicOptionDef>("religion:civicoption_religion").Name,
+            with.Get<CivicOptionDef>("religion:civicoption_religion").DefaultCivic));
+        Assert.Equal(9, with.Get<CivicDef>().All.Count(c => c.Option == "religion:civicoption_religion"));
+        Assert.Equal("religion:state_church", with.Get<LeaderDef>("peoples:leader_asoka").FavoriteCivic);
+        Assert.Null(WithoutReligion.Value.Get<LeaderDef>("peoples:leader_asoka").FavoriteCivic);
+        Assert.Contains("religion:folklore", with.Get<CivilizationDef>("peoples:america").StartingCivics);
+        Assert.DoesNotContain(WithoutReligion.Value.Get<CivilizationDef>("peoples:america").StartingCivics, Religious.IsMatch);
+        // Base civics that forbade a religion civic leave it to that civic, which forbids them in turn.
+        Assert.Null(WithoutReligion.Value.Get<CivicDef>("government:theocracy").Requirements is { } r
+            ? ContentReferences.Leaves(r).FirstOrDefault(l => l.Kind == "civic") : null);
+        Assert.Contains(ContentReferences.Leaves(with.Get<CivicDef>("religion:secular").Requirements!), l => l.Id == "government:theocracy");
     }
 
     [Fact]
@@ -89,12 +99,12 @@ public sealed class ReligionAbsenceTests(LoadedMods mods) : IClassFixture<Loaded
     }
 
     [Fact]
-    public void A_game_without_the_mod_saves_no_religion_but_the_civic_category()
+    public void A_game_without_the_mod_saves_no_religion()
     {
         var sim = GameFactory.CreateAi(WithoutReligion.Value, seed: 3, players: 2);
         for (int turn = 0; turn < 20; turn++) sim.AdvanceTurn();
         string save = SaveGame.Save(sim);
-        Assert.Empty(Regex.Matches(save.Replace(CivicOption, "", StringComparison.Ordinal), "religio", RegexOptions.IgnoreCase));
+        Assert.Empty(Regex.Matches(save, "religio", RegexOptions.IgnoreCase));
     }
 
     /// <summary>Every key or string naming religion that is none of the allowed leftovers, as "file: path".</summary>
@@ -116,7 +126,7 @@ public sealed class ReligionAbsenceTests(LoadedMods mods) : IClassFixture<Loaded
             case JsonArray array:
                 foreach (var item in array) Walk(item, path + "[]", file, found);
                 break;
-            case JsonValue value when value.TryGetValue(out string? text) && Religious.IsMatch(text) && text != CivicOption:
+            case JsonValue value when value.TryGetValue(out string? text) && Religious.IsMatch(text):
                 found.Add($"{file}: {path} = {text}");
                 break;
         }

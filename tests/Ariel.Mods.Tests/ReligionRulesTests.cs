@@ -92,7 +92,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
 
     private static void StateFaith(Simulation sim, int player, string? faith = Buddhism)
     {
-        sim.State.PlayerById(player).Civics["government:civicoption_religion"] = "government:intolerant";
+        sim.State.PlayerById(player).Civics["religion:civicoption_religion"] = "religion:intolerant";
         sim.State.PlayerById(player).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = faith });
     }
 
@@ -253,7 +253,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var sim = Scenario(); var city = City(sim, 39); Presence(sim, city, Buddhism, "religion:hinduism");
         sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Select(t => t.Id));
         StateFaith(sim, 0, state ? Buddhism : null);
-        if (!allow) sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
+        if (!allow) sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:state_church";
         if (disallow) sim.State.PlayerById(0).Civics["government:civicoption_society"] = "government:liberal";
         bool enabled = state && allow && !disallow;
         Assert.Equal(enabled, Service<IReligionService>(sim).IsInquisitionEnabled(sim, 0));
@@ -495,7 +495,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void Missionary_commands_consume_the_unit_and_enforce_foreign_civic_and_ownership_gates()
     {
         var sim = Scenario(); var domestic = City(sim, 0); var foreign = City(sim, 40, 1);
-        sim.State.PlayerById(1).Civics["government:civicoption_religion"] = "government:intolerant";
+        sim.State.PlayerById(1).Civics["religion:civicoption_religion"] = "religion:intolerant";
         var unit = Missionary(sim, foreign);
         var command = new PerformMissionCommand { Player = 0, Unit = unit.Id, Mission = ReligionMissions.Spread, Subject = Buddhism };
         var hash = sim.ComputeHash();
@@ -515,7 +515,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var sim = Scenario(); var holy = City(sim, 0); Found(sim, holy);
         var foreign = City(sim, 40, 1); Spread(sim, foreign);
         holy.Buildings.AddRange(["religion:buddhist_temple", "religion:buddhist_shrine", "cities:sistine_chapel"]);
-        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:state_church";
         var religion = Service<IReligionService>(sim);
         Assert.True(sim.TryApply(new SetStateReligionCommand { Player = 0, Religion = Buddhism }, out var error), error);
         Assert.Equal(Buddhism, religion.StateReligion(sim, 0));
@@ -561,12 +561,12 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.True(sim.TryApply(shrine, out shrineError), shrineError);
         Assert.Contains("religion:buddhist_shrine", holy.Buildings);
         Assert.Null(sim.State.FindUnit(prophet.Id));
-        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:state_church";
         Spread(sim, city, "religion:hinduism", "religion:hindu_missionary");
         Assert.True(sim.TryApply(new SetStateReligionCommand { Player = 0, Religion = "religion:hinduism" }, out var error), error);
         Assert.False(production.Validate(sim, city.Id, "cities:building", "religion:buddhist_monastery").Success);
         Assert.True(production.Validate(sim, city.Id, "cities:building", "religion:buddhist_temple").Success); // Temple exemption.
-        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:free_church";
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:free_church";
         Assert.True(production.Validate(sim, city.Id, "cities:building", "religion:buddhist_monastery").Success);
         sim.State.PlayerById(0).Civics.Clear();
         Assert.Null(Service<IReligionService>(sim).StateReligion(sim, 0));
@@ -600,7 +600,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var palace = sim.Content.Get<S.BuildingDef>("religion:apostolic_palace");
         Assert.NotNull(religion.RefuseBuilding(sim, city, palace));
         Assert.Null(religion.RefuseBuilding(sim, city, sim.Content.Get<S.BuildingDef>("religion:buddhist_temple"))); // Temple exemption.
-        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:state_church";
         Assert.True(sim.TryApply(new SetStateReligionCommand { Player = 0, Religion = Buddhism }, out var error), error);
         Assert.Null(religion.RefuseBuilding(sim, city, palace));
         Assert.Equal("Requires matching state religion: religion:islam",

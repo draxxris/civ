@@ -409,7 +409,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
                 Dispatch(session, person, GreatPersonMissions.Trade); Assert.True(sim.State.PlayerById(0).Treasury > before);
                 break;
             default:
-                sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:intolerant";
+                sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:intolerant";
                 sim.State.PlayerById(0).Extensions.Set(sim.Content, new ReligionPlayerState { LastStateReligion = "religion:buddhism" });
                 city.Extensions.Set(sim.Content, new ReligionCityState { Religions = ["religion:buddhism", "religion:hinduism"] });
                 Dispatch(session, person, ReligionMissions.Inquisition); Assert.Single(sim.Events.Published.OfType<InquisitionAttempt>());

@@ -87,6 +87,41 @@ public sealed class ReligionSplitTests
         ContentEmission.Validate(rows.All, rows.Claimant);
     }
 
+    [Fact]
+    public void The_religion_civic_category_its_civics_and_what_needs_them_are_the_mods_and_base_rows_keep_none_of_them()
+    {
+        var rows = Map(
+            Record("CivicOptionInfo", "CIVICOPTION_RELIGION"), Record("CivicOptionInfo", "CIVICOPTION_POWER"),
+            Record("CivicInfo", "CIVIC_FOLKLORE", Leaf("CivicOptionType", "CIVICOPTION_RELIGION")),
+            Record("CivicInfo", "CIVIC_SECULAR", Leaf("CivicOptionType", "CIVICOPTION_RELIGION"), Leaf("TechPrereq", "TECH_MYSTICISM")),
+            Record("CivicInfo", "CIVIC_THEOCRACY", Leaf("CivicOptionType", "CIVICOPTION_POWER"),
+                Pairs("ForbiddenCivics", "CivicType", "bForbidden", ("CIVIC_SECULAR", "1"))),
+            Record("TechInfo", "TECH_MYSTICISM"),
+            Class("BUILDINGCLASS_UNIVERSAL_CHURCH", "BUILDING_UNIVERSAL_CHURCH"),
+            Record("BuildingInfo", "BUILDING_UNIVERSAL_CHURCH", Leaf("BuildingClass", "BUILDINGCLASS_UNIVERSAL_CHURCH"),
+                DataNode.Branch("PrereqAndCivics", [DataNode.Leaf("CivicType", "CIVIC_SECULAR")])),
+            Record("LeaderHeadInfo", "LEADER_ASOKA", Leaf("FavoriteCivic", "CIVIC_SECULAR")),
+            Record("CivilizationInfo", "CIVILIZATION_INDIA", DataNode.Branch("InitialCivics", [DataNode.Leaf("CivicType", "CIVIC_FOLKLORE")])),
+            Record("VoteInfo", "VOTE_FREE_RELIGION", Pairs("ForceCivics", "CivicType", "bForce", ("CIVIC_SECULAR", "1"))));
+        Assert.Equal("religion", rows.One<Schema.CivicOptionDef>("religion:civicoption_religion").Mod);
+        var secular = rows.One<Schema.CivicDef>("religion:secular");
+        Assert.Equal(("religion", "religion:civicoption_religion"), (secular.Mod, secular.Definition.Option));
+        Assert.Equal("religion", rows.One<Schema.BuildingDef>("religion:universal_church").Mod);
+        // The base rows name none of it; Religion's rows put it back.
+        Assert.Null(rows.One<Schema.LeaderDef>("peoples:leader_asoka").Definition.FavoriteCivic);
+        Assert.Equal("religion:secular", rows.One<Ariel.Mods.Religion.LeaderReligionDef>("religion:leader_asoka").Definition.FavoriteCivic);
+        Assert.Empty(rows.One<Schema.CivilizationDef>("peoples:india").Definition.StartingCivics);
+        Assert.Equal(["religion:folklore"], rows.One<Ariel.Mods.Religion.CivilizationReligionDef>("religion:india").Definition.StartingCivics.ToArray());
+        // Theocracy forbade Secular; Secular forbids Theocracy instead, which the government checks the same way.
+        Assert.Null(rows.One<Schema.CivicDef>("government:theocracy").Definition.Requirements);
+        var forbidden = Assert.Single(ContentReferences.Leaves(secular.Definition.Requirements!), l => l.Kind == "civic");
+        Assert.Equal("government:theocracy", forbidden.Id);
+        // The resolution that forces Secular stays Votes', under its religion folder.
+        var vote = rows.One<Ariel.Mods.Votes.VoteDef>("votes:vote_free_religion");
+        Assert.Equal(("votes", "religion"), (vote.Mod, vote.Folder));
+        ContentEmission.Validate(rows.All, rows.Claimant);
+    }
+
     // Source fixtures.
     private static EffectiveRecord Record(string family, string type, params DataNode[] fields) =>
         new(family, type, DataNode.Branch(family, new[] { DataNode.Leaf("Type", type) }.Concat(fields)), []);

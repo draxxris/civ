@@ -71,9 +71,11 @@ public sealed class UnitGrantsReligionDef : ContentAttachment<UnitDef>
 }
 
 /// <summary>What a civilization means to religion: the religious buildings and units it builds in place of the usual
-/// ones, or not at all (the barbarians build none), added to its overrides.</summary>
+/// ones, or not at all (the barbarians build none), added to its overrides, and its starting civic in the religion
+/// category (Folklore), added to its starting civics.</summary>
 public sealed class CivilizationReligionDef : ContentAttachment<CivilizationDef>
 {
+    [AmendsTarget] public ImmutableArray<string> StartingCivics { get; init; } = [];
     [AmendsTarget] public ImmutableDictionary<string, string?> BuildingOverrides { get; init; } = ImmutableDictionary<string, string?>.Empty;
     [AmendsTarget] public ImmutableDictionary<string, string?> UnitOverrides { get; init; } = ImmutableDictionary<string, string?>.Empty;
 }
@@ -145,7 +147,8 @@ public sealed class TraitReligionDef : ContentAttachment<TraitDef>, Ariel.Game.I
 
 /// <summary>How a leader regards a player of its own state religion and one of another (each attitude, its growth
 /// divisor and its limit), and its weights for the memories of accepting or refusing a faith, added to the leader's
-/// memory tables (<see cref="LeaderDef.MemoryAttitudePercents"/>, <see cref="LeaderDef.MemoryDecays"/>).</summary>
+/// memory tables (<see cref="LeaderDef.MemoryAttitudePercents"/>, <see cref="LeaderDef.MemoryDecays"/>), and its
+/// favourite civic when that is one of the religion category's, filled into its empty <see cref="LeaderDef.FavoriteCivic"/>.</summary>
 public sealed class LeaderReligionDef : ContentAttachment<LeaderDef>
 {
     /// <summary>The row of a leader nothing attached to.</summary>
@@ -158,4 +161,5 @@ public sealed class LeaderReligionDef : ContentAttachment<LeaderDef>
     public int DifferentReligionAttitudeDivisor { get; init; }
     [AmendsTarget] public ImmutableDictionary<string, int> MemoryAttitudePercents { get; init; } = ImmutableDictionary<string, int>.Empty;
     [AmendsTarget] public ImmutableDictionary<string, int> MemoryDecays { get; init; } = ImmutableDictionary<string, int>.Empty;
+    [AmendsTarget] public string? FavoriteCivic { get; init; }
 }

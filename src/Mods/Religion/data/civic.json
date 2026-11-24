@@ -1,0 +1,780 @@
+[
+  {
+    "aiWeight": 0,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {},
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [
+      {
+        "amount": 50,
+        "key": "cities:specialist_research_hundredths",
+        "scope": "city",
+        "target": "foundation:specialist_scientist"
+      },
+      {
+        "amount": 20,
+        "key": "commerce.percent.gold",
+        "scope": "city",
+        "target": null
+      },
+      {
+        "amount": 20,
+        "key": "commerce.percent.research",
+        "scope": "city",
+        "target": null
+      }
+    ],
+    "era": "foundation:era_industrial",
+    "featureHappinessChanges": {},
+    "fixedBorders": false,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/Atheist2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,1",
+    "id": "religion:atheist",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "Atheist",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "Atheist represents a society with a distrust of all religions and atheism set as the state religion. Religions are not allowed to hold public displays nor try to convert others to their religion, which angers anyone who practices a religion. However, religions are allowed to preach and exhibit their history on the radio and in plays, which helps balance the unhappiness.",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:psychology"
+          ]
+        },
+        {
+          "all": [
+            {
+              "not": {
+                "count": 1,
+                "id": "government:theocracy",
+                "kind": "civic"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "Atheism is the lack of belief in any religion. Atheistic societies scorn and mock all religions equally, and preach science and knowledge as the cure to religion.",
+    "unsupported": [
+      "iRevIdxSwitchTo"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": "government:upkeep_medium"
+  },
+  {
+    "aiWeight": 0,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {
+      "cities:sacrificial_altar": 1,
+      "cities:standing_stone": 2
+    },
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 50,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [
+      {
+        "amount": -20,
+        "key": "cities:great_people_percent",
+        "scope": "city",
+        "target": null
+      },
+      {
+        "amount": -50,
+        "key": "cities:population_anger_percent",
+        "scope": "city",
+        "target": null
+      },
+      {
+        "amount": -25,
+        "key": "cities:war_weariness_percent",
+        "scope": "city",
+        "target": null
+      },
+      {
+        "amount": -10,
+        "key": "commerce.percent.culture",
+        "scope": "city",
+        "target": null
+      },
+      {
+        "amount": -10,
+        "key": "commerce.percent.gold",
+        "scope": "city",
+        "target": null
+      }
+    ],
+    "era": "foundation:era_classical",
+    "featureHappinessChanges": {},
+    "fixedBorders": false,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/DivineRule.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,8,2",
+    "id": "religion:divine_rule",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "Divine Cult",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "Divine Cult represents a state-run cult that forces all citizens to worship the civilization\u0092s rulers as gods. The state uses this religion as justification for military campaigns. A classic example of a civilization employing an divine cult is ancient Egypt and modern North Korea.",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:scriptures"
+          ]
+        }
+      ]
+    },
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "Divine Rule is where the government\u0027s rule is that of a god. The leader is the figurehead of both the state and religion, with decisions bearing both authoritarian and religious power.",
+    "unsupported": [
+      "fRevIdxBadReligionMod",
+      "fRevIdxGoodReligionMod",
+      "fRevViolentMod",
+      "iRevIdxHolyCityBad",
+      "iRevIdxHolyCityGood",
+      "iRevIdxSwitchTo",
+      "iRevReligiousFreedom"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": "government:upkeep_high"
+  },
+  {
+    "aiWeight": -20,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {},
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [],
+    "era": null,
+    "featureHappinessChanges": {},
+    "fixedBorders": false,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/folklore.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,4,3",
+    "id": "religion:folklore",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "Folklore",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "Folklore represents primitive religion system. Paganism and shamanism is common and people often worship things like nature and weather gods, spirits and other supernatural things.",
+    "requirements": null,
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "Folklore is where religion is spread through folk tales and oral tradition, with no hard written basis. It often changes from generation to generation.",
+    "unsupported": [
+      "LandmarkYieldChanges",
+      "LandmarkYieldChanges/iYield",
+      "iLandmarkHappiness"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": null
+  },
+  {
+    "aiWeight": 0,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {},
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [],
+    "era": "foundation:era_renaissance",
+    "featureHappinessChanges": {},
+    "fixedBorders": false,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/Church2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,2",
+    "id": "religion:free_church",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "Reformation",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "Free Church represents a strong central church that is independent from the state. Technically, the state has authority over the church, but the church is often exhibits more power than the state. In some cases, a strong free church can infiltrate the state and employ theocracy, but not in all cases. An example of a strong free church is the Roman Catholic church during the Medieval era.",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:humanism"
+          ]
+        }
+      ]
+    },
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "Free Church is where churches are free from governmental regulation and control, providing true autonomy.",
+    "unsupported": [
+      "SpecialBuildingNotRequireds",
+      "SpecialBuildingNotRequireds/SpecialBuildingNotRequired",
+      "SpecialBuildingNotRequireds/SpecialBuildingNotRequired/SpecialBuildingType",
+      "SpecialBuildingNotRequireds/SpecialBuildingNotRequired/bNotRequired",
+      "fRevIdxBadReligionMod",
+      "fRevIdxGoodReligionMod",
+      "iRevIdxHolyCityGood",
+      "iRevIdxSwitchTo",
+      "iRevReligiousFreedom"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": "government:upkeep_low"
+  },
+  {
+    "aiWeight": 0,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {},
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [
+      {
+        "amount": 100,
+        "key": "cities:specialist_gold_hundredths",
+        "scope": "city",
+        "target": "foundation:specialist_priest"
+      },
+      {
+        "amount": -50,
+        "key": "cities:war_weariness_percent",
+        "scope": "city",
+        "target": null
+      },
+      {
+        "amount": -25,
+        "key": "commerce.percent.research",
+        "scope": "city",
+        "target": null
+      }
+    ],
+    "era": "foundation:era_medieval",
+    "featureHappinessChanges": {},
+    "fixedBorders": true,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/Intolerant.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,7,3",
+    "id": "religion:intolerant",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "Intolerant",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "Intolerant represents a society that is extremely intolerant of all non-state religions and scientific research that could undermine their religion. An intolerant society, with the help of the church and/or the state, eradicates all non-state religions in your civilization through an inquisition. In addition, all soldiers are conditioned to fight to the death for their religion and are guaranteed a good afterlife if they do so. Intolerant is great for creating a massive religious military campaign, known as a crusade or holy war, but completely undermines all scientific and technological advancement. Examples of intolerance are Europe during the Crusades, the Spanish Inquisition, and modern Islamic Jihadists.",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:fundamentalism"
+          ]
+        },
+        {
+          "all": [
+            {
+              "not": {
+                "count": 1,
+                "id": "government:liberal",
+                "kind": "civic"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "Intolerance is the lack of acceptance of any belief system other than your own. Dissent is hateful, free thought is treason, and choice is blasphemy.",
+    "unsupported": [
+      "fRevIdxBadReligionMod",
+      "fRevIdxGoodReligionMod",
+      "iRevIdxHolyCityBad",
+      "iRevIdxHolyCityGood",
+      "iRevReligiousFreedom"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": "government:upkeep_high"
+  },
+  {
+    "aiWeight": 0,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {},
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 25,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [
+      {
+        "amount": 5,
+        "key": "cities:happiness",
+        "scope": "city",
+        "target": null
+      },
+      {
+        "amount": 20,
+        "key": "cities:military_production_percent",
+        "scope": "city",
+        "target": null
+      },
+      {
+        "amount": -10,
+        "key": "commerce.percent.culture",
+        "scope": "city",
+        "target": null
+      }
+    ],
+    "era": "foundation:era_industrial",
+    "featureHappinessChanges": {},
+    "fixedBorders": false,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/Atheist2.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,12",
+    "id": "religion:personality_cult",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "Personality Cult",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "A \u0022personality cult\u0022 is the creation of an idealized or even worshipful image of a person through propaganda and mass media. Leaders had nearly always been held as revered figures in history, and some were deified either in life or in death, while others claimed to hold their rule through the \u0022divine right of kings\u0022. After the rise of rationalism and secularism, this ideal became harder to preserve. The development of propaganda techniques allowed leaders, especially in totalitarian states, to manipulate their image in new ways. These cults were often so strong as to be practically religions.",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:propaganda"
+          ]
+        },
+        {
+          "all": [
+            {
+              "not": {
+                "count": 1,
+                "id": "government:theocracy",
+                "kind": "civic"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "A Personality Cult attempts to cast the leader as an idealized symbol of the nation.",
+    "unsupported": [
+      "iRevIdxSwitchTo"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": "government:upkeep_medium"
+  },
+  {
+    "aiWeight": -15,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {},
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [
+      {
+        "amount": 50,
+        "key": "cities:combat_production_percent",
+        "scope": "city",
+        "target": "military:unitcombat_missionary"
+      }
+    ],
+    "era": "foundation:era_ancient",
+    "featureHappinessChanges": {},
+    "fixedBorders": false,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/Prophet.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,2,6",
+    "id": "religion:prophets",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "Prophets",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "Prophets represents religion spreading through the orations of wandering prophets. The state is too primitive at this point in order to control the spread of religion, so religions spread easily throughout your civilization and foreign civilizations geographically near you.",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:mysticism"
+          ]
+        }
+      ]
+    },
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "Prophets are chosen people by the gods, who bring their word and will to the people. Prophets can often be extremely clairvoyant and bring about a golden age or be shunned by the masses as a heretic.",
+    "unsupported": [
+      "iRevIdxSwitchTo"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": null
+  },
+  {
+    "aiWeight": 0,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {},
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [
+      {
+        "amount": 25,
+        "key": "cities:great_people_percent",
+        "scope": "city",
+        "target": null
+      }
+    ],
+    "era": "foundation:era_renaissance",
+    "featureHappinessChanges": {},
+    "fixedBorders": false,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/Secular.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,5,6",
+    "id": "religion:secular",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "Secular",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "Secular represents a complete separation of church and state. Specific religions are given no special benefits from the state and all religions are accepted and guaranteed rights in the civilization. An example is the United States.",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:constitution"
+          ]
+        },
+        {
+          "all": [
+            {
+              "not": {
+                "count": 1,
+                "id": "government:theocracy",
+                "kind": "civic"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "Secularism is the acceptance and understanding of multiple belief systems, where all ideas can be equally shared without fear of reproach or scorn.",
+    "unsupported": [
+      "iRevIdxSwitchTo",
+      "iRevReligiousFreedom"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": "government:upkeep_low"
+  },
+  {
+    "aiWeight": 0,
+    "anarchyLength": 1,
+    "baseFreeMilitaryUnits": 0,
+    "baseFreeUnits": 0,
+    "buildingClassCommerceChanges": {},
+    "buildingHappinessChanges": {},
+    "buildingHealthChanges": {},
+    "capitalCommerceModifiers": {
+      "culture": 0,
+      "gold": 20,
+      "research": 0
+    },
+    "capitalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "civicPercentAnger": 0,
+    "distantUnitSupportCostModifier": 0,
+    "effects": [
+      {
+        "amount": 100,
+        "key": "cities:specialist_gold_hundredths",
+        "scope": "city",
+        "target": "foundation:specialist_priest"
+      },
+      {
+        "amount": 20,
+        "key": "commerce.percent.culture",
+        "scope": "city",
+        "target": null
+      }
+    ],
+    "era": "foundation:era_medieval",
+    "featureHappinessChanges": {},
+    "fixedBorders": false,
+    "flavors": {},
+    "freeMilitaryUnitsPopulationPercent": 0,
+    "freeUnitsPopulationPercent": 0,
+    "goldPerMilitaryUnit": 0,
+    "goldPerUnit": 0,
+    "happyPerMilitaryUnit": 0,
+    "help": "",
+    "hurryCostModifier": 0,
+    "hurryInflationModifier": 0,
+    "hurrys": {},
+    "icon": ",Art/Interface/Buttons/Civics/Statechurch.dds,Art/Interface/Buttons/Atlases/Source_Civic_Atlas.dds,1,7",
+    "id": "religion:state_church",
+    "improvementHealthPercentChanges": {},
+    "improvementYieldChanges": {},
+    "inflation": 0,
+    "largestCityHappiness": 0,
+    "maxConscript": 0,
+    "name": "State Church",
+    "noCapitalUnhappiness": false,
+    "option": "religion:civicoption_religion",
+    "pedia": "State Church represents a religion run by a church that is owned and operated by the government. In a theocracy, the clergy have power over the state, but in a state church the state has power over the clergy. Similarly to Free Church, the church is powerful and has influence on the civilization. However, commerce and trade increases in the capital city rather than the holy city due to the state\u0092s centralization of religion.",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:papacy"
+          ]
+        }
+      ]
+    },
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "strategy": "A State Church is a organized religion that the state actively coordinates with and controls. State Churches may have some autonomy, but are more often puppets for the governments more earthly goals.",
+    "unsupported": [
+      "SpecialBuildingNotRequireds",
+      "SpecialBuildingNotRequireds/SpecialBuildingNotRequired",
+      "SpecialBuildingNotRequireds/SpecialBuildingNotRequired/SpecialBuildingType",
+      "SpecialBuildingNotRequireds/SpecialBuildingNotRequired/bNotRequired",
+      "fRevIdxBadReligionMod",
+      "fRevIdxGoodReligionMod",
+      "iRevIdxHolyCityBad",
+      "iRevIdxHolyCityGood",
+      "iRevIdxSwitchTo",
+      "iRevReligiousFreedom"
+    ],
+    "upgradeAnywhere": false,
+    "upkeep": "government:upkeep_medium"
+  }
+]

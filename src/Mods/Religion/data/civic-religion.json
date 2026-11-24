@@ -16,7 +16,7 @@
     "stateReligionHappiness": 0,
     "stateReligionHealth": 0,
     "stateReligionUnitProductionModifier": 0,
-    "target": "government:atheist"
+    "target": "religion:atheist"
   },
   {
     "allowInquisitions": false,
@@ -54,7 +54,7 @@
     "stateReligionHappiness": 1,
     "stateReligionHealth": 0,
     "stateReligionUnitProductionModifier": 0,
-    "target": "government:divine_rule"
+    "target": "religion:divine_rule"
   },
   {
     "allowInquisitions": false,
@@ -73,7 +73,7 @@
     "stateReligionHappiness": 2,
     "stateReligionHealth": 0,
     "stateReligionUnitProductionModifier": 0,
-    "target": "government:free_church"
+    "target": "religion:free_church"
   },
   {
     "allowInquisitions": true,
@@ -92,7 +92,7 @@
     "stateReligionHappiness": 3,
     "stateReligionHealth": 0,
     "stateReligionUnitProductionModifier": 20,
-    "target": "government:intolerant"
+    "target": "religion:intolerant"
   },
   {
     "allowInquisitions": false,
@@ -130,7 +130,7 @@
     "stateReligionHappiness": 0,
     "stateReligionHealth": 0,
     "stateReligionUnitProductionModifier": 0,
-    "target": "government:personality_cult"
+    "target": "religion:personality_cult"
   },
   {
     "allowInquisitions": false,
@@ -149,7 +149,7 @@
     "stateReligionHappiness": 0,
     "stateReligionHealth": 0,
     "stateReligionUnitProductionModifier": 0,
-    "target": "government:prophets"
+    "target": "religion:prophets"
   },
   {
     "allowInquisitions": false,
@@ -168,7 +168,7 @@
     "stateReligionHappiness": 0,
     "stateReligionHealth": 0,
     "stateReligionUnitProductionModifier": 0,
-    "target": "government:secular"
+    "target": "religion:secular"
   },
   {
     "allowInquisitions": false,
@@ -187,7 +187,7 @@
     "stateReligionHappiness": 0,
     "stateReligionHealth": 0,
     "stateReligionUnitProductionModifier": 0,
-    "target": "government:state_church"
+    "target": "religion:state_church"
   },
   {
     "allowInquisitions": true,

@@ -3561,6 +3561,222 @@
     }
   },
   {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {},
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 0,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 300,
+    "defaultBuilding": "religion:community_center",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": "foundation:era_industrial",
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "growth": 8
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 2,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 1,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas2.dds,6,12",
+    "id": "religion:community_center",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Community Center",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Community centers are public locations for gathering, social support, and group activities. Early community centers were established in the 1900\u0027s for activities outside of school hours. Typical community centers offer facilities from meeting rooms to fitness room to classes to games.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:psychology"
+          ]
+        },
+        {
+          "any": [
+            {
+              "count": 1,
+              "id": "religion:atheist",
+              "kind": "civic"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": true,
+    "requiresPower": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {
+      "foundation:specialist_artist": 1,
+      "foundation:specialist_scientist": 1
+    },
+    "specialistYieldChanges": {},
+    "strategy": "A {color:building_text}Community Center{/color} increases happiness and health and provides an Artist and a Scientist specialist slot. It requires the {color:highlight_text}Atheist{/color} civic.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
     "aiWeight": 0,
@@ -8299,6 +8515,226 @@
     }
   },
   {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {},
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 0,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 15,
+    "defaultBuilding": "religion:idol_shrine",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": "foundation:era_ancient",
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 10
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas.dds,1,16",
+    "id": "religion:idol_shrine",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Shrine",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tIdolatry is usually defined as worship of any cult image, idea, or object, as opposed to the worship of a monotheistic God. It is considered a major sin in the Abrahamic religions whereas in religions where such activity is not considered as sin, the term \u0022idolatry\u0022 itself is absent. Which images, ideas, and objects, constitute idolatry, and which constitute reasonable worship, is a matter of contention with some religious authorities and groups using the term to describe certain other religions apart from their own.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:mysticism"
+          ]
+        },
+        {
+          "any": [
+            {
+              "count": 1,
+              "id": "religion:divine_rule",
+              "kind": "civic"
+            },
+            {
+              "count": 1,
+              "id": "religion:prophets",
+              "kind": "civic"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": true,
+    "requiresPower": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {
+      "foundation:specialist_priest": 1
+    },
+    "specialistYieldChanges": {},
+    "strategy": "Commerce boost with resources, however, this building becomes obsolete fast.  This building requires Folklore civic.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
     "aiWeight": 0,
@@ -12636,6 +13072,230 @@
       "research": 0
     },
     "commerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 300,
+    "defaultBuilding": "religion:propaganda_office",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": "foundation:era_industrial",
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "espionage": 4,
+      "growth": 6
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 3,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Civics/Free_Speech.dds,Art/Interface/Buttons/Civics_Civilizations_Religions_Atlas.dds,2,3",
+    "id": "religion:propaganda_office",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Propaganda Office",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Personality cults have always relied on propaganda as one of their primary instruments. Government control of the mass media is used to create and reinforce the idealized image of the leader.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:propaganda"
+          ]
+        },
+        {
+          "all": [
+            {
+              "count": 1,
+              "id": "cities:propaganda_net",
+              "kind": "building-class",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "count": 1,
+              "id": "religion:personality_cult",
+              "kind": "civic"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": true,
+    "requiresPower": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "The {color:building_text}Propaganda Office{/color} increases Happiness and provides 2 Spy slots. It requires the {color:highlight_text}Personality Cult{/color} civic.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {},
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 0,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
       "culture": 10,
       "gold": 0,
       "research": -15
@@ -12752,7 +13412,7 @@
           "all": [
             {
               "count": 1,
-              "id": "government:intolerant",
+              "id": "religion:intolerant",
               "kind": "civic"
             }
           ]
@@ -13436,12 +14096,12 @@
           "any": [
             {
               "count": 1,
-              "id": "government:state_church",
+              "id": "religion:state_church",
               "kind": "civic"
             },
             {
               "count": 1,
-              "id": "government:free_church",
+              "id": "religion:free_church",
               "kind": "civic"
             }
           ]
@@ -16568,6 +17228,221 @@
       "fVisibilityPriority",
       "iAsset",
       "iGreatGeneralRateModifier"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {},
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 0,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 1,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 10,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 185,
+    "defaultBuilding": "religion:universal_church",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": "foundation:era_modern",
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "culture": 10,
+      "growth": 6
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 1,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas.dds,4,16",
+    "id": "religion:universal_church",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Universal Church",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tUnitarian Universalism is a theologically liberal religion characterized by its support for a \u0022free and responsible search for truth and meaning.\u0022 Unitarian Universalists do not share a creed; rather, they are unified by their shared search for spiritual growth. Unitarian Universalists draw on many different theological sources and have a wide range of beliefs and practices.  Both Unitarianism and Universalism trace their origins to Christian Protestantism and thus Unitarian Universalism has its historical roots in the Christian faith. But by the time they decided to combine their efforts at the continental level, the theological significance of these terms had expanded beyond the traditional Christian understanding. Today\u0092s Unitarian Universalists appreciate and value aspects of other religions ranging from Judaism to Buddhism. Although Unitarian Universalist congregations and fellowships tend to retain some Christian traditions, such as Sunday worship with a sermon and the singing of hymns, they do not necessarily identify themselves as Christians, nor do they necessarily subscribe to Christian beliefs. The extent to which the elements of any particular faith tradition are incorporated into one\u0027s personal spiritual practices is a matter of personal choice in keeping with Unitarian Universalism\u0027s creedless, non-dogmatic approach to spirituality and faith development.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:globalization"
+          ]
+        },
+        {
+          "all": [
+            {
+              "count": 1,
+              "id": "religion:secular",
+              "kind": "civic"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": true,
+    "requiresPower": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Increases Culture, Happiness, Health, and War Weariness.  This building requires Secular civic.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {
+      "peoples:trait_spiritual": 100
+    },
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "fVisibilityPriority",
+      "iAsset"
     ],
     "vicinityBonusYieldChanges": {},
     "wonderCapacityIncrement": 0,

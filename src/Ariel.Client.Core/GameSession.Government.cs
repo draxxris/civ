@@ -34,9 +34,16 @@ public sealed partial class GameSession
     {
         var alternative = new SortedDictionary<string, string>(cabinet.ToDictionary(p => p.Key, p => p.Value), StringComparer.Ordinal)
         { [civic.Option!] = civic.Id };
-        var result = Sim.Content.Requirements.Evaluate(civic.Requirements, new(Sim, LocalPlayer, ProposedCivics: alternative));
+        // The whole resulting cabinet, as the government validates it: a pair of civics that excludes each other may say so
+        // on either civic (a mod's civic forbids a base one the base row cannot name).
+        var context = new Ariel.Content.RequirementContext(Sim, LocalPlayer, ProposedCivics: alternative);
+        var failures = Sim.Content.Requirements.Evaluate(civic.Requirements, context).Failures
+            .Concat(alternative.Values.Where(id => id != civic.Id)
+                .SelectMany(id => Sim.Content.Requirements.Evaluate(Sim.Content.Get<Schema.CivicDef>(id).Requirements, context).Failures
+                    .Where(f => f.Leaf is { Kind: "civic" } leaf && leaf.Id == civic.Id)))
+            .Select(f => f.Explanation).Distinct().ToList();
         return new(civic.Id, civic.Name, Me.Civics.GetValueOrDefault(civic.Option!) == civic.Id,
-            result.Failures.Select(f => f.Explanation).ToList(), civic.Help,
+            failures, civic.Help,
             ContentDescription.Of(Sim.Content, civic));
     }
 

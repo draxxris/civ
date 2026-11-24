@@ -60,18 +60,6 @@
     "unsupported": []
   },
   {
-    "defaultCivic": "government:folklore",
-    "era": null,
-    "help": "",
-    "icon": "",
-    "id": "government:civicoption_religion",
-    "name": "Religion",
-    "pedia": "",
-    "requirements": null,
-    "strategy": "",
-    "unsupported": []
-  },
-  {
     "defaultCivic": "government:tribal",
     "era": null,
     "help": "",

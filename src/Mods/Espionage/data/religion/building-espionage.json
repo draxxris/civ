@@ -27,5 +27,14 @@
     "commerceChanges": {
       "espionage": 1
     }
+  },
+  {
+    "id": "espionage:propaganda_office",
+    "name": "",
+    "requirements": null,
+    "target": "religion:propaganda_office",
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
+    }
   }
 ]

@@ -33,7 +33,10 @@ public sealed class ReligionMod : IPreparableMod
     private static readonly ModJsonFile<Ariel.Content.Schema.BuildingDef[]> FoundingWonders = new("data/founding-wonders.json");
     /// <summary>What an inquisition, or a razed holy city, leaves in the memory of the faithful.</summary>
     private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
-    /// <summary>What each civic means to religion, attached to the base civics.</summary>
+    /// <summary>The religion civic category and its civics, Folklore to Reformation: a game without this mod has neither.</summary>
+    private static readonly ModJsonFile<CivicOptionDef[]> CivicOptions = new("data/civic-option.json");
+    private static readonly ModJsonFile<CivicDef[]> OwnCivics = new("data/civic.json");
+    /// <summary>What each civic means to religion, attached to its own civics and to the base game's.</summary>
     private static readonly ModJsonFile<CivicReligionDef[]> Civics = new("data/civic-religion.json");
     /// <summary>What buildings, units and the rule constants mean to religion, attached to the base rows.</summary>
     private static readonly ModJsonFile<BuildingReligionDef[]> Buildings = new("data/building-religion.json");
@@ -48,13 +51,15 @@ public sealed class ReligionMod : IPreparableMod
     private static readonly ModJsonFile<TechDef[]> Techs = new("data/tech.json");
     private static readonly ModJsonFile<VictoryIdentityDef[]> Victories = new("data/victory-identity.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
-        [Religions, Conditions, OwnBuildings, OwnUnits, OwnPromotions, FoundingWonders, Memories, Civics, Buildings, Units, Constants, GreatPeople, BuildingGrants,
+        [Religions, Conditions, CivicOptions, OwnCivics, OwnBuildings, OwnUnits, OwnPromotions, FoundingWonders, Memories, Civics, Buildings, Units, Constants, GreatPeople, BuildingGrants,
          UnitGrants, Civilizations, Traits, Leaders, Options, Techs, Victories];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Religions);
         ContentRegistration.Load(context, Conditions);
+        ContentRegistration.Load(context, CivicOptions);
+        ContentRegistration.Load(context, OwnCivics);
         ContentRegistration.Load(context, OwnBuildings);
         ContentRegistration.Load(context, OwnUnits);
         ContentRegistration.Load(context, OwnPromotions);

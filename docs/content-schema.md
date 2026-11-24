@@ -41,7 +41,8 @@ that output with the committed data so changes can be brought in piece-meal (see
   factor and commerce vectors, `ReligionConditionDef` (leaf kind `religion-condition`,
   `data/religion-condition.json`), and `CivicReligionDef` attached to civics
   (`data/civic-religion.json`). Its own base-typed rows are the religious buildings, units
-  and promotions (`data/building.json`, `unit.json`, `promotion.json`), its game options
+  and promotions (`data/building.json`, `unit.json`, `promotion.json`), the religion civic
+  category and its civics (`data/civic-option.json`, `civic.json`), its game options
   (`data/game-option.json`), the placeholder technology (`data/tech.json`) and the
   religious victory identity (`data/victory-identity.json`). The mod also registers one
   founding wonder per religion: a `BuildingDef` whose `founds` names the religion (kind
@@ -305,7 +306,8 @@ definition without a row reads as the defaults:
   `religionSpreads`, `inquisitor`), `data/trait-religion.json` (`TraitReligionDef`:
   `nonStateReligionCommerce`), `data/leader-religion.json` (`LeaderReligionDef`: the six
   same and different religion attitude fields, and `memoryAttitudePercents` and
-  `memoryDecays` for `accepted_religion` and `denied_religion`, which amend the leader)
+  `memoryDecays` for `accepted_religion` and `denied_religion`, and `favoriteCivic` when it
+  is one of Religion's civics, which amend the leader)
   and `data/rule-constants-religion.json` (`RuleConstantsReligionDef`:
   `baseReligionAnarchyTurns` and the spread, decay, inquisition and conversion
   constants). Its amending rows are `data/building-grants-religion.json`
@@ -314,7 +316,7 @@ definition without a row reads as the defaults:
   `data/unit-grants-religion.json`
   (`UnitGrantsReligionDef`: `constructibleBuildings`, `freePromotions`) and
   `data/civilization-religion.json` (`CivilizationReligionDef`: `buildingOverrides`,
-  `unitOverrides`).
+  `unitOverrides`, and `startingCivics`, Religion's starting civics).
 - Corporations: `data/unit-corporations.json` (`UnitCorporationsDef`:
   `corporationSpreads`), `data/handicap-corporations.json` (`HandicapCorporationsDef`:
   `corporationMaintenancePercent`) and `data/world-size-corporations.json`
@@ -324,7 +326,9 @@ definition without a row reads as the defaults:
   (`BuildingEspionageDef`), `data/civic-espionage.json` (`CivicEspionageDef`: `effects`),
   `data/trait-espionage.json` (`TraitEspionageDef`), `data/specialist-espionage.json`
   (`SpecialistEspionageDef`: `commerces`), `data/religion/building-religion-espionage.json`
-  (`BuildingReligionEspionageDef`, with the Religion mod) and
+  (`BuildingReligionEspionageDef`, with the Religion mod),
+  `data/religion/building-espionage.json` and `data/religion/civic-espionage.json` (about
+  Religion's buildings and civics) and
   `data/corporations/building-espionage.json` (with the Corporations mod).
 
 An attachment property marked `[AmendsTarget]` is not read by its mod: it adds into the

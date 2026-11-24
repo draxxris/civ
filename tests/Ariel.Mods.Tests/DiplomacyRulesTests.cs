@@ -16,7 +16,7 @@ public sealed class DiplomacyRulesTests
         var mods = new LoadedMods();
         var civic = mods.Content.Get<S.CivicDef>().All.First(c => mods.Content.Attachment<CivicReligionDef>(c.Id)?.RequiresStateReligion == true);
         var constants = mods.Content.Get<S.RuleConstantsDef>().All.Single();
-        var probe = new ModSource { Root = mods.Root, Manifest = new() { Id = "diplomacy_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "government"] }, Instance = new Probe(civic, constants) };
+        var probe = new ModSource { Root = mods.Root, Manifest = new() { Id = "diplomacy_probe", Version = "1", Dependencies = ["foundation"], References = ["foundation", "government", "religion"] }, Instance = new Probe(civic, constants) };
         return ModLoader.Build(mods.Sources.Append(probe));
     });
     private static Simulation Scenario(bool unlockTrading = true)

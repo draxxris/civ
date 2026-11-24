@@ -571,7 +571,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim);
         var home = City(sim); var target = City(sim, 41);
         home.Extensions.Set(sim.Content, new ReligionCityState { Religions = ["religion:buddhism"] });
-        sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:intolerant";
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:intolerant";
         Decide(sim);
         Assert.Equal("religion:buddhism", Service<IReligionService>(sim).StateReligion(sim, 0));
         sim.AdvanceTurn(); // Finish conversion anarchy before religious unit orders.

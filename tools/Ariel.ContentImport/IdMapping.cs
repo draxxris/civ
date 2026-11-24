@@ -72,7 +72,30 @@ public static class IdMapping
         new("GameOptionInfo", "religion", (r, _) => r.Type.Contains("RELIGION", StringComparison.Ordinal) || r.Type.Contains("INQUISITION", StringComparison.Ordinal)),
         new("TechInfo", "religion", (r, _) => r.Type == "TECH_RELIGION"),
         new("VictoryInfo", "religion", (r, _) => r.Type == "VICTORY_RELIGIOUS"),
+        // And the religion civic category with its civics, Folklore to Reformation, and the buildings that need one of
+        // them (the community center, the idol shrine, the propaganda office, the universal church).
+        new("CivicOptionInfo", "religion", (r, _) => r.Type == ReligionCivicOption),
+        new("CivicInfo", "religion", (r, _) => r.Node.Value("CivicOptionType") == ReligionCivicOption),
+        new("BuildingInfo", "religion", (r, all) => NamesReligionCivic(r, all, "PrereqAndCivics", "PrereqOrCivics")),
     ];
+    private const string ReligionCivicOption = "CIVICOPTION_RELIGION";
+    /// <summary>A record that names a civic of the religion category in one of these fields.</summary>
+    private static bool NamesReligionCivic(EffectiveRecord record, SourceRecords all, params string[] fields)
+    {
+        var named = fields.Select(f => record.Node.Child(f)).Where(n => n is not null)
+            .SelectMany(n => n!.DescendantsAndSelf()).Select(n => n.Text).Where(t => t?.StartsWith("CIVIC_", StringComparison.Ordinal) == true).ToHashSet();
+        return named.Count > 0 && all.Of("CivicInfo").Any(c => named.Contains(c.Type) && c.Node.Value("CivicOptionType") == ReligionCivicOption);
+    }
+    /// <summary>Records of a feature mod's own class whose row needs an optional provider's records: the row stays in the
+    /// feature mod, under <c>data/&lt;provider&gt;/</c>, registered only with the provider. The U.N. resolution that forces
+    /// the Secular civic, which is Religion's, is Votes' row about Religion.</summary>
+    public static readonly IReadOnlyList<RecordOwner> RecordProviders =
+    [
+        new("VoteInfo", "religion", (r, all) => NamesReligionCivic(r, all, "ForceCivics")),
+    ];
+    /// <summary>The optional provider a <see cref="RecordProviders"/> rule files the record's rows under, or null.</summary>
+    public static string? Provider(EffectiveRecord record, SourceRecords all) =>
+        RecordProviders.FirstOrDefault(o => o.Class == CanonicalClass(record.Class) && o.Claims(record, all))?.Mod;
     /// <summary>A record that names a religion, or sets a religion flag, in one of these fields.</summary>
     private static bool Religious(EffectiveRecord record, params string[] fields) => fields.Any(field =>
         field.StartsWith('b') ? ContentMapper.Boolean(record.Node.Value(field)) : ContentMapper.Present(record.Node.Value(field)));

@@ -15,6 +15,7 @@ internal sealed class PrerequisiteMapper(ContentMapper mapper)
             if (node is null) continue;
             var items = Entries(record, node, mapping).ToArray();
             ContentMapper.Mark(node, mapping.Source, mapped);
+            if (mapping.Mode == "not") items = Forbidden(record, mapping, items);
             if (items.Length == 0) continue;
             if (mapping.Mode == "promotionAny") { promotionAlternatives.AddRange(items); continue; }
             clauses.Add(mapping.Mode switch
@@ -25,6 +26,10 @@ internal sealed class PrerequisiteMapper(ContentMapper mapper)
             });
         }
         if (promotionAlternatives.Count > 0) clauses.Add(new Requirement.Any(promotionAlternatives));
+        // A civic a mod owns forbids the base civics that forbid it, which their rows may not say.
+        foreach (var mapping in mappings.Where(m => m.Mode == "not" && m.Kind == "civic" && record.Node.Child(m.Source) is null))
+            if (mapper.ForbiddenBy(record, mapping).ToArray() is { Length: > 0 } mirrored)
+                clauses.Add(new Requirement.All(mirrored.Select(r => (Requirement)new Requirement.Not(r)).ToArray()));
         AddConditions(record, clauses, mapped);
         return clauses.Count == 0 ? null : new Requirement.All(clauses);
     }
@@ -40,6 +45,20 @@ internal sealed class PrerequisiteMapper(ContentMapper mapper)
             if (kept.FirstOrDefault() is not Requirement.Leaf || !mapper.CarriesAlternatives(record, mapping.Source, dropped.Id))
                 mapper.NoteUnnamedAlternative(record, mapping.Source, dropped.Id);
         return new Requirement.Any(kept);
+    }
+
+    /// <summary>A forbidden record this row may not name is left out. Civics forbid each other both ways, as the government
+    /// validates every civic of a cabinet, so the owner's civic forbids this one instead (<see cref="ContentMapper.ForbiddenBy"/>);
+    /// anything else is reported. The civic's own forbidden list gains this one unless it names it already.</summary>
+    private Requirement[] Forbidden(EffectiveRecord record, RequirementMapping mapping, Requirement[] items)
+    {
+        var kept = items.Where(i => i is not Requirement.Leaf leaf || mapper.MayName(leaf.Id)).ToList();
+        foreach (var dropped in items.Except(kept).Cast<Requirement.Leaf>())
+            if (mapping.Kind != "civic") mapper.NoteUnnamedAlternative(record, mapping.Source, dropped.Id);
+        if (mapping.Kind == "civic")
+            foreach (var mirrored in mapper.ForbiddenBy(record, mapping))
+                if (!kept.OfType<Requirement.Leaf>().Any(l => l.Id == mirrored.Id)) kept.Add(mirrored);
+        return kept.ToArray();
     }
 
     /// <summary>For an amending row: the alternatives of the record's <paramref name="source"/> group that name the

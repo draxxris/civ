@@ -495,10 +495,11 @@ technologies) stay in base. The mods' rows:
   (`TraitReligionDef`), a leader's regard for shared and other faiths (`LeaderReligionDef`)
   and the spread, decay, inquisition and conversion constants (`RuleConstantsReligionDef`).
   What it adds to base rows amends them: the Shaolin Temple's promotion and the throne
-  room's palace alternatives (`BuildingGrantsReligionDef`), the great prophet's shrines and the crusader's and
-  Shaolin monk's promotions (`UnitGrantsReligionDef`), each civilization's religious
-  buildings and units (`CivilizationReligionDef`) and the leaders' memory weights for
-  accepted and refused faiths (`LeaderReligionDef`). The amending fields of buildings and
+  room's palace alternatives (`BuildingGrantsReligionDef`), the great prophet's shrines
+  and the crusader's and Shaolin monk's promotions (`UnitGrantsReligionDef`), each
+  civilization's religious buildings and units and its starting Folklore
+  (`CivilizationReligionDef`) and the leaders' memory weights for accepted and refused
+  faiths and their favourite civics among Religion's (`LeaderReligionDef`). The amending fields of buildings and
   units live in their own `Grants` types because Espionage amends `BuildingReligionDef`
   rows, and an amended row may not amend. GreatPeople, which skips shrines when a great
   person builds, reads `BuildingReligionDef` through the Religion API it already
@@ -1415,8 +1416,8 @@ spread, decay and inquisition numbers). Other mods read it through
 `sim.Service<IReligionService>()`, null when the mod is not loaded.
 
 Nothing about religion stays in the base game: removing the mod removes every faith,
-religious building, unit, promotion, condition, option, constant and attitude, and a game
-without it saves no religion string beyond the civic category below.
+religious building, unit, promotion, civic, condition, option, constant and attitude, and
+a game without it saves no religion string.
 
 - **The mod's own content.** Its faiths (`religion:buddhism`, ...) are `ReligionDef` rows,
   which declare the `religion` leaf kind (presence; parameter 1 the player's state
@@ -1430,11 +1431,27 @@ without it saves no religion string beyond the civic category below.
   `religion:gameoption_no_inquisitions`, `religion:gameoption_limited_religions`,
   `religion:gameoption_pick_religion`; `religion:gameoption_multiple_religion_spread` is
   offered by its setup policy alone), the disabled placeholder technology
-  `religion:religion` and the deferred victory `religion:victory_religious`.
+  `religion:religion` and the deferred victory `religion:victory_religious`. Nothing names
+  the placeholder technology, but the research timeline counts every shipped technology,
+  disabled ones too, per era (`ResearchTimeline`), so removing it would shift research
+  costs by a few percent, as a game without the mod already does. Open: whether the timeline should skip
+  disabled technologies, and then whether the row can go.
+  Its civic category `religion:civicoption_religion` (shown as "Religion") and its nine
+  civics, `religion:folklore` (the default) to `religion:free_church` (Reformation), are
+  its own `CivicOptionDef` and `CivicDef` rows, registered like any mod's civics; so are
+  the four buildings that need one of them (`religion:community_center`, `idol_shrine`,
+  `propaganda_office`, `universal_church`). A category a mod adds sorts by its id, so the
+  government screen and the civic planner take Religion after the Government module's
+  categories. Base civics that forbade one of them (Liberalism forbade Intolerant,
+  Theocracy forbade Secular, Personality Cult and Atheist) no longer can; the government
+  checks every civic of a proposed cabinet, so Religion's civic forbids the base civic
+  instead, which is the same rule, and the government screen shows such a refusal on
+  either civic.
 - **Its rows about base content**, listed under "Content attachments": the religion fields
   of buildings, units, traits, leaders and the rule constants, and the amendments that put
-  its promotions, shrines, the throne room's palace alternatives, civilization overrides
-  and leader memory weights into base rows.
+  its promotions, shrines, the throne room's palace alternatives, civilization overrides and
+  starting civics (Folklore), and leader memory weights and favourite civics into base
+  rows.
 - **Generic seams it answers**: `IBuildingRule` and `IUnitTrainingRule` (a faith's
   buildings and the inquisitor), `IRazeProtection` (holy cities), `IAttitudeSource`
   (shared and other faiths, from its `religion:attitudes` counters), `IBuildingFounder`
@@ -1445,8 +1462,9 @@ without it saves no religion string beyond the civic category below.
   `AiPlannerOrder.Missions`.
 - **Other mods** reach it only optionally. GreatPeople, Revolution and Votes ask
   `sim.Service<IReligionService>()` (null without the mod) or read its attachments, and
-  Espionage, Votes and ScriptedWonders keep their rows about religious buildings under
-  `data/religion/`, registered only when `IModContext.IsLoaded("religion")`.
+  Espionage, Votes and ScriptedWonders keep their rows about religious buildings and civics
+  (Espionage's Propaganda Office and Personality Cult, Votes' resolution forcing Secular)
+  under `data/religion/`, registered only when `IModContext.IsLoaded("religion")`.
 
 What the base game keeps that mentions religion:
 
@@ -1454,11 +1472,6 @@ What the base game keeps that mentions religion:
   source fields in `unsupported` lists.
 - The `religion` key in the AI flavour weights of techs, buildings, civics, units and
   leaders: an open map that no rule reads without the mod's content.
-- Open: the Government module's `government:civicoption_religion` civic category and its
-  civics (Folklore to Free Church). Their religious effects are `CivicReligionDef` rows,
-  but the category key is the one religion string a religion-less save still carries.
-  Renaming it needs an importer id override (`IdMapping` has none) and a player-visible
-  name for the category, which is a product decision.
 - The Godot client's tooltip colour for the "Religions" pedia category, beside the
   "Corporations" one: a colour for a category a mod may add, unused without it.
 - `VictoryIdentityDef` rows stay in Foundation for the victories other mods implement;

@@ -109,7 +109,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var adopt = ViewWalk.Find<ActionButton>(ScreenProbe.Body(s, ReligionScreen), "adopt:" + Buddhism)!;
         Assert.False(adopt.Enabled); // no civic allows a state religion yet
         Assert.NotNull(adopt.Disabled);
-        s.Me.Civics["government:civicoption_religion"] = "government:state_church";
+        s.Me.Civics["religion:civicoption_religion"] = "religion:state_church";
         Assert.True(ViewWalk.Find<ActionButton>(ScreenProbe.Body(s, ReligionScreen), "adopt:" + Buddhism)!.Enabled);
         Assert.True(ScreenProbe.Press(s, ReligionScreen, "adopt:" + Buddhism), s.Message);
         var after = ScreenProbe.Body(s, ReligionScreen);

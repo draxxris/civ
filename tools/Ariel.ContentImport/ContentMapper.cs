@@ -56,6 +56,9 @@ public sealed partial class ContentMapper
     /// <summary>The religion conditions the mapped rows name (<c>religion:state_religion</c>, <c>religion:any_religion</c>).</summary>
     public SortedSet<string> ReligionConditions { get; } = new(StringComparer.Ordinal);
 
+    /// <summary>Every source record by class, for the record owner and provider rules.</summary>
+    private readonly IdMapping.SourceRecords sources;
+
 public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<string, string?> lookupText,
         IReadOnlyDictionary<string, DefineValue>? defines = null)
     {
@@ -63,7 +66,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         this.defines = defines ?? new Dictionary<string, DefineValue>(StringComparer.Ordinal);
         records = effectiveRecords.ToDictionary(r => (r.Class, r.Type));
         var idEntries = IdMapping.Create(effectiveRecords);
-        var all = new IdMapping.SourceRecords(effectiveRecords);
+        var all = sources = new IdMapping.SourceRecords(effectiveRecords);
         ids = idEntries.ToDictionary(r => (r.Class, r.SourceType), r => r.Id);
         foreach (var role in NativeUnitAiRoles)
         {
@@ -94,7 +97,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     private string? Subfolder(EffectiveRecord record, DefinitionMapping mapping)
     {
         var owner = claimed.GetValueOrDefault(ids[(record.Class, record.Type)]);
-        return IdMapping.Subfolder(emitter, mapping.TargetMod ?? (owner is not null && owner != emitter ? owner : mapping.Mod));
+        return IdMapping.Subfolder(emitter, mapping.TargetMod ?? (owner is not null && owner != emitter ? owner
+            : IdMapping.Provider(record, sources) ?? mapping.Mod));
     }
 
     public IReadOnlyList<MappedDefinition> Map()
@@ -212,6 +216,24 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     internal bool CarriesAlternatives(EffectiveRecord record, string source, string id) => claimed.TryGetValue(id, out var owner)
         && SchemaCatalog.Definitions.Any(d => d.SourceClass == record.Class && d.IsAttachment && d.Mod == owner
             && d.Fields.Any(f => f.Kind == "alternatives" && f.Source == source));
+    /// <summary>The civics of the record's class that forbid it in <paramref name="source"/> but may not name it (a base
+    /// civic that forbids one of Religion's), as the leaves of their own forbidden lists: the government validates every
+    /// civic of a cabinet, so the record's own row forbids them in turn.</summary>
+    internal IEnumerable<Requirement.Leaf> ForbiddenBy(EffectiveRecord record, RequirementMapping mapping)
+    {
+        var id = ids[(record.Class, record.Type)];
+        if (!claimed.ContainsKey(id)) yield break;
+        foreach (var other in records.Values.Where(r => r.Class == record.Class && r.Type != record.Type).OrderBy(r => ids[(r.Class, r.Type)], StringComparer.Ordinal))
+        {
+            var otherId = ids[(other.Class, other.Type)];
+            if (claimed.ContainsKey(otherId) || other.Node.Child(mapping.Source) is not { } list) continue;
+            var entry = list.Children.FirstOrDefault(n => (n.Text ?? n.Children.FirstOrDefault()?.Text) == record.Type);
+            if (entry is null) continue;
+            var amount = entry.Children.Length > 1 ? entry.Children[1].Text : null;
+            if (amount is not null && Integer(amount) == 0) continue;
+            yield return new(mapping.Kind, otherId, amount is null ? null : Integer(amount), mapping.Scope);
+        }
+    }
     /// <summary>A requirement alternative the row may not name is left out; say which, since the rest still apply.</summary>
     internal void NoteUnnamedAlternative(EffectiveRecord record, string field, string id) =>
         Issues.Add(new(ids[(record.Class, record.Type)], field, id,
@@ -496,8 +518,9 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     /// building the row may not name (<see cref="Names"/>) is left out.</summary>
     private object CivilizationField(EffectiveRecord record, DataNode node, FieldMapping field)
     {
+        // A starting civic a mod owns (Religion's Folklore) is that mod's amending row's to list.
         if (node.Name == "InitialCivics") return node.Children.Where(n => Present(n.Text))
-            .Select(n => RequiredReference("CivicInfo", n.Text!, record, node.Name)).ToArray();
+            .Select(n => RequiredReference("CivicInfo", n.Text!, record, node.Name)).Where(id => Names(id, field.Owned)).ToArray();
         bool unit = node.Name.Contains("Unit", StringComparison.Ordinal);
         var classFamily = unit ? "UnitClassInfo" : "BuildingClassInfo";
         var family = unit ? "UnitInfo" : "BuildingInfo";

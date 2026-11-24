@@ -20,15 +20,21 @@ public sealed class VotesMod : IPreparableMod
     /// <summary>The council a religious building seats (the Apostolic Palace), registered only with Religion, whose
     /// building it is.</summary>
     private static readonly ModJsonFile<BuildingVotesDef[]> ReligiousBuildings = new("data/religion/building-votes.json");
+    /// <summary>The resolution that forces Religion's Secular civic, registered only with Religion.</summary>
+    private static readonly ModJsonFile<VoteDef[]> ReligiousVotes = new("data/religion/vote.json");
     private static readonly ModJsonFile<VictoryDef[]> Victories = new("data/victory.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Sources, Votes, Buildings, ReligiousBuildings, Victories];
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Sources, Votes, Buildings, ReligiousBuildings, ReligiousVotes, Victories];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Sources);
         ContentRegistration.Load(context, Votes);
         ContentRegistration.Load(context, Buildings);
-        if (context.IsLoaded("religion")) ContentRegistration.Load(context, ReligiousBuildings);
+        if (context.IsLoaded("religion"))
+        {
+            ContentRegistration.Load(context, ReligiousBuildings);
+            ContentRegistration.Load(context, ReligiousVotes);
+        }
         ContentRegistration.Load(context, Victories);
         var service = new CouncilService();
         context.RegisterService<IVotesService>("councils", service);

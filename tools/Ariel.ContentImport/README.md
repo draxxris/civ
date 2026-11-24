@@ -245,8 +245,15 @@ religion attitude fields map onto its attachments, and the leader memory tables 
 their `accepted_religion` and `denied_religion` entries into Religion's amending
 `LeaderReligionDef` (`onlyKeys`/`exceptKeys`). The `state_religion` and `any_religion`
 conditions become its `religion-condition` leaves. The religion and inquisition game
-options, `TECH_RELIGION` and `VICTORY_RELIGIOUS` are claimed records (`religion:*`). Of the
-religion, holy-city, inquisition and conversion defines, the ones Religion reads are
+options, `TECH_RELIGION`, `VICTORY_RELIGIOUS`, `CIVICOPTION_RELIGION` with its civics, and
+the buildings whose `PrereqAndCivics` or `PrereqOrCivics` name one of those civics are
+claimed records (`religion:*`). A leader's `FavoriteCivic` and a civilization's `InitialCivics` that name
+one of them are Religion's amending `LeaderReligionDef` and `CivilizationReligionDef`
+fields. A base civic's `ForbiddenCivics` entry naming one of them is left out, and the
+Religion civic forbids the base civic instead (`ContentMapper.ForbiddenBy`): the government
+checks every civic of a cabinet, so the rule is the same. A Votes resolution whose
+`ForceCivics` names one is filed under Votes' `data/religion/` (`IdMapping.RecordProviders`).
+Of the religion, holy-city, inquisition and conversion defines, the ones Religion reads are
 typed in `RuleConstantMapping.json`; the rest are dropped like Espionage's.
 
 The source's commerce arrays have four slots (gold, research, culture, espionage). A row

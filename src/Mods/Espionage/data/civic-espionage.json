@@ -70,20 +70,6 @@
     ]
   },
   {
-    "id": "espionage:personality_cult",
-    "name": "",
-    "requirements": null,
-    "target": "government:personality_cult",
-    "effects": [
-      {
-        "amount": 20,
-        "key": "commerce.percent.espionage",
-        "scope": "city",
-        "target": null
-      }
-    ]
-  },
-  {
     "id": "espionage:shadow_war",
     "name": "",
     "requirements": null,
