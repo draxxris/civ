@@ -23,7 +23,7 @@ internal sealed class CityReadScope
     public readonly Dictionary<City, IReadOnlyList<S.BuildingDef>> Effective = new(ReferenceEqualityComparer.Instance);
     public readonly Dictionary<City, S.CultureLevelDef> Level = new(ReferenceEqualityComparer.Instance);
     public readonly Dictionary<City, IReadOnlyList<S.BuildingDef>> ActiveWithoutPower = new(ReferenceEqualityComparer.Instance);
-    public readonly Dictionary<City, S.BuildingDef[]> LocalPowerSources = new(ReferenceEqualityComparer.Instance);
+    public readonly Dictionary<City, (bool Powered, bool Dirty)> LocalPower = new(ReferenceEqualityComparer.Instance);
     public readonly Dictionary<City, string[]> FreeBuildings = new(ReferenceEqualityComparer.Instance);
     public readonly Dictionary<City, IReadOnlyDictionary<string, int>> Available = new(ReferenceEqualityComparer.Instance);
     public readonly Dictionary<int, SortedSet<string>> GrantCategories = new();

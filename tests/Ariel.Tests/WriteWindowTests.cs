@@ -382,6 +382,44 @@ public sealed class WriteWindowTests
         Assert.Empty(ModifierSources.UnreadThroughCalculation(own, content, ModifierScope.City, reader));
     }
 
+    private sealed class Reader(IReadOnlyList<string> unread) : IStateReader
+    {
+        public IReadOnlyList<string>? UnreadDomains(ContentDb content) => unread;
+    }
+
+    [Fact]
+    public void A_kept_query_answer_survives_writes_its_reader_never_reads_and_verification_catches_a_lie()
+    {
+        var (sim, _, _) = Game();
+        sim.State.PlayerById(0).Treasury = 40;
+        int calls = 0;
+        var query = new KeptQuery<int, long>("test:treasury", new Reader(["probe:culture"]));
+        long Ask(Simulation s) => query.Get(s, 0, () => { calls++; return s.State.PlayerById(0).Treasury; });
+        long seen = 0;
+        Assert.True(sim.TryApply(new Script(s =>
+        {
+            Ask(s);
+            Assert.True(s.TryApply(new SetCulture { Player = 0, Value = 9 }, out _));
+            Assert.Equal(40, Ask(s));
+            Assert.Equal(1, calls); // culture is unread: kept
+            Assert.True(s.TryApply(new SetTreasury { Player = 0, Value = 55 }, out _));
+            seen = Ask(s);
+            Assert.Equal(2, calls);
+        }) { Player = 0 }, out _));
+        Assert.Equal(55, seen);
+        Ask(sim);
+        Assert.Equal(3, calls); // outside kernel work nothing is kept
+
+        var lying = new KeptQuery<int, long>("test:lying", new Reader(["probe:treasury"]));
+        sim.VerifyWrites = true;
+        Assert.Throws<InvalidOperationException>(() => sim.TryApply(new Script(s =>
+        {
+            lying.Get(s, 0, () => s.State.PlayerById(0).Treasury);
+            s.TryApply(new SetTreasury { Player = 0, Value = 60 }, out _);
+            lying.Get(s, 0, () => s.State.PlayerById(0).Treasury);
+        }) { Player = 0 }, out _));
+    }
+
     [Fact]
     public void An_event_published_outside_any_window_dispatches_inside_one()
     {
