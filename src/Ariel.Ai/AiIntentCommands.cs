@@ -26,7 +26,9 @@ public abstract class AiPlanningCommand : GameCommand
     public sealed override string? Validate(Simulation sim)
     {
         if (IntentCommandRules.Validate(sim, Player) is { } error) return error;
-        _evaluated = Evaluate(sim);
+        // Evaluation only reads, outside the AI's read epochs: one span lets its queries share their answers (the
+        // player's economy, city ledgers and building scopes) instead of each deriving them in a span of its own.
+        using (sim.OpenReadSpan()) _evaluated = Evaluate(sim);
         return ExpectedIntent is not null && ExpectedIntent != _evaluated ? "AI intent changed" : null;
     }
 
