@@ -7,14 +7,23 @@ namespace Ariel.Mods.Religion;
 // What base definitions mean to religion, kept in this mod's own rows (see "Content attachments" in docs/DESIGN.md).
 // A definition without a row means nothing to religion: read it as None, whose values are all zero or empty.
 
-/// <summary>What a building means to religion: how it draws faiths to its city, what it yields in state religion
-/// cities, whether it ignores the state religion, and the faith whose shrine it is.</summary>
+/// <summary>What a building means to religion: its faith, whether it needs a religion or a state religion, how it draws
+/// faiths to its city, what it yields in state religion cities, whether it ignores the state religion, and the faith
+/// whose shrine it is.</summary>
 public sealed class BuildingReligionDef : ContentAttachment<BuildingDef>
 {
     /// <summary>The row of a building nothing attached to.</summary>
     public static readonly BuildingReligionDef None = new();
+    /// <summary>The faith the building belongs to (a temple, monastery, cathedral or shrine): a city builds it only with
+    /// that state religion, unless it is free from it, and loses it when the faith leaves.</summary>
+    [ContentReference(typeof(ReligionDef))]
+    public string? Religion { get; init; }
+    /// <summary>The building needs some religion in its city.</summary>
+    public bool RequiresReligion { get; init; }
+    /// <summary>The building needs its owner to have a state religion.</summary>
+    public bool RequiresStateReligion { get; init; }
     /// <summary>Influence the building adds to each named faith's natural spread into its city.</summary>
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Keys)]
+    [ContentReference(typeof(ReligionDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> ReligionChanges { get; init; } = ImmutableDictionary<string, int>.Empty;
     /// <summary>Commerce the building adds, across its owner's cities, to each building of the state religion.</summary>
     public CommerceVector StateReligionCommerces { get; init; }
@@ -23,7 +32,7 @@ public sealed class BuildingReligionDef : ContentAttachment<BuildingDef>
     /// <summary>Happiness when the building's religion is its owner's state religion.</summary>
     public int StateReligionHappiness { get; init; }
     /// <summary>The faith whose shrine the building is: it earns that faith's commerce for every city holding it.</summary>
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
+    [ContentReference(typeof(ReligionDef), ReferencePart.Values)]
     public string? GlobalReligionCommerce { get; init; }
 }
 
@@ -34,12 +43,15 @@ public sealed class BuildingGrantsReligionDef : ContentAttachment<BuildingDef>
     [AmendsTarget] public string? FreePromotion { get; init; }
 }
 
-/// <summary>What a unit means to religion: the chance, per faith, that its spread mission succeeds.</summary>
+/// <summary>What a unit means to religion: whether it is an inquisitor, and the chance, per faith, that its spread
+/// mission succeeds.</summary>
 public sealed class UnitReligionDef : ContentAttachment<UnitDef>
 {
     /// <summary>The row of a unit nothing attached to.</summary>
     public static readonly UnitReligionDef None = new();
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Keys)]
+    /// <summary>The unit performs inquisitions, where civics and the state religion allow them.</summary>
+    public bool Inquisitor { get; init; }
+    [ContentReference(typeof(ReligionDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> ReligionSpreads { get; init; } = ImmutableDictionary<string, int>.Empty;
 }
 

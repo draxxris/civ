@@ -141,7 +141,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -157,15 +156,13 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -365,7 +362,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:islam",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -378,7 +374,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -386,22 +382,20 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -602,7 +596,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:zoroastrianism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -620,7 +613,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]
@@ -628,15 +621,15 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         },
         {
           "count": 4,
@@ -647,8 +640,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -841,7 +832,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -860,8 +850,8 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         },
         {
           "count": 3,
@@ -872,8 +862,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1076,7 +1064,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:asatru",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -1104,7 +1091,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -1113,8 +1100,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1310,7 +1295,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:asatru",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -1321,7 +1305,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -1330,8 +1314,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1528,7 +1510,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:asatru",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -1536,7 +1517,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion",
               "param": 2
             }
@@ -1546,8 +1527,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1748,7 +1727,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:asatru",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -1759,7 +1737,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -1768,8 +1746,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1969,7 +1945,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:buddhism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -1997,7 +1972,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -2006,8 +1981,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -2202,7 +2175,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:buddhism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -2213,7 +2185,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -2222,8 +2194,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -2422,7 +2392,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:buddhism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -2430,7 +2399,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion",
               "param": 2
             }
@@ -2440,8 +2409,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -2640,7 +2607,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:buddhism",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -2651,7 +2617,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -2660,8 +2626,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -2861,7 +2825,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:christianity",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -2889,7 +2852,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -2898,8 +2861,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3094,7 +3055,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:christianity",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -3105,7 +3065,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -3114,8 +3074,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3314,7 +3272,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:christianity",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -3322,7 +3279,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion",
               "param": 2
             }
@@ -3332,8 +3289,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3532,7 +3487,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:christianity",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -3543,7 +3497,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -3552,8 +3506,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3753,7 +3705,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:confucianism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -3781,7 +3732,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -3790,8 +3741,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3986,7 +3935,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:confucianism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -3997,7 +3945,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -4006,8 +3954,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -4206,7 +4152,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:confucianism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -4214,7 +4159,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion",
               "param": 2
             }
@@ -4224,8 +4169,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -4424,7 +4367,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:confucianism",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -4435,7 +4377,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -4444,8 +4386,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -4662,7 +4602,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:christianity",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -4675,7 +4614,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -4683,22 +4622,20 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -4913,7 +4850,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -4933,15 +4869,13 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -5140,7 +5074,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:confucianism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -5163,7 +5096,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -5171,22 +5104,20 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -5395,7 +5326,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:egypt_mythology",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -5423,7 +5353,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -5432,8 +5362,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -5628,7 +5556,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:egypt_mythology",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -5639,7 +5566,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -5648,8 +5575,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -5848,7 +5773,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:egypt_mythology",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -5856,7 +5780,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 2
             }
@@ -5866,8 +5790,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6065,7 +5987,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:egypt_mythology",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -6076,7 +5997,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -6085,8 +6006,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6281,7 +6200,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -6302,15 +6220,13 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6511,7 +6427,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hellenism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -6539,7 +6454,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -6548,8 +6463,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6744,7 +6657,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hellenism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -6755,7 +6667,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -6764,8 +6676,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6964,7 +6874,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hellenism",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -6975,7 +6884,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -6984,8 +6893,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -7205,7 +7112,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hinduism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -7218,7 +7124,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -7226,22 +7132,20 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -7442,7 +7346,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hinduism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -7470,7 +7373,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -7479,8 +7382,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -7675,7 +7576,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hinduism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -7686,7 +7586,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -7695,8 +7595,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -7895,7 +7793,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hinduism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -7903,7 +7800,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion",
               "param": 2
             }
@@ -7913,8 +7810,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8113,7 +8008,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hinduism",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -8124,7 +8018,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -8133,8 +8027,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8329,7 +8221,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -8349,15 +8240,13 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": true,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8554,7 +8443,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:islam",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -8582,7 +8470,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -8591,8 +8479,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8787,7 +8673,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:islam",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -8798,7 +8683,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -8807,8 +8692,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9007,7 +8890,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:islam",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -9015,7 +8897,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion",
               "param": 2
             }
@@ -9025,8 +8907,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9225,7 +9105,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:islam",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -9236,7 +9115,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -9245,8 +9124,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9445,7 +9322,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:shinto",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -9458,7 +9334,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -9466,15 +9342,15 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         },
         {
           "any": [
@@ -9489,8 +9365,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9691,7 +9565,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:judaism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -9719,7 +9592,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -9728,8 +9601,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9924,7 +9795,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:judaism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -9937,7 +9807,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -9945,22 +9815,20 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -10158,7 +10026,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:judaism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -10169,7 +10036,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -10178,8 +10045,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -10378,7 +10243,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:judaism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -10386,7 +10250,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion",
               "param": 2
             }
@@ -10396,8 +10260,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -10596,7 +10458,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:judaism",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -10607,7 +10468,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -10616,8 +10477,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -10823,7 +10682,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:buddhism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -10836,7 +10694,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -10844,22 +10702,20 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11057,7 +10913,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {
       "cities:press_agency": true,
       "cities:printer": true
@@ -11071,15 +10926,13 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11276,7 +11129,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:mesoamericanism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -11304,7 +11156,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -11313,8 +11165,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11513,7 +11363,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:mesoamericanism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -11526,7 +11375,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -11534,22 +11383,20 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11749,7 +11596,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:mesoamericanism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -11760,7 +11606,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -11769,8 +11615,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11969,7 +11813,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:mesoamericanism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -11977,7 +11820,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion",
               "param": 2
             }
@@ -11987,8 +11830,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -12190,7 +12031,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:mesoamericanism",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -12201,7 +12041,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -12210,8 +12050,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -12427,7 +12265,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hellenism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -12445,7 +12282,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -12453,22 +12290,20 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -12670,7 +12505,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:buddhism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -12683,7 +12517,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -12691,22 +12525,20 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -12907,7 +12739,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -12927,15 +12758,13 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": true,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -13149,7 +12978,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:asatru",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -13162,7 +12990,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -13170,22 +12998,20 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -13382,7 +13208,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {
       "cities:press_agency": true,
       "cities:printer": true,
@@ -13397,15 +13222,13 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -13600,7 +13423,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -13625,15 +13447,13 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": true,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -13832,7 +13652,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:shinto",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -13860,7 +13679,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -13869,8 +13688,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -14065,7 +13882,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:shinto",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -14076,7 +13892,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -14085,8 +13901,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -14285,7 +14099,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:shinto",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -14293,7 +14106,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion",
               "param": 2
             }
@@ -14303,8 +14116,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -14503,7 +14314,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:shinto",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -14514,7 +14324,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -14523,8 +14333,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -14719,7 +14527,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:hellenism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -14727,7 +14534,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion",
               "param": 2
             }
@@ -14737,8 +14544,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -14943,7 +14748,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:taoism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -14971,7 +14775,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -14980,8 +14784,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -15176,7 +14978,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:taoism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -15187,7 +14988,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -15196,8 +14997,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -15396,7 +15195,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:taoism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -15404,7 +15202,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion",
               "param": 2
             }
@@ -15414,8 +15212,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -15614,7 +15410,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:taoism",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -15625,7 +15420,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -15634,8 +15429,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -15855,7 +15648,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:taoism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -15868,7 +15660,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -15876,22 +15668,20 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -16117,7 +15907,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:egypt_mythology",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -16150,7 +15939,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -16158,22 +15947,20 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -16405,7 +16192,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:egypt_mythology",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -16438,7 +16224,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -16446,22 +16232,20 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -16687,7 +16471,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:egypt_mythology",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -16720,7 +16503,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -16728,22 +16511,20 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 1
             }
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": true,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -16947,7 +16728,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:zoroastrianism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -16975,7 +16755,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]
@@ -16984,8 +16764,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -17180,7 +16958,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:zoroastrianism",
     "replaceBuildings": {
       "cities:infomatrix": true,
       "cities:public_school": true
@@ -17191,7 +16968,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]
@@ -17200,8 +16977,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -17400,7 +17175,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:zoroastrianism",
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -17408,7 +17182,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion",
               "param": 2
             }
@@ -17418,8 +17192,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -17618,7 +17390,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": "foundation:zoroastrianism",
     "replaceBuildings": {},
     "replacedBy": [
       "cities:firepit",
@@ -17629,7 +17400,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]
@@ -17638,8 +17409,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,

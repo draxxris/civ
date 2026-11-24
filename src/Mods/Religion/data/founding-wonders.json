@@ -14,7 +14,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:asatru",
+      "id": "religion:asatru",
       "kind": "religion"
     },
     "flavors": {
@@ -38,7 +38,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:buddhism",
+      "id": "religion:buddhism",
       "kind": "religion"
     },
     "flavors": {
@@ -62,7 +62,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:christianity",
+      "id": "religion:christianity",
       "kind": "religion"
     },
     "flavors": {
@@ -86,7 +86,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:confucianism",
+      "id": "religion:confucianism",
       "kind": "religion"
     },
     "flavors": {
@@ -110,7 +110,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:egypt_mythology",
+      "id": "religion:egypt_mythology",
       "kind": "religion"
     },
     "flavors": {
@@ -134,7 +134,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:hellenism",
+      "id": "religion:hellenism",
       "kind": "religion"
     },
     "flavors": {
@@ -158,7 +158,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:hinduism",
+      "id": "religion:hinduism",
       "kind": "religion"
     },
     "flavors": {
@@ -182,7 +182,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:islam",
+      "id": "religion:islam",
       "kind": "religion"
     },
     "flavors": {
@@ -206,7 +206,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:judaism",
+      "id": "religion:judaism",
       "kind": "religion"
     },
     "flavors": {
@@ -230,7 +230,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:mesoamericanism",
+      "id": "religion:mesoamericanism",
       "kind": "religion"
     },
     "flavors": {
@@ -254,7 +254,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:shinto",
+      "id": "religion:shinto",
       "kind": "religion"
     },
     "flavors": {
@@ -278,7 +278,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:taoism",
+      "id": "religion:taoism",
       "kind": "religion"
     },
     "flavors": {
@@ -302,7 +302,7 @@
       "world": 1
     },
     "founds": {
-      "id": "foundation:zoroastrianism",
+      "id": "religion:zoroastrianism",
       "kind": "religion"
     },
     "flavors": {

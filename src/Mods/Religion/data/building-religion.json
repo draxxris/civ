@@ -2,12 +2,33 @@
   {
     "freeFromStateReligion": false,
     "globalReligionCommerce": null,
+    "id": "religion:abu_simbel",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:abu_simbel"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
     "id": "religion:alhambra",
     "name": "",
+    "religion": "religion:islam",
     "religionChanges": {
-      "foundation:islam": 3
+      "religion:islam": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 1,
       "gold": 1,
@@ -19,12 +40,51 @@
   {
     "freeFromStateReligion": false,
     "globalReligionCommerce": null,
+    "id": "religion:apadana_palace",
+    "name": "",
+    "religion": "religion:zoroastrianism",
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:apadana_palace"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:apostolic_palace",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:apostolic_palace"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
     "id": "religion:asatru_cathedral",
     "name": "",
+    "religion": "religion:asatru",
     "religionChanges": {
-      "foundation:asatru": 3
+      "religion:asatru": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -38,10 +98,13 @@
     "globalReligionCommerce": null,
     "id": "religion:asatru_monastery",
     "name": "",
+    "religion": "religion:asatru",
     "religionChanges": {
-      "foundation:asatru": 1
+      "religion:asatru": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -52,13 +115,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:asatru",
+    "globalReligionCommerce": "religion:asatru",
     "id": "religion:asatru_shrine",
     "name": "",
+    "religion": "religion:asatru",
     "religionChanges": {
-      "foundation:asatru": 4
+      "religion:asatru": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -72,10 +138,13 @@
     "globalReligionCommerce": null,
     "id": "religion:asatru_temple",
     "name": "",
+    "religion": "religion:asatru",
     "religionChanges": {
-      "foundation:asatru": 1
+      "religion:asatru": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -89,10 +158,13 @@
     "globalReligionCommerce": null,
     "id": "religion:buddhist_cathedral",
     "name": "",
+    "religion": "religion:buddhism",
     "religionChanges": {
-      "foundation:buddhism": 3
+      "religion:buddhism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -106,10 +178,13 @@
     "globalReligionCommerce": null,
     "id": "religion:buddhist_monastery",
     "name": "",
+    "religion": "religion:buddhism",
     "religionChanges": {
-      "foundation:buddhism": 1
+      "religion:buddhism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -120,13 +195,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:buddhism",
+    "globalReligionCommerce": "religion:buddhism",
     "id": "religion:buddhist_shrine",
     "name": "",
+    "religion": "religion:buddhism",
     "religionChanges": {
-      "foundation:buddhism": 4
+      "religion:buddhism": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -140,10 +218,13 @@
     "globalReligionCommerce": null,
     "id": "religion:buddhist_temple",
     "name": "",
+    "religion": "religion:buddhism",
     "religionChanges": {
-      "foundation:buddhism": 2
+      "religion:buddhism": 2
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -157,10 +238,13 @@
     "globalReligionCommerce": null,
     "id": "religion:christian_cathedral",
     "name": "",
+    "religion": "religion:christianity",
     "religionChanges": {
-      "foundation:christianity": 3
+      "religion:christianity": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -174,10 +258,13 @@
     "globalReligionCommerce": null,
     "id": "religion:christian_monastery",
     "name": "",
+    "religion": "religion:christianity",
     "religionChanges": {
-      "foundation:christianity": 1
+      "religion:christianity": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -188,13 +275,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:christianity",
+    "globalReligionCommerce": "religion:christianity",
     "id": "religion:christian_shrine",
     "name": "",
+    "religion": "religion:christianity",
     "religionChanges": {
-      "foundation:christianity": 4
+      "religion:christianity": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -208,10 +298,13 @@
     "globalReligionCommerce": null,
     "id": "religion:christian_temple",
     "name": "",
+    "religion": "religion:christianity",
     "religionChanges": {
-      "foundation:christianity": 2
+      "religion:christianity": 2
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -225,10 +318,13 @@
     "globalReligionCommerce": null,
     "id": "religion:confucian_cathedral",
     "name": "",
+    "religion": "religion:confucianism",
     "religionChanges": {
-      "foundation:confucianism": 1
+      "religion:confucianism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -242,10 +338,13 @@
     "globalReligionCommerce": null,
     "id": "religion:confucian_monastery",
     "name": "",
+    "religion": "religion:confucianism",
     "religionChanges": {
-      "foundation:confucianism": 1
+      "religion:confucianism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -256,13 +355,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:confucianism",
+    "globalReligionCommerce": "religion:confucianism",
     "id": "religion:confucian_shrine",
     "name": "",
+    "religion": "religion:confucianism",
     "religionChanges": {
-      "foundation:confucianism": 4
+      "religion:confucianism": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -276,10 +378,13 @@
     "globalReligionCommerce": null,
     "id": "religion:confucian_temple",
     "name": "",
+    "religion": "religion:confucianism",
     "religionChanges": {
-      "foundation:confucianism": 0
+      "religion:confucianism": 0
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -293,10 +398,13 @@
     "globalReligionCommerce": null,
     "id": "religion:crusade",
     "name": "",
+    "religion": "religion:christianity",
     "religionChanges": {
-      "foundation:christianity": 3
+      "religion:christianity": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -308,12 +416,51 @@
   {
     "freeFromStateReligion": false,
     "globalReligionCommerce": null,
+    "id": "religion:djenne",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:djenne"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:dosan_seowon",
+    "name": "",
+    "religion": "religion:confucianism",
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:dosan_seowon"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
     "id": "religion:egypt_myth_cathedral",
     "name": "",
+    "religion": "religion:egypt_mythology",
     "religionChanges": {
-      "foundation:egypt_mythology": 3
+      "religion:egypt_mythology": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -327,10 +474,13 @@
     "globalReligionCommerce": null,
     "id": "religion:egypt_myth_monastery",
     "name": "",
+    "religion": "religion:egypt_mythology",
     "religionChanges": {
-      "foundation:egypt_mythology": 1
+      "religion:egypt_mythology": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -341,13 +491,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:egypt_mythology",
+    "globalReligionCommerce": "religion:egypt_mythology",
     "id": "religion:egypt_myth_shrine",
     "name": "",
+    "religion": "religion:egypt_mythology",
     "religionChanges": {
-      "foundation:egypt_mythology": 4
+      "religion:egypt_mythology": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -361,10 +514,13 @@
     "globalReligionCommerce": null,
     "id": "religion:egypt_myth_temple",
     "name": "",
+    "religion": "religion:egypt_mythology",
     "religionChanges": {
-      "foundation:egypt_mythology": 2
+      "religion:egypt_mythology": 2
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -376,12 +532,33 @@
   {
     "freeFromStateReligion": false,
     "globalReligionCommerce": null,
+    "id": "religion:gutenberg",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:gutenberg"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
     "id": "religion:hellenic_cathedral",
     "name": "",
+    "religion": "religion:hellenism",
     "religionChanges": {
-      "foundation:hellenism": 3
+      "religion:hellenism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -395,10 +572,13 @@
     "globalReligionCommerce": null,
     "id": "religion:hellenic_monastery",
     "name": "",
+    "religion": "religion:hellenism",
     "religionChanges": {
-      "foundation:hellenism": 1
+      "religion:hellenism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -412,10 +592,13 @@
     "globalReligionCommerce": null,
     "id": "religion:hellenic_temple",
     "name": "",
+    "religion": "religion:hellenism",
     "religionChanges": {
-      "foundation:hellenism": 1
+      "religion:hellenism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -429,10 +612,13 @@
     "globalReligionCommerce": null,
     "id": "religion:hindu_brihadeeswarar",
     "name": "",
+    "religion": "religion:hinduism",
     "religionChanges": {
-      "foundation:hinduism": 3
+      "religion:hinduism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -446,10 +632,13 @@
     "globalReligionCommerce": null,
     "id": "religion:hindu_cathedral",
     "name": "",
+    "religion": "religion:hinduism",
     "religionChanges": {
-      "foundation:hinduism": 3
+      "religion:hinduism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -463,10 +652,13 @@
     "globalReligionCommerce": null,
     "id": "religion:hindu_monastery",
     "name": "",
+    "religion": "religion:hinduism",
     "religionChanges": {
-      "foundation:hinduism": 1
+      "religion:hinduism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -477,13 +669,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:hinduism",
+    "globalReligionCommerce": "religion:hinduism",
     "id": "religion:hindu_shrine",
     "name": "",
+    "religion": "religion:hinduism",
     "religionChanges": {
-      "foundation:hinduism": 1
+      "religion:hinduism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -497,10 +692,13 @@
     "globalReligionCommerce": null,
     "id": "religion:hindu_temple",
     "name": "",
+    "religion": "religion:hinduism",
     "religionChanges": {
-      "foundation:hinduism": 1
+      "religion:hinduism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -512,12 +710,33 @@
   {
     "freeFromStateReligion": false,
     "globalReligionCommerce": null,
+    "id": "religion:holy_order",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:holy_order"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
     "id": "religion:islamic_cathedral",
     "name": "",
+    "religion": "religion:islam",
     "religionChanges": {
-      "foundation:islam": 3
+      "religion:islam": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -531,10 +750,13 @@
     "globalReligionCommerce": null,
     "id": "religion:islamic_monastery",
     "name": "",
+    "religion": "religion:islam",
     "religionChanges": {
-      "foundation:islam": 1
+      "religion:islam": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -545,13 +767,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:islam",
+    "globalReligionCommerce": "religion:islam",
     "id": "religion:islamic_shrine",
     "name": "",
+    "religion": "religion:islam",
     "religionChanges": {
-      "foundation:islam": 4
+      "religion:islam": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -565,10 +790,13 @@
     "globalReligionCommerce": null,
     "id": "religion:islamic_temple",
     "name": "",
+    "religion": "religion:islam",
     "religionChanges": {
-      "foundation:islam": 2
+      "religion:islam": 2
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -582,10 +810,13 @@
     "globalReligionCommerce": null,
     "id": "religion:itsukushima",
     "name": "",
+    "religion": "religion:shinto",
     "religionChanges": {
-      "foundation:shinto": 3
+      "religion:shinto": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -599,10 +830,13 @@
     "globalReligionCommerce": null,
     "id": "religion:jewish_cathedral",
     "name": "",
+    "religion": "religion:judaism",
     "religionChanges": {
-      "foundation:judaism": 3
+      "religion:judaism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -616,10 +850,13 @@
     "globalReligionCommerce": null,
     "id": "religion:jewish_masada",
     "name": "",
+    "religion": "religion:judaism",
     "religionChanges": {
-      "foundation:judaism": 3
+      "religion:judaism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -633,10 +870,13 @@
     "globalReligionCommerce": null,
     "id": "religion:jewish_monastery",
     "name": "",
+    "religion": "religion:judaism",
     "religionChanges": {
-      "foundation:judaism": 2
+      "religion:judaism": 2
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -647,13 +887,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:judaism",
+    "globalReligionCommerce": "religion:judaism",
     "id": "religion:jewish_shrine",
     "name": "",
+    "religion": "religion:judaism",
     "religionChanges": {
-      "foundation:judaism": 4
+      "religion:judaism": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -667,10 +910,13 @@
     "globalReligionCommerce": null,
     "id": "religion:jewish_temple",
     "name": "",
+    "religion": "religion:judaism",
     "religionChanges": {
-      "foundation:judaism": 1
+      "religion:judaism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -684,8 +930,11 @@
     "globalReligionCommerce": null,
     "id": "religion:jsbach_cathedral",
     "name": "",
+    "religion": null,
     "religionChanges": {},
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -699,10 +948,13 @@
     "globalReligionCommerce": null,
     "id": "religion:kotoku",
     "name": "",
+    "religion": "religion:buddhism",
     "religionChanges": {
-      "foundation:buddhism": 3
+      "religion:buddhism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -714,12 +966,33 @@
   {
     "freeFromStateReligion": false,
     "globalReligionCommerce": null,
+    "id": "religion:lombard_cloister",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:lombard_cloister"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
     "id": "religion:mesoamerican_cathedral",
     "name": "",
+    "religion": "religion:mesoamericanism",
     "religionChanges": {
-      "foundation:mesoamericanism": 3
+      "religion:mesoamericanism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -733,10 +1006,13 @@
     "globalReligionCommerce": null,
     "id": "religion:mesoamerican_magician_pyramid",
     "name": "",
+    "religion": "religion:mesoamericanism",
     "religionChanges": {
-      "foundation:mesoamericanism": 3
+      "religion:mesoamericanism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -750,10 +1026,13 @@
     "globalReligionCommerce": null,
     "id": "religion:mesoamerican_monastery",
     "name": "",
+    "religion": "religion:mesoamericanism",
     "religionChanges": {
-      "foundation:mesoamericanism": 1
+      "religion:mesoamericanism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -764,13 +1043,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:mesoamericanism",
+    "globalReligionCommerce": "religion:mesoamericanism",
     "id": "religion:mesoamerican_shrine",
     "name": "",
+    "religion": "religion:mesoamericanism",
     "religionChanges": {
-      "foundation:mesoamericanism": 4
+      "religion:mesoamericanism": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -784,10 +1066,13 @@
     "globalReligionCommerce": null,
     "id": "religion:mesoamerican_temple",
     "name": "",
+    "religion": "religion:mesoamericanism",
     "religionChanges": {
-      "foundation:mesoamericanism": 2
+      "religion:mesoamericanism": 2
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -801,10 +1086,13 @@
     "globalReligionCommerce": null,
     "id": "religion:parthenon",
     "name": "",
+    "religion": "religion:hellenism",
     "religionChanges": {
-      "foundation:hellenism": 3
+      "religion:hellenism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -818,8 +1106,11 @@
     "globalReligionCommerce": null,
     "id": "religion:petra",
     "name": "",
+    "religion": null,
     "religionChanges": {},
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -833,10 +1124,13 @@
     "globalReligionCommerce": null,
     "id": "religion:potala_palace",
     "name": "",
+    "religion": "religion:buddhism",
     "religionChanges": {
-      "foundation:buddhism": 1
+      "religion:buddhism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -848,12 +1142,33 @@
   {
     "freeFromStateReligion": false,
     "globalReligionCommerce": null,
+    "id": "religion:revivalist_church",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:revivalist_church"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
     "id": "religion:sagas",
     "name": "",
+    "religion": "religion:asatru",
     "religionChanges": {
-      "foundation:asatru": 3
+      "religion:asatru": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -867,8 +1182,11 @@
     "globalReligionCommerce": null,
     "id": "religion:sankore",
     "name": "",
+    "religion": null,
     "religionChanges": {},
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -880,12 +1198,51 @@
   {
     "freeFromStateReligion": false,
     "globalReligionCommerce": null,
+    "id": "religion:scriptorium",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:scriptorium"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
+    "id": "religion:seminary",
+    "name": "",
+    "religion": null,
+    "religionChanges": {},
+    "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
+    "stateReligionCommerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "stateReligionHappiness": 0,
+    "target": "religion:seminary"
+  },
+  {
+    "freeFromStateReligion": false,
+    "globalReligionCommerce": null,
     "id": "religion:shinto_cathedral",
     "name": "",
+    "religion": "religion:shinto",
     "religionChanges": {
-      "foundation:shinto": 3
+      "religion:shinto": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -899,10 +1256,13 @@
     "globalReligionCommerce": null,
     "id": "religion:shinto_monastery",
     "name": "",
+    "religion": "religion:shinto",
     "religionChanges": {
-      "foundation:shinto": 1
+      "religion:shinto": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -913,13 +1273,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:shinto",
+    "globalReligionCommerce": "religion:shinto",
     "id": "religion:shinto_shrine",
     "name": "",
+    "religion": "religion:shinto",
     "religionChanges": {
-      "foundation:shinto": 4
+      "religion:shinto": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -933,10 +1296,13 @@
     "globalReligionCommerce": null,
     "id": "religion:shinto_temple",
     "name": "",
+    "religion": "religion:shinto",
     "religionChanges": {
-      "foundation:shinto": 1
+      "religion:shinto": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -950,8 +1316,11 @@
     "globalReligionCommerce": null,
     "id": "religion:sistine_chapel",
     "name": "",
+    "religion": null,
     "religionChanges": {},
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 5,
       "gold": 0,
@@ -965,8 +1334,11 @@
     "globalReligionCommerce": null,
     "id": "religion:spiral_minaret",
     "name": "",
+    "religion": null,
     "religionChanges": {},
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 2,
@@ -977,13 +1349,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:hellenism",
+    "globalReligionCommerce": "religion:hellenism",
     "id": "religion:statue_of_zeus",
     "name": "",
+    "religion": "religion:hellenism",
     "religionChanges": {
-      "foundation:hellenism": 1
+      "religion:hellenism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -997,10 +1372,13 @@
     "globalReligionCommerce": null,
     "id": "religion:taoist_cathedral",
     "name": "",
+    "religion": "religion:taoism",
     "religionChanges": {
-      "foundation:taoism": 3
+      "religion:taoism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1014,10 +1392,13 @@
     "globalReligionCommerce": null,
     "id": "religion:taoist_monastery",
     "name": "",
+    "religion": "religion:taoism",
     "religionChanges": {
-      "foundation:taoism": 1
+      "religion:taoism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1028,13 +1409,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:taoism",
+    "globalReligionCommerce": "religion:taoism",
     "id": "religion:taoist_shrine",
     "name": "",
+    "religion": "religion:taoism",
     "religionChanges": {
-      "foundation:taoism": 4
+      "religion:taoism": 4
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1048,10 +1432,13 @@
     "globalReligionCommerce": null,
     "id": "religion:taoist_temple",
     "name": "",
+    "religion": "religion:taoism",
     "religionChanges": {
-      "foundation:taoism": 2
+      "religion:taoism": 2
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1065,10 +1452,13 @@
     "globalReligionCommerce": null,
     "id": "religion:taoist_temple_of_heaven",
     "name": "",
+    "religion": "religion:taoism",
     "religionChanges": {
-      "foundation:taoism": 3
+      "religion:taoism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1082,10 +1472,13 @@
     "globalReligionCommerce": null,
     "id": "religion:temple_of_isis",
     "name": "",
+    "religion": "religion:egypt_mythology",
     "religionChanges": {
-      "foundation:egypt_mythology": 3
+      "religion:egypt_mythology": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1099,10 +1492,13 @@
     "globalReligionCommerce": null,
     "id": "religion:temple_of_osiris",
     "name": "",
+    "religion": "religion:egypt_mythology",
     "religionChanges": {
-      "foundation:egypt_mythology": 3
+      "religion:egypt_mythology": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1116,10 +1512,13 @@
     "globalReligionCommerce": null,
     "id": "religion:temple_of_set",
     "name": "",
+    "religion": "religion:egypt_mythology",
     "religionChanges": {
-      "foundation:egypt_mythology": 3
+      "religion:egypt_mythology": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": true,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1133,10 +1532,13 @@
     "globalReligionCommerce": null,
     "id": "religion:zoroastrian_cathedral",
     "name": "",
+    "religion": "religion:zoroastrianism",
     "religionChanges": {
-      "foundation:zoroastrianism": 3
+      "religion:zoroastrianism": 3
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1150,10 +1552,13 @@
     "globalReligionCommerce": null,
     "id": "religion:zoroastrian_monastery",
     "name": "",
+    "religion": "religion:zoroastrianism",
     "religionChanges": {
-      "foundation:zoroastrianism": 1
+      "religion:zoroastrianism": 1
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1164,13 +1569,16 @@
   },
   {
     "freeFromStateReligion": false,
-    "globalReligionCommerce": "foundation:zoroastrianism",
+    "globalReligionCommerce": "religion:zoroastrianism",
     "id": "religion:zoroastrian_shrine",
     "name": "",
+    "religion": "religion:zoroastrianism",
     "religionChanges": {
-      "foundation:zoroastrianism": 6
+      "religion:zoroastrianism": 6
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,
@@ -1184,10 +1592,13 @@
     "globalReligionCommerce": null,
     "id": "religion:zoroastrian_temple",
     "name": "",
+    "religion": "religion:zoroastrianism",
     "religionChanges": {
-      "foundation:zoroastrianism": 2
+      "religion:zoroastrianism": 2
     },
     "requirements": null,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
     "stateReligionCommerces": {
       "culture": 0,
       "gold": 0,

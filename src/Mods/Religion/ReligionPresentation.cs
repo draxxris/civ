@@ -56,12 +56,9 @@ internal sealed class ReligionScreen : IGameScreen
         };
     }
 
-    /// <summary>The wonder that founds a religion. Buildings name the faith by its identity.</summary>
-    internal static BuildingDef? FoundingWonder(ContentDb content, string religion)
-    {
-        string identity = ReligionIdentities.Identity(content, religion);
-        return content.Get<BuildingDef>().All.FirstOrDefault(b => ReligionFounder.Founded(b) == identity);
-    }
+    /// <summary>The wonder that founds a religion.</summary>
+    internal static BuildingDef? FoundingWonder(ContentDb content, string religion) =>
+        content.Get<BuildingDef>().All.FirstOrDefault(b => ReligionFounder.Founded(b) == religion);
 }
 
 /// <summary>The religions present in a city on its screen, its holy-city faiths and the owner's state religion marked.</summary>

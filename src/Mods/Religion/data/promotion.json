@@ -57,7 +57,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion",
               "param": 1
             }
@@ -147,7 +147,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion",
               "param": 1
             }
@@ -235,7 +235,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion",
               "param": 1
             }
@@ -326,7 +326,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion",
               "param": 1
             }
@@ -411,7 +411,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion",
               "param": 1
             }
@@ -496,7 +496,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion",
               "param": 1
             }
@@ -583,7 +583,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion",
               "param": 1
             }
@@ -663,7 +663,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion",
               "param": 1
             }
@@ -749,7 +749,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion",
               "param": 1
             }
@@ -844,7 +844,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion",
               "param": 1
             }
@@ -921,7 +921,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion",
               "param": 1
             }
@@ -1007,7 +1007,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion",
               "param": 1
             }
@@ -1101,7 +1101,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion",
               "param": 1
             }
@@ -1178,7 +1178,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion",
               "param": 1
             }

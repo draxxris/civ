@@ -24,13 +24,6 @@ internal sealed class CityRequirements : ICityRequirementService
     {
         var sim = context.Sim;
         if (leaf.Id is "foundation:coastal" or "foundation:river" or "foundation:fresh_water") return Location(leaf, context);
-        if (leaf.Id is "foundation:any_religion" or "foundation:state_religion")
-        {
-            if (sim.Rules().CityReligions is not { } religions) return null;
-            if (context.City is not { } city) return false;
-            return leaf.Id == "foundation:any_religion" ? religions.HasAnyReligion(sim, city.Id)
-                : religions.HasStateReligion(sim, context.Player, city.Id);
-        }
         return leaf.Id switch
         {
             "foundation:population" => context.City?.Population >= (leaf.Count ?? 1),

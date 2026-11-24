@@ -16,14 +16,13 @@ public sealed class FoundationModule : IPreparableMod
     private static readonly ModJsonFile<HandicapDef[]> Handicaps = new("data/handicap.json");
     private static readonly ModJsonFile<SpecialistDef[]> Specialists = new("data/specialist.json");
     private static readonly ModJsonFile<VictoryIdentityDef[]> Victories = new("data/victory-identity.json");
-    private static readonly ModJsonFile<ReligionIdentityDef[]> Religions = new("data/religion-identity.json");
     private static readonly ModJsonFile<WorldSizeDef[]> WorldSizes = new("data/world-size.json");
     private static readonly ModJsonFile<YieldDef[]> Yields = new("data/yield.json");
     private static readonly ModJsonFile<ConditionDef[]> Conditions = new("data/condition.json");
     private static readonly ModJsonFile<RuleConstantsDef[]> Constants = new("data/rule-constants.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
         [HexOverrides, Commerce, CultureLevels, Eras, Options, Speeds, Handicaps,
-            Specialists, Victories, Religions, WorldSizes, Yields, Conditions, Constants];
+            Specialists, Victories, WorldSizes, Yields, Conditions, Constants];
 
     private sealed class GameOptionRequirements : Ariel.Content.IContentRequirementEvaluator
     {
@@ -55,7 +54,6 @@ public sealed class FoundationModule : IPreparableMod
 
         ContentRegistration.Load(context, Specialists);
         ContentRegistration.Load(context, Victories);
-        ContentRegistration.Load(context, Religions);
         ContentRegistration.Load(context, WorldSizes);
         ContentRegistration.Load(context, Yields);
         ContentRegistration.Load(context, Conditions);
@@ -81,16 +79,5 @@ public sealed class FoundationModule : IPreparableMod
         // condition no loaded module registers is not on, so its buildings stay unavailable.
         ContentRegistration.Evaluator<VictoryIdentityDef>(context, "victory", (leaf, subject) =>
             subject.Sim.Rules().Victory.IsEnabled(subject.Sim, leaf.Id));
-        // A religion requirement is the religion's presence in the city (no parameter), the player's state religion
-        // (1) or the city's holy city status (2). The mod that runs religion answers; without one the leaf fails, so
-        // religious buildings, missionaries and promotions stay unavailable rather than free.
-        ContentRegistration.Evaluator<ReligionIdentityDef>(context, "religion", (leaf, subject) =>
-            subject.Sim.Rules().CityReligions is { } religions && leaf.Param switch
-            {
-                1 => religions.IsStateReligion(subject.Sim, subject.Player, leaf.Id),
-                2 => subject.City is { } city && religions.IsHolyCityOf(subject.Sim, city.Id, leaf.Id),
-                null or 0 => subject.City is { } city && religions.Has(subject.Sim, city.Id, leaf.Id),
-                _ => false,
-            });
     }
 }

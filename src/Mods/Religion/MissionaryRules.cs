@@ -12,8 +12,8 @@ internal sealed class SpreadReligionMission : IMission
     {
         var def = sim.Content.Get<S.UnitDef>(unit.Type);
         return def.DefaultUnitAi != ReligionData.MissionaryUnitAi ? []
-            : ReligionData.Spreads(sim.Content, def.Id).Where(p => p.Value > 0).Select(p => ReligionIdentities.Religion(sim.Content, p.Key))
-                .OfType<string>().Order(StringComparer.Ordinal);
+            : ReligionData.Spreads(sim.Content, def.Id).Where(p => p.Value > 0).Select(p => p.Key)
+                .Order(StringComparer.Ordinal);
     }
 
     public string Label(Simulation sim, string subject) => "Spread " + sim.Content.Get<ReligionDef>(subject).Name;
@@ -23,7 +23,7 @@ internal sealed class SpreadReligionMission : IMission
         if (!sim.Content.TryGet<ReligionDef>(order.Subject, out _)) return "Unknown religion";
         var def = sim.Content.Get<S.UnitDef>(order.Unit.Type);
         if (def.DefaultUnitAi != ReligionData.MissionaryUnitAi
-            || ReligionData.Spreads(sim.Content, def.Id).GetValueOrDefault(ReligionIdentities.Identity(sim.Content, order.Subject)) <= 0)
+            || ReligionData.Spreads(sim.Content, def.Id).GetValueOrDefault(order.Subject) <= 0)
             return "Unit cannot spread this religion";
         if (ReligionData.Has(sim, order.City, order.Subject)) return "Religion is already present";
         bool foreign = sim.TeamOf(order.City.Owner).Id != sim.TeamOf(order.Player).Id;
@@ -33,7 +33,7 @@ internal sealed class SpreadReligionMission : IMission
     public MissionTerms Terms(Simulation sim, MissionOrder order)
     {
         int probability = ReligionData.Spreads(sim.Content, order.Unit.Type)
-            .GetValueOrDefault(ReligionIdentities.Identity(sim.Content, order.Subject));
+            .GetValueOrDefault(order.Subject);
         if (sim.TeamOf(order.City.Owner).Id != sim.TeamOf(order.Unit.Owner).Id) probability /= 2;
         int religions = sim.Content.Get<ReligionDef>().Count;
         probability += (religions - ReligionData.Present(sim, order.City).Count) * (100 - probability) / Math.Max(1, religions);

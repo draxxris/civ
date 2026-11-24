@@ -53,6 +53,8 @@ public sealed partial class ContentMapper
     public List<DataIssue> Issues { get; } = [];
     public Dictionary<string, HashSet<string>> MappedPaths { get; } = new(StringComparer.Ordinal);
     public SortedSet<string> Conditions { get; } = new(StringComparer.Ordinal);
+    /// <summary>The religion conditions the mapped rows name (<c>religion:state_religion</c>, <c>religion:any_religion</c>).</summary>
+    public SortedSet<string> ReligionConditions { get; } = new(StringComparer.Ordinal);
 
 public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<string, string?> lookupText,
         IReadOnlyDictionary<string, DefineValue>? defines = null)
@@ -156,9 +158,9 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         return JsonSerializer.Serialize(row, mapping.DefinitionType, Json) == JsonSerializer.Serialize(empty, mapping.DefinitionType, Json) ? null : row;
     }
 
-    /// <summary>A record's id in its family. A family a mod other than the record's owner emits (Religion's rules about
-    /// the base game's religion identities) gets the id <c>mod:name</c> and names the identity it describes in
-    /// <c>identity</c>, so the mod's rules and the base game's references stay in their own namespaces.</summary>
+    /// <summary>A record's id in its family. A family a mod other than the record's owner emits gets the id
+    /// <c>mod:name</c> and names the record it describes in <c>identity</c>, so the mod's rules and the owner's
+    /// references stay in their own namespaces.</summary>
     private string RecordId(EffectiveRecord record, DefinitionMapping mapping)
     {
         string id = ids[(record.Class, record.Type)];

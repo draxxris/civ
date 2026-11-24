@@ -80,17 +80,6 @@
     "era": null,
     "help": "",
     "icon": "",
-    "id": "foundation:state_religion",
-    "name": "state religion",
-    "pedia": "",
-    "requirements": null,
-    "strategy": "",
-    "unsupported": []
-  },
-  {
-    "era": null,
-    "help": "",
-    "icon": "",
     "id": "foundation:team_count",
     "name": "team count",
     "pedia": "",

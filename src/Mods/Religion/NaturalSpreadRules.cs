@@ -103,8 +103,7 @@ internal sealed partial class ReligionService
     {
         int holy = HolyCity(sim, religion) == city.Id ? ReligionData.Raw(sim, "HOLY_CITY_INFLUENCE", 1) : 0;
         var buildings = turn?.Active(city) ?? ReligionData.Active(sim, city);
-        string identity = ReligionIdentities.Identity(sim.Content, religion);
-        return Math.Max(0, holy + buildings.Sum(b => ReligionData.Building(sim.Content, b.Id).ReligionChanges.GetValueOrDefault(identity)));
+        return Math.Max(0, holy + buildings.Sum(b => ReligionData.Building(sim.Content, b.Id).ReligionChanges.GetValueOrDefault(religion)));
     }
     private static int AgeAdjustment(Simulation sim, City city, string religion, int threshold)
     {

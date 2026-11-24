@@ -19,7 +19,7 @@ internal sealed partial class ReligionService
     }
     internal string? ValidateInquisition(Simulation sim, MissionOrder order)
     {
-        if (!sim.Content.Get<Ariel.Content.Schema.UnitDef>(order.Unit.Type).Inquisitor) return "Unit cannot perform an inquisition";
+        if (!ReligionData.IsInquisitor(sim.Content, order.Unit.Type)) return "Unit cannot perform an inquisition";
         if (!IsInquisitionEnabled(sim, order.Player)) return "Civics and state religion do not allow inquisitions";
         var city = order.City;
         if (sim.TeamOf(city.Owner).Id != sim.TeamOf(order.Player).Id) return "Inquisitor must be in a friendly city";
@@ -111,7 +111,7 @@ internal sealed class InquisitionMission(ReligionService service) : IMission
 {
     public string Id => ReligionMissions.Inquisition;
     public IEnumerable<string> Subjects(Simulation sim, Unit unit, City? city) =>
-        sim.Content.Get<Ariel.Content.Schema.UnitDef>(unit.Type).Inquisitor ? [""] : [];
+        ReligionData.IsInquisitor(sim.Content, unit.Type) ? [""] : [];
     public string Label(Simulation sim, string subject) => "Perform inquisition";
     public string? Validate(Simulation sim, MissionOrder order) => service.ValidateInquisition(sim, order);
     public MissionTerms Terms(Simulation sim, MissionOrder order) => new(Chance: service.InquisitionChance(sim, order));

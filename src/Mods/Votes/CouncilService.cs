@@ -108,7 +108,7 @@ internal sealed class CouncilService : IVotesService, ITradeTerms, ICivicRestric
         if (Seats(sim, source).FirstOrDefault() is not { } seat) return false;
         string? religion = null;
         var building = sim.Content.Get<BuildingVotesDef>().All.First(b => b.VoteSource == source && seat.Buildings.Contains(b.Target));
-        if (sim.Content.Get<BuildingDef>(building.Target).RequiresStateReligion)
+        if (sim.Content.Attachment<Ariel.Mods.Religion.BuildingReligionDef>(building.Target)?.RequiresStateReligion == true)
             if ((religion = Religions(sim)?.StateReligion(sim, seat.Owner)) is null) return false;
         Edit(sim).Councils[source] = new CouncilState { FoundedTurn = sim.State.Turn, Religion = religion };
         sim.Events.Publish(new CouncilFounded(source, seat.Owner));

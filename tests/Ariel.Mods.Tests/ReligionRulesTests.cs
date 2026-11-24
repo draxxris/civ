@@ -43,12 +43,9 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var content = WithoutReligion.Value;
         Assert.Null(content.Services.Find<IReligionService>());
-        Assert.Null(content.Rules().CityReligions);
         Assert.False(content.CommandTypes.Contains("religion:set_state_religion"));
         Assert.DoesNotContain(content.Services.Get<Ariel.Ai.IAiPlanner>(), p => p.Id.StartsWith("religion:", StringComparison.Ordinal));
         Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.Founds?.Kind == "religion");
-        // The identities stay in the base game, so buildings, units and leaders still name their faith.
-        Assert.NotEmpty(content.Get<S.ReligionIdentityDef>().All);
 
         var sim = GameFactory.CreateAi(content, seed: 5, players: 2);
         for (int turn = 0; turn < 30; turn++) sim.AdvanceTurn();
@@ -57,8 +54,8 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
 
         // The temples, missionaries, the inquisitor and the faiths' promotions are the mod's own content.
         var city = sim.State.Cities.First();
-        Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.ReligionType is not null || b.RequiresStateReligion);
-        Assert.DoesNotContain(content.Get<S.UnitDef>().All, u => u.Inquisitor);
+        Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.Id.StartsWith("religion:", StringComparison.Ordinal));
+        Assert.DoesNotContain(content.Get<S.UnitDef>().All, u => u.Id.StartsWith("religion:", StringComparison.Ordinal));
         var session = new Ariel.Client.GameSession(sim, city.Owner);
         Assert.DoesNotContain(session.Screens.Entries(), e => e.Id == "religion:screen");
         Assert.Equal("", session.CityTags(city));
@@ -463,7 +460,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var content = mods.Content;
         foreach (var religion in content.Get<ReligionDef>().All)
         {
-            var wonder = Assert.Single(content.Get<S.BuildingDef>().All, b => b.Founds == new LeafReference("religion", religion.Identity));
+            var wonder = Assert.Single(content.Get<S.BuildingDef>().All, b => b.Founds == new LeafReference("religion", religion.Id));
             Assert.Equal(religion.Name, wonder.Name);
             Assert.True(CityBuildingRules.IsWonder(wonder));
             Assert.Equal(1, wonder.Limits.World);
@@ -606,7 +603,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.PlayerById(0).Civics["government:civicoption_religion"] = "government:state_church";
         Assert.True(sim.TryApply(new SetStateReligionCommand { Player = 0, Religion = Buddhism }, out var error), error);
         Assert.Null(religion.RefuseBuilding(sim, city, palace));
-        Assert.Equal("Requires matching state religion: foundation:islam",
+        Assert.Equal("Requires matching state religion: religion:islam",
             religion.RefuseBuilding(sim, city, sim.Content.Get<S.BuildingDef>("religion:alhambra")));
     }
 }

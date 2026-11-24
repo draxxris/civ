@@ -43,19 +43,17 @@ internal static class ReligionData
     /// rules.</summary>
     internal static BuildingDef[] InvalidatedBuildings(Simulation sim, City city, IReadOnlyList<string> removed)
     {
-        // Buildings name religions by identity, so the comparison is between identities.
-        var remaining = Present(sim, city).Where(r => !removed.Contains(r, StringComparer.Ordinal))
-            .Select(r => ReligionIdentities.Identity(sim.Content, r)).ToArray();
+        var remaining = Present(sim, city).Where(r => !removed.Contains(r, StringComparer.Ordinal)).ToArray();
         return city.Buildings.Order(StringComparer.Ordinal).Select(sim.Content.Get<BuildingDef>)
-            .Where(b => !ReligionSupported(b, remaining)).ToArray();
+            .Where(b => !ReligionSupported(sim.Content, b, remaining)).ToArray();
     }
     /// <summary>Only religion requirements can be broken by a faith leaving; lost resources never destroy buildings,
     /// so every other branch counts as satisfied here. Religion alternatives are honoured: one surviving faith keeps
     /// a building whose requirement is "this religion or that one".</summary>
-    private static bool ReligionSupported(BuildingDef building, IReadOnlyList<string> remaining)
+    private static bool ReligionSupported(ContentDb content, BuildingDef building, IReadOnlyList<string> remaining)
     {
         // Being free from the state religion only relaxes state matching; the faith itself must still be present.
-        if (building.ReligionType is { } type && !remaining.Contains(type, StringComparer.Ordinal)) return false;
+        if (Building(content, building.Id).Religion is { } faith && !remaining.Contains(faith, StringComparer.Ordinal)) return false;
         return ReligionSupported(building.Requirements ?? new Ariel.Content.Requirement.All([]), remaining);
     }
     private static bool ReligionSupported(Ariel.Content.Requirement requirement, IReadOnlyList<string> remaining) => requirement switch
@@ -86,9 +84,12 @@ internal static class ReligionData
     /// <summary>What a building means to religion.</summary>
     internal static BuildingReligionDef Building(ContentDb content, string building) =>
         content.Attachment<BuildingReligionDef>(building) ?? BuildingReligionDef.None;
-    /// <summary>The faiths a unit spreads, by identity, with each mission's chance.</summary>
-    internal static ImmutableDictionary<string, int> Spreads(ContentDb content, string unit) =>
-        (content.Attachment<UnitReligionDef>(unit) ?? UnitReligionDef.None).ReligionSpreads;
+    /// <summary>What a unit means to religion.</summary>
+    internal static UnitReligionDef Unit(ContentDb content, string unit) => content.Attachment<UnitReligionDef>(unit) ?? UnitReligionDef.None;
+    /// <summary>The faiths a unit spreads, with each mission's chance.</summary>
+    internal static ImmutableDictionary<string, int> Spreads(ContentDb content, string unit) => Unit(content, unit).ReligionSpreads;
+    /// <summary>Whether the unit performs inquisitions.</summary>
+    internal static bool IsInquisitor(ContentDb content, string unit) => Unit(content, unit).Inquisitor;
     /// <summary>The religion rule constants.</summary>
     internal static RuleConstantsReligionDef Rules(Simulation sim) =>
         sim.Content.Attachment<RuleConstantsReligionDef>(sim.Content.Get<RuleConstantsDef>().All.Single().Id) ?? RuleConstantsReligionDef.None;

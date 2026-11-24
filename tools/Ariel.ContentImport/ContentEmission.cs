@@ -22,6 +22,8 @@ public static class ContentEmission
         definitions.AddRange(Constants(registry.Defines));
         definitions.AddRange(mapper.Conditions.Select(name => new MappedDefinition(new("", "ConditionDef", "foundation", [], []),
             new ConditionDef { Id = "foundation:" + name, Name = name.Replace('_', ' ') })));
+        definitions.AddRange(mapper.ReligionConditions.Select(name => new MappedDefinition(new("", "ReligionConditionDef", "religion", [], []),
+            new Ariel.Mods.Religion.ReligionConditionDef { Id = "religion:" + name, Name = name.Replace('_', ' ') })));
         Validate(definitions, mapper.Claimant);
         var eraOrder = registry.EraOrder.Select(era => registry.Ids.Single(i => i.Class == "EraInfo" && i.SourceType == era).Id).ToArray();
         var (kept, dropped) = Filter(definitions, maximumEra, eraOrder);
@@ -34,7 +36,7 @@ public static class ContentEmission
     /// records of a base class outright writes for them (that class's own, and any row another mod keeps about them).</summary>
     public static IReadOnlyList<(string Mod, string Definition, string Folder)> Families(EmissionResult result) =>
         SchemaCatalog.Definitions.Select(m => (m.Mod, m.Definition, m.Folder))
-            .Concat([("foundation", "ConditionDef", ""), ("foundation", "RuleConstantsDef", "")])
+            .Concat([("foundation", "ConditionDef", ""), ("religion", "ReligionConditionDef", ""), ("foundation", "RuleConstantsDef", "")])
             .Concat(SchemaCatalog.Constants.Attachments.Select(a => (a.Mod, a.Definition, "")))
             .Concat(IdMapping.RecordOwners.SelectMany(o => SchemaCatalog.Definitions.Where(m => m.SourceClass == o.Class && !m.IsAttachment)
                 .Select(m => (o.Mod, m.Definition, ""))))

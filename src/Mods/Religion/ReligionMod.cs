@@ -7,11 +7,14 @@ using Ariel.Rules;
 namespace Ariel.Mods.Religion;
 
 /// <summary>Religions, their founding, spread, decay, state religion and inquisitions, with the computer player's use
-/// of them and their screens. Without this mod the base game has no religions: the religion requirement leaves and the
-/// building and unit fields that name a faith by its identity answer as if no faith were present.</summary>
+/// of them and their screens, with every building, unit and promotion of a faith. Without this mod the base game has no
+/// religion: no base row names a faith, and the seams this mod answers (production rules, raze protection, attitude
+/// sources, the planner's building exclusion) have nothing to say.</summary>
 public sealed class ReligionMod : IPreparableMod
 {
     private static readonly ModJsonFile<ReligionDef[]> Religions = new("data/religion.json");
+    /// <summary>The requirements about religion that name no faith: a state religion, any religion.</summary>
+    private static readonly ModJsonFile<ReligionConditionDef[]> Conditions = new("data/religion-condition.json");
     /// <summary>The temples, monasteries, cathedrals, shrines and religious wonders, the missionaries and the inquisitor,
     /// and each faith's promotions: religion's own content, which no base row names.</summary>
     private static readonly ModJsonFile<Ariel.Content.Schema.BuildingDef[]> OwnBuildings = new("data/building.json");
@@ -37,11 +40,12 @@ public sealed class ReligionMod : IPreparableMod
     private static readonly ModJsonFile<UnitReligionDef[]> Units = new("data/unit-religion.json");
     private static readonly ModJsonFile<RuleConstantsReligionDef[]> Constants = new("data/rule-constants-religion.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
-        [Religions, OwnBuildings, OwnUnits, OwnPromotions, FoundingWonders, Memories, Civics, Buildings, Units, Constants, GreatPeople, BuildingGrants, UnitGrants, Civilizations];
+        [Religions, Conditions, OwnBuildings, OwnUnits, OwnPromotions, FoundingWonders, Memories, Civics, Buildings, Units, Constants, GreatPeople, BuildingGrants, UnitGrants, Civilizations];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Religions);
+        ContentRegistration.Load(context, Conditions);
         ContentRegistration.Load(context, OwnBuildings);
         ContentRegistration.Load(context, OwnUnits);
         ContentRegistration.Load(context, OwnPromotions);
@@ -57,7 +61,7 @@ public sealed class ReligionMod : IPreparableMod
         ContentRegistration.Load(context, Civilizations);
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);
-        context.RegisterService<ICityReligions>("city_religions", new CityReligions(service));
+        ReligionRequirements.Register(context, service);
         var production = new ReligionProductionRules(service);
         context.RegisterService<IBuildingRule>("building_rule", production);
         context.RegisterService<IUnitTrainingRule>("training_rule", production);

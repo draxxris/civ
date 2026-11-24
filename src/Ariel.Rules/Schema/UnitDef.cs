@@ -76,7 +76,6 @@ public sealed class UnitDef : GameContentDef
     public bool HiddenNationality { get; init; } = false;
     public bool IgnoreBuildingDefense { get; init; } = false;
     public bool IgnoreTerrainCost { get; init; } = false;
-    public bool Inquisitor { get; init; } = false;
     public bool Invisible { get; init; } = false;
     public bool MilitaryHappiness { get; init; } = false;
     public bool MilitaryProduction { get; init; } = false;

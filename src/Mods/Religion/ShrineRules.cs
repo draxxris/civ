@@ -23,8 +23,7 @@ internal sealed class ShrineMission(ReligionService service) : IMission
             || ReligionData.Building(sim.Content, def.Id).GlobalReligionCommerce is not { } shrine) return "Not a shrine";
         if (!sim.Content.Get<S.UnitDef>(order.Unit.Type).ConstructibleBuildings.GetValueOrDefault(order.Subject))
             return "Unit cannot construct this shrine";
-        if (ReligionIdentities.Religion(sim.Content, shrine) is not { } religion
-            || service.HolyCity(sim, religion) != order.City.Id) return "Requires the holy city";
+        if (service.HolyCity(sim, shrine) != order.City.Id) return "Requires the holy city";
         // Prophets bypass the negative production cost, not requirements, replacements or class limits.
         var result = sim.Rules().CityProduction.Validate(sim, order.City.Id, "cities:building", def.Id);
         return result.Failures.FirstOrDefault(f => !ProductionFailures.IsCostOnly(f))?.Explanation;

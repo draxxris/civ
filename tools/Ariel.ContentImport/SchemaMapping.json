@@ -1967,12 +1967,6 @@
         "value": "iProductionTrait"
       },
       {
-        "source": "ReligionType",
-        "property": "ReligionType",
-        "kind": "ref",
-        "target": "ReligionInfo"
-      },
-      {
         "source": "ReplaceBuildings",
         "property": "ReplaceBuildings",
         "kind": "mapBool",
@@ -2183,12 +2177,6 @@
         "default": 0
       },
       {
-        "source": "bPrereqReligion",
-        "property": "RequiresReligion",
-        "kind": "bool",
-        "default": 0
-      },
-      {
         "source": "bRequiresActiveCivics",
         "property": "RequiresActiveCivics",
         "kind": "bool",
@@ -2199,12 +2187,6 @@
         "property": "RiverLocation",
         "kind": "bool",
         "default": false
-      },
-      {
-        "source": "bStateReligion",
-        "property": "RequiresStateReligion",
-        "kind": "bool",
-        "default": 0
       },
       {
         "source": "bTeamShare",
@@ -2979,12 +2961,6 @@
         "property": "IgnoreTerrainCost",
         "kind": "bool",
         "default": 0
-      },
-      {
-        "source": "bInquisitor",
-        "property": "Inquisitor",
-        "kind": "bool",
-        "default": false
       },
       {
         "source": "bInvisible",
@@ -5161,13 +5137,6 @@
   },
   {
     "sourceClass": "ReligionInfo",
-    "definition": "ReligionIdentityDef",
-    "mod": "foundation",
-    "fields": [],
-    "requirements": []
-  },
-  {
-    "sourceClass": "ReligionInfo",
     "definition": "ReligionDef",
     "mod": "religion",
     "fields": [
@@ -5526,6 +5495,9 @@
     "definition": "BuildingReligionDef",
     "mod": "religion",
     "fields": [
+      { "source": "ReligionType", "property": "Religion", "kind": "ref", "target": "ReligionInfo" },
+      { "source": "bPrereqReligion", "property": "RequiresReligion", "kind": "bool", "default": 0 },
+      { "source": "bStateReligion", "property": "RequiresStateReligion", "kind": "bool", "default": 0 },
       {
         "source": "GlobalReligionCommerce",
         "property": "GlobalReligionCommerce",
@@ -5565,6 +5537,7 @@
     "definition": "UnitReligionDef",
     "mod": "religion",
     "fields": [
+      { "source": "bInquisitor", "property": "Inquisitor", "kind": "bool", "default": false },
       {
         "source": "ReligionSpreads",
         "property": "ReligionSpreads",

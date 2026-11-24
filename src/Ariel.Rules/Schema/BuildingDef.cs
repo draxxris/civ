@@ -61,8 +61,6 @@ public sealed class BuildingDef : GameContentDef
     public YieldVector PowerYieldModifiers { get; init; } = default;
     [ContentReference(typeof(TraitDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> TraitProductionModifiers { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
-    public string? ReligionType { get; init; } = null;
     [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, bool> ReplaceBuildings { get; init; } = ImmutableDictionary<string, bool>.Empty;
     /// <summary>The other side of <see cref="ReplaceBuildings"/>: each building listed here (by id) relates to this one
@@ -113,10 +111,8 @@ public sealed class BuildingDef : GameContentDef
     public bool NukeImmune { get; init; } = false;
     public bool ProducesPower { get; init; } = false;
     public bool RequiresPower { get; init; } = false;
-    public bool RequiresReligion { get; init; } = false;
     public bool RequiresActiveCivics { get; init; } = false;
     public bool RiverLocation { get; init; } = false;
-    public bool RequiresStateReligion { get; init; } = false;
     public bool TeamShare { get; init; } = false;
     public bool CoastalLocation { get; init; } = false;
     public int AiWeight { get; init; } = 0;

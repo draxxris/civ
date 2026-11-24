@@ -86,7 +86,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
         foreach (var building in ctx.Def(unit).ConstructibleBuildings.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal))
         {
             var def = ctx.Sim.Content.Get<BuildingDef>(building.Key);
-            if (ReligionIdentities.Religion(ctx.Sim.Content, ctx.Sim.Content.Attachment<BuildingReligionDef>(def.Id)?.GlobalReligionCommerce) is not { } faith || city.Buildings.Contains(def.Id)
+            if (ctx.Sim.Content.Attachment<BuildingReligionDef>(def.Id)?.GlobalReligionCommerce is not { } faith || city.Buildings.Contains(def.Id)
                 || religion.HolyCity(ctx.Sim, faith) != city.Id) continue;
             var eligibility = ctx.Service<ICityProductionService>().Validate(ctx.Sim, city.Id, "cities:building", def.Id);
             if (eligibility.Failures.Any(f => !ProductionFailures.IsCostOnly(f))) continue;

@@ -23,7 +23,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
         foreach (var unit in ctx.Units.Where(ctx.Alive).Where(u => u.Health > 0 && !ctx.HasActed(u)).OrderBy(u => u.Id))
         {
             if ((unit.Extensions.Get<MilitaryUnitState>(ctx.Sim.Content)?.Activity ?? UnitActivity.Awake) != UnitActivity.Awake) continue;
-            if (ctx.Def(unit).Inquisitor) Purge(unit, religion);
+            if (ReligionData.IsInquisitor(ctx.Sim.Content, unit.Type)) Purge(unit, religion);
             else Spread(unit, religion);
         }
     }
@@ -58,8 +58,7 @@ internal sealed class ReligionPlanner(AiContext ctx)
         if (religion.HolyCity(ctx.Sim, id) is not { } holy || ctx.Sim.State.FindCity(holy) is not { } city || city.Owner != ctx.PlayerId)
             return value;
         value += HolyCityValue;
-        string identity = ReligionIdentities.Identity(ctx.Sim.Content, id);
-        if (city.Buildings.Any(b => ReligionData.Building(ctx.Sim.Content, b).GlobalReligionCommerce == identity)) value += ShrineValue;
+        if (city.Buildings.Any(b => ReligionData.Building(ctx.Sim.Content, b).GlobalReligionCommerce == id)) value += ShrineValue;
         return value;
     }
 
@@ -76,9 +75,8 @@ internal sealed class ReligionPlanner(AiContext ctx)
 
     private void Spread(Unit unit, IReligionService religion)
     {
-        // Units name the faiths they spread by identity; missions and presence use the religion's own id.
         var spreads = ReligionData.Spreads(ctx.Sim.Content, unit.Type).Where(p => p.Value > 0)
-            .Select(p => ReligionIdentities.Religion(ctx.Sim.Content, p.Key)).OfType<string>().Order(StringComparer.Ordinal);
+            .Select(p => p.Key).Order(StringComparer.Ordinal);
         foreach (var faith in spreads)
         {
             var targets = ctx.Cities.Where(c => !religion.Present(ctx.Sim, c.Id).Contains(faith))
@@ -127,15 +125,15 @@ internal sealed class InquisitorWishes : IProductionWishes
     public IEnumerable<ProductionWish> Wishes(AiContext ctx, City city)
     {
         if (!Wanted(ctx)) yield break;
-        foreach (var unit in ctx.Sim.Content.Get<UnitDef>().All.Where(u => u.Inquisitor))
+        foreach (var unit in ctx.Sim.Content.Get<UnitDef>().All.Where(u => ReligionData.IsInquisitor(ctx.Sim.Content, u.Id)))
             yield return new("cities:unit", unit.Id, InquisitorScore + 1000L / Math.Max(1, unit.Cost));
     }
 
     private static bool Wanted(AiContext ctx)
     {
         if (ctx.Sim.Service<IReligionService>() is not { } religion || !religion.IsInquisitionEnabled(ctx.Sim, ctx.PlayerId)) return false;
-        if (ctx.Units.Any(u => ctx.Alive(u) && u.Health > 0 && ctx.Def(u).Inquisitor)) return false;
-        if (ctx.Cities.SelectMany(c => c.ProductionQueue).Any(o => o.Kind == "cities:unit" && ctx.Sim.Content.Get<UnitDef>(o.ContentId).Inquisitor))
+        if (ctx.Units.Any(u => ctx.Alive(u) && u.Health > 0 && ReligionData.IsInquisitor(ctx.Sim.Content, u.Type))) return false;
+        if (ctx.Cities.SelectMany(c => c.ProductionQueue).Any(o => o.Kind == "cities:unit" && ReligionData.IsInquisitor(ctx.Sim.Content, o.ContentId)))
             return false;
         return ctx.Cities.Any(c => religion.HasInquisitionTargets(ctx.Sim, c.Id));
     }

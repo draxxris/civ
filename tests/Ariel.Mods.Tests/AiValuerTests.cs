@@ -254,8 +254,8 @@ public sealed class AiValuerTests
     {
         var civilization = sim.Content.Get<CivilizationDef>(sim.State.PlayerById(0).Civilization);
         return sim.Content.Get<BuildingDef>().All
-            .Where(b => b.Cost > 0 && !CityBuildingRules.IsWonder(b) && !b.Capital && !b.RequiresReligion && !b.RequiresStateReligion
-                && b.ReligionType is null && b.ObsoleteTech is null
+            .Where(b => b.Cost > 0 && !CityBuildingRules.IsWonder(b) && !b.Capital && sim.Content.Attachment<Ariel.Mods.Religion.BuildingReligionDef>(b.Id) is not
+                    { Religion: not null } and not { RequiresReligion: true } and not { RequiresStateReligion: true } && b.ObsoleteTech is null
                 && civilization.BuildingOverrides.GetValueOrDefault(b.DefaultBuilding, b.DefaultBuilding) == b.Id
                 && sim.Rules().CityProduction.Validate(sim, city.Id, "cities:building", b.Id).Success)
             .Select(b => b.Id).Order(StringComparer.Ordinal);

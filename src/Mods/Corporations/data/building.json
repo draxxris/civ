@@ -154,7 +154,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -171,8 +170,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -388,7 +385,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -405,8 +401,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -626,7 +620,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [
       "cities:beadmaker",
@@ -646,8 +639,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -845,7 +836,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -859,8 +849,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1061,7 +1049,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -1080,8 +1067,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1282,7 +1267,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -1296,8 +1280,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1498,7 +1480,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -1512,8 +1493,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1714,7 +1693,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -1728,8 +1706,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -1930,7 +1906,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -1944,8 +1919,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -2146,7 +2119,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -2160,8 +2132,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -2389,7 +2359,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -2406,8 +2375,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -2607,7 +2574,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -2621,8 +2587,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -2823,7 +2787,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -2847,8 +2810,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3050,7 +3011,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -3074,8 +3034,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3277,7 +3235,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -3301,8 +3258,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3504,7 +3459,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -3528,8 +3482,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3735,7 +3687,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -3749,8 +3700,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -3978,7 +3927,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -3995,8 +3943,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -4192,7 +4138,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -4216,8 +4161,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -4419,7 +4362,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -4443,8 +4385,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -4646,7 +4586,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -4670,8 +4609,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -4873,7 +4810,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -4897,8 +4833,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -5100,7 +5034,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -5114,8 +5047,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -5316,7 +5247,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -5340,8 +5270,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -5547,7 +5475,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -5561,8 +5488,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -5790,7 +5715,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -5807,8 +5731,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6006,7 +5928,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -6020,8 +5941,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6222,7 +6141,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -6246,8 +6164,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6449,7 +6365,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -6473,8 +6388,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6676,7 +6589,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -6700,8 +6612,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -6903,7 +6813,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -6927,8 +6836,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -7134,7 +7041,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -7148,8 +7054,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -7387,7 +7291,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [
       "cities:grocer",
@@ -7408,8 +7311,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -7607,7 +7508,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -7621,8 +7521,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -7823,7 +7721,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -7847,8 +7744,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8050,7 +7945,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -8074,8 +7968,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8305,7 +8197,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -8322,8 +8213,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8519,7 +8408,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -8533,8 +8421,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8739,7 +8625,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -8753,8 +8638,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -8982,7 +8865,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [
       "cities:butchery"
@@ -9001,8 +8883,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9198,7 +9078,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -9212,8 +9091,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9437,7 +9314,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -9454,8 +9330,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9655,7 +9529,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -9669,8 +9542,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -9890,7 +9761,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [
       "cities:chinese_pavillion",
@@ -9914,8 +9784,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -10138,7 +10006,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -10155,8 +10022,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -10360,7 +10225,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -10374,8 +10238,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -10580,7 +10442,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -10594,8 +10455,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -10815,7 +10674,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [
       "cities:combat_simulator",
@@ -10837,8 +10695,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11034,7 +10890,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -11048,8 +10903,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11277,7 +11130,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -11294,8 +11146,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11518,7 +11368,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -11535,8 +11384,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -11761,7 +11608,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -11778,8 +11624,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -12004,7 +11848,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -12021,8 +11864,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -12252,7 +12093,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -12269,8 +12109,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -12497,7 +12335,6 @@
       "production": 0
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -12514,8 +12351,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,
@@ -12734,7 +12569,6 @@
       "production": 5
     },
     "producesPower": false,
-    "religionType": null,
     "replaceBuildings": {},
     "replacedBy": [],
     "requirements": {
@@ -12751,8 +12585,6 @@
     },
     "requiresActiveCivics": false,
     "requiresPower": false,
-    "requiresReligion": false,
-    "requiresStateReligion": false,
     "riverLocation": false,
     "riverPlotYieldChanges": {
       "commerce": 0,

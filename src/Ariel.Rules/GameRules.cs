@@ -100,8 +100,6 @@ public sealed class GameRules : IRuleset
     // Seams one feature answers. Null when no loaded mod answers them; rules then apply the base game's default.
     /// <summary>How a computer leader would answer a deal, answered by the computer player, or null without one.</summary>
     public IDealAppraiser? DealAppraiser { get; private set; }
-    /// <summary>Religion in cities and what it allows, answered by the mod that runs religion, or null without one.</summary>
-    public ICityReligions? CityReligions { get; private set; }
     /// <summary>Interception by the feature that flies aircraft, or null without one: then no aircraft can be trained
     /// and no unit stands on intercept.</summary>
     public IAirOperations? AirOperations { get; private set; }
@@ -208,7 +206,6 @@ public sealed class GameRules : IRuleset
         Scores = services.Get<IPlayerScores>().Single();
         Victory = services.Get<IVictoryService>().Single();
         DealAppraiser = services.Get<IDealAppraiser>().SingleOrDefault();
-        CityReligions = services.Get<ICityReligions>().SingleOrDefault();
         AirOperations = services.Get<IAirOperations>().SingleOrDefault();
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();

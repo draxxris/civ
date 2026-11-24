@@ -121,9 +121,17 @@ internal sealed class PrerequisiteMapper(ContentMapper mapper)
 
     private Requirement Condition(string name, int? count = null)
     {
+        if (ReligionConditions.Contains(name))
+        {
+            mapper.ReligionConditions.Add(name);
+            return new Requirement.Leaf("religion-condition", "religion:" + name, count);
+        }
         mapper.Conditions.Add(name);
         return new Requirement.Leaf("condition", "foundation:" + name, count);
     }
+    /// <summary>The conditions about religion are the Religion mod's own leaf kind (<c>religion-condition</c>), so a base
+    /// row never names one: only the buildings and units Religion owns carry the flags that need them.</summary>
+    private static readonly HashSet<string> ReligionConditions = new(["state_religion", "any_religion"], StringComparer.Ordinal);
 
     private static readonly (string Field, string Condition)[] Flags =
     [

@@ -64,7 +64,6 @@
     "id": "religion:asatru_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -102,7 +101,7 @@
         {
           "all": [
             {
-              "id": "foundation:asatru",
+              "id": "religion:asatru",
               "kind": "religion"
             }
           ]
@@ -205,7 +204,6 @@
     "id": "religion:buddhist_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -243,7 +241,7 @@
         {
           "all": [
             {
-              "id": "foundation:buddhism",
+              "id": "religion:buddhism",
               "kind": "religion"
             }
           ]
@@ -346,7 +344,6 @@
     "id": "religion:christian_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -384,7 +381,7 @@
         {
           "all": [
             {
-              "id": "foundation:christianity",
+              "id": "religion:christianity",
               "kind": "religion"
             }
           ]
@@ -487,7 +484,6 @@
     "id": "religion:confucian_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -525,7 +521,7 @@
         {
           "all": [
             {
-              "id": "foundation:confucianism",
+              "id": "religion:confucianism",
               "kind": "religion"
             }
           ]
@@ -628,7 +624,6 @@
     "id": "religion:egypt_myth_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -666,7 +661,7 @@
         {
           "all": [
             {
-              "id": "foundation:egypt_mythology",
+              "id": "religion:egypt_mythology",
               "kind": "religion"
             }
           ]
@@ -769,7 +764,6 @@
     "id": "religion:hellenic_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -807,7 +801,7 @@
         {
           "all": [
             {
-              "id": "foundation:hellenism",
+              "id": "religion:hellenism",
               "kind": "religion"
             }
           ]
@@ -910,7 +904,6 @@
     "id": "religion:hindu_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -948,7 +941,7 @@
         {
           "all": [
             {
-              "id": "foundation:hinduism",
+              "id": "religion:hinduism",
               "kind": "religion"
             }
           ]
@@ -1051,7 +1044,6 @@
     "id": "religion:inquisitor",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": true,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -1108,8 +1100,8 @@
           ]
         },
         {
-          "id": "foundation:state_religion",
-          "kind": "condition"
+          "id": "religion:state_religion",
+          "kind": "religion-condition"
         }
       ]
     },
@@ -1211,7 +1203,6 @@
     "id": "religion:islamic_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -1249,7 +1240,7 @@
         {
           "all": [
             {
-              "id": "foundation:islam",
+              "id": "religion:islam",
               "kind": "religion"
             }
           ]
@@ -1352,7 +1343,6 @@
     "id": "religion:jewish_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -1390,7 +1380,7 @@
         {
           "all": [
             {
-              "id": "foundation:judaism",
+              "id": "religion:judaism",
               "kind": "religion"
             }
           ]
@@ -1493,7 +1483,6 @@
     "id": "religion:nagualism_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -1531,7 +1520,7 @@
         {
           "all": [
             {
-              "id": "foundation:mesoamericanism",
+              "id": "religion:mesoamericanism",
               "kind": "religion"
             }
           ]
@@ -1634,7 +1623,6 @@
     "id": "religion:shinto_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -1672,7 +1660,7 @@
         {
           "all": [
             {
-              "id": "foundation:shinto",
+              "id": "religion:shinto",
               "kind": "religion"
             }
           ]
@@ -1775,7 +1763,6 @@
     "id": "religion:taoist_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -1813,7 +1800,7 @@
         {
           "all": [
             {
-              "id": "foundation:taoism",
+              "id": "religion:taoism",
               "kind": "religion"
             }
           ]
@@ -1916,7 +1903,6 @@
     "id": "religion:zoroastrian_missionary",
     "ignoreBuildingDefense": false,
     "ignoreTerrainCost": false,
-    "inquisitor": false,
     "interceptionPercent": 0,
     "invisibility": null,
     "invisible": false,
@@ -1954,7 +1940,7 @@
         {
           "all": [
             {
-              "id": "foundation:zoroastrianism",
+              "id": "religion:zoroastrianism",
               "kind": "religion"
             }
           ]

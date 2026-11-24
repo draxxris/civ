@@ -11,20 +11,20 @@ namespace Ariel.Mods.Religion;
 /// founded.</summary>
 internal sealed class ReligionFounder : IBuildingFounder
 {
-    /// <summary>The leaf kind of a religion reference, declared by <see cref="ReligionIdentityDef"/>.</summary>
+    /// <summary>The leaf kind of a religion reference, declared by <see cref="ReligionDef"/>.</summary>
     internal const string Kind = "religion";
 
-    /// <summary>The religion identity a building founds, or null when it founds no religion.</summary>
+    /// <summary>The religion a building founds, or null when it founds no religion.</summary>
     internal static string? Founded(BuildingDef building) => building.Founds is { Kind: Kind } founds ? founds.Id : null;
 
-    public bool Claims(ContentDb content, BuildingDef building) => ReligionIdentities.Religion(content, Founded(building)) is not null;
+    public bool Claims(ContentDb content, BuildingDef building) => Founded(building) is not null;
 
     public string? Refuse(Simulation sim, City city, BuildingDef building) =>
-        ReligionData.Game(sim).Founded.ContainsKey(ReligionIdentities.Religion(sim.Content, Founded(building))!) ? "Religion is already founded" : null;
+        ReligionData.Game(sim).Founded.ContainsKey(Founded(building)!) ? "Religion is already founded" : null;
 
     public void Found(Simulation sim, City city, BuildingDef building)
     {
-        var id = ReligionIdentities.Religion(sim.Content, Founded(building))!;
+        var id = Founded(building)!;
         var state = ReligionData.EditGame(sim);
         // The world limit and building validation keep a second copy from completing; a scenario may still pre-found.
         if (state.Founded.ContainsKey(id)) return;

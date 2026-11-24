@@ -73,23 +73,3 @@ public static class ReligionMemories
     /// <summary>Remembered by followers of a religion whose holy city was razed.</summary>
     public const string RazedHolyCity = "religion:razed_holy_city";
 }
-
-/// <summary>Translates between a religion's rules id (<see cref="ReligionDef.Id"/>, kept in saves) and the identity id
-/// every other content record names it by (<see cref="ReligionDef.Identity"/>).</summary>
-public static class ReligionIdentities
-{
-    private static readonly ConditionalWeakTable<ContentDb, Dictionary<string, ReligionDef>> Index = new();
-
-    /// <summary>The religion with this identity, or null for none (or a null identity).</summary>
-    public static ReligionDef? ByIdentity(ContentDb content, string? identity) =>
-        identity is not null && Index.GetValue(content, Build).TryGetValue(identity, out var religion) ? religion : null;
-
-    /// <summary>The rules id of the religion with this identity, or null.</summary>
-    public static string? Religion(ContentDb content, string? identity) => ByIdentity(content, identity)?.Id;
-
-    /// <summary>The identity of the religion with this rules id.</summary>
-    public static string Identity(ContentDb content, string religion) => content.Get<ReligionDef>(religion).Identity;
-
-    private static Dictionary<string, ReligionDef> Build(ContentDb content) =>
-        content.Get<ReligionDef>().All.ToDictionary(r => r.Identity, StringComparer.Ordinal);
-}
