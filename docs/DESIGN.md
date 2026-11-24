@@ -2347,7 +2347,10 @@ Several query paths avoid redundant traversal:
   disposes it before returning, and is ended by every kernel write like an epoch. The
   outermost `CityReadScope` query opens one, and so do `ICityProductionService.Calculate`
   and `IPlayerEconomyService.Calculate`, so a turn system's or a command's city
-  calculation gathers each modifier sum and connected resource count once. Verification
+  calculation gathers each modifier sum and connected resource count once. Read-only
+  passes over many cities open one span around the whole pass: global warming weighing
+  every city's environmental unhealth (which itself runs in one `CityReadScope`), and an
+  AI planning command's evaluation in `Validate`. Verification
   hashes spans like epochs (about 100 s per turn at turn 451, so verify short runs).
 - Kept modifier contributions: across writes, inside kernel work, each modifier
   source's lines are kept until a write it may read, from writers' and readers' state
@@ -2910,6 +2913,27 @@ declare both sides.
   declares nothing. That is why the Cities module's building effects can name the AI's
   domain, and the Cities and ScriptedWonders sources can name Cities domains, without
   depending on those modules being loaded.
+- **Scopes a source contributes to.** `IModifierSource.ContributesTo(scope)`, true by
+  default, says whether a source may add anything to a calculation of that scope.
+  `ModifierSink.Collect` asks a source only for its scopes, and under verification asks a
+  skipped one anyway and throws if it adds a line. Trade, revolution, conscription, great
+  people and hurry anger add only to city calculations; promotions and building
+  promotions only to unit ones. A reader that collects a nested calculation, as
+  Corporations' maintenance collects the owner's player ledger, may declare only what
+  every other source of that scope declares:
+  `ModifierSources.UnreadThroughCalculation(own, content, scope, self)`. The reader's own
+  contribution is left out, since its declaration already covers it. Two sources that
+  each collect the other's scope this way would recurse, so neither may.
+- **Kept queries.** A rule's own derived answer can be kept across writes the same way:
+  `KeptQuery<TKey, TValue>` keeps an answer per key with the write stamp it was computed
+  at, under a reader's declaration (`IStateReader`), the same windows, kernel spans and
+  verification, and `Simulation.KeptAnswers` empties its tables with the modifier cache.
+  It suits an answer that is costly, asked from many separate read spans between writes,
+  and immutable, since every caller and thread shares the value. Cities keeps whether a
+  team's area has clean power, and whether a city powers itself and how cleanly
+  (`CityData.IsAreaCleanPower`, `IsPowered`, `IsDirtyPower`). The reader declares what
+  building effects declare: those answers follow running buildings, grants and
+  resources.
 - **Widening before a rare broad write.** A declared writer whose usual work stays in
   its domains, but which now and then writes more, calls `Simulation.WidenWriteWindow()`
   just before the broad write. From then on the window counts as writing everything,
@@ -3011,9 +3035,17 @@ declare both sides.
     - `CityHurry` reads only the hurry anger among them.
     - `CivicEffects` reads population and the units in a city, so it leaves out growth,
       both anger domains and the move's domains.
+    - `TimerModifiers` never reads `CityStateDomains.NeverReadByBuildings`: it follows the
+      stored timers, the turn and city owners.
+    - The Corporations mod's `CorporationEffects` declares `NeverReadByBuildings` without
+      growth (maintenance reads population) and the treasury (inflation is in the
+      economy's player state), through the building seams and the player ledger's other
+      sources. With today's sources that is work, queue, culture, plot culture and
+      production. Inflation and player timers with effects rest on inspection;
+      `--verify-modifier-cache` covers them where a run exercises them.
   - Undeclared:
-    - Readers: the Corporations mod's `CorporationEffects` (it reads population and
-      collects a nested player ledger) and Trade's `TradeEffects`.
+    - Readers: Trade's `TradeEffects`, and the city-only and unit-only sources that
+      declare only their scopes (revolution, conscription, great people, promotions).
     - Writers: `global_warming:warming` and the other global systems, and every command
       not listed, including the other unit commands (load, unload, promote, upgrade).
   - An undeclared source still counts private domains as unread, so it survives their

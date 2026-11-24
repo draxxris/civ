@@ -238,6 +238,10 @@ ______________________________________________________________________
        │
        ▼
 [Pass 21: Nov 23, 2026] Content Amendments & Mixed Commerce Layouts (Cost Check)
+       │
+       ▼
+[Pass 22: Nov 24, 2026] Late-Game Turns: Shared Read Spans and Kept Answers
+                        (Commits: 2f2c6ac8 .. b788e312)
 ```
 
 ______________________________________________________________________
@@ -2968,6 +2972,195 @@ are the measurement.
 
 ______________________________________________________________________
 
+### Pass 22: Late-Game Turns: Shared Read Spans and Kept Answers
+
+- **Date**: 2026-11-24
+- **Commits**: `2f2c6ac8`, `c5b9ad8d`, `8007c007`, `449d7add`, `b788e312` (mod versions),
+  then the documentation
+
+This pass starts from the Pass 20 "Still Slow" list. The profile found that ledgers
+missed in undeclared readers were real but no longer the largest cost. Larger was the
+same work repeated across many separate read spans between two writes: environmental
+unhealth, power, and the AI planning commands' evaluation. Every final state is
+byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- Base: local main `49720f60`, extracted with `git archive` into `/tmp/ariel/p22/base`
+  (source, tools and tests only, to save space on `/tmp`). Final: `b788e312`. Both ran
+  through `mise run ai:play`.
+- Saves: the older saves no longer load (the Pass 19 552 save fails on the economy's
+  removed espionage total), so two were regenerated on the base tree from a fresh game (seed 3, 4 players, all optional mods,
+  so corporations are active): f450 (450 turns) and f550 (f450 + 100 turns). Each has
+  36 cities and 15 players, with 200 to 310 units. They were re-headed for the final
+  tree's mod versions; only the header changes.
+- Reference hashes, taken on `49720f60` before any change. All match on the final tree:
+
+  | Run | Hash |
+  | :-- | :-- |
+  | Seed 3, 4 players, 160 turns | `9193354cacdc6ad3` |
+  | Seed 1, 4 players, 100 turns | `3c57df1d21022b54` |
+  | Seed 5, 8 players, 150 turns (new8) | `93e196e52544961c` |
+  | f450 + 2 / + 4 / + 8 | `488a32661652251e` / `191b615ad8ce1579` / `c3d92c075e81feb0` |
+  | f550 + 2 / + 4 / + 8 | `468fe40998ac6c3e` / `ddb5f7be9db01be5` / `e2946b4dc3104320` |
+
+- The profile is the built-in `--profile`, plus temporary probes that were not
+  committed. One probe split every modifier source's time on a miss by reason (open
+  window, stale since a named writer, cold) and by turn. The others timed stages of
+  growth, wellbeing, warming, power and command validation. The first turn of a loaded
+  save carries compilation and cold caches (collection took 2.1 s on it against about
+  0.4 s on later turns), so every figure below leaves out the first two turns.
+
+#### Where the Time Went
+
+At f550, per turn, turns 553 to 557. Each probe ran on the tree of its time: the
+ledger split and warming on the base tree, power after steps 1 and 2, the economy
+after step 3 and command validation after step 4 (so the review figures there already
+include its span):
+
+- **Ledger misses** (probe time, inflated by the probe): open 123 ms, stale 126 ms and
+  cold 73 ms. `CorporationEffects` was the largest source on a miss at 151 ms, ahead of
+  `BuildingEffects` at 113 ms. Its misses followed citizen reassignments, growth,
+  culture, gold, production and moves, because it declared nothing. The largest writer
+  behind misses was global warming, at 61 ms.
+- **Global warming**, 117 ms per turn and 85 MB. Almost all of it was the
+  environmental-unhealth query, one read span per city plus up to five more inside it.
+  Each span rebuilt its owner's player ledgers, building grants and resource networks.
+  Its ledger misses could not be removed by declaring it: the undeclared map systems
+  before it, and any city that completes an order in the last players' chains, stamp
+  everything first (Pass 18 found the same).
+- **Power**, about 270 ms (area clean power) plus 170 ms (a city's own sources) per turn,
+  summed over threads, with 160 and 70 MB. Wellbeing, building and yield queries all ask
+  for power, each in its own span outside the AI's epochs. The area answer resolves the
+  running buildings of every city the team has in that area.
+- **The economy outside epochs**: 34 calls per turn, about 95 ms: 15 settlements, one
+  per player (29 ms), 14 from `ReviewCivicGoalCommand` (39 ms) and 5 from
+  `ReviewCampaignGoalsCommand` (30 ms). The reviews plan inside `Validate`, outside any
+  epoch.
+- **Command validation**: only the AI planning commands cost anything:
+  `PrepareWorkerMissionsCommand` 71 ms, `ReviewCivicGoalCommand` 57 ms and
+  `ReviewCampaignGoalsCommand` 33 ms per turn. Every other command type validated in
+  under 2 ms per turn each, about 6 ms together.
+- The Pass 20 items were small here: sight recompute 28 ms per turn, the contact scan
+  13 ms, rejected upgrades 37 validations in 1.7 ms.
+
+#### What Was Built
+
+1. **Warming in one read span** (`2f2c6ac8`). `GlobalWarmingSystem.WarmingValue` opens
+   one span around the city loop. `CityWellbeingService.EnvironmentalUnhealth` runs in
+   one `CityReadScope`, as `Calculate` does. Global warming 1.2.0.
+2. **Source scopes and the corporation declaration** (`c5b9ad8d`):
+   - `IModifierSource.ContributesTo(scope)`: `Collect` asks a source only for the scopes
+     it contributes to, and verification asks a skipped source anyway.
+   - `ModifierSources.UnreadThroughCalculation` gives a reader of a nested calculation
+     what every other source of that scope declares.
+   - Trade, revolution, conscription, great people and hurry anger are city-only.
+     Promotions and building promotions are unit-only.
+   - `TimerModifiers` declares `NeverReadByBuildings`.
+   - `CorporationEffects` declares `NeverReadByBuildings` without growth and the
+     treasury, through the building seams and the player ledger's sources. Today that
+     is work, queue, culture, plot culture and production.
+   - Corporations 8.1.0, Trade 2.6.0, Revolution 2.13.0, Great People 3.8.0, Economy
+     1.9.0, Military 1.35.0.
+3. **Kept queries and power** (`8007c007`). `KeptQuery<TKey, TValue>` generalizes the
+   modifier cache to a rule's own derived answer. The answer is kept per key with its
+   write stamp, under a reader's declaration, the same windows and spans, and
+   verification. Area clean power and a city's own power, now a (powered, dirty) pair,
+   go through it with building effects' declaration. Cities 1.44.0.
+4. **Planning evaluation in one read span** (`449d7add`). `AiPlanningCommand.Validate`
+   evaluates inside `OpenReadSpan`, so the plan's queries share the economy, ledgers
+   and building scopes. AI 1.20.0.
+
+Probe at f550 after step 2, per turn: ledger misses outside the cold ones fell from 248
+to 141 ms. `CorporationEffects` on a miss fell from 151 to 62 ms.
+
+#### Results
+
+Base and final ran alternately (base, final, final, base) at load 1.6 to 4.8, 8 turns
+each. Figures are per turn over the last 6 turns; each cell gives the two runs:
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| f550 + 8, wall per turn | 1,289 / 1,315 ms | 1,096 / 1,010 ms | −15 to −23% |
+| f550 + 8, turn systems | 629 / 639 ms | 511 / 475 ms | −19 to −26% |
+| f550 + 8, AI | 622 / 634 ms | 543 / 517 ms | −13 to −18% |
+| f550 + 8, `modifiers:collect` (summed over threads) | 418 / 423 ms | 327 / 305 ms | −22 to −28% |
+| f550 + 8, `global_warming:warming` | 101 / 102 ms | 20 / 19 ms | −81% |
+| f550 + 8, `cities:growth` | 115 / 114 ms | 71 / 68 ms | −39% |
+| f550 + 8, `ai:citizens` | 99 / 100 ms | 50 / 48 ms | −51% |
+| f550 + 8, `ai:civics` | 67 / 71 ms | 43 / 42 ms | −38% |
+| f550 + 8, allocation per turn | 1,277 / 1,285 MiB | 1,014 / 1,014 MiB | −21% |
+| f450 + 8, wall per turn | 1,055 / 1,062 ms | 926 / 916 ms | −13% |
+| f450 + 8, turn systems | 475 / 489 ms | 424 / 399 ms | −11 to −18% |
+| f450 + 8, AI | 524 / 522 ms | 456 / 456 ms | −13% |
+| f450 + 8, allocation per turn | 931 MiB | 712 MiB | −23% |
+| New8 (150 turns), wall total (one run each, load 4 to 5) | 19.6 s | 19.4 s | within noise |
+| New8, allocation per turn | 58 MiB | 55 MiB | −5% |
+
+The late game gains most, where cities are many and corporations are running. Early in
+the game warming has no cities to weigh and power is rare, so new8 does not move.
+
+#### Rejected and Deferred
+
+- **Declaring global warming**: rejected again, for the reason under "Where the Time
+  Went". Sharing one read span cut the system by 81% instead.
+- **A kept player economy**: a `KeptQuery` over `PlayerEconomy.Calculate` whose reader
+  declares nothing (so it survives only private writes). It served one reuse outside an
+  epoch per turn. The reviews compute the economy only in `Validate`, so there was no
+  earlier answer to reuse. Reverted; the planning span (step 4) took the cost instead.
+- **Splitting population from `cities:growth`**: after step 2 the remaining growth
+  misses were about 33 ms per turn under the probe (corporations 22, civics 10). Domain
+  stamps are global, so one city growing would stale every population reader for the
+  rest of that player's growth window. The first read per city is already stale, from
+  the treasury that gold and inflation stamp just before growth. Not built.
+- **Narrowing the completion widen**: completing a building changes buildings, which
+  are in the remainder. A trained unit publishes `UnitCreated` and recomputes sight.
+  Both are broad. About 9 ms per turn under the probe. Not built.
+- **A read span around every command's validation**: only the AI planning commands cost
+  anything to validate (step 4), and `Validate` has no read-only contract to rely on.
+  Not built.
+- **Sight recompute, contact scan, promotions, rejected upgrades** (Pass 20 items 2 to
+  4): 27 to 50 ms, 13 to 19 ms, and under 2 ms per turn at these saves. Not attempted.
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash above matches the base tree. f550 + 8 also gives
+  `e2946b4dc3104320` with `--waves max` and with `DOTNET_PROCESSOR_COUNT=1`, and seed
+  1 (4 players, 100 turns) with `--waves max` gives `3c57df1d21022b54`.
+- `--verify-modifier-cache` and `--verify-read-epochs` together pass on f550 + 4 and
+  f450 + 4. `--verify-modifier-cache` passes on seed 3 (4 players, 160 turns), checked
+  on the tree with step 2. The corporation and timer declarations rest on inspection
+  for inflation and for player timers with effects; verification covers them where
+  these runs exercise them.
+- `WriteWindowTests` covers skipped scopes, a lying scope, the nested-calculation
+  helper and kept queries (reuse, recompute, outside kernel work, a lying reader).
+- `mise run test`, `mise run test:e2e`, `mise run test:worldgen`, `mise run check:sync`
+  and `mise run build:game` pass.
+
+#### Still Slow, Ranked
+
+At f550 + 8 on the final tree, per turn:
+
+1. **Modifier collection**, about 300 to 330 ms summed over threads. Cold misses (the
+   first read of each city per kernel span) are the largest part. After them come
+   growth's open window (corporations and civics read population), the kernel's own
+   writes, warming's reads and completions.
+2. **AI city and worker planning**: `ai:cities` 134 to 140 ms and `ai:workers` about
+   99 ms summed over threads. `PrepareWorkerMissionsCommand`'s evaluation is 71 ms of
+   serial work per turn, now in one read span.
+3. **Growth and work assignment**: `cities:growth` about 70 ms and `cities:assign_work`
+   56 to 61 ms, mostly wellbeing, yields and the citizen choice.
+4. **Unit refresh** (`military:units`, about 48 ms), **natural corporations** (about
+   43 ms) and **religion turns** (about 43 ms).
+5. The Pass 20 items 2 to 4 are unchanged and small at these saves.
+
+`mise run benchmark` was not run in this pass. The alternating `ai:play` runs above
+are the measurement.
+
+______________________________________________________________________
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization
@@ -3048,3 +3241,6 @@ passes:
 |                                         |                      | Same, 8 turns from turn 552 (saved game)                   | `MoveUnitPathCommand`    |         846–862 ms |         542–549 ms |                                  **-36%** |
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |    1,346–1,359 ms |    1,303–1,316 ms |                                   **-3%** |
 |                                         |                      | 150-turn 8-player AI game, standard world (seed 3)         | `world:sight_recompute`  |    2,734–2,979 ms |    2,209–2,296 ms |                                  **-21%** |
+| **Pass 22: Late-Game Turns**            | `2f2c6ac8`..`b788e312` | Four-player AI game, per turn at turns 554-559 (saved game) | Wall time (profiled)     |    1,289–1,315 ms |    1,010–1,096 ms |                           **-15 to -23%** |
+|                                         |                      | Same                                                       | `global_warming:warming` |         101–102 ms |           19–20 ms |                                  **-81%** |
+|                                         |                      | Same, per turn at turns 454-459 (saved game)               | Wall time (profiled)     |    1,055–1,062 ms |           916–926 ms |                                  **-13%** |
