@@ -132,9 +132,14 @@ public sealed class ExtractionSmokeTests
         Assert.DoesNotContain(result.Definitions, d => d.Definition is GameContentDef { Era: { } era } && era != "foundation:era_ancient");
         using var directory = new TemporaryDirectory();
         ContentEmission.Write(result, Roots(directory.Path), directory.Path);
-        // One file per family, one per mod's rule constants row, Foundation's conditions and rule constants, and the
-        // buildings and units Corporations owns outright, written even when the filter leaves none.
-        Assert.Equal(SchemaCatalog.Definitions.Count + SchemaCatalog.Constants.Attachments.Length + 2 + 2 + 5 + 1, ContentEmission.Families(result).Count);
+        // One file per family, written even when the filter leaves none: each mapping, each mod's rule constants row,
+        // Foundation's conditions and rule constants and Religion's conditions (3), the base families of the records a
+        // feature mod owns outright (14: Corporations' buildings, special buildings and units; Espionage's commerce,
+        // process, specialist, units and options; Religion's buildings, units, promotions, options, technology and
+        // victory), and the rows a mod keeps about an optional provider's records under data/<provider>/ (7: Espionage's
+        // building, religion building and unit rows about Corporations' and Religion's records, and Votes' about
+        // Religion's buildings).
+        Assert.Equal(SchemaCatalog.Definitions.Count + SchemaCatalog.Constants.Attachments.Length + 3 + 14 + 7, ContentEmission.Families(result).Count);
         Assert.Equal(ContentEmission.Families(result).Count, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));
         Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "rules/Foundation/data/handicap.json")).Trim());
         Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "mods/Corporations/data/building.json")).Trim());

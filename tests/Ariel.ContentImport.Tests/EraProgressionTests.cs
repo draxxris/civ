@@ -72,10 +72,11 @@ public sealed class EraProgressionTests
         }
         // Every emitted family, with each mod's row about the rule constants beside Foundation's own, and the base
         // families a mod writes for the records it owns outright.
-        var families = ContentEmission.Families(result).Select(f => new DefinitionMapping("", f.Definition, f.Mod, [], [])).ToArray();
-        var mods = families.GroupBy(m => m.Mod).Select(group => new ModSource
+        // A family can sit in a provider folder (data/religion/), beside the mod's own file of the same family.
+        var families = ContentEmission.Families(result).Select(f => (Mapping: new DefinitionMapping("", f.Definition, f.Mod, [], []), f.Folder)).ToArray();
+        var mods = families.GroupBy(m => m.Mapping.Mod).Select(group => new ModSource
         {
-            Manifest = new ModManifest { Id = group.Key, References = families.Select(m => m.Mod).Distinct().Where(m => m != group.Key).ToArray() },
+            Manifest = new ModManifest { Id = group.Key, References = families.Select(m => m.Mapping.Mod).Distinct().Where(m => m != group.Key).ToArray() },
             Root = roots.Module(group.Key),
             Instance = new EmittedDataMod(group.ToArray(), ShippedModifierKeys(roots, group.Key))
         }).ToArray();
@@ -116,24 +117,24 @@ public sealed class EraProgressionTests
         Assert.False(Regex.IsMatch(value, @"A[ _]+New[ _]+Dawn|Rise[ _]+of[ _]+Mankind|(?<![A-Za-z0-9])and(?=[_:/\\.-])", RegexOptions.IgnoreCase), value);
     }
 
-    private sealed class EmittedDataMod(DefinitionMapping[] mappings, string? modifierKeys) : IMod
+    private sealed class EmittedDataMod((DefinitionMapping Mapping, string Folder)[] mappings, string? modifierKeys) : IMod
     {
         public void Register(IModContext context)
         {
             if (modifierKeys is not null)
                 foreach (var key in JsonSerializer.Deserialize<ModifierKeyDef[]>(File.ReadAllText(modifierKeys), ModLoader.Json)!)
                     context.Content<ModifierKeyDef>().Register(key);
-            foreach (var mapping in mappings)
+            foreach (var (mapping, folder) in mappings)
                 typeof(EmittedDataMod).GetMethod(nameof(Load), BindingFlags.NonPublic | BindingFlags.Static)!
-                    .MakeGenericMethod(mapping.DefinitionType).Invoke(null, [context, mapping.Definition]);
+                    .MakeGenericMethod(mapping.DefinitionType).Invoke(null, [context, mapping.Definition, folder]);
             if (context.ModId == "foundation")
                 foreach (var (kind, type) in SchemaCatalog.LeafKinds)
                     context.RegisterService<IRequirementEvaluator>("leaf_" + kind, new IdentityEvaluator(kind, type));
         }
 
-        private static void Load<T>(IModContext context, string definition) where T : ContentDef
+        private static void Load<T>(IModContext context, string definition, string folder) where T : ContentDef
         {
-            foreach (var record in context.Data.ReadJson<T[]>("data/" + ContentEmission.FileName(definition)))
+            foreach (var record in context.Data.ReadJson<T[]>(string.Join('/', new[] { "data", folder, ContentEmission.FileName(definition) }.Where(p => p.Length > 0))))
                 context.Content<T>().Register(record);
         }
     }
