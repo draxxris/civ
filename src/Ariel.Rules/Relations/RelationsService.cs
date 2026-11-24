@@ -24,6 +24,8 @@ internal sealed class RelationsService : IRelationsService
     {
         if (teamA == teamB || !PlayerRules.TeamNegotiates(sim, teamA) || !PlayerRules.TeamNegotiates(sim, teamB) || HasMet(sim, teamA, teamB)) return;
         var pair = TeamPair.Of(teamA, teamB);
+        // Contacts are found after moves, whose windows declare only units and sight.
+        sim.WidenWriteWindow();
         Edit(sim).Relations[pair.Key] = new() { First = pair.First, Second = pair.Second, ContactTurn = sim.State.Turn, PeaceStarted = sim.State.Turn };
         sim.Events.Publish(new TeamsMet(pair.First, pair.Second));
     }
@@ -31,34 +33,130 @@ internal sealed class RelationsService : IRelationsService
     public void DiscoverContacts(Simulation sim)
     {
         using var scope = sim.Profiler.Measure(ProfileKind.Rule, "relations:discover_contacts");
-        // Current sight, not revealed history. Occupants and owned borders both count as contact targets.
-        // Movement asks after every step, so the sets are reused across tiles, and a tile with neither a unit nor an
-        // owner, which has no target to meet, is passed over before any of them is built.
+        // Current sight, not revealed history. Occupants and owned borders both count as contact targets. A tile with
+        // neither a unit nor an owner, which has no target to meet, is passed over first; so is one none of whose
+        // occupants could still meet anyone (ContactScan), and when nobody could, as late in a game, nothing is
+        // scanned at all.
+        var scan = ContactScan.Of(sim, this);
+        if (scan is null) return;
         var state = sim.State;
         var grid = state.Grid;
-        SortedSet<int>? occupants = null, observers = null;
         for (int i = 0; i < grid.Count; i++)
         {
             var tile = new TileId(i);
-            var plot = state.Plots[i];
             bool units = state.HasUnitsAt(tile);
-            if (!units && plot.Owner is null) continue;
-            occupants ??= new(); observers ??= new();
-            occupants.Clear(); observers.Clear();
-            if (units) foreach (var unit in state.UnitsAt(grid.HexOf(tile))) occupants.Add(sim.TeamOf(unit.Owner).Id);
-            if (plot.Owner is { } owner) occupants.Add(sim.TeamOf(owner).Id);
-            observers.UnionWith(occupants);
-            foreach (var team in state.Teams)
-                if (plot.Visible.Contains(team.Id)) observers.Add(team.Id);
+            int owner = scan.PlotTeam[i];
+            if (!units && owner < 0) continue;
+            scan.Clear();
+            if (units) foreach (var unit in state.UnitsAt(grid.HexOf(tile))) scan.Occupant(scan.TeamOf(unit.Owner));
+            if (owner >= 0) scan.Occupant(owner);
+            if (!scan.Meets) continue;
+            var visible = state.Plots[i].Visible;
+            if (!visible.IsEmpty)
+                foreach (int team in scan.Unmet)
+                    if (visible.Contains(team)) scan.Observer(team);
             foreach (var neighbor in grid.Neighbors(tile))
             {
-                var adjacent = state.Plots[neighbor.Value];
-                if (adjacent.Owner is { } p) observers.Add(sim.TeamOf(p).Id);
+                if (scan.PlotTeam[neighbor.Value] is var p and >= 0) scan.Observer(p);
                 if (state.HasUnitsAt(neighbor))
-                    foreach (var unit in state.UnitsAt(grid.HexOf(neighbor))) observers.Add(sim.TeamOf(unit.Owner).Id);
+                    foreach (var unit in state.UnitsAt(grid.HexOf(neighbor))) scan.Observer(scan.TeamOf(unit.Owner));
             }
-            foreach (int target in occupants)
-                foreach (int observer in observers) EstablishContact(sim, observer, target);
+            scan.Establish(sim, this);
+        }
+    }
+
+    /// <summary>One contact scan's teams, as flags by team id. Every occupant of a tile is also one of its observers,
+    /// and each occupant (the target) is offered to each observer in ascending team order, as sets would give them.
+    /// Only a team that has yet to meet another it could meet (<see cref="EstablishContact"/>: both negotiate, they have
+    /// no relation) can make a contact, and only if it takes part in the scan, as the owner of a unit or a plot or as a
+    /// team that sees a plot; teams of players who are gone hold and see nothing. A pair that is not two such teams is
+    /// passed over, since contact between them would change nothing, so only such teams are gathered as observers.
+    /// Teams of players and of plot owners are looked up once per scan.</summary>
+    private sealed class ContactScan
+    {
+        private readonly bool[] _unmet, _occupant, _observer;
+        private readonly int[] _playerTeam;
+        private bool _meets;
+        /// <summary>The team owning each plot, or -1.</summary>
+        internal readonly int[] PlotTeam;
+        /// <summary>The teams that could still make a contact, ascending.</summary>
+        internal readonly List<int> Unmet = new();
+
+        private ContactScan(int span, int[] playerTeam, int[] plotTeam)
+        {
+            _unmet = new bool[span]; _occupant = new bool[span]; _observer = new bool[span];
+            _playerTeam = playerTeam; PlotTeam = plotTeam;
+        }
+
+        internal static ContactScan? Of(Simulation sim, RelationsService relations)
+        {
+            var state = sim.State;
+            var teams = state.Teams;
+            int span = 0, players = 0;
+            foreach (var team in teams) span = Math.Max(span, team.Id + 1);
+            foreach (var player in state.Players) players = Math.Max(players, player.Id + 1);
+            var playerTeam = new int[players];
+            foreach (var player in state.Players) playerTeam[player.Id] = player.TeamId;
+            var present = new bool[span];
+            foreach (var unit in state.Units) present[playerTeam[unit.Owner]] = true;
+            var plots = state.Plots;
+            var plotTeam = new int[plots.Length];
+            for (int i = 0; i < plots.Length; i++)
+            {
+                var plot = plots[i];
+                plotTeam[i] = plot.Owner is { } owner ? playerTeam[owner] : -1;
+                if (plotTeam[i] >= 0) present[plotTeam[i]] = true;
+                if (plot.Visible.IsEmpty) continue;
+                foreach (var team in teams)
+                    if (plot.Visible.Contains(team.Id)) present[team.Id] = true;
+            }
+            ContactScan? scan = null;
+            for (int i = 0; i < teams.Count; i++)
+            {
+                int a = teams[i].Id;
+                if (!present[a] || !PlayerRules.TeamNegotiates(sim, a)) continue;
+                for (int j = i + 1; j < teams.Count; j++)
+                {
+                    int b = teams[j].Id;
+                    if (a == b || !present[b] || !PlayerRules.TeamNegotiates(sim, b) || relations.HasMet(sim, a, b)) continue;
+                    scan ??= new(span, playerTeam, plotTeam);
+                    scan._unmet[a] = scan._unmet[b] = true;
+                }
+            }
+            if (scan is not null)
+                for (int team = 0; team < span; team++)
+                    if (scan._unmet[team]) scan.Unmet.Add(team);
+            return scan;
+        }
+
+        internal int TeamOf(int player) => _playerTeam[player];
+
+        /// <summary>Whether an occupant of the tile could still meet anyone.</summary>
+        internal bool Meets => _meets;
+
+        internal void Clear()
+        {
+            Array.Clear(_occupant);
+            Array.Clear(_observer);
+            _meets = false;
+        }
+
+        internal void Occupant(int team)
+        {
+            _occupant[team] = _observer[team] = true;
+            _meets |= _unmet[team];
+        }
+
+        internal void Observer(int team) => _observer[team] = true;
+
+        internal void Establish(Simulation sim, RelationsService relations)
+        {
+            for (int target = 0; target < _occupant.Length; target++)
+            {
+                if (!_occupant[target] || !_unmet[target]) continue;
+                for (int observer = 0; observer < _observer.Length; observer++)
+                    if (_observer[observer] && _unmet[observer]) relations.EstablishContact(sim, observer, target);
+            }
         }
     }
 

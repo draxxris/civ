@@ -53,6 +53,9 @@ public sealed class WorldModule : IPreparableMod
         context.RegisterService<Ariel.Game.ITerrainChanges>("terrain_changes", new TerrainChanges());
         context.RegisterService<Ariel.Content.IRequirementEvaluator>("bonus_requirements", new BonusEvaluator());
         context.RegisterStateComponent<WorkerOrder>("worker_order");
+        context.RegisterStateDomain("sight", "Plots/*/Visible", "Plots/*/RevealedSnapshots");
+        context.RegisterStateDomain("revealed", "Plots/*/Revealed");
+        context.RegisterStateDomain("worker_orders", "Units/*/Extensions/world:worker_order");
         context.RegisterCommand<Ariel.Game.StartBuildCommand>("start_build");
         context.RegisterCommand<Ariel.Game.CancelBuildCommand>("cancel_build");
         context.TurnSystems.Register(workers);

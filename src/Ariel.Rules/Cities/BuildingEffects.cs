@@ -12,9 +12,10 @@ internal sealed class BuildingEffects : IModifierSource
 {
     /// <summary>Building effects follow the city's buildings, techs, power, resources and grants, and its work area
     /// through its culture level, never who works its plots, what it is building or a turn's tallies
-    /// (<see cref="CityStateDomains.Tallies"/>), as long as every resource supplier and building grant provider says
-    /// the same.</summary>
-    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(CityStateDomains.Tallies, content);
+    /// (<see cref="CityStateDomains.Tallies"/>), and units only through the naval blockades the resource network asks
+    /// about, never sight or worker orders (<see cref="CityStateDomains.NeverReadByBuildings"/>), as long as every
+    /// resource supplier and building grant provider says the same.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(CityStateDomains.NeverReadByBuildings, content);
     public void Contribute(ModifierContext context, ModifierSink sink) =>
         CityReadScope.Run(context.Sim, _ => { ContributeScoped(context, sink); return true; });
     private static void ContributeScoped(ModifierContext context, ModifierSink sink)

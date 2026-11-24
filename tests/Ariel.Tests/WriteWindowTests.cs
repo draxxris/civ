@@ -166,6 +166,7 @@ public sealed class WriteWindowTests
     private sealed class CultureThenTreasury : GameCommand
     {
         public bool Widen { get; init; }
+        public IReadOnlyList<string>? WidenBy { get; init; }
         public long Seen { get; private set; }
         public override IReadOnlyList<string>? WriteDomains => ["probe:culture"];
         public override string? Validate(Simulation sim) => null;
@@ -173,6 +174,7 @@ public sealed class WriteWindowTests
         {
             sim.State.PlayerById(Player).Culture++;
             if (Widen) sim.WidenWriteWindow();
+            if (WidenBy is not null) sim.WidenWriteWindow(WidenBy);
             sim.State.PlayerById(Player).Treasury += 5;
             Seen = ModifierSink.Collect(new(sim, ModifierScope.Player, Player)).Total("probe:treasury");
         }
@@ -203,6 +205,31 @@ public sealed class WriteWindowTests
         Assert.Contains("CultureThenTreasury", error.Message);
         // Outside any window it does nothing.
         sim.WidenWriteWindow();
+    }
+
+    [Fact]
+    public void A_window_widened_by_domains_writes_them_and_still_not_the_rest()
+    {
+        var (sim, treasury, _) = Game();
+        sim.VerifyWrites = true;
+        ulong culture = sim.Content.StateDomains.Mask(["probe:culture"], out _);
+        ulong both = sim.Content.StateDomains.Mask(["probe:culture", "probe:treasury"], out _);
+        var widened = new CultureThenTreasury { Player = 0, WidenBy = ["probe:treasury"] };
+        Assert.True(sim.TryApply(new Script(s =>
+        {
+            Player(s);
+            int before = treasury.Calls;
+            long stamp = s.WriteStamp;
+            Assert.True(s.TryApply(widened, out _)); // verification accepts the treasury write
+            Assert.Equal(before + 1, treasury.Calls); // read afresh inside the widened window
+            Assert.Equal(5, widened.Seen);
+            Assert.True(s.WrittenSince(culture, stamp)); // the treasury was stamped
+            Assert.False(s.WrittenSince(both, stamp)); // and nothing else
+            Player(s);
+            Assert.Equal(before + 2, treasury.Calls);
+        }) { Player = 0 }, out _));
+        // Outside any window it does nothing.
+        sim.WidenWriteWindow(["probe:treasury"]);
     }
 
     private sealed class UndeclaredWrite : GameCommand

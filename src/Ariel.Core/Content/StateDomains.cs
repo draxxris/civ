@@ -23,7 +23,9 @@ public interface IStateReader
     /// asks, given the loaded content: a reader that calls other modules' providers must leave out what any of them
     /// may read (<see cref="StateDomainRegistry.UnreadByAll"/>). Null, the default, declares nothing. A wrong
     /// declaration makes the game use stale answers; <see cref="Game.Simulation.VerifyWrites"/> catches it where a run
-    /// exercises it. An id no loaded module registered declares nothing.</summary>
+    /// exercises it. An id no loaded module registered declares nothing. The declaration covers the calculations the
+    /// kernel keeps across writes, city, player and team ones (<see cref="ModifierSink.Collect"/>): what a source
+    /// reads for a unit or plot calculation, such as the unit itself, does not count, because those are never kept.</summary>
     IReadOnlyList<string>? UnreadDomains(ContentDb content) => null;
 }
 

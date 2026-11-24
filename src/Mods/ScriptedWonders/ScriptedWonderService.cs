@@ -8,10 +8,11 @@ internal sealed class ScriptedWonderService : IScriptedWonderService, IModifierS
 {
     private static IEnumerable<WonderScriptDef> Rules(Simulation sim) => sim.Content.Get<WonderScriptDef>().All;
 
-    /// <summary>Wonder scripts follow buildings, civics, plots and units, never who works a city's plots, what it is
-    /// building or a turn's tallies (<see cref="CityStateDomains.Tallies"/>), as a modifier source (of unit
-    /// calculations only) and as a building grant provider.</summary>
-    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.Tallies;
+    /// <summary>Wonder scripts follow buildings, civics and plots, never who works a city's plots, what it is building,
+    /// a turn's tallies, units, sight or worker orders (<see cref="CityStateDomains.NeverReadByBuildings"/>), as a
+    /// building grant provider and as a modifier source in kept calculations: it contributes to unit calculations
+    /// only, which read the unit but are never kept.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.NeverReadByBuildings;
 
     public bool IsActive(Simulation sim, int cityId, string building)
     {

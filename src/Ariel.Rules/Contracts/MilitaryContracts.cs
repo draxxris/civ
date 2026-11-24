@@ -80,7 +80,36 @@ public interface ICombatService
     /// a fight the combat service resolved would.</summary>
     void AwardExperience(Simulation sim, int winner, int opponent, Hex plot, int amount);
 }
-/// <summary>Optional naval rules. Queries use current units and wars, with no saved blockade counters.</summary>
+/// <summary>The state a plain unit move writes, as state domains (<see cref="Content.StateDomain"/>), so that city,
+/// player and team ledgers kept across writes survive moves (<see cref="MoveUnitPathCommand.WriteDomains"/>).</summary>
+public static class UnitStateDomains
+{
+    /// <summary>Where units stand and how far they may still move: every unit's position, moves left and Military unit
+    /// state (activity, transport, whether it moved or attacked, experience bookkeeping). A reader of a city, player or
+    /// team calculation that sees units only through naval blockades (<see cref="INavalBlockadeService"/>) may count
+    /// this domain as unread, because every writer that declares it widens its window
+    /// (<see cref="Simulation.WidenWriteWindow()"/>) before it changes a unit whose activity is
+    /// <see cref="UnitActivity.Blockade"/>. A reader that counts the units in a city does read it.</summary>
+    public const string Units = "military:units";
+    /// <summary>What each team sees now and remembers of each plot: plots' visible teams and revealed memories, but
+    /// not which teams have revealed a plot (<see cref="Revealed"/>).</summary>
+    public const string Sight = "world:sight";
+    /// <summary>Which teams have revealed each plot. The resource network reads it, so a move that declares
+    /// <see cref="Sight"/> widens by this domain only when it reveals a plot for the first time.</summary>
+    public const string Revealed = "world:revealed";
+    /// <summary>Workers' current build orders.</summary>
+    public const string WorkerOrders = "world:worker_orders";
+    /// <summary>What a plain move writes: units, sight and worker orders. A move that fights, captures a city or a
+    /// unit, opens a goody hut, makes a contact or moves a blockading unit widens to everything first, and one that
+    /// reveals a plot widens by <see cref="RevealedOnly"/>.</summary>
+    public static readonly IReadOnlyList<string> MoveWrites = [Units, Sight, WorkerOrders];
+    public static readonly IReadOnlyList<string> RevealedOnly = [Revealed];
+}
+
+/// <summary>Optional naval rules. Queries use current units and wars, with no saved blockade counters. An
+/// implementation reads units only through those whose activity is <see cref="UnitActivity.Blockade"/>: the resource
+/// network asks it for every city's connections, and readers of city ledgers count
+/// <see cref="UnitStateDomains.Units"/> unread on that promise.</summary>
 public interface INavalBlockadeService
 {
     bool IsBlockaded(Simulation sim, TileId tile, int team);
