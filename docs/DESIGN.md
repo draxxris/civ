@@ -2449,7 +2449,15 @@ is reduced across eight optimization areas:
   terrain levels (`SeeFrom` and `SeeThrough`) are resolved at most once per queried
   tile, and team water-sight capability is resolved once per queried team. Two
   plot-sized lazy arrays and a small team dictionary memoize these queries exclusively
-  for the duration of a single `Recompute` call.
+  for the duration of a single `Recompute` call. The same call-local state skips work
+  that cannot change the result:
+  - An observer is passed over when one of the same team, tile and kind of sight with at
+    least its radius was already revealed in this call (`RecomputeLevels.Adds`). Sight
+    only widens with the radius, so stacked units reveal their disk once.
+  - The clearing pass notes which teams saw each plot (`SawBefore`). Revealing such a
+    plot again only marks it revealed, because its memory was captured from the same
+    state moments earlier.
+  - A unit's sight change sums only the promotions that change sight.
 - **Spatial threat indexing and settlement geography**: In `AiContext`, repeated
   whole-map enemy scans are replaced by a spatial threat grid (`ThreatStrength`). Enemy
   combat units populate tile-strength buckets once per segment that queries threats, and
@@ -2477,8 +2485,9 @@ All caching mechanisms adhere to strict lifetime and isolation boundaries:
 - **Bounded path cache**: To prevent unbounded memory growth, `AiContext.FindPath` caps
   cached routes at $\\min(256, \\max(1, \\text{units}) \\times 8)$ per unchanged
   segment. Subsequent queries fall back deterministically to uncached A\* search.
-- **Call-local visibility memoization**: The lazy level arrays and team capability
-  dictionary in `VisibilityService.Recompute` belong entirely to that single invocation.
+- **Call-local visibility memoization**: The lazy level arrays, the team capability
+  dictionary, the observer table and the seen-before flags in `VisibilityService.Recompute`
+  belong entirely to that single invocation.
   They are discarded before `Recompute` returns and are never stored on the service, in
   state, or across threads.
 - **Mid-turn entity refresh and stale-cache bug fixes**:
@@ -2658,7 +2667,12 @@ contracts are in `Contracts/RelationContracts.cs`; `GameRules.Relations` is
   a turn starts, sight is renewed (`MilitaryData.Sight`), and by the `relations:turn`
   system at `TurnPhase.Visibility + 1`, after team sight and before the end-of-turn hooks,
   so a mod's own end-of-turn bookkeeping already sees this turn's contacts. First contact
-  creates the pair's `TeamRelation` in `RelationsState` and publishes `TeamsMet`.
+  creates the pair's `TeamRelation` in `RelationsState` and publishes `TeamsMet`; it
+  widens the open write window first, since a move declares only units and sight.
+  `DiscoverContacts` scans in tile order and offers each occupant to each observer in
+  ascending team order. It considers only teams that take part in the scan (owning a
+  unit or a plot, or seeing a plot) and have yet to meet another such team they could
+  meet. With no such team, it returns at once.
 - War and peace. `DeclareWarCommand` (`relations:declare_war`) and `MakePeaceCommand`
   (`relations:make_peace`) are the only way a war starts or ends; the client and the AI
   both issue them, and nothing else calls `GameState.SetWar` during play. A war needs
@@ -2803,12 +2817,16 @@ declare both sides.
   writes. Null, the default, means anything.
 - **Readers declare what they never read.** `IStateReader.UnreadDomains(ContentDb)`, which
   `IModifierSource` extends, names the domains a source never reads, directly or through
-  any rule it calls. Null, the default, declares nothing. A source that calls other
+  any rule it calls, in the calculations the kernel keeps (city, player and team ones).
+  What a source reads for a unit or plot calculation, such as the unit itself, does not
+  count, because those are never kept. Null, the default, declares nothing. A source that calls other
   modules' providers may declare only what every provider declares too
   (`StateDomainRegistry.UnreadByAll`). The seams it calls bound what their
   implementations read: `ICityResourceSupply` and `IFreeBuildingGrants` default to never reading
-  `CityStateDomains.Tallies`: work, queue, growth, culture, plot culture, production,
-  conscript anger, hurry anger and the treasury. `CityStateDomains.UnreadThroughBuildings`
+  `CityStateDomains.NeverReadByBuildings`: the tallies (`CityStateDomains.Tallies`: work,
+  queue, growth, culture, plot culture, production, conscript anger, hurry anger and the
+  treasury) and what a plain unit move writes (`UnitStateDomains.MoveWrites`: units,
+  sight and worker orders). `CityStateDomains.UnreadThroughBuildings`
   intersects a source's own list with those providers' lists. An id no loaded module registered
   declares nothing. That is why the Cities module's building effects can name the AI's
   domain, and the Cities and ScriptedWonders sources can name Cities domains, without
@@ -2819,6 +2837,11 @@ declare both sides.
   exactly as an undeclared one. A city that completes an order, a team that discovers a
   technology, a great person born, a faith that spreads or decays and a wonder that
   completes all widen this way. Widening outside any window does nothing.
+  `Simulation.WidenWriteWindow(domains)` widens by the named domains only, for a rare
+  write that touches a little more: a move that reveals a plot for the first time widens
+  by `world:revealed`, which the resource network reads, and readers that never read it
+  keep their answers. Pass the same list instance each time; an unregistered id widens
+  to everything.
 - **Thresholds that readers see.** A source may read a domain only through a value
   derived from it and still count the domain unread, if every declared writer of that
   domain widens before the derived value changes. Each such contract is written on the
@@ -2829,6 +2852,11 @@ declare both sides.
     before it changes an owner.
   - `revolution:instability`: readers see the mutiny tier. `RevolutionService.Update`
     widens when the tier flips.
+  - `military:units`: readers of kept calculations see units only through naval
+    blockades (`INavalBlockadeService`, which the resource network asks, reads only units
+    whose activity is `Blockade`). A declared writer widens before it changes such a
+    unit: moving one ends its blockade. A reader that counts units in a city, as
+    `CivicEffects` does for military happiness, reads the domain.
   - `government:timers`: readers see whether anarchy lasts, and the timer system widens
     on its last turn. `cities:occupation`: readers see whether the city is in occupation
     or disorder, and `SettleConquest` widens when that ends.
@@ -2875,6 +2903,12 @@ declare both sides.
   - Writers (commands): `SetCityAssignmentsCommand` (`cities:work`),
     `SetCityProductionCommand` and `MoveCityQueueCommand` (`cities:queue`), and the AI's
     planning, forget, prune and war-preparation commands (`ai:intent`).
+  - Unit moves: `MoveUnitPathCommand` writes `UnitStateDomains.MoveWrites`:
+    `military:units` (positions, moves left, the Military unit state), `world:sight`
+    (visible teams and plot memories) and `world:worker_orders`. `MovementService.MoveStep`
+    widens to everything before it moves a blockading unit, fights, or captures a city or
+    civilians. A goody hut and a first contact widen before they write. A first reveal
+    widens by `world:revealed` (`Plots/*/Revealed`).
   - Writers (the per-player turn chain):
     - `cities:assign_work` writes `cities:work`, and `cities:growth` writes
       `cities:growth` and `cities:work`.
@@ -2893,15 +2927,16 @@ declare both sides.
       `revolution:instability`, Religion's city turns and `scripted_wonders:city_turns`.
   - Readers:
     - `BuildingEffects`, `TraitEffects`, `ReligionEffects` and `ScriptedWonderService`
-      never read any of `CityStateDomains.Tallies`.
+      never read any of `CityStateDomains.NeverReadByBuildings`: the tallies and the
+      move's domains.
     - `CityHurry` reads only the hurry anger among them.
-    - `CivicEffects` reads population, so it leaves out growth and both anger domains.
+    - `CivicEffects` reads population and the units in a city, so it leaves out growth,
+      both anger domains and the move's domains.
   - Undeclared:
     - Readers: the Corporations mod's `CorporationEffects` (it reads population and
       collects a nested player ledger) and Trade's `TradeEffects`.
-    - Writers: unit moves (`MoveUnitPathCommand`), because the resource flood reads
-      `Revealed` and a narrower domain needs that first; `global_warming:warming` and
-      the other global systems; and every command not listed.
+    - Writers: `global_warming:warming` and the other global systems, and every command
+      not listed, including the other unit commands (load, unload, promote, upgrade).
   - An undeclared source still counts private domains as unread, so it survives their
     writes. The Corporations resource supplier (`CorporationResourceSupply`) declares
     nothing itself, but the `ICityResourceSupply` seam's default binds it. It meets that

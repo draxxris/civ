@@ -2667,6 +2667,211 @@ are the measurement.
 
 ______________________________________________________________________
 
+### Pass 20: Unit Moves
+
+- **Date**: 2026-11-23
+- **Commits**: `f8990d3d`, `8991958c`, `8b67773d`, `cc880c76`, then the documentation
+
+This pass takes item 1 of the Pass 19 "Still Slow" list. Unit moves were undeclared,
+so each one dropped every kept city ledger. They now declare what they write. The
+profile showed that most of a move's cost was never that invalidation, though. It was
+the sight recompute and contact scan that run after every step, so those were made
+cheaper first. Every final state is byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- Base: local main `9d87de83`, extracted with `git archive`. Final: `cc880c76`, also
+  extracted, so that verification and timing could run while work went on in the
+  worktree. Both ran through `mise run ai:play`.
+- Saves:
+  - The Pass 19 saves 451 (`/tmp/ariel/ai450.json`) and 552 (`/tmp/ariel/p14/t550.json`)
+    are re-headed for each tree's mod versions. They still load and play, but their
+    hashes differ from Pass 19's, because content has changed since.
+  - The old corporations save no longer loads (the corporations rework moved its
+    content). It was regenerated on the base tree from the corporation-heavy game (seed
+    3, 4 players, industrial era, 160 turns).
+  - A fresh 450-turn game (seed 3, 4 players), "f450", was added, saved by the base
+    tree and only re-headed for the final one.
+- Reference hashes, taken on `9d87de83` before any change:
+
+  | Run | Hash |
+  | :-- | :-- |
+  | 451 + 4 / + 8 | `72a399046f62437a` / `691f32d857ee6def` |
+  | 552 + 2 / + 4 / + 8 | `ea6e57d55f8c33d3` / `2335395d42482563` / `6f4469fb16cb816f` |
+  | f450 + 8 | `364708b54d575545` |
+  | Corporations save (turn 161) + 4 | `f9566b6a2521a2ac` |
+  | New4 (seed 3, 4 players, 100 turns) | `37d0476f6aa2778c` |
+  | New4 for 160 turns | `b92e571e38672a53` |
+  | New8 (seed 3, 8 players, standard world, 150 turns) | `a9ba4f3b5780707a` |
+  | Corporation-heavy game (seed 3, 4 players, industrial era, 160 turns) | `30d7fbff18d96f13` |
+
+- Timing ran in alternating pairs (base, final, final, base), per subject. Pairs A
+  (sight and contacts only) and B (all four commits) ran at load 0.8 to 4.1. Pair C
+  added new8 and ran at load 3 to 12, because other agents shared the machine, so for
+  the saved games only pairs A and B are quoted. The profile is the built-in
+  `--profile`, plus temporary probes that were not committed.
+
+#### Where the Time Went
+
+At 552 + 8 on the base tree, with probes:
+
+- **The ceiling of declaring moves.** A deliberately unsound probe declared the move
+  as writing only the private `ai:intent` domain. Under `--verify-modifier-cache` it
+  threw at the first move, so the window really was narrow. Kept ledgers reused rose
+  only from 34,235 to 36,422 (+6%), and `modifiers:collect` fell from 4.6 to 4.3 s
+  summed over threads. In new4 they rose 18% and collection fell by 6%. Few ledgers
+  are read again between two moves, so even a perfect declaration cannot show in wall
+  time.
+- **The move itself.** There were 290 move commands, 872 ms in all, and 501 sight
+  recomputes, 995 ms (the turn system's runs included). Of a recompute:
+  - re-revealing from every unit, 271 ms, mostly stacked units revealing the same disk
+    again, and a LINQ sum of each unit's promotions;
+  - the clearing pass, 81 ms, which enumerated each plot's team mask through an
+    allocating iterator;
+  - capturing each still-visible plot a second time from the same state.
+- **Contact discovery**, 294 ms and 170 MB over 8 turns: sorted sets per tile, and two
+  dictionary lookups for every team looked up. In these games many teams never meet:
+  teams of seceded or minor players. So there is almost always some pair still to
+  meet, and an early exit alone does not help.
+
+Pass 19 put most of the 1.1 to 1.4 s of military issue cost on the invalidation. It was
+the recompute.
+
+#### What Was Built
+
+1. **Sight without repeated work** (`f8990d3d`).
+   - An observer is skipped when one of the same team, tile and kind of sight, with at
+     least its radius, was already revealed in the call (`RecomputeLevels.Adds`).
+     Sight only widens with the radius: a wider range tests more tiles and is less
+     strict at the edge.
+   - The clearing pass notes which teams saw each plot (`SawBefore`). Revealing such a
+     plot again only marks it revealed.
+   - A unit's sight change sums only the promotions that change sight.
+   - World mod 1.20.3 to 1.21.0.
+2. **Contacts between teams that can still meet** (`8991958c`).
+   - `ContactScan` finds the present teams (owning a unit or plot, or seeing a plot)
+     that have yet to meet another present team they could meet, and returns at once
+     when there are none.
+   - It skips a tile with no such occupant, and gathers only such teams as observers.
+   - Occupants and observers are flags by team id, offered in the same ascending order
+     as the sets. Player and plot-owner teams are looked up once per scan.
+   - Relations mod 1.4.0 to 1.5.0.
+3. **Widening by domains** (`8b67773d`). `Simulation.WidenWriteWindow(domains)` adds
+   only the named domains to the open window, for a rare write that touches a little
+   more.
+4. **Unit moves declared** (`cc880c76`).
+   - New domains: `military:units` (positions, moves left, Military unit state),
+     `world:sight` (visible teams, plot memories), `world:revealed` and
+     `world:worker_orders`.
+   - `MoveUnitPathCommand` declares units, sight and worker orders.
+   - It widens by `world:revealed` on a first reveal, which the resource network
+     reads.
+   - It widens to everything before:
+     - moving a blockading unit;
+     - combat;
+     - capturing a city or civilians;
+     - a goody hut;
+     - a first contact.
+   - Readers see units only through naval blockades, now stated on
+     `INavalBlockadeService`: a threshold, like Pass 18's.
+   - `CityStateDomains.NeverReadByBuildings` (the tallies plus the move's domains) is
+     the default for the building seams. Building, trait, religion and wonder effects
+     and hurry anger declare it.
+   - `CivicEffects` counts units in a city, so it does not declare it.
+   - `IStateReader.UnreadDomains` now says that declarations cover kept calculations
+     only, since unit calculations read the unit and are never kept.
+   - A probe counted 288 of 290 move windows closing narrow at 552 + 8.
+   - Military 1.34.0, Cities 1.40.0, Economy 1.6.0, Peoples 1.10.0, Religion 2.7.0 and
+     ScriptedWonders 2.7.0.
+
+#### Results
+
+Each cell gives the base runs, then the final runs, per 8 turns (new games: whole game)
+unless stated:
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| 552 + 8, `world:sight_recompute` | 991 / 1,000 ms | 589 / 600 ms | −40% |
+| 552 + 8, `MoveUnitPathCommand` | 846 / 862 ms | 542 / 549 ms | −36% |
+| 552 + 8, `relations:discover_contacts` | 297 / 296 ms | 226 / 240 ms | −21% |
+| 552 + 8, contact allocation | 170 MB | 67 MB | −60% |
+| 552 + 8, sight allocation | 205 MB | 99 MB | −52% |
+| 552 + 8, wall per turn | 1,359 / 1,346 ms | 1,316 / 1,303 ms | −3% |
+| 552 + 8, allocation per turn | 1,260 MiB | 1,234 to 1,236 MiB | −2% |
+| f450 + 8, `world:sight_recompute` | 409 / 334 ms | 307 / 327 ms | −10% |
+| f450 + 8, wall per turn | 1,063 / 1,010 ms | 1,043 / 1,043 ms | within noise |
+| New8, `world:sight_recompute` (pair C) | 2,734 / 2,979 ms | 2,209 / 2,296 ms | −21% |
+| New8, `MoveUnitPathCommand` (pair C) | 2,317 / 2,443 ms | 2,011 / 2,069 ms | −14% |
+| New8, wall total (pair C) | 22.3 / 22.5 s | 22.3 / 22.6 s | within noise |
+| New4, wall total | 10.7 / 10.1 s | 10.1 / 9.5 s | within noise |
+| Kept ledgers reused, 552 + 8 | 34,229 / 34,261 | 34,668 / 34,641 | +1.2% |
+| Kept ledgers reused, f450 + 8 | 36,289 / 36,326 | 37,604 / 37,586 | +3.5% |
+| Kept ledgers reused, new4 | 63,662 / 63,608 | 66,338 / 66,433 | +4.3% |
+| Kept ledgers reused, new8 (pair C) | 256,480 / 256,072 | 269,220 / 269,065 | +5% |
+
+The sight and contact changes are what saves time, most at 552, where stacks are large.
+In new4 the sight and contact figures moved by as much between two runs of one tree as
+between the trees, so they are not quoted. The declaration raises reuse by 1 to 5% and
+moves `modifiers:collect` by less than its spread between runs. Its value is
+structural: a move no longer stamps the remainder. That leaves other undeclared writers
+and readers as the ledgers' limit, not moves.
+
+#### Rejected and Deferred
+
+- **Sight for the mover's team only**: other teams' sight inputs (their units, the
+  terrain, their techs) can change between recomputes without one, and every
+  recompute refreshes all teams' plot memories, which are saved. Hashes would change.
+  Not built.
+- **Promotion checks** (stretch). The AI plans inside a read epoch per segment, so a
+  unit's ledger is already built once per segment. The remaining builds are the first
+  check of each unit after each command. No exact bound lets a check skip the ledger:
+  the percent key has no lower bound across sources. Keeping unit calculations across
+  writes cost more than it saved in Pass 17. Not built.
+- **Rejected upgrades** (stretch): still held by the speculative waves' conflict
+  tracking (Pass 19). Not attempted.
+- **`CorporationEffects`** (stretch). On the corporations save + 4, a probe put the
+  source at 105 ms over 4 turns (nested collections included), about 5% of wall. Its
+  maintenance collects the whole player ledger, so its declaration could only be what
+  every player-scope source declares. Several are undeclared (`TimerModifiers`,
+  revolution, conscription, golden ages), so that is empty today. Deferred until those
+  sources declare.
+- **A garrison threshold** for `CivicEffects` and revolution, which count units in
+  cities. The reuse ceiling above shows it cannot pay. Not built.
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash above matches the base tree.
+- `--verify-modifier-cache` passes on 552 + 8, 451 + 8, f450 + 8, the corporations
+  save + 4, new4, the corporation-heavy game and new8.
+- `--verify-read-epochs` passes on 552 + 4 and new4.
+- `--waves max` and `DOTNET_PROCESSOR_COUNT=1` give the base hashes on 552 + 8 and new4.
+- `MoveWriteWindowTests` checks under verification that a plain move stamps only its
+  domains, a first reveal adds `world:revealed` only, and a blockader's move stamps
+  everything. `WriteWindowTests` covers widening by domains.
+- `mise run test`, `mise run test:e2e`, `mise run test:worldgen` and
+  `mise run check:sync` pass.
+
+#### Still Slow, Ranked
+
+At 552 + 8 on the final tree:
+
+1. **Ledgers read inside undeclared writers.** `modifiers:collect` is still about
+   4.5 s summed over threads. Moves are no longer the limit. The rest are the other
+   unit commands (promote, upgrade, load), the global systems and the undeclared
+   sources: `TimerModifiers`, revolution, conscription, golden ages and Corporations.
+2. **Sight recompute**, about 75 ms per turn: line-of-sight tests from each distinct
+   observer, and every plot memory captured once per call.
+3. **Contact scan**, about 30 ms per turn, while teams that never meet stay present.
+4. The Pass 19 items 3 to 6 (promotions, rejected upgrades, `BestDefender` ledgers,
+   campaign moves) and the Pass 18 items 2 to 6 are unchanged.
+
+`mise run benchmark` was not run in this pass. The alternating `ai:play` pairs above
+are the measurement.
+
+______________________________________________________________________
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization
@@ -2743,3 +2948,7 @@ passes:
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |          1,434 ms |    1,244–1,283 ms |                              **-11 to -13%** |
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | Managed bytes per turn   |          1,120 MiB |           953 MiB |                                **-14.9%** |
 |                                         |                      | Same, per turn at turns 454-459 (saved game)               | `ai:military` time       |       131–133 ms |       102–108 ms |                              **-19 to -22%** |
+| **Pass 20: Unit Moves**                 | `f8990d3d`..`cc880c76` | Six-player AI game, 8 turns from turn 552 (saved game)     | `world:sight_recompute`  |     991–1,000 ms |         589–600 ms |                                  **-40%** |
+|                                         |                      | Same, 8 turns from turn 552 (saved game)                   | `MoveUnitPathCommand`    |         846–862 ms |         542–549 ms |                                  **-36%** |
+|                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |    1,346–1,359 ms |    1,303–1,316 ms |                                   **-3%** |
+|                                         |                      | 150-turn 8-player AI game, standard world (seed 3)         | `world:sight_recompute`  |    2,734–2,979 ms |    2,209–2,296 ms |                                  **-21%** |
