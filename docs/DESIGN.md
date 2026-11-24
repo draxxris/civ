@@ -2254,7 +2254,10 @@ Several query paths avoid redundant traversal:
   hands out copies, which callers may add to; modifier sources only read the state, so
   the same context sums the same. `ResourceNetwork.ConnectedCounts` keeps each
   (player, city) flood's counts in one, which every city view and every exporter's city
-  group asks again. `Simulation.VerifyReadEpochs` hashes the state at an
+  group asks again. Military keeps `CombatCalculator.TotalCityDefense` per (city,
+  buildings ignored) and `MilitaryData.Buildings` (a city's working buildings, in
+  ordinal order) per city in one each, because every combat preview against a unit in a
+  city asks both. `Simulation.VerifyReadEpochs` hashes the state at an
   epoch's start and end and throws on a difference, and also throws when a rejected
   command changed the state or the RNG; `hash-trace --verify-read-epochs` turns it on
   for a whole game.
@@ -2373,7 +2376,22 @@ is reduced across eight optimization areas:
   resulting movement command, eliminating duplicate searches. Within A\*
   (`PathfindingService`), costs and parent pointers are consolidated into a single local
   table (`Dictionary<TileId, (int Cost, TileId Parent)>`), removing a second dictionary
-  and its growth allocations per search.
+  and its growth allocations per search. One `MovementService.MovementQuery` serves a
+  whole search (and `ValidatePath` a whole path): it keeps each plot's entry error,
+  zone-of-control facts and regular step cost, so a plot reached from six neighbours is
+  judged once; `CanStep` is the search's only movement call. An exhausted non-attack
+  search can hand back the tiles it reached (`IPathfindingService.FindPath` with an
+  `out` reach); the segment keeps that set per unit and answers a later non-attack
+  query for a goal outside it with no path, without searching. Attack searches never
+  record a reach, since an attack may end on a tile a move cannot enter.
+- **First reachable tile in order (`AttackPlanner.FirstReachable`)**: Campaign staging
+  and target tiles are tried in their ranked order, and the first tile every unit of the
+  force reaches wins, instead of searching every tile and then picking the first.
+  `ParallelScoring.All` tests a force's units in parallel and stops at the first
+  failure; it runs sequentially inside a parallel AI turn. After a successful
+  `ReviewCampaignGoalsCommand`, `CampaignTargets.Reviewed` takes the dependency digest
+  the review stored for the first theater instead of computing it again: the review
+  writes only the private `ai:intent` domain, which the digest does not read.
 - **Candidate pruning and allocation reduction**: Cheap legality and budget checks
   precede expensive evaluations. In `CityPlanner`, unaffordable wonder candidates are
   rejected before evaluating production eligibility or building values. In
