@@ -158,6 +158,24 @@ public sealed partial class Simulation
     /// kernel work.</summary>
     public void WidenWriteWindow() => TryWidenWriteWindow();
 
+    /// <summary>The running command or turn system is about to write the state domains in <paramref name="domains"/>
+    /// as well as those it declares: a rare write that touches a little more, such as a move that reveals a plot for
+    /// the first time. Like <see cref="WidenWriteWindow()"/>, but its window widens only by these domains, so readers
+    /// that never read them keep their remembered answers. An id no loaded module registered widens to everything.
+    /// Call it before the write. Outside any window, or in a window that already writes everything, it does nothing.
+    /// Pass the same list instance each time: the kernel resolves each list once.</summary>
+    public void WidenWriteWindow(IReadOnlyList<string> domains)
+    {
+        if (_windows.Count == 0) return;
+        var frame = _windows[^1];
+        if (frame.Rest) return;
+        ulong mask = Content.StateDomains.Mask(domains, out bool unknown);
+        frame.Mask |= mask;
+        frame.Rest |= unknown;
+        _openMask |= mask;
+        _openRest |= unknown;
+    }
+
     /// <summary>The kernel wrote outside any window (ended turns, the turn order): everything counts as written.</summary>
     internal void NoteKernelWrite() => Stamp(0, rest: true);
 
