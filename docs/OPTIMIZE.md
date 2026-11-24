@@ -235,6 +235,9 @@ ______________________________________________________________________
        ▼
 [Pass 19: Nov 23, 2026] AI Military Planning
                         (Commits: 2674fe14 .. 3055c377)
+       │
+       ▼
+[Pass 21: Nov 23, 2026] Content Amendments (Cost Check)
 ```
 
 ______________________________________________________________________
@@ -2786,3 +2789,23 @@ passes:
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |          1,434 ms |    1,244–1,283 ms |                              **-11 to -13%** |
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | Managed bytes per turn   |          1,120 MiB |           953 MiB |                                **-14.9%** |
 |                                         |                      | Same, per turn at turns 454-459 (saved game)               | `ai:military` time       |       131–133 ms |       102–108 ms |                              **-19 to -22%** |
+
+### Pass 21: Content Amendments (Cost Check)
+
+This pass checks what merging amending attachments into their targets costs at content
+load. The Espionage mod amends 47 buildings, 8 civics, a trait, 3 specialists, a
+civilization, 134 leaders and, with their mods, the Alhambra, the Mapster headquarters and
+the spy specialist's great person row. The merge runs once per content build. It is the
+`content amendments` phase of `ARIEL_TRACE_STARTUP=1` (Release `Ariel.SyncCheck
+hash-trace`, then five content builds in one test process):
+
+| Content build | Amendments | Whole build |
+| :-- | --: | --: |
+| First in a process (cold JIT), five processes | 9.2–10.6 ms | 463–495 ms |
+| Second to fifth in one process (warm) | 0.9–2.2 ms | 157–225 ms |
+| Without the Espionage mod (no amending rows; phase skipped) | 0 ms | 413–448 ms |
+
+The first version scanned every registry, with a sort, to find each row's target, and
+merged empty maps through reflection. Finding the candidate registries once per target
+type and skipping empty maps cut the cold phase from 10.2–11.0 ms to 9.2–10.6 ms; what
+remains is first-call reflection and JIT. The content hash is unchanged.

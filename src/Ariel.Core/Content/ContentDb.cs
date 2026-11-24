@@ -264,11 +264,15 @@ public sealed class ContentDb
         if (rows.Length == 0) return;
         using var trace = Modding.StartupTrace.Phase("content amendments");
         var errors = new SortedSet<string>(StringComparer.Ordinal);
+        // The registries that may hold a target of each type, found once per type rather than once per row.
+        var holders = new Dictionary<Type, Entry[]>();
         foreach (var row in rows)
         {
             var targetType = row.TargetType();
-            var holder = _registries.Where(e => targetType.IsAssignableFrom(e.Key)).OrderBy(e => e.Key.FullName, StringComparer.Ordinal)
-                .Select(e => (Entry: e.Value, Target: e.Value.Find(row.Target))).FirstOrDefault(found => found.Target is not null);
+            if (!holders.TryGetValue(targetType, out var candidates))
+                holders[targetType] = candidates = _registries.Where(e => targetType.IsAssignableFrom(e.Key))
+                    .OrderBy(e => e.Key.FullName, StringComparer.Ordinal).Select(e => e.Value).ToArray();
+            var holder = candidates.Select(entry => (Entry: entry, Target: entry.Find(row.Target))).FirstOrDefault(found => found.Target is not null);
             if (holder.Target is not { } target) { errors.Add($"{row.Id}.Target: '{row.Target}' does not resolve to {targetType.FullName}"); continue; }
             if (ContentAmendments.Fields(target.GetType()).Length > 0) { errors.Add($"{row.Id}.Target: '{row.Target}' amends another definition and cannot be amended"); continue; }
             holder.Entry.Replace(ContentAmendments.Amend(target, row, Commerce.Zero, errors));

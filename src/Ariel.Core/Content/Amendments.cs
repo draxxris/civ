@@ -36,21 +36,25 @@ internal static class ContentAmendments
         var copy = target.ShallowCopy();
         foreach (var field in Fields(row.GetType()))
         {
-            string path = $"{row.Id}.{field.Name}";
             var into = TargetField(copy.GetType(), field);
             if (into is null || into.PropertyType != field.PropertyType || into.SetMethod is null)
             {
-                errors.Add($"{path}: {copy.GetType().Name} '{target.Id}' has no field {field.Name} of type {field.PropertyType.Name} to amend");
+                errors.Add($"{row.Id}.{field.Name}: {copy.GetType().Name} '{target.Id}' has no field {field.Name} of type {field.PropertyType.Name} to amend");
                 continue;
             }
             var addition = field.GetValue(row);
-            if (addition is null) continue;
+            if (addition is null || IsEmpty(addition)) continue;
             var current = into.GetValue(copy);
-            try { into.SetValue(copy, current is null ? addition : Combine(field.PropertyType, current, addition, zero, path)); }
+            try { into.SetValue(copy, current is null ? addition : Combine(field.PropertyType, current, addition, zero, $"{row.Id}.{field.Name}")); }
             catch (InvalidDataException e) { errors.Add(e.Message); }
         }
         return copy;
     }
+
+    /// <summary>Whether a field adds nothing: an empty dictionary, the common case for rows that fill one or two of
+    /// their fields. Arrays go to <see cref="Append{T}"/>, which also handles a default array, and a vector always
+    /// amends, so the target's vector carries every loaded type even when the row's amounts are all zero.</summary>
+    private static bool IsEmpty(object addition) => addition is System.Collections.IDictionary { Count: 0 };
 
     private static object Combine(Type type, object current, object addition, CommerceVector zero, string path)
     {
