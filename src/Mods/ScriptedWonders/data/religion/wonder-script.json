@@ -1,0 +1,10 @@
+[
+  {
+    "id": "scripted_wonders:crusade",
+    "name": "Crusade unit grants",
+    "building": "religion:crusade",
+    "unit": "military:crusader",
+    "intervalTurns": 6,
+    "completionUnits": 1
+  }
+]

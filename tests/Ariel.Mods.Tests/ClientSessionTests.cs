@@ -392,7 +392,7 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var sim = GameFactory.Scenario(mods.Content); GameFactory.NeutralPolitics(sim);
         var city = AddCity(sim, owner: action == "trade" ? 1 : 0); var session = new GameSession(sim);
-        string type = action switch { "lead" => "military:great_general", "construct" => "military:scientist", "trade" => "military:merchant", _ => "military:inquisitor" };
+        string type = action switch { "lead" => "military:great_general", "construct" => "military:scientist", "trade" => "military:merchant", _ => "religion:inquisitor" };
         var person = Add(sim, type);
         switch (action)
         {
@@ -652,10 +652,10 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
 
         // A world wonder and a national wonder land in the wonder tab; a building whose limits declare NoLimit keeps its
         // own copies (the corporation buildings) and stays an ordinary building.
-        Assert.Contains(wonders, c => c.Id == "cities:abu_simbel");
+        Assert.Contains(wonders, c => c.Id == "religion:abu_simbel");
         Assert.Contains(wonders, c => c.Id == "cities:amusement_park");
         Assert.Contains(buildings, c => c.Id == "cities:aluminum_factory");
-        Assert.DoesNotContain(buildings, c => c.Id == "cities:abu_simbel");
+        Assert.DoesNotContain(buildings, c => c.Id == "religion:abu_simbel");
         Assert.DoesNotContain(wonders, c => c.Id == "cities:aluminum_factory");
 
         // The other kinds keep one tab each, so the wonder split never empties them.

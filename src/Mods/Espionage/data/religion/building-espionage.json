@@ -1,0 +1,31 @@
+[
+  {
+    "id": "espionage:hindu_brihadeeswarar",
+    "name": "",
+    "requirements": null,
+    "target": "religion:hindu_brihadeeswarar",
+    "globalBuildingExtraCommerces": {
+      "religion:hindu_cathedral": {
+        "espionage": 1
+      },
+      "religion:hindu_monastery": {
+        "espionage": 1
+      },
+      "religion:hindu_shrine": {
+        "espionage": 1
+      },
+      "religion:hindu_temple": {
+        "espionage": 1
+      }
+    }
+  },
+  {
+    "id": "espionage:mesoamerican_monastery",
+    "name": "",
+    "requirements": null,
+    "target": "religion:mesoamerican_monastery",
+    "commerceChanges": {
+      "espionage": 1
+    }
+  }
+]

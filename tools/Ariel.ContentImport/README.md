@@ -214,6 +214,27 @@ references. The source's 25 espionage and spy constants (`ESPIONAGE_*`, `SPY_*`,
 `NO_ESPIONAGE_*` and the like, which no rule reads) are left out of the base game's raw
 constants and kept nowhere.
 
+Religion owns every building, unit and promotion of a faith: a building with a
+`ReligionType`, a religion or holy-city prerequisite, or `bStateReligion` or
+`bPrereqReligion` (the temples, monasteries, cathedrals, shrines and religious wonders, the
+Scriptorium and the Gutenberg Bible among them), every unit with a positive religion
+spread, a religion prerequisite or `bInquisitor` (the missionaries and the inquisitor), and
+every promotion with a religion or state-religion prerequisite (`religion:asatru_temple`,
+`religion:inquisitor`, `religion:martial_arts`, ...). The crusader's promotion then takes
+`religion:crusader`, so the crusader unit, whose id no longer collides, is
+`military:crusader`. As for corporations, the owner emits every row about its records,
+Great People's included (`Religion/data/building-great-people.json`); the Espionage and
+Votes rows about them stay in those mods, under `data/religion/`. What a base row said
+about a religious record is Religion's amending row (docs/DESIGN.md "Content amendments"):
+the great prophet's shrines and the faiths' promotions of the crusader and the Shaolin monk
+(`UnitGrantsReligionDef`), the Shaolin Temple's promotion (`BuildingGrantsReligionDef`,
+filling in the base row's empty `FreePromotion`) and the barbarians' and Lombards'
+overrides (`CivilizationReligionDef`). The base temple replacements (the fire pit and the
+sacrificial altar) are named in the temples' `ReplacedBy`. Two things are left out and
+reported in `data-issues`: a requirement alternative a base row may not name (the
+Apadana Palace and the Alhambra as the throne room's palace), and the link of a base row's
+text to a religious record, which keeps only its words.
+
 The source's commerce arrays have four slots (gold, research, culture, espionage). A row
 carries only the commerce types its mod may name: the base game's three, plus the
 espionage slot in a row Espionage owns. The espionage slot of a base row is a separate
@@ -238,12 +259,11 @@ the base row's field name, so an import splits one source vector into two rows:
 - A base vector field with non-zero espionage and no amending field is not dropped
   silently: the run lists it in `data-issues`.
 
-Limits that a re-import has not been checked against (no source extraction was available
-when this was written; the synthetic tests in `EspionageSplitTests` cover the rules): a base
-row that names a moved record through a single reference (rather than a map entry) fails the
-reference check, text links from base rows to moved records come out as `{link:espionage:...}`,
-and the hand-written `process.json` carries only the espionage key where an import writes all
-four (the same value).
+The synthetic tests in `EspionageSplitTests` and `ReligionSplitTests` cover these rules. A
+base row's single reference to a moved record (rather than a map entry) is left out unless
+an amending row maps that field with `owned`, and a text link from a base row to a moved
+record keeps only its words. The hand-written `process.json` carries only the espionage key
+where an import writes all four (the same value).
 
 Specialists belong to foundation, as the plan specifies. Great-person units remain
 military records. Great-people and trade have no dedicated Info classes in this profile.

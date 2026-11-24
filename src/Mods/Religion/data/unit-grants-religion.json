@@ -1,0 +1,44 @@
+[
+  {
+    "constructibleBuildings": {},
+    "freePromotions": {
+      "religion:crusader": true
+    },
+    "id": "religion:crusader",
+    "name": "",
+    "requirements": null,
+    "target": "military:crusader"
+  },
+  {
+    "constructibleBuildings": {
+      "religion:asatru_shrine": true,
+      "religion:buddhist_shrine": true,
+      "religion:christian_shrine": true,
+      "religion:confucian_shrine": true,
+      "religion:egypt_myth_shrine": true,
+      "religion:hindu_shrine": true,
+      "religion:islamic_shrine": true,
+      "religion:jewish_shrine": true,
+      "religion:mesoamerican_shrine": true,
+      "religion:shinto_shrine": true,
+      "religion:statue_of_zeus": true,
+      "religion:taoist_shrine": true,
+      "religion:zoroastrian_shrine": true
+    },
+    "freePromotions": {},
+    "id": "religion:prophet",
+    "name": "",
+    "requirements": null,
+    "target": "military:prophet"
+  },
+  {
+    "constructibleBuildings": {},
+    "freePromotions": {
+      "religion:martial_arts": true
+    },
+    "id": "religion:shaolin",
+    "name": "",
+    "requirements": null,
+    "target": "military:shaolin"
+  }
+]

@@ -1,15 +1,6 @@
 [
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:abu_simbel",
-    "name": "",
-    "requirements": null,
-    "target": "cities:abu_simbel",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:scientist",
     "id": "great_people:academy",
     "name": "",
@@ -24,15 +15,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:adam_smith",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:alhambra",
-    "name": "",
-    "requirements": null,
-    "target": "cities:alhambra",
     "tradeMissionModifier": 0
   },
   {
@@ -64,24 +46,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:artist",
-    "id": "great_people:apadana_palace",
-    "name": "",
-    "requirements": null,
-    "target": "cities:apadana_palace",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:apostolic_palace",
-    "name": "",
-    "requirements": null,
-    "target": "cities:apostolic_palace",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:great_spy",
     "id": "great_people:art_of_war",
     "name": "",
@@ -96,15 +60,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:artemis",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:asatru_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:asatru_shrine",
     "tradeMissionModifier": 0
   },
   {
@@ -163,15 +118,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:buddhist_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:buddhist_shrine",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:artist",
     "id": "great_people:burningman",
     "name": "",
@@ -226,15 +172,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:christian_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:christian_shrine",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:artist",
     "id": "great_people:circus_maximus",
     "name": "",
@@ -271,15 +208,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:confucian_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:confucian_shrine",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:scientist",
     "id": "great_people:copernicus_observatory",
     "name": "",
@@ -303,15 +231,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:cristo_redentor",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:crusade",
-    "name": "",
-    "requirements": null,
-    "target": "cities:crusade",
     "tradeMissionModifier": 0
   },
   {
@@ -352,24 +271,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:djenne",
-    "name": "",
-    "requirements": null,
-    "target": "cities:djenne",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:scientist",
-    "id": "great_people:dosan_seowon",
-    "name": "",
-    "requirements": null,
-    "target": "cities:dosan_seowon",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:merchant",
     "id": "great_people:east_india_company",
     "name": "",
@@ -393,15 +294,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:edison",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:egypt_myth_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:egypt_myth_shrine",
     "tradeMissionModifier": 0
   },
   {
@@ -568,15 +460,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:gutenberg",
-    "name": "",
-    "requirements": null,
-    "target": "cities:gutenberg",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:engineer",
     "id": "great_people:hagia_sophia",
     "name": "",
@@ -636,24 +519,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:himeji_castle",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:hindu_brihadeeswarar",
-    "name": "",
-    "requirements": null,
-    "target": "cities:hindu_brihadeeswarar",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:hindu_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:hindu_shrine",
     "tradeMissionModifier": 0
   },
   {
@@ -721,56 +586,11 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:islamic_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:islamic_shrine",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:artist",
-    "id": "great_people:itsukushima",
-    "name": "",
-    "requirements": null,
-    "target": "cities:itsukushima",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:jewish_masada",
-    "name": "",
-    "requirements": null,
-    "target": "cities:jewish_masada",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:jewish_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:jewish_shrine",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:artist",
     "id": "great_people:jsbach_cathedral",
     "name": "",
     "requirements": null,
     "target": "cities:jsbach_cathedral",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:kotoku",
-    "name": "",
-    "requirements": null,
-    "target": "cities:kotoku",
     "tradeMissionModifier": 0
   },
   {
@@ -879,24 +699,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:mausoleum_of_maussollos",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:mesoamerican_magician_pyramid",
-    "name": "",
-    "requirements": null,
-    "target": "cities:mesoamerican_magician_pyramid",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:mesoamerican_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:mesoamerican_shrine",
     "tradeMissionModifier": 0
   },
   {
@@ -1072,15 +874,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:artist",
-    "id": "great_people:parthenon",
-    "name": "",
-    "requirements": null,
-    "target": "cities:parthenon",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:great_spy",
     "id": "great_people:pentagon",
     "name": "",
@@ -1140,15 +933,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:porcelain_tower",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:potala_palace",
-    "name": "",
-    "requirements": null,
-    "target": "cities:potala_palace",
     "tradeMissionModifier": 0
   },
   {
@@ -1225,15 +1009,6 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:artist",
-    "id": "great_people:sagas",
-    "name": "",
-    "requirements": null,
-    "target": "cities:sagas",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:merchant",
     "id": "great_people:san_marco",
     "name": "",
@@ -1302,15 +1077,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:shaolin",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:shinto_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:shinto_shrine",
     "tradeMissionModifier": 0
   },
   {
@@ -1397,15 +1163,6 @@
   {
     "goldenAgeModifier": 0,
     "greatPersonUnit": "military:prophet",
-    "id": "great_people:statue_of_zeus",
-    "name": "",
-    "requirements": null,
-    "target": "cities:statue_of_zeus",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
     "id": "great_people:stonehenge",
     "name": "",
     "requirements": null,
@@ -1450,56 +1207,11 @@
   },
   {
     "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:taoist_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:taoist_shrine",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:taoist_temple_of_heaven",
-    "name": "",
-    "requirements": null,
-    "target": "cities:taoist_temple_of_heaven",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
     "greatPersonUnit": "military:scientist",
     "id": "great_people:technological_capital",
     "name": "",
     "requirements": null,
     "target": "cities:technological_capital",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:temple_of_isis",
-    "name": "",
-    "requirements": null,
-    "target": "cities:temple_of_isis",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:temple_of_osiris",
-    "name": "",
-    "requirements": null,
-    "target": "cities:temple_of_osiris",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:temple_of_set",
-    "name": "",
-    "requirements": null,
-    "target": "cities:temple_of_set",
     "tradeMissionModifier": 0
   },
   {
@@ -1662,15 +1374,6 @@
     "name": "",
     "requirements": null,
     "target": "cities:world_trade_center",
-    "tradeMissionModifier": 0
-  },
-  {
-    "goldenAgeModifier": 0,
-    "greatPersonUnit": "military:prophet",
-    "id": "great_people:zoroastrian_shrine",
-    "name": "",
-    "requirements": null,
-    "target": "cities:zoroastrian_shrine",
     "tradeMissionModifier": 0
   }
 ]

@@ -55,7 +55,7 @@ public sealed class VictoryRulesTests
     {
         var sim = Scenario();
         sim.State.Cities[0].Population = 3;
-        sim.State.Cities[0].Buildings.Add("cities:abu_simbel");
+        sim.State.Cities[0].Buildings.Add("cities:pyramid");
         Learn(sim, 0, "research:fission", "research:laser");
         var score = sim.Rules().Scores.Breakdown(sim, 0);
         Assert.Equal(3, score.Population);

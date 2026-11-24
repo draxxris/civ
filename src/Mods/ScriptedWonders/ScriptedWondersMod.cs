@@ -7,11 +7,15 @@ namespace Ariel.Mods.ScriptedWonders;
 public sealed class ScriptedWondersMod : IPreparableMod
 {
     private static readonly ModJsonFile<WonderScriptDef[]> Scripts = new("data/wonder-script.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Scripts];
+    /// <summary>The scripts of religious wonders (the Crusade), registered only with Religion, whose buildings they are.</summary>
+    private static readonly ModJsonFile<WonderScriptDef[]> ReligiousScripts = new("data/religion/wonder-script.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Scripts, ReligiousScripts];
 
     public void Register(IModContext context)
     {
-        foreach (var rule in Scripts.Read(context.Data))
+        var rules = Scripts.Read(context.Data).AsEnumerable();
+        if (context.IsLoaded("religion")) rules = rules.Concat(ReligiousScripts.Read(context.Data));
+        foreach (var rule in rules)
         {
             if (rule.IntervalTurns < 0 || rule.CompletionUnits < 0 || rule.CompletionCulture < 0
                 || ((rule.IntervalTurns > 0 || rule.CompletionUnits > 0) && rule.Unit is null))

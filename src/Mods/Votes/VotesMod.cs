@@ -17,14 +17,18 @@ public sealed class VotesMod : IPreparableMod
     private static readonly ModJsonFile<VoteSourceDef[]> Sources = new("data/vote-source.json");
     private static readonly ModJsonFile<VoteDef[]> Votes = new("data/vote.json");
     private static readonly ModJsonFile<BuildingVotesDef[]> Buildings = new("data/building-votes.json");
+    /// <summary>The council a religious building seats (the Apostolic Palace), registered only with Religion, whose
+    /// building it is.</summary>
+    private static readonly ModJsonFile<BuildingVotesDef[]> ReligiousBuildings = new("data/religion/building-votes.json");
     private static readonly ModJsonFile<VictoryDef[]> Victories = new("data/victory.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Sources, Votes, Buildings, Victories];
+    public IReadOnlyList<ModJsonFile> PreparationFiles => [Sources, Votes, Buildings, ReligiousBuildings, Victories];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Sources);
         ContentRegistration.Load(context, Votes);
         ContentRegistration.Load(context, Buildings);
+        if (context.IsLoaded("religion")) ContentRegistration.Load(context, ReligiousBuildings);
         ContentRegistration.Load(context, Victories);
         var service = new CouncilService();
         context.RegisterService<IVotesService>("councils", service);

@@ -1,0 +1,1211 @@
+[
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": true,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 20,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {
+      "military:unitcombat_archer": 10,
+      "military:unitcombat_gun": 10,
+      "military:unitcombat_melee": 10
+    },
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,8,7",
+    "id": "religion:berserk",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Berserk",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:asatru",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 25,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": true,
+    "era": "foundation:era_medieval",
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,7,4",
+    "id": "religion:crusader",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Crusader",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 100,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:fundamentalism"
+          ]
+        },
+        {
+          "all": [
+            {
+              "id": "foundation:christianity",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 25,
+    "combatPercent": 0,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {
+      "world:forest": 25,
+      "world:jungle": 25
+    },
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,6,5",
+    "id": "religion:flower_war",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 1,
+    "movesChange": 0,
+    "name": "Flower War",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:mesoamericanism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": -25,
+    "cityDefense": 50,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {
+      "military:unitcombat_archer": 25,
+      "military:unitcombat_gun": 25
+    },
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {
+      "world:forest": -25,
+      "world:jungle": -25
+    },
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,7,6",
+    "id": "religion:gentlemen",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Gentlemen",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:confucianism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 25,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 10,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,6,7",
+    "id": "religion:holy_trinity",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Holy Trinity",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:hinduism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": true,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 2,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,8,4",
+    "id": "religion:kanai",
+    "immuneToFirstStrikes": true,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Kanai",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:judaism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {
+      "military:unitcombat_animal": 25,
+      "military:unitcombat_archer": 5,
+      "military:unitcombat_melee": 15
+    },
+    "combatTypes": {
+      "military:unitcombat_melee": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,8,6",
+    "id": "religion:martial_arts",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Martial Arts",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:taoism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 15,
+    "combatTypeModifiers": {
+      "military:unitcombat_melee": 15,
+      "military:unitcombat_mounted": 15
+    },
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,5,5",
+    "id": "religion:mujahid",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Mujahid",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:islam",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound",
+      "iRevoltProtection"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 15,
+    "cityDefense": 15,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,6,6",
+    "id": "religion:order_of_ormazd",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Order of Ormazd",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:zoroastrianism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 5,
+    "combatTypeModifiers": {
+      "military:unitcombat_archer": 10,
+      "military:unitcombat_gun": 10,
+      "military:unitcombat_melee": 20,
+      "military:unitcombat_recon": 20
+    },
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_gun": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": "foundation:era_future",
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,7,7",
+    "id": "religion:pankration",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Pankration",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:special_promotion"
+          ]
+        },
+        {
+          "all": [
+            {
+              "id": "foundation:hellenism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 20,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 1,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,7,5",
+    "id": "religion:pharaoh",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Pharaoh\u0027s Propaganda",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:egypt_mythology",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound",
+      "iRevoltProtection"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": true,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 10,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 1,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,5,8",
+    "id": "religion:purity",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Purity",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:shinto",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": false,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 20,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true,
+      "military:unitcombat_siege": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,5,7",
+    "id": "religion:waidan",
+    "immuneToFirstStrikes": false,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Waidan",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "id": "foundation:taoism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 25,
+    "visibilityChange": 0,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  },
+  {
+    "adjacentTileHealChange": 0,
+    "airRangeChange": 0,
+    "alwaysHeal": true,
+    "amphibious": false,
+    "blitz": false,
+    "bombardRateChange": 0,
+    "canMovePeaks": false,
+    "cargoChange": 0,
+    "chanceFirstStrikesChange": 0,
+    "cityAttack": 0,
+    "cityDefense": 0,
+    "collateralDamageChange": 0,
+    "collateralDamageProtection": 0,
+    "combatPercent": 0,
+    "combatTypeModifiers": {},
+    "combatTypes": {
+      "military:unitcombat_archer": true,
+      "military:unitcombat_melee": true,
+      "military:unitcombat_mounted": true,
+      "military:unitcombat_recon": true
+    },
+    "domainMods": {},
+    "enemyHealChange": 0,
+    "enemyRoute": false,
+    "era": null,
+    "evasionChange": 0,
+    "experiencePercent": 0,
+    "featureAttacks": {},
+    "featureDefenses": {},
+    "featureDoubleMoves": {},
+    "firstStrikesChange": 0,
+    "friendlyHealChange": 0,
+    "help": "",
+    "hillsAttack": 0,
+    "hillsDefense": 0,
+    "hillsDoubleMove": false,
+    "icon": ",Art/Interface/Buttons/Units/empty.dds,Art/Interface/Buttons/atlases/rom_promotions_atlas.dds,8,5",
+    "id": "religion:zen",
+    "immuneToFirstStrikes": true,
+    "interceptChange": 0,
+    "kamikazePercent": 0,
+    "leader": false,
+    "moveDiscountChange": 0,
+    "movesChange": 0,
+    "name": "Zen",
+    "neutralHealChange": 0,
+    "obsoleteTech": null,
+    "pedia": "",
+    "pillageChange": 0,
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "foundation:buddhism",
+              "kind": "religion",
+              "param": 1
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "id": "military:leader",
+              "kind": "promotion"
+            }
+          ]
+        }
+      ]
+    },
+    "riverAttack": false,
+    "sameTileHealChange": 0,
+    "strategy": "",
+    "terrainAttacks": {},
+    "terrainDefenses": {},
+    "terrainDoubleMoves": {},
+    "unsupported": [
+      "Sound"
+    ],
+    "upgradeDiscount": 0,
+    "visibilityChange": 1,
+    "withdrawalChange": 0,
+    "zoneOfControl": false
+  }
+]

@@ -31,11 +31,12 @@ public sealed class EspionageMod : IPreparableMod
     /// <summary>The espionage optional mods' rows give, registered only when that mod is loaded.</summary>
     private static readonly ModJsonFile<BuildingEspionageDef[]> CorporationBuildings = new("data/corporations/building-espionage.json");
     private static readonly ModJsonFile<BuildingReligionEspionageDef[]> ReligionBuildings = new("data/religion/building-religion-espionage.json");
+    private static readonly ModJsonFile<BuildingEspionageDef[]> ReligiousBuildings = new("data/religion/building-espionage.json");
     /// <summary>The great person the spy specialist's points produce, in the Great People mod's own row type.</summary>
     private static readonly ModJsonFile<Ariel.Mods.GreatPeople.SpecialistGreatPeopleDef[]> GreatPeople = new("data/great_people/specialist-great-people.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
         [Rules, Memories, Units, Commerce, Processes, OwnSpecialists, OwnUnits, Options, Buildings, Civics, Traits, Specialists,
-         Civilizations, Leaders, CorporationBuildings, ReligionBuildings, GreatPeople];
+         Civilizations, Leaders, CorporationBuildings, ReligionBuildings, ReligiousBuildings, GreatPeople];
 
     public void Register(IModContext context)
     {
@@ -56,7 +57,11 @@ public sealed class EspionageMod : IPreparableMod
         ContentRegistration.Load(context, Traits);
         ContentRegistration.Load(context, Specialists);
         if (context.IsLoaded("corporations")) ContentRegistration.Load(context, CorporationBuildings);
-        if (context.IsLoaded("religion")) ContentRegistration.Load(context, ReligionBuildings);
+        if (context.IsLoaded("religion"))
+        {
+            ContentRegistration.Load(context, ReligionBuildings);
+            ContentRegistration.Load(context, ReligiousBuildings);
+        }
         if (context.IsLoaded("great_people")) ContentRegistration.Load(context, GreatPeople);
         var service = new EspionageService();
         context.RegisterService<IEspionageService>("espionage", service);

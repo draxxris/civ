@@ -29,9 +29,11 @@ public abstract class ContentAttachment<TTarget> : ContentAttachment where TTarg
 /// its units in a civilization's overrides, while the base rows name none of it and removing the mod removes all of it.
 /// <para>When content freezes, before it is hashed, each target is replaced by a copy carrying its fields plus every
 /// amending row's, rows applied in ordinal id order. Commerce vectors add. Maps add their entries; a key both name is
-/// an error unless its values combine (vectors, sequences, maps). Sequences append. A field of any other type, or one
-/// the target lacks, is a load error, and so is a target that itself amends. References in an amending field are
-/// validated as the target field's are (its <see cref="ContentReferenceAttribute"/>s), but against the amending row's
-/// mod, which must declare every provider it names; the merged target is not validated again under its own mod.</para></summary>
+/// an error unless its values combine (vectors, sequences, maps). Sequences append. A field of any other type fills
+/// in a target field that is empty (null), such as the promotion a base building grants when that promotion is a
+/// mod's. Amending a set value is a load error, as are a field the target lacks and a target that itself amends.
+/// References in an amending field are validated as the target field's are (its
+/// <see cref="ContentReferenceAttribute"/>s), but against the amending row's mod, which must declare every provider it
+/// names; the merged target is validated as its own mod registered it, never again with the additions.</para></summary>
 [AttributeUsage(AttributeTargets.Property, Inherited = true)]
 public sealed class AmendsTargetAttribute : Attribute;

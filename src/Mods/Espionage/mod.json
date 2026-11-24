@@ -1,7 +1,7 @@
 {
   "id": "espionage",
   "name": "Espionage",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "assembly": "Ariel.Mods.Espionage.dll",
   "api": "Ariel.Mods.Espionage.Api.dll",
   "dependencies": [],

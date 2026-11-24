@@ -575,11 +575,11 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         Decide(sim);
         Assert.Equal("religion:buddhism", Service<IReligionService>(sim).StateReligion(sim, 0));
         sim.AdvanceTurn(); // Finish conversion anarchy before religious unit orders.
-        var missionary = Add(sim, "military:buddhist_missionary", target.Position);
+        var missionary = Add(sim, "religion:buddhist_missionary", target.Position);
         Decide(sim);
         Assert.Null(sim.State.FindUnit(missionary.Id)); Assert.Contains("religion:buddhism", Service<IReligionService>(sim).Present(sim, target.Id));
         target.Extensions.Get<ReligionCityState>(sim.Content)!.Religions.Add("religion:hinduism");
-        var inquisitor = Add(sim, "military:inquisitor", target.Position);
+        var inquisitor = Add(sim, "religion:inquisitor", target.Position);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         Decide(sim); Decide(loaded);
         Assert.Null(sim.State.FindUnit(inquisitor.Id));

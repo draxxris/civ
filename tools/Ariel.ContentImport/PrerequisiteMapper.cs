@@ -19,7 +19,7 @@ internal sealed class PrerequisiteMapper(ContentMapper mapper)
             if (mapping.Mode == "promotionAny") { promotionAlternatives.AddRange(items); continue; }
             clauses.Add(mapping.Mode switch
             {
-                "any" => new Requirement.Any(items),
+                "any" => Alternatives(record, mapping, items),
                 "not" => new Requirement.All(items.Select(r => (Requirement)new Requirement.Not(r)).ToArray()),
                 _ => new Requirement.All(items)
             });
@@ -27,6 +27,15 @@ internal sealed class PrerequisiteMapper(ContentMapper mapper)
         if (promotionAlternatives.Count > 0) clauses.Add(new Requirement.Any(promotionAlternatives));
         AddConditions(record, clauses, mapped);
         return clauses.Count == 0 ? null : new Requirement.All(clauses);
+    }
+
+    /// <summary>An alternative that names a record a feature mod owns, which this row may not name (a base building that
+    /// accepts a religious wonder in place of a palace), is left out and reported; the other alternatives still apply.</summary>
+    private Requirement Alternatives(EffectiveRecord record, RequirementMapping mapping, Requirement[] items)
+    {
+        var kept = items.Where(i => i is not Requirement.Leaf leaf || mapper.MayName(leaf.Id)).ToArray();
+        foreach (var dropped in items.Except(kept).Cast<Requirement.Leaf>()) mapper.NoteUnnamedAlternative(record, mapping.Source, dropped.Id);
+        return new Requirement.Any(kept);
     }
 
     private IEnumerable<Requirement> Entries(EffectiveRecord record, DataNode node, RequirementMapping mapping)

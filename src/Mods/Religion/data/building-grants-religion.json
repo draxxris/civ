@@ -1,0 +1,9 @@
+[
+  {
+    "freePromotion": "religion:martial_arts",
+    "id": "religion:shaolin",
+    "name": "",
+    "requirements": null,
+    "target": "cities:shaolin"
+  }
+]

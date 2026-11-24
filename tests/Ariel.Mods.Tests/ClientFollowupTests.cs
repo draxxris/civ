@@ -126,14 +126,14 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         var holy = AddCity(s.Sim, 0);
         Found(s.Sim);
         var target = AddCity(s.Sim, 5);
-        var missionary = AddUnit(s.Sim, target, "military:buddhist_missionary");
+        var missionary = AddUnit(s.Sim, target, "religion:buddhist_missionary");
         s.SelectUnit(missionary.Id);
         Assert.Contains(s.DescribeUnit(s.Unit)!.Actions, a => a.Id == "religion:spread:" + Buddhism && a.Command != null);
         var prophet = AddUnit(s.Sim, holy, "military:prophet");
         s.SelectUnit(prophet.Id);
-        Assert.Contains(s.DescribeUnit(s.Unit)!.Actions, a => a.Id == "religion:shrine:cities:buddhist_shrine");
-        s.RunAction("religion:shrine:cities:buddhist_shrine");
-        Assert.Contains("cities:buddhist_shrine", holy.Buildings);
+        Assert.Contains(s.DescribeUnit(s.Unit)!.Actions, a => a.Id == "religion:shrine:religion:buddhist_shrine");
+        s.RunAction("religion:shrine:religion:buddhist_shrine");
+        Assert.Contains("religion:buddhist_shrine", holy.Buildings);
         s.SelectUnit(missionary.Id);
         s.RunAction("religion:spread:" + Buddhism);
         Assert.Contains(s.RecentNotifications(), n => n.Kind == "religion" && n.Text.Contains("Missionary"));
@@ -319,7 +319,7 @@ public sealed class ClientFollowupTests(LoadedMods mods) : IClassFixture<LoadedM
         Found(s.Sim);
         s.SetMessage(""); // Founding was driven directly on the simulation; the next command collects its events.
         s.SelectNextUnit();
-        var missionary = AddUnit(s.Sim, s.Sim.State.Cities[0], "military:buddhist_missionary");
+        var missionary = AddUnit(s.Sim, s.Sim.State.Cities[0], "religion:buddhist_missionary");
         s.Submit(new SetUnitActivityCommand { Player = 0, Unit = missionary.Id, Activity = UnitActivity.Sleep });
         Assert.Contains(s.Notifications, n => n.Kind == "tech");
         Assert.Contains(s.Notifications, n => n.Kind == "religion" && n.Text.Contains("was founded"));

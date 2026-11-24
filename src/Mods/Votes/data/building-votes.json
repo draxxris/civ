@@ -1,14 +1,6 @@
 [
   {
     "forceTeamVoteEligible": true,
-    "id": "votes:apostolic_palace",
-    "name": "",
-    "requirements": null,
-    "target": "cities:apostolic_palace",
-    "voteSource": "votes:diplovote_pope"
-  },
-  {
-    "forceTeamVoteEligible": true,
     "id": "votes:un_mission",
     "name": "",
     "requirements": null,

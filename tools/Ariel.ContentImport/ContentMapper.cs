@@ -138,6 +138,9 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             if (node is null) continue;
             // The mod's own record already carries its commerce type in its own row: an amendment would count it twice.
             if (field.Part is { } part && claimed.TryGetValue(recordId, out var owner) && commerceOwners.GetValueOrDefault(part) == owner) continue;
+            // Nor does an amending field that lists the mod's own records, for a record the mod owns: its row names them.
+            if (field.Owned && claimed.GetValueOrDefault(recordId) == emitter
+                && mapping.DefinitionType.GetProperty(field.Property)?.IsDefined(typeof(AmendsTargetAttribute), true) == true) continue;
             var value = MapValue(record, node, field);
             Mark(node, field.Source, mapped);
             // Several source fields can fill one property: effects add up, and maps of different keys join.
@@ -197,6 +200,14 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
 
     /// <summary>A base row cannot carry a commerce type another mod owns, so its amount there is for an amending row. When no
     /// field of the schema catalog carries it, the amount is lost: say so instead of dropping it silently.</summary>
+    /// <summary>Whether the row being mapped may name the record: not one a feature mod owns outright that the row's mod
+    /// may not name.</summary>
+    internal bool MayName(string id) => !claimed.TryGetValue(id, out var owner) || IdMapping.MayName(emitter, owner);
+    /// <summary>A requirement alternative the row may not name is left out; say which, since the rest still apply.</summary>
+    internal void NoteUnnamedAlternative(EffectiveRecord record, string field, string id) =>
+        Issues.Add(new(ids[(record.Class, record.Type)], field, id,
+            $"The alternative {id} is left out: {claimed[id]} owns it, and this row may not name it."));
+
     private void NoteDroppedCommerce(EffectiveRecord record, DataNode node, FieldMapping field)
     {
         if (!IsCommerceKind(field.Kind) || field.Part is not null) return;
@@ -204,6 +215,22 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             if (HasAmount(MapValue(record, node, field with { Part = key })))
                 Issues.Add(new(ids[(record.Class, record.Type)], field.Source, key,
                     $"The {key} amount is dropped: no amending row type carries this field for the mod that owns {key}."));
+    }
+
+    /// <summary>The (class, source field) pairs an amending row maps with <see cref="FieldMapping.Owned"/>: a single reference
+    /// the row being mapped may not name is that row's to carry.</summary>
+    private readonly HashSet<(string Class, string Source)> ownedReferences = SchemaCatalog.Definitions
+        .SelectMany(d => d.Fields.Where(f => f.Owned).Select(f => (d.SourceClass, f.Source))).ToHashSet();
+    /// <summary>A single reference, left out when it names a record a feature mod owns that the row may not name (the
+    /// Shaolin Temple's faith promotion). The owner's amending row maps the same field with owned and carries it; without
+    /// one the reference is lost, which the run reports.</summary>
+    private string? NamedReference(EffectiveRecord record, DataNode node, FieldMapping field)
+    {
+        if (Reference(field.Target!, node.Text, record, field.Source) is not { } id) return null;
+        if (Names(id, field.Owned)) return id;
+        if (!field.Owned && !ownedReferences.Contains((record.Class, field.Source)))
+            Issues.Add(new(ids[(record.Class, record.Type)], field.Source, id, $"The reference to {id} is dropped: {claimed[id]} owns it, and no amending row carries this field."));
+        return null;
     }
 
     private object? MapValue(EffectiveRecord record, DataNode node, FieldMapping field)
@@ -324,7 +351,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         };
     }
 
-    /// <summary>AND stores at most one presence religion per building, and the state-religion rule reads the first
+    /// <summary>The source stores at most one presence religion per building, and the state-religion rule reads the first
     /// such leaf. Two different ones cannot be represented, so record the conversion error instead of shipping a
     /// requirement whose second half never runs.</summary>
     private void NoteAmbiguousReligion(EffectiveRecord record, Requirement? requirements)
@@ -334,7 +361,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             .Where(l => l.Kind == "religion" && l.Param is null or 0).Select(l => l.Id).Distinct(StringComparer.Ordinal).ToArray();
         if (religions.Length <= 1) return;
         Issues.Add(new(ids[(record.Class, record.Type)], "PrereqReligion", string.Join(", ", religions),
-            "More than one presence religion. AND has a single PrereqReligion field and the game keeps the first, so split this requirement before shipping."));
+            "More than one presence religion. The source has a single PrereqReligion field and the game keeps the first, so split this requirement before shipping."));
     }
 
     private string? CivicDefault(EffectiveRecord option)
@@ -349,7 +376,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     {
         "int" => Integer(node.Text, DefaultInt(field)), "bool" => GetterBoolean(node.Text, DefaultBool(field)),
         "text" => Text(node.Text ?? ""), "enum" => NativeKey(node.Text ?? ""),
-        "ref" => Reference(field.Target!, node.Text, record, field.Source),
+        "ref" => NamedReference(record, node, field),
         "leafRef" => Reference(field.Target!, node.Text, record, field.Source) is { } named
             ? new LeafReference(field.LeafKind ?? throw new InvalidDataException(field.Source + ": a leafRef needs a leafKind"), named) : null,
         "csvRefs" => (node.Text ?? "").Split(',').Where(Present).Select(v => Reference(field.Target!, v, record, field.Source)).Where(v => v is not null).ToArray(),
@@ -576,7 +603,10 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         return Branding.Output(Regex.Replace(value, @"\{link:([^}]+)\}(.*?)\{/link\}", match =>
         {
             var body = match.Groups[2].Value;
-            if (symbols.TryGetValue(match.Groups[1].Value, out var entry) && SchemaCatalog.Definitions.Any(d => d.SourceClass == entry.Class))
+            // A link is a reference: text of a row that may not name the record a feature mod owns keeps only the words.
+            if (symbols.TryGetValue(match.Groups[1].Value, out var entry) && claimed.TryGetValue(entry.Id, out var owner)
+                && !IdMapping.MayName(emitter, owner)) return body;
+            if (entry is not null && SchemaCatalog.Definitions.Any(d => d.SourceClass == entry.Class))
                 return "{link:" + entry.Id + "}" + body + "{/link}";
             return "{topic:" + Branding.Identifier(match.Groups[1].Value) + "}" + body + "{/topic}";
         }, RegexOptions.CultureInvariant | RegexOptions.Singleline));

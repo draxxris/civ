@@ -147,26 +147,6 @@
     }
   },
   {
-    "id": "espionage:hindu_brihadeeswarar",
-    "name": "",
-    "requirements": null,
-    "target": "cities:hindu_brihadeeswarar",
-    "globalBuildingExtraCommerces": {
-      "cities:hindu_cathedral": {
-        "espionage": 1
-      },
-      "cities:hindu_monastery": {
-        "espionage": 1
-      },
-      "cities:hindu_shrine": {
-        "espionage": 1
-      },
-      "cities:hindu_temple": {
-        "espionage": 1
-      }
-    }
-  },
-  {
     "id": "espionage:holy_roman_rathaus",
     "name": "",
     "requirements": null,
@@ -266,15 +246,6 @@
     "target": "cities:meetingofminds",
     "freeSpecialistCounts": {
       "espionage:specialist_spy": 1
-    }
-  },
-  {
-    "id": "espionage:mesoamerican_monastery",
-    "name": "",
-    "requirements": null,
-    "target": "cities:mesoamerican_monastery",
-    "commerceChanges": {
-      "espionage": 1
     }
   },
   {

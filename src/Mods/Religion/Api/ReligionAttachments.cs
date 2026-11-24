@@ -27,6 +27,13 @@ public sealed class BuildingReligionDef : ContentAttachment<BuildingDef>
     public string? GlobalReligionCommerce { get; init; }
 }
 
+/// <summary>What a base building grants that is religion's, filled into its row: the faith's promotion its city's new
+/// units start with (the Shaolin Temple's martial arts) in its empty <see cref="BuildingDef.FreePromotion"/>.</summary>
+public sealed class BuildingGrantsReligionDef : ContentAttachment<BuildingDef>
+{
+    [AmendsTarget] public string? FreePromotion { get; init; }
+}
+
 /// <summary>What a unit means to religion: the chance, per faith, that its spread mission succeeds.</summary>
 public sealed class UnitReligionDef : ContentAttachment<UnitDef>
 {
@@ -34,6 +41,22 @@ public sealed class UnitReligionDef : ContentAttachment<UnitDef>
     public static readonly UnitReligionDef None = new();
     [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> ReligionSpreads { get; init; } = ImmutableDictionary<string, int>.Empty;
+}
+
+/// <summary>What a base unit gets that is religion's, added to its row: the shrines it builds (the great prophet) and
+/// the faith's promotions it starts with (the crusader's, the Shaolin monk's).</summary>
+public sealed class UnitGrantsReligionDef : ContentAttachment<UnitDef>
+{
+    [AmendsTarget] public ImmutableDictionary<string, bool> ConstructibleBuildings { get; init; } = ImmutableDictionary<string, bool>.Empty;
+    [AmendsTarget] public ImmutableDictionary<string, bool> FreePromotions { get; init; } = ImmutableDictionary<string, bool>.Empty;
+}
+
+/// <summary>What a civilization means to religion: the religious buildings and units it builds in place of the usual
+/// ones, or not at all (the barbarians build none), added to its overrides.</summary>
+public sealed class CivilizationReligionDef : ContentAttachment<CivilizationDef>
+{
+    [AmendsTarget] public ImmutableDictionary<string, string?> BuildingOverrides { get; init; } = ImmutableDictionary<string, string?>.Empty;
+    [AmendsTarget] public ImmutableDictionary<string, string?> UnitOverrides { get; init; } = ImmutableDictionary<string, string?>.Empty;
 }
 
 /// <summary>The religion rule constants, attached to the base game's <see cref="RuleConstantsDef"/>.</summary>

@@ -73,7 +73,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         sim.State.Map = original.State.Map; sim.State.Plots = original.State.Plots;
         sim.State.Units.Clear(); sim.State.RebuildIndexes();
         var city = P7ModFixture.City(sim);
-        Complete(sim, city, "cities:crusade");
+        Complete(sim, city, "religion:crusade");
         Assert.Single(sim.State.Units);
         Tick(sim); Tick(sim); // Completion turn and duplicate processing cannot advance the timer.
         Assert.Equal(0, Service(sim).DescribeCity(sim, city.Id).Single().ElapsedTurns);
@@ -83,7 +83,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         Assert.Equal(2, sim.State.Units.Count);
         Assert.All(sim.State.Units, u =>
         {
-            Assert.Equal("military:unit_unit_crusader", u.Type);
+            Assert.Equal("military:crusader", u.Type);
             Assert.Equal(city.Position, u.Position); Assert.Equal(city.Owner, u.Owner);
             Assert.True(u.MovesLeft > 0);
         });
@@ -91,7 +91,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         sim.TeamOf(0).Techs.Add("research:liberalism");
         for (int i = 0; i < interval * 2; i++) { sim.State.Turn++; Tick(sim); }
         Assert.Equal(2, sim.State.Units.Count);
-        Assert.False(Service(sim).IsActive(sim, city.Id, "cities:crusade"));
+        Assert.False(Service(sim).IsActive(sim, city.Id, "religion:crusade"));
     }
 
     [Fact]
@@ -286,7 +286,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
         var city = P7ModFixture.City(sim);
         int units = sim.State.Units.Count;
         sim.TeamOf(0).Techs.Add("research:liberalism"); // Obsoletes King Richard's Crusade, so the wonder is inactive.
-        Complete(sim, city, "cities:crusade");
+        Complete(sim, city, "religion:crusade");
         Tick(sim);
         Assert.Equal(units, sim.State.Units.Count);
         sim.TeamOf(0).Techs.Remove("research:liberalism");
@@ -302,7 +302,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
     {
         var sim = P7ModFixture.Scenario(mods.Combined);
         var city = P7ModFixture.City(sim);
-        Complete(sim, city, "cities:crusade");
+        Complete(sim, city, "religion:crusade");
         for (int i = 0; i < 9; i++) sim.AdvanceTurn();
         var before = sim.ComputeHash();
         Assert.True(Service(sim).DescribeCity(sim, city.Id).Single().ElapsedTurns > 0);
@@ -314,7 +314,7 @@ public sealed class ScriptedWonderTests(P7ModFixture mods) : IClassFixture<P7Mod
             sim.AdvanceTurn(); peer.AdvanceTurn();
             Assert.Equal(sim.ComputeHash(), peer.ComputeHash());
         }
-        Assert.True(sim.State.Units.Count(u => u.Type == "military:unit_unit_crusader") >= 2);
+        Assert.True(sim.State.Units.Count(u => u.Type == "military:crusader") >= 2);
     }
 
     [Fact]

@@ -12,6 +12,20 @@ namespace Ariel.Mods.Religion;
 public sealed class ReligionMod : IPreparableMod
 {
     private static readonly ModJsonFile<ReligionDef[]> Religions = new("data/religion.json");
+    /// <summary>The temples, monasteries, cathedrals, shrines and religious wonders, the missionaries and the inquisitor,
+    /// and each faith's promotions: religion's own content, which no base row names.</summary>
+    private static readonly ModJsonFile<Ariel.Content.Schema.BuildingDef[]> OwnBuildings = new("data/building.json");
+    private static readonly ModJsonFile<UnitDef[]> OwnUnits = new("data/unit.json");
+    private static readonly ModJsonFile<PromotionDef[]> OwnPromotions = new("data/promotion.json");
+    /// <summary>The great person the points of each religious wonder and shrine count towards, in the Great People mod's
+    /// row type.</summary>
+    private static readonly ModJsonFile<Ariel.Mods.GreatPeople.BuildingGreatPeopleDef[]> GreatPeople = new("data/building-great-people.json");
+    /// <summary>What base buildings and units get that is religion's: the Shaolin Temple's promotion, the great prophet's
+    /// shrines, the crusader's and Shaolin monk's promotions.</summary>
+    private static readonly ModJsonFile<BuildingGrantsReligionDef[]> BuildingGrants = new("data/building-grants-religion.json");
+    private static readonly ModJsonFile<UnitGrantsReligionDef[]> UnitGrants = new("data/unit-grants-religion.json");
+    /// <summary>The religious buildings and units each civilization builds instead (the barbarians build none).</summary>
+    private static readonly ModJsonFile<CivilizationReligionDef[]> Civilizations = new("data/civilization-religion.json");
     /// <summary>One world wonder per religion; completing it founds the religion in that city.</summary>
     private static readonly ModJsonFile<Ariel.Content.Schema.BuildingDef[]> FoundingWonders = new("data/founding-wonders.json");
     /// <summary>What an inquisition, or a razed holy city, leaves in the memory of the faithful.</summary>
@@ -22,17 +36,25 @@ public sealed class ReligionMod : IPreparableMod
     private static readonly ModJsonFile<BuildingReligionDef[]> Buildings = new("data/building-religion.json");
     private static readonly ModJsonFile<UnitReligionDef[]> Units = new("data/unit-religion.json");
     private static readonly ModJsonFile<RuleConstantsReligionDef[]> Constants = new("data/rule-constants-religion.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Religions, FoundingWonders, Memories, Civics, Buildings, Units, Constants];
+    public IReadOnlyList<ModJsonFile> PreparationFiles =>
+        [Religions, OwnBuildings, OwnUnits, OwnPromotions, FoundingWonders, Memories, Civics, Buildings, Units, Constants, GreatPeople, BuildingGrants, UnitGrants, Civilizations];
 
     public void Register(IModContext context)
     {
         ContentRegistration.Load(context, Religions);
+        ContentRegistration.Load(context, OwnBuildings);
+        ContentRegistration.Load(context, OwnUnits);
+        ContentRegistration.Load(context, OwnPromotions);
         ContentRegistration.Load(context, FoundingWonders);
         MemoryKinds.Load(context, Memories);
         ContentRegistration.Load(context, Civics);
         ContentRegistration.Load(context, Buildings);
         ContentRegistration.Load(context, Units);
         ContentRegistration.Load(context, Constants);
+        ContentRegistration.Load(context, GreatPeople);
+        ContentRegistration.Load(context, BuildingGrants);
+        ContentRegistration.Load(context, UnitGrants);
+        ContentRegistration.Load(context, Civilizations);
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);
         context.RegisterService<ICityReligions>("city_religions", new CityReligions(service));

@@ -87,15 +87,15 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(90, db.Get<Schema.TechDef>("research:bronze_working").Cost);
         var religion = db.Get<ReligionDef>("religion:buddhism");
         Assert.Equal("research:meditation", religion.FoundingTech);
-        Assert.Equal("military:buddhist_missionary", religion.Missionary);
+        Assert.Equal("religion:buddhist_missionary", religion.Missionary);
         Assert.Equal(35, religion.SpreadFactor);
         Assert.Equal(TestCommerce.Vector(1, 0, 2, 0), religion.GlobalCityCommerce);
 
-        var wonder = db.Get<Schema.BuildingDef>("cities:abu_simbel");
+        var wonder = db.Get<Schema.BuildingDef>("religion:abu_simbel");
         Assert.Equal(150, wonder.Cost);
         Assert.Equal(1, wonder.Limits.World);
         Assert.Equal(-1, wonder.Limits.Team);
-        Assert.Equal("cities:abu_simbel", wonder.DefaultBuilding);
+        Assert.Equal("religion:abu_simbel", wonder.DefaultBuilding);
         Assert.Equal(100, wonder.BonusProductionModifiers["world:stone"]);
         Assert.Equal(6, wonder.ObsoleteSafeCommerceChanges.Culture);
         Assert.Equal(30, db.Get<Schema.BuildingDef>("cities:granary").FoodKept);

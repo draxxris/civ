@@ -5577,6 +5577,35 @@
     "requirements": []
   },
   {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingGrantsReligionDef",
+    "mod": "religion",
+    "fields": [
+      { "source": "FreePromotion", "property": "FreePromotion", "kind": "ref", "target": "PromotionInfo", "owned": true }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "UnitInfo",
+    "definition": "UnitGrantsReligionDef",
+    "mod": "religion",
+    "fields": [
+      { "source": "Buildings", "property": "ConstructibleBuildings", "kind": "mapBool", "target": "BuildingInfo", "key": "BuildingType", "value": "bBuilding", "owned": true },
+      { "source": "FreePromotions", "property": "FreePromotions", "kind": "mapBool", "target": "PromotionInfo", "key": "PromotionType", "value": "bFreePromotion", "owned": true }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivilizationInfo",
+    "definition": "CivilizationReligionDef",
+    "mod": "religion",
+    "fields": [
+      { "source": "Buildings", "property": "BuildingOverrides", "kind": "civilization", "owned": true },
+      { "source": "Units", "property": "UnitOverrides", "kind": "civilization", "owned": true }
+    ],
+    "requirements": []
+  },
+  {
     "sourceClass": "UnitInfo",
     "definition": "UnitCorporationsDef",
     "mod": "corporations",

@@ -1,13 +1,5 @@
 [
   {
-    "id": "scripted_wonders:crusade",
-    "name": "Crusade unit grants",
-    "building": "cities:crusade",
-    "unit": "military:unit_unit_crusader",
-    "intervalTurns": 6,
-    "completionUnits": 1
-  },
-  {
     "id": "scripted_wonders:terracotta",
     "name": "Terracotta Army muster",
     "building": "cities:terracotta",

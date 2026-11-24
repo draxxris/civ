@@ -61,7 +61,17 @@ public static class IdMapping
         new("SpecialistInfo", "espionage", (r, _) => r.Type == "SPECIALIST_SPY"),
         new("UnitInfo", "espionage", (r, _) => ContentMapper.Boolean(r.Node.Value("bSpy"))),
         new("GameOptionInfo", "espionage", (r, _) => r.Type.Contains("ESPIONAGE", StringComparison.Ordinal)),
+        // A building, unit or promotion of a faith, or one that needs a religion or a state religion, is Religion's own
+        // (religion:*): the temples, monasteries, shrines and religious wonders, the missionaries and the inquisitor, and
+        // each faith's promotion.
+        new("BuildingInfo", "religion", (r, _) => Religious(r, "ReligionType", "PrereqReligion", "StateReligion", "HolyCity", "bStateReligion", "bPrereqReligion")),
+        new("UnitInfo", "religion", (r, _) => Religious(r, "PrereqReligion", "StateReligion", "HolyCity", "bInquisitor")
+            || r.Node.Child("ReligionSpreads")?.Children.Any(n => n.Children.Length > 1 && ContentMapper.Integer(n.Children[1].Text) > 0) == true),
+        new("PromotionInfo", "religion", (r, _) => Religious(r, "PrereqReligion", "StateReligionPrereq")),
     ];
+    /// <summary>A record that names a religion, or sets a religion flag, in one of these fields.</summary>
+    private static bool Religious(EffectiveRecord record, params string[] fields) => fields.Any(field =>
+        field.StartsWith('b') ? ContentMapper.Boolean(record.Node.Value(field)) : ContentMapper.Present(record.Node.Value(field)));
 
     /// <summary>The mods a feature mod registers content for only when they are loaded (its <c>optionalReferences</c>, which
     /// a test keeps equal to the committed manifests). A row of that mod about a record such a provider owns, or in the
@@ -69,6 +79,7 @@ public static class IdMapping
     public static readonly IReadOnlyDictionary<string, IReadOnlySet<string>> OptionalProviders = new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
     {
         ["espionage"] = new HashSet<string>(["corporations", "great_people", "religion"], StringComparer.Ordinal),
+        ["votes"] = new HashSet<string>(["religion"], StringComparer.Ordinal),
     };
     /// <summary>Whether rows of <paramref name="mod"/> may name records of <paramref name="provider"/>: its own, or an
     /// optional provider's.</summary>

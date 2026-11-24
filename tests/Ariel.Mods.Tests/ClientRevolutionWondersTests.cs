@@ -105,13 +105,13 @@ public sealed class ClientRevolutionWondersTests(P7ModFixture mods) : IClassFixt
     {
         var session = Session(mods.Wonders, out var city);
         var sim = session.Sim;
-        city.Buildings.Add("cities:crusade");
-        sim.Events.Publish(new BuildingCompleted(city.Id, "cities:crusade"));
+        city.Buildings.Add("religion:crusade");
+        sim.Events.Publish(new BuildingCompleted(city.Id, "religion:crusade"));
         var panel = Panel(session, city, "scripted_wonders:city")!;
         var script = Assert.Single(ViewWalk.All(panel).OfType<Paragraph>());
-        Assert.Equal("cities:crusade", script.Id);
+        Assert.Equal("religion:crusade", script.Id);
         Assert.Matches(@": next .+ in \d+ turns$", script.Text);
-        sim.Events.Publish(new ScriptedWonderEffectApplied(city.Id, "cities:crusade", "culture", 5));
+        sim.Events.Publish(new ScriptedWonderEffectApplied(city.Id, "religion:crusade", "culture", 5));
         session.SetMessage("");
         session.Submit(new EndTurnCommand { Player = 0 });
         Assert.Contains(session.Notifications, n => n.Kind == "wonder");

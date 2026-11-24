@@ -125,7 +125,8 @@ public sealed class ContentDb
         foreach (var definition in _registries.Values.SelectMany(e => e.Items()).OrderBy(d => d.Id, StringComparer.Ordinal))
         {
             var owner = definition.Id.Split(':')[0];
-            foreach (var reference in ContentReferences.Enumerate(definition, kinds))
+            // An amended definition is checked as its own mod wrote it: what amending rows add is checked under theirs.
+            foreach (var reference in ContentReferences.Enumerate(_unamended.GetValueOrDefault(definition) ?? definition, kinds))
             {
                 if (!targets.TryGetValue(reference.DefinitionType, out var ids) || !ids.Contains(reference.Id))
                     errors.Add($"{reference.Path}: '{reference.Id}' does not resolve to {reference.DefinitionType.FullName}");
@@ -256,6 +257,8 @@ public sealed class ContentDb
     }
     /// <summary>Replace each definition an attachment amends (<see cref="AmendsTargetAttribute"/>) by a copy carrying the
     /// amending fields, rows applied in ordinal id order, before attachments are indexed and content is hashed.</summary>
+    /// <summary>Each amended definition's copy, with the definition its own mod registered.</summary>
+    private readonly Dictionary<ContentDef, ContentDef> _unamended = new(ReferenceEqualityComparer.Instance);
     private void ApplyAmendments()
     {
         var rows = _registries.Where(e => ContentAmendments.Fields(e.Key).Length > 0)
@@ -275,7 +278,9 @@ public sealed class ContentDb
             var holder = candidates.Select(entry => (Entry: entry, Target: entry.Find(row.Target))).FirstOrDefault(found => found.Target is not null);
             if (holder.Target is not { } target) { errors.Add($"{row.Id}.Target: '{row.Target}' does not resolve to {targetType.FullName}"); continue; }
             if (ContentAmendments.Fields(target.GetType()).Length > 0) { errors.Add($"{row.Id}.Target: '{row.Target}' amends another definition and cannot be amended"); continue; }
-            holder.Entry.Replace(ContentAmendments.Amend(target, row, Commerce.Zero, errors));
+            var amended = ContentAmendments.Amend(target, row, Commerce.Zero, errors);
+            _unamended[amended] = _unamended.Remove(target, out var original) ? original : target;
+            holder.Entry.Replace(amended);
         }
         if (errors.Count > 0) throw new InvalidDataException("Content amendment failed:\n" + string.Join("\n", errors));
     }

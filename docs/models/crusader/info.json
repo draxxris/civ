@@ -1,6 +1,6 @@
 {
-  "name": "unit_unit_crusader",
-  "model": "src/Ariel.Rules/Military/art/models/unit_unit_crusader.glb",
+  "name": "crusader",
+  "model": "src/Ariel.Rules/Military/art/models/crusader.glb",
   "texture_path": [
     "art/units/scenario/knigts_templar/knight_templar_weapons_64.dds",
     "art/units/scenario/knigts_templar/knight_templar_body_128.dds"

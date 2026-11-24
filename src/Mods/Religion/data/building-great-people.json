@@ -1,0 +1,299 @@
+[
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:abu_simbel",
+    "name": "",
+    "requirements": null,
+    "target": "religion:abu_simbel",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:alhambra",
+    "name": "",
+    "requirements": null,
+    "target": "religion:alhambra",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "religion:apadana_palace",
+    "name": "",
+    "requirements": null,
+    "target": "religion:apadana_palace",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:apostolic_palace",
+    "name": "",
+    "requirements": null,
+    "target": "religion:apostolic_palace",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:asatru_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:asatru_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:buddhist_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:buddhist_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:christian_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:christian_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:confucian_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:confucian_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:crusade",
+    "name": "",
+    "requirements": null,
+    "target": "religion:crusade",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:djenne",
+    "name": "",
+    "requirements": null,
+    "target": "religion:djenne",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:scientist",
+    "id": "religion:dosan_seowon",
+    "name": "",
+    "requirements": null,
+    "target": "religion:dosan_seowon",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:egypt_myth_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:egypt_myth_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:gutenberg",
+    "name": "",
+    "requirements": null,
+    "target": "religion:gutenberg",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:hindu_brihadeeswarar",
+    "name": "",
+    "requirements": null,
+    "target": "religion:hindu_brihadeeswarar",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:hindu_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:hindu_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:islamic_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:islamic_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "religion:itsukushima",
+    "name": "",
+    "requirements": null,
+    "target": "religion:itsukushima",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:jewish_masada",
+    "name": "",
+    "requirements": null,
+    "target": "religion:jewish_masada",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:jewish_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:jewish_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:kotoku",
+    "name": "",
+    "requirements": null,
+    "target": "religion:kotoku",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:mesoamerican_magician_pyramid",
+    "name": "",
+    "requirements": null,
+    "target": "religion:mesoamerican_magician_pyramid",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:mesoamerican_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:mesoamerican_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "religion:parthenon",
+    "name": "",
+    "requirements": null,
+    "target": "religion:parthenon",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:potala_palace",
+    "name": "",
+    "requirements": null,
+    "target": "religion:potala_palace",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:artist",
+    "id": "religion:sagas",
+    "name": "",
+    "requirements": null,
+    "target": "religion:sagas",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:shinto_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:shinto_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:statue_of_zeus",
+    "name": "",
+    "requirements": null,
+    "target": "religion:statue_of_zeus",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:taoist_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:taoist_shrine",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:taoist_temple_of_heaven",
+    "name": "",
+    "requirements": null,
+    "target": "religion:taoist_temple_of_heaven",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:temple_of_isis",
+    "name": "",
+    "requirements": null,
+    "target": "religion:temple_of_isis",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:temple_of_osiris",
+    "name": "",
+    "requirements": null,
+    "target": "religion:temple_of_osiris",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:temple_of_set",
+    "name": "",
+    "requirements": null,
+    "target": "religion:temple_of_set",
+    "tradeMissionModifier": 0
+  },
+  {
+    "goldenAgeModifier": 0,
+    "greatPersonUnit": "military:prophet",
+    "id": "religion:zoroastrian_shrine",
+    "name": "",
+    "requirements": null,
+    "target": "religion:zoroastrian_shrine",
+    "tradeMissionModifier": 0
+  }
+]
