@@ -64,7 +64,7 @@ public sealed class ReligionSplitTests
     }
 
     [Fact]
-    public void A_base_requirement_alternative_and_a_text_link_naming_a_religious_building_are_left_out()
+    public void A_base_requirement_alternative_naming_a_religious_building_is_the_mods_amending_row_and_a_text_link_keeps_its_words()
     {
         var mapper = Mapper(Faith("RELIGION_ISLAM"),
             Class("BUILDINGCLASS_PALACE", "BUILDING_PALACE"), Class("BUILDINGCLASS_ALHAMBRA", "BUILDING_ALHAMBRA"),
@@ -77,7 +77,12 @@ public sealed class ReligionSplitTests
         var rows = new Mapped(mapper.Map(), mapper.Claimant);
         var throne = rows.One<Schema.BuildingDef>("cities:throne_room").Definition;
         Assert.Equal(["cities:palace"], ContentReferences.Leaves(throne.Requirements!).Select(l => l.Id));
-        Assert.Contains(mapper.Issues, i => i.Record == "cities:throne_room" && i.SourceValue == "religion:alhambra");
+        // Religion's row adds the Alhambra back beside the palace, so nothing is lost and nothing is reported.
+        var grants = rows.One<Ariel.Mods.Religion.BuildingGrantsReligionDef>("religion:throne_room");
+        Assert.Equal(("religion", "cities:throne_room"), (grants.Mod, grants.Definition.Target));
+        var added = Assert.Single(grants.Definition.RequirementAlternatives["cities:palace"]);
+        Assert.Equal(new Requirement.Leaf("building-class", "religion:alhambra", 1, 0), added);
+        Assert.DoesNotContain(mapper.Issues, i => i.Record == "cities:throne_room");
         Assert.Equal("Rivalled by the Alhambra.", rows.One<Schema.BuildingDef>("cities:palace").Definition.Pedia);
         ContentEmission.Validate(rows.All, rows.Claimant);
     }

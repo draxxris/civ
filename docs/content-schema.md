@@ -309,7 +309,9 @@ definition without a row reads as the defaults:
   and `data/rule-constants-religion.json` (`RuleConstantsReligionDef`:
   `baseReligionAnarchyTurns` and the spread, decay, inquisition and conversion
   constants). Its amending rows are `data/building-grants-religion.json`
-  (`BuildingGrantsReligionDef`: `freePromotion`), `data/unit-grants-religion.json`
+  (`BuildingGrantsReligionDef`: `freePromotion`, and `requirementAlternatives`, a map from
+  an alternative of one of the target's `any` groups to the requirements that join it),
+  `data/unit-grants-religion.json`
   (`UnitGrantsReligionDef`: `constructibleBuildings`, `freePromotions`) and
   `data/civilization-religion.json` (`CivilizationReligionDef`: `buildingOverrides`,
   `unitOverrides`).

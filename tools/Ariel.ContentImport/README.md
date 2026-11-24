@@ -230,10 +230,13 @@ the great prophet's shrines and the faiths' promotions of the crusader and the S
 (`UnitGrantsReligionDef`), the Shaolin Temple's promotion (`BuildingGrantsReligionDef`,
 filling in the base row's empty `FreePromotion`) and the barbarians' and Lombards'
 overrides (`CivilizationReligionDef`). The base temple replacements (the fire pit and the
-sacrificial altar) are named in the temples' `ReplacedBy`. Two things are left out and
-reported in `data-issues`: a requirement alternative a base row may not name (the
-Apadana Palace and the Alhambra as the throne room's palace), and the link of a base row's
-text to a religious record, which keeps only its words.
+sacrificial altar) are named in the temples' `ReplacedBy`. A requirement alternative a
+base row may not name (the Apadana Palace and the Alhambra as the throne room's palace)
+is left out of the base row and carried by the owner's amending row, keyed by the first
+alternative the base row keeps (field kind `alternatives`, `BuildingGrantsReligionDef`
+`RequirementAlternatives`); without such a row, or with no kept alternative to name the
+group by, it is lost and reported in `data-issues`. The link of a base row's text to a
+religious record keeps only its words.
 
 The rest of religion is Religion's too. `ReligionInfo` is its class, so the faiths have no
 base identity. The building and unit religion fields (`ReligionType`, `bPrereqReligion`,

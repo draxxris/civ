@@ -494,8 +494,8 @@ technologies) stay in base. The mods' rows:
   spreads and the inquisitor (`UnitReligionDef`), a trait's non-state religion commerce
   (`TraitReligionDef`), a leader's regard for shared and other faiths (`LeaderReligionDef`)
   and the spread, decay, inquisition and conversion constants (`RuleConstantsReligionDef`).
-  What it adds to base rows amends them: the Shaolin Temple's promotion
-  (`BuildingGrantsReligionDef`), the great prophet's shrines and the crusader's and
+  What it adds to base rows amends them: the Shaolin Temple's promotion and the throne
+  room's palace alternatives (`BuildingGrantsReligionDef`), the great prophet's shrines and the crusader's and
   Shaolin monk's promotions (`UnitGrantsReligionDef`), each civilization's religious
   buildings and units (`CivilizationReligionDef`) and the leaders' memory weights for
   accepted and refused faiths (`LeaderReligionDef`). The amending fields of buildings and
@@ -564,6 +564,14 @@ nothing of the mod, and without the mod nothing is added.
   is empty (null), such as the promotion a base building grants when that promotion is a
   mod's; amending a set value is a load error, so an amendment only adds and never
   overrides: replacing a value is an override by id.
+- Requirements take alternatives only. Every attachment has its own `Requirements`, so the
+  amending field names its target field (`[AmendsTarget(nameof(Requirements))]`) and is a
+  map from the id of a leaf that is already an alternative of one `any` group of the
+  target's requirements to the requirements that join that group after its own. A key that
+  names no such group, or several, is a load error; nothing is removed or tightened.
+  Religion's `BuildingGrantsReligionDef` adds the Apadana Palace and the Alhambra beside
+  the palace in the throne room's palace group, so without the mod the base row accepts
+  the palace, the Great Palace and Versailles only.
 - Rows apply in ordinal id order, so the result does not depend on mod load order. The
   amended definition keeps its id and owner; the target's reference attributes apply to
   the amending field, checked against the amending row's mod, which must declare every
@@ -1425,8 +1433,8 @@ without it saves no religion string beyond the civic category below.
   `religion:religion` and the deferred victory `religion:victory_religious`.
 - **Its rows about base content**, listed under "Content attachments": the religion fields
   of buildings, units, traits, leaders and the rule constants, and the amendments that put
-  its promotions, shrines, civilization overrides and leader memory weights into base
-  rows.
+  its promotions, shrines, the throne room's palace alternatives, civilization overrides
+  and leader memory weights into base rows.
 - **Generic seams it answers**: `IBuildingRule` and `IUnitTrainingRule` (a faith's
   buildings and the inquisitor), `IRazeProtection` (holy cities), `IAttitudeSource`
   (shared and other faiths, from its `religion:attitudes` counters), `IBuildingFounder`
@@ -1453,11 +1461,6 @@ What the base game keeps that mentions religion:
   name for the category, which is a product decision.
 - The Godot client's tooltip colour for the "Religions" pedia category, beside the
   "Corporations" one: a colour for a category a mod may add, unused without it.
-- Open: the throne room no longer accepts the Apadana Palace and the Alhambra as its
-  palace alternatives, with the mod loaded too: the base row cannot name Religion's
-  buildings, and requirement alternatives have no amendment seam yet (the importer
-  reports the dropped leaves). An amendment that adds `any` alternatives to a target's
-  requirements would restore them.
 - `VictoryIdentityDef` rows stay in Foundation for the victories other mods implement;
   the religious one, implemented by no mod, is Religion's own row.
 

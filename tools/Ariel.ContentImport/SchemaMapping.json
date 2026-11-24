@@ -5513,7 +5513,8 @@
     "definition": "BuildingGrantsReligionDef",
     "mod": "religion",
     "fields": [
-      { "source": "FreePromotion", "property": "FreePromotion", "kind": "ref", "target": "PromotionInfo", "owned": true }
+      { "source": "FreePromotion", "property": "FreePromotion", "kind": "ref", "target": "PromotionInfo", "owned": true },
+      { "source": "PrereqOrBuildingClasses", "property": "RequirementAlternatives", "kind": "alternatives", "owned": true }
     ],
     "requirements": []
   },

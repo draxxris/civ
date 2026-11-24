@@ -30,12 +30,31 @@ internal sealed class PrerequisiteMapper(ContentMapper mapper)
     }
 
     /// <summary>An alternative that names a record a feature mod owns, which this row may not name (a base building that
-    /// accepts a religious wonder in place of a palace), is left out and reported; the other alternatives still apply.</summary>
+    /// accepts a religious wonder in place of a palace), is left out; the other alternatives still apply. The owner's
+    /// amending row carries it beside the first kept alternative (<see cref="OwnedAlternatives"/>) when its mod maps the
+    /// field with kind <c>alternatives</c>; otherwise it is lost, and reported.</summary>
     private Requirement Alternatives(EffectiveRecord record, RequirementMapping mapping, Requirement[] items)
     {
         var kept = items.Where(i => i is not Requirement.Leaf leaf || mapper.MayName(leaf.Id)).ToArray();
-        foreach (var dropped in items.Except(kept).Cast<Requirement.Leaf>()) mapper.NoteUnnamedAlternative(record, mapping.Source, dropped.Id);
+        foreach (var dropped in items.Except(kept).Cast<Requirement.Leaf>())
+            if (kept.FirstOrDefault() is not Requirement.Leaf || !mapper.CarriesAlternatives(record, mapping.Source, dropped.Id))
+                mapper.NoteUnnamedAlternative(record, mapping.Source, dropped.Id);
         return new Requirement.Any(kept);
+    }
+
+    /// <summary>For an amending row: the alternatives of the record's <paramref name="source"/> group that name the
+    /// emitting mod's own records, keyed by the first alternative the base row keeps, or null when there are none or the
+    /// base row keeps no leaf to address the group by.</summary>
+    public Dictionary<string, Requirement[]>? OwnedAlternatives(EffectiveRecord record, string source)
+    {
+        var mapping = SchemaCatalog.Definitions.Where(d => d.SourceClass == record.Class && !d.IsAttachment)
+            .SelectMany(d => d.Requirements).FirstOrDefault(r => r.Source == source && r.Mode == "any");
+        if (mapping is null || record.Node.Child(source) is not { } node) return null;
+        var items = Entries(record, node, mapping).ToArray();
+        var owned = items.Where(i => i is Requirement.Leaf leaf && mapper.Owns(leaf.Id)).ToArray();
+        if (owned.Length == 0 || items.FirstOrDefault(i => i is Requirement.Leaf leaf && mapper.Claimant(leaf.Id) is null) is not Requirement.Leaf beside)
+            return null;
+        return new() { [beside.Id] = owned };
     }
 
     private IEnumerable<Requirement> Entries(EffectiveRecord record, DataNode node, RequirementMapping mapping)

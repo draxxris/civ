@@ -205,6 +205,13 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     /// <summary>Whether the row being mapped may name the record: not one a feature mod owns outright that the row's mod
     /// may not name.</summary>
     internal bool MayName(string id) => !claimed.TryGetValue(id, out var owner) || IdMapping.MayName(emitter, owner);
+    /// <summary>Whether the record is one the mod emitting the row owns outright.</summary>
+    internal bool Owns(string id) => claimed.TryGetValue(id, out var owner) && owner == emitter;
+    /// <summary>Whether the owner of <paramref name="id"/> has an amending row that maps the requirement group
+    /// <paramref name="source"/> of the record's class with kind <c>alternatives</c>, and so carries the alternative.</summary>
+    internal bool CarriesAlternatives(EffectiveRecord record, string source, string id) => claimed.TryGetValue(id, out var owner)
+        && SchemaCatalog.Definitions.Any(d => d.SourceClass == record.Class && d.IsAttachment && d.Mod == owner
+            && d.Fields.Any(f => f.Kind == "alternatives" && f.Source == source));
     /// <summary>A requirement alternative the row may not name is left out; say which, since the rest still apply.</summary>
     internal void NoteUnnamedAlternative(EffectiveRecord record, string field, string id) =>
         Issues.Add(new(ids[(record.Class, record.Type)], field, id,
@@ -379,6 +386,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "int" => Integer(node.Text, DefaultInt(field)), "bool" => GetterBoolean(node.Text, DefaultBool(field)),
         "text" => Text(node.Text ?? ""), "enum" => NativeKey(node.Text ?? ""),
         "ref" => NamedReference(record, node, field),
+        "alternatives" => new PrerequisiteMapper(this).OwnedAlternatives(record, field.Source),
         "leafRef" => Reference(field.Target!, node.Text, record, field.Source) is { } named
             ? new LeafReference(field.LeafKind ?? throw new InvalidDataException(field.Source + ": a leafRef needs a leafKind"), named) : null,
         "csvRefs" => (node.Text ?? "").Split(',').Where(Present).Select(v => Reference(field.Target!, v, record, field.Source)).Where(v => v is not null).ToArray(),

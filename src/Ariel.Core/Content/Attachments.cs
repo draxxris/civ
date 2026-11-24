@@ -34,6 +34,20 @@ public abstract class ContentAttachment<TTarget> : ContentAttachment where TTarg
 /// mod's. Amending a set value is a load error, as are a field the target lacks and a target that itself amends.
 /// References in an amending field are validated as the target field's are (its
 /// <see cref="ContentReferenceAttribute"/>s), but against the amending row's mod, which must declare every provider it
-/// names; the merged target is validated as its own mod registered it, never again with the additions.</para></summary>
+/// names; the merged target is validated as its own mod registered it, never again with the additions.</para>
+/// <para>A field may name the target field it amends (<see cref="Field"/>) when the target's name is taken: every
+/// attachment has its own <see cref="ContentDef.Requirements"/>, so a field amending the target's requirements is
+/// named otherwise. Its type is <c>ImmutableDictionary&lt;string, ImmutableArray&lt;Requirement&gt;&gt;</c>: each key is
+/// the id of a leaf that is already an alternative of exactly one <c>any</c> group of the target's requirements (not
+/// under a <c>not</c>), and the key's requirements join that group after its own alternatives. It adds alternatives
+/// and never removes or tightens one; a key that names no such group, or several, is a load error.</para></summary>
 [AttributeUsage(AttributeTargets.Property, Inherited = true)]
-public sealed class AmendsTargetAttribute : Attribute;
+public sealed class AmendsTargetAttribute : Attribute
+{
+    /// <summary>Amends the target's field of the same name.</summary>
+    public AmendsTargetAttribute() { }
+    /// <summary>Amends the target's field <paramref name="field"/>.</summary>
+    public AmendsTargetAttribute(string field) { Field = field; }
+    /// <summary>The target field's name, when it differs from the amending field's.</summary>
+    public string? Field { get; }
+}

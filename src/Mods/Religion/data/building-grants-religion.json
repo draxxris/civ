@@ -3,7 +3,31 @@
     "freePromotion": "religion:martial_arts",
     "id": "religion:shaolin",
     "name": "",
+    "requirementAlternatives": {},
     "requirements": null,
     "target": "cities:shaolin"
+  },
+  {
+    "freePromotion": null,
+    "id": "religion:throne_room",
+    "name": "",
+    "requirementAlternatives": {
+      "cities:palace": [
+        {
+          "count": 1,
+          "id": "religion:apadana_palace",
+          "kind": "building-class",
+          "param": 0
+        },
+        {
+          "count": 1,
+          "id": "religion:alhambra",
+          "kind": "building-class",
+          "param": 0
+        }
+      ]
+    },
+    "requirements": null,
+    "target": "cities:throne_room"
   }
 ]

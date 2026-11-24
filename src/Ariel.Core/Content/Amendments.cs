@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Reflection;
+using Alternatives = System.Collections.Immutable.ImmutableDictionary<string, System.Collections.Immutable.ImmutableArray<Ariel.Content.Requirement>>;
 
 namespace Ariel.Content;
 
@@ -20,7 +21,7 @@ internal static class ContentAmendments
 
     /// <summary>The target type's field an amending field adds to, or null when the target type has none of that name.</summary>
     internal static PropertyInfo? TargetField(Type targetType, PropertyInfo field) =>
-        targetType.GetProperty(field.Name, BindingFlags.Instance | BindingFlags.Public);
+        targetType.GetProperty(field.GetCustomAttribute<AmendsTargetAttribute>(true)?.Field ?? field.Name, BindingFlags.Instance | BindingFlags.Public);
 
     /// <summary>The definition type an attachment type is about, from its <see cref="ContentAttachment{TTarget}"/> base.</summary>
     internal static Type? TargetTypeOf(Type attachmentType)
@@ -37,15 +38,20 @@ internal static class ContentAmendments
         foreach (var field in Fields(row.GetType()))
         {
             var into = TargetField(copy.GetType(), field);
-            if (into is null || into.PropertyType != field.PropertyType || into.SetMethod is null)
+            bool alternatives = into?.PropertyType == typeof(Requirement) && field.PropertyType == typeof(Alternatives);
+            if (into is null || into.PropertyType != field.PropertyType && !alternatives || into.SetMethod is null)
             {
-                errors.Add($"{row.Id}.{field.Name}: {copy.GetType().Name} '{target.Id}' has no field {field.Name} of type {field.PropertyType.Name} to amend");
+                errors.Add($"{row.Id}.{field.Name}: {copy.GetType().Name} '{target.Id}' has no field {into?.Name ?? field.Name} of type {field.PropertyType.Name} to amend");
                 continue;
             }
             var addition = field.GetValue(row);
             if (addition is null || IsEmpty(addition)) continue;
             var current = into.GetValue(copy);
-            try { into.SetValue(copy, current is null ? addition : Combine(field.PropertyType, current, addition, zero, $"{row.Id}.{field.Name}")); }
+            try
+            {
+                into.SetValue(copy, alternatives ? AddAlternatives((Requirement?)current, (Alternatives)addition, $"{row.Id}.{field.Name}")
+                    : current is null ? addition : Combine(field.PropertyType, current, addition, zero, $"{row.Id}.{field.Name}"));
+            }
             catch (InvalidDataException e) { errors.Add(e.Message); }
         }
         return copy;
@@ -67,6 +73,31 @@ internal static class ContentAmendments
             catch (TargetInvocationException e) when (e.InnerException is InvalidDataException inner) { throw inner; }
         }
         throw new InvalidDataException($"{path}: a field of type {type.Name} cannot amend its target");
+    }
+
+    /// <summary>The target's requirements with each key's requirements added to the one <c>any</c> group that already
+    /// holds a leaf of that id, keys in ordinal order. The tree is rebuilt, never changed in place.</summary>
+    private static Requirement AddAlternatives(Requirement? current, Alternatives addition, string path)
+    {
+        var result = current ?? throw new InvalidDataException($"{path}: the target has no requirements to add alternatives to");
+        foreach (var (beside, items) in addition.OrderBy(p => p.Key, StringComparer.Ordinal))
+        {
+            int groups = 0;
+            result = Add(result);
+            if (groups != 1)
+                throw new InvalidDataException($"{path}[{beside}]: {(groups == 0 ? "no" : groups.ToString(System.Globalization.CultureInfo.InvariantCulture))} 'any' group of the target holds the alternative '{beside}'; exactly one must");
+
+            Requirement Add(Requirement node) => node switch
+            {
+                Requirement.Any any when any.Items.Any(i => i is Requirement.Leaf leaf && leaf.Id == beside) =>
+                    Counted(new Requirement.Any([.. any.Items.Select(Add), .. items])),
+                Requirement.Any any => new Requirement.Any([.. any.Items.Select(Add)]),
+                Requirement.All all => new Requirement.All([.. all.Items.Select(Add)]),
+                _ => node,
+            };
+            Requirement Counted(Requirement group) { groups++; return group; }
+        }
+        return result;
     }
 
     private static bool Combines(Type type) => type == typeof(CommerceVector)

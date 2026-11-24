@@ -36,11 +36,18 @@ public sealed class BuildingReligionDef : ContentAttachment<BuildingDef>
     public string? GlobalReligionCommerce { get; init; }
 }
 
-/// <summary>What a base building grants that is religion's, filled into its row: the faith's promotion its city's new
-/// units start with (the Shaolin Temple's martial arts) in its empty <see cref="BuildingDef.FreePromotion"/>.</summary>
+/// <summary>What a base building grants or accepts that is religion's, filled into its row: the faith's promotion its
+/// city's new units start with (the Shaolin Temple's martial arts) in its empty <see cref="BuildingDef.FreePromotion"/>,
+/// and the religious buildings its requirements accept beside a base alternative (the Apadana Palace and the Alhambra
+/// as the throne room's palace).</summary>
 public sealed class BuildingGrantsReligionDef : ContentAttachment<BuildingDef>
 {
     [AmendsTarget] public string? FreePromotion { get; init; }
+    /// <summary>By the id of an alternative already in one of the building's <c>any</c> groups, the alternatives that join
+    /// that group.</summary>
+    [AmendsTarget(nameof(Requirements))]
+    public ImmutableDictionary<string, ImmutableArray<Requirement>> RequirementAlternatives { get; init; } =
+        ImmutableDictionary<string, ImmutableArray<Requirement>>.Empty;
 }
 
 /// <summary>What a unit means to religion: whether it is an inquisitor, and the chance, per faith, that its spread

@@ -52,6 +52,27 @@ public sealed class ReligionAbsenceTests(LoadedMods mods) : IClassFixture<Loaded
     }
 
     [Fact]
+    public void The_throne_room_accepts_the_apadana_palace_and_the_alhambra_only_with_the_mod()
+    {
+        string[] Palaces(ContentDb content) => ContentReferences.Leaves(content.Get<BuildingDef>("cities:throne_room").Requirements!)
+            .Where(l => l.Kind == "building-class").Select(l => l.Id).ToArray();
+        Assert.Equal(["cities:palace", "cities:great_palace", "cities:versailles", "religion:apadana_palace", "religion:alhambra"], Palaces(mods.Content));
+        Assert.Equal(["cities:palace", "cities:great_palace", "cities:versailles"], Palaces(WithoutReligion.Value));
+
+        // A city holding the Alhambra in place of a palace may build the throne room under Autocracy with Absolutism.
+        var sim = GameFactory.Create(mods.Content);
+        var city = new City { Id = sim.State.NextCityId++, Owner = 0, Position = sim.State.Grid.HexOf(new TileId(0)) };
+        sim.State.AddCity(city);
+        city.Buildings.Add("religion:alhambra");
+        sim.TeamOf(0).Techs.Add("research:absolutism");
+        sim.State.PlayerById(0).Civics["government:civicoption_power"] = "government:autocracy";
+        var context = new RequirementContext(sim, 0, city);
+        Assert.True(sim.Content.Requirements.Evaluate(sim.Content.Get<BuildingDef>("cities:throne_room").Requirements, context).Success);
+        city.Buildings.Remove("religion:alhambra");
+        Assert.False(sim.Content.Requirements.Evaluate(sim.Content.Get<BuildingDef>("cities:throne_room").Requirements, context).Success);
+    }
+
+    [Fact]
     public void No_data_file_of_the_base_game_or_another_main_mod_names_religion_but_in_prose_tags_and_flavours()
     {
         var files = mods.Sources.Where(s => s.Manifest.Id != "religion").Select(s => Path.Combine(s.Root, "data")).Where(Directory.Exists)

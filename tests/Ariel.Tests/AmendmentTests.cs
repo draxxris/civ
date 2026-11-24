@@ -43,6 +43,62 @@ public class AmendmentTests
         [AmendsTarget] public int Size { get; init; }
     }
 
+    /// <summary>Adds requirement alternatives to its target, beside an alternative the target already has.</summary>
+    public sealed class ShopEntryDef : ContentAttachment<ShopDef>
+    {
+        [AmendsTarget(nameof(Requirements))]
+        public ImmutableDictionary<string, ImmutableArray<Requirement>> Alternatives { get; init; } =
+            ImmutableDictionary<string, ImmutableArray<Requirement>>.Empty;
+    }
+
+    /// <summary>A leaf kind that passes for the ids listed.</summary>
+    private sealed class Passes(params string[] ids) : IRequirementEvaluator
+    {
+        public string Kind => "pass";
+        public string? Evaluate(Requirement.Leaf leaf, RequirementContext context) => ids.Contains(leaf.Id) ? null : "no";
+    }
+
+    private static Requirement.Leaf Pass(string id) => new("pass", id);
+
+    /// <summary>A gated shop: one of a key or a pass, and one of a seal.</summary>
+    private static ModSource GatedBase(params string[] passing) => Src("base", ctx =>
+    {
+        ctx.RegisterService<IRequirementEvaluator>("pass", new Passes(passing));
+        ctx.Content<ShopDef>().Register(new ShopDef
+        {
+            Id = "base:shop",
+            Requirements = new Requirement.All([new Requirement.Any([Pass("base:key"), Pass("base:pass")]), new Requirement.Any([Pass("base:seal")])]),
+        });
+    });
+
+    private static ModSource Entries(string beside, params Requirement[] added) => Src("entries", ctx =>
+        ctx.Content<ShopEntryDef>().Register(new ShopEntryDef
+        {
+            Id = "entries:shop", Target = "base:shop",
+            Alternatives = ImmutableDictionary<string, ImmutableArray<Requirement>>.Empty.Add(beside, [.. added]),
+        }), references: ["base"]);
+
+    [Fact]
+    public void RequirementAlternativesJoinTheAnyGroupThatHoldsTheirNeighbour()
+    {
+        var db = ModLoader.Build([GatedBase(), Entries("base:pass", Pass("entries:token"))]);
+        var gate = Assert.IsType<Requirement.All>(db.Get<ShopDef>("base:shop").Requirements);
+        Assert.Equal([Pass("base:key"), Pass("base:pass"), Pass("entries:token")], Assert.IsType<Requirement.Any>(gate.Items[0]).Items);
+        Assert.Equal([Pass("base:seal")], Assert.IsType<Requirement.Any>(gate.Items[1]).Items);
+        // The added alternative passes the group; the other group still applies.
+        var passing = ModLoader.Build([GatedBase("entries:token", "base:seal"), Entries("base:pass", Pass("entries:token"))]);
+        Assert.True(passing.Requirements.Evaluate(passing.Get<ShopDef>("base:shop").Requirements, new(null!, 0)).Success);
+        var sealless = ModLoader.Build([GatedBase("entries:token"), Entries("base:pass", Pass("entries:token"))]);
+        Assert.False(sealless.Requirements.Evaluate(sealless.Get<ShopDef>("base:shop").Requirements, new(null!, 0)).Success);
+    }
+
+    [Fact]
+    public void RequirementAlternativesBesideNoAlternativeFailTheLoad()
+    {
+        var error = Assert.Throws<InvalidDataException>(() => ModLoader.Build([GatedBase(), Entries("base:gate", Pass("entries:token"))]));
+        Assert.Contains("entries:shop.Alternatives[base:gate]: no 'any' group of the target holds the alternative 'base:gate'", error.Message);
+    }
+
     private sealed class TestMod(Action<IModContext> body) : IMod
     {
         public void Register(IModContext ctx) => body(ctx);
