@@ -1429,8 +1429,9 @@ a game without it saves no religion string.
   promotion is `religion:crusader`, and the crusader unit stays Military's
   `military:crusader`). So are its game options (`religion:gameoption_religion_decay`,
   `religion:gameoption_no_inquisitions`, `religion:gameoption_limited_religions`,
-  `religion:gameoption_pick_religion`; `religion:gameoption_multiple_religion_spread` is
-  offered by its setup policy alone), the disabled placeholder technology
+  `religion:gameoption_pick_religion`; `religion:gameoption_multiple_religion_spread` and
+  `religion:gameoption_no_natural_spread` are offered by its setup policy alone), the
+  disabled placeholder technology
   `religion:religion` and the deferred victory `religion:victory_religious`. Nothing names
   the placeholder technology, but the research timeline counts every shipped technology,
   disabled ones too, per era (`ResearchTimeline`), so removing it would shift research
@@ -1507,8 +1508,8 @@ World supplies `ICityConnectionService` for physical routes, river trade, and un
 water trade. Its `Groups` splits cities into connected groups, each city joining the first
 group whose first member reaches it; the default asks `Connected` pair by pair, and the
 network answers with one flood per group. Deal resource accounting groups a player's
-cities this way. Distance uses hex distance and the hex map diameter. Religion age uses
-elapsed turns.
+cities this way. Natural spread reads neither distance nor a faith's age; decay counts a
+faith's age in elapsed turns since its founding.
 
 Religion mechanics:
 
@@ -1521,10 +1522,25 @@ Religion mechanics:
   (`{"kind": "religion", "id": "religion:buddhism"}`). The mod
   is the wonder's `IBuildingFounder` (`ReligionFounder`): Cities refuses barbarians and
   asks it whether the religion is founded already, and hands it the completed wonder.
-- **Foreign trade spread**: International trade routes connect cities across open
-  borders and revealed road/water networks. Natural spread evaluates connected foreign
-  trade partners, spreading state religions to foreign cities when allowed by standard
-  spread rules or the `religion:gameoption_multiple_religion_spread` option.
+- **Natural spread**: A city and a founded faith form an eligible pair when natural
+  spread is on (the setup-only `religion:gameoption_no_natural_spread` is off), the city
+  lacks the faith, its owner's civics let the faith in (`NoNonStateReligionSpread` bars
+  every faith but the state religion), it holds no faith at all unless
+  `religion:gameoption_multiple_religion_spread` is on, and a city that had the faith
+  when the owner's pass began is trade-connected to it: same team or met and at peace,
+  and joined by the city connection network or a trade route, foreign routes across open
+  borders included. Each turn each eligible pair spreads when a draw in
+  [0, `NaturalSpreadMeanTurns` (30) x growth percent) falls below 100 plus the owner's
+  civic `ReligionSpreadRate` sum (Prophets +50%), clamped at zero: a geometric wait of
+  33 turns at normal speed (110%), 22 under Prophets. Distance, the number and buildings
+  of sources, the faith's spread factor and its age play no part. Cities are taken in id
+  order and faiths in id order; a faith that arrives is checked against the next, so
+  with multiple spread on a city may gain two in a turn, and a city that gains a faith
+  passes it on from the next turn. `IReligionService.NaturalSpreadOdds` returns that
+  draw without rolling it. `NaturalSpreadMeanTurns` is a Religion rule
+  constant (`data/rule-constants-religion.json`, at least 1, checked when the game
+  starts); the source's distance, count, threshold and young-faith spread constants are
+  not imported.
 - **Religion decay & attrition**: When `religion:gameoption_religion_decay` is
   enabled, cities with non-state minority religions lacking religious buildings roll for
   decay based on elapsed city turns and foreign pressure. Holy cities and the player's

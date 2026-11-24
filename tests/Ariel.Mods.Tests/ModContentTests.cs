@@ -53,6 +53,7 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
 
         var policyOptions = Ariel.Game.SetupPolicies.GameOptions(mods.Content);
         Assert.Contains(policyOptions, option => option.Id == "religion:gameoption_multiple_religion_spread");
+        Assert.Contains(policyOptions, option => option.Id == "religion:gameoption_no_natural_spread" && !option.Default);
     }
 
     [Fact]

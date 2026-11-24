@@ -26,9 +26,7 @@ internal static class CorporationReport
         string world = HashTrace.Option(args, "--world") ?? "foundation:worldsize_small";
         string era = HashTrace.Option(args, "--era") ?? "foundation:era_ancient";
         string? save = HashTrace.Option(args, "--save"), load = HashTrace.Option(args, "--load");
-        var options = new SortedDictionary<string, bool>(StringComparer.Ordinal);
-        for (int i = 0; i < args.Length - 1; i++)
-            if (args[i] == "--game-option" && args[i + 1].Split('=') is [var id, var value]) options[id] = bool.Parse(value);
+        var options = HashTrace.GameOptions(args);
         var sim = load is null ? GameFactory.CreateAi(content, seed, players, world, TurnMode.Simultaneous, era, options) : SaveGame.Load(content, File.ReadAllText(load), force: args.Contains("--force"));
         var buildings = content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal)
             .Select(c => (Corporation: c, Building: content.Get<BuildingDef>().All.FirstOrDefault(b => b.Founds is { Kind: "corporation" } f && f.Id == c.Id)))

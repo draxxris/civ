@@ -99,7 +99,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void Foreign_spread_requires_contact_and_peace_and_scales_with_existing_faiths(bool multiple)
+    public void Foreign_spread_requires_contact_and_peace_and_a_faithless_city_unless_multiple_spread_is_on(bool multiple)
     {
         var foundation = mods.Sources.Single(s => s.Manifest.Id == "foundation");
         var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance) };
@@ -110,19 +110,18 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var holy = City(sim, 0); var foreign = City(sim, 1, 1);
         foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Revealed.Add(1); plot.Route = "world:route_route_road"; }
         Found(sim, holy);
-        holy.Buildings.AddRange(["religion:buddhist_temple", "religion:buddhist_shrine"]);
-        sim.State.Turn = 101;
         var religion = Service<IReligionService>(sim);
         Assert.True(Service<ICityConnectionService>(sim).Connected(sim, holy.Id, foreign.Id));
         Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
         sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Service<IDiplomacyService>(sim).SignAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
         Assert.Contains(Service<ITradeRouteService>(sim).Calculate(sim, foreign.Id).Routes, r => r.PartnerCity == holy.Id && r.Foreign);
-        Assert.Equal(10, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+        // The chance is flat: 100 in 30 turns x 110% growth, however many faiths the city already holds.
+        Assert.Equal(new ReligionSpreadOdds(100, 3300), religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism));
         Presence(sim, foreign, "religion:hinduism");
-        Assert.Equal(multiple ? 5 : 0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+        Assert.Equal(multiple ? 100 : 0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
         Presence(sim, foreign, "religion:hinduism", "religion:christianity");
-        Assert.Equal(multiple ? 3 : 0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
+        Assert.Equal(multiple ? 100 : 0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
         Presence(sim, foreign);
         sim.State.SetWar(0, 1, true);
         Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
@@ -130,7 +129,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Service<IDiplomacyService>(sim).SignAgreement(sim, 0, 1, DiplomaticAgreement.OpenBorders);
         if (multiple) Presence(sim, foreign, "religion:hinduism");
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
-        for (int i = 0; i < 2200 && !religion.Present(sim, foreign.Id).Contains(Buddhism); i++)
+        for (int i = 0; i < 1000 && !religion.Present(sim, foreign.Id).Contains(Buddhism); i++)
         {
             sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns").Run(sim);
             loaded.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns").Run(loaded);
@@ -155,8 +154,6 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         // Only the holy city's team has seen the roads, so the network joins the cities from its side alone.
         foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Route = "world:route_route_road"; }
         Found(sim, holy);
-        holy.Buildings.AddRange(["religion:buddhist_temple", "religion:buddhist_shrine"]);
-        sim.State.Turn = 101;
         var religion = Service<IReligionService>(sim);
         var diplomacyService = Service<IDiplomacyService>(sim);
         sim.Rules().Relations.EstablishContact(sim, 0, 1);
@@ -468,28 +465,88 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         }
     }
     [Fact]
-    public void Natural_spread_uses_connected_influence_and_continues_identically_after_a_save()
+    public void Natural_spread_reaches_a_connected_city_and_continues_identically_after_a_save()
     {
         var sim = Scenario(); var source = City(sim, 0); Found(sim, source);
-        source.Buildings.AddRange(["religion:buddhist_temple", "religion:buddhist_shrine"]);
         var connected = City(sim, 1); var isolated = City(sim, 8);
-        sim.State.Turn = 101; // Outside the new-religion window, before old-religion attenuation.
         var religion = Service<IReligionService>(sim);
-        Assert.Equal(new ReligionSpreadOdds(10, 1100), religion.NaturalSpreadOdds(sim, connected.Id, Buddhism)); // 245/6 +1, then /4. Hex diameter is nine.
+        // Neither the source's buildings nor the faith's age matter: 100 in 30 turns x 110% growth.
+        Assert.Equal(new ReligionSpreadOdds(100, 3300), religion.NaturalSpreadOdds(sim, connected.Id, Buddhism));
         Assert.Equal(0, religion.NaturalSpreadOdds(sim, isolated.Id, Buddhism).Threshold);
         var before = sim.ComputeHash();
         _ = religion.NaturalSpreadOdds(sim, connected.Id, Buddhism);
         Assert.Equal(before, sim.ComputeHash()); // Preview neither draws RNG nor writes extension state.
         var loaded = SaveGame.Load(mods.Content, SaveGame.Save(sim));
         var phase = sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns");
-        // Keep age fixed while sampling enough low-probability attempts to avoid dependence on the map's RNG offset.
-        for (int i = 0; i < 1100 && religion.Present(sim, connected.Id).Count == 0; i++)
+        for (int i = 0; i < 1000 && religion.Present(sim, connected.Id).Count == 0; i++)
         {
             phase.Run(sim); phase.Run(loaded);
             Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
         }
         Assert.Contains(Buddhism, religion.Present(sim, connected.Id));
         Assert.Empty(religion.Present(sim, isolated.Id));
+    }
+    [Fact]
+    public void Natural_spread_waits_the_mean_turns_scaled_by_the_game_speed_on_average()
+    {
+        var sim = Scenario(); var source = City(sim, 0); Found(sim, source);
+        foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Route = "world:route_route_road"; }
+        var targets = Enumerable.Range(1, 20).Select(tile => City(sim, tile)).ToArray();
+        var religion = Service<IReligionService>(sim);
+        var phase = sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns");
+        Assert.All(targets, t => Assert.Equal(new ReligionSpreadOdds(100, 3300), religion.NaturalSpreadOdds(sim, t.Id, Buddhism)));
+        long waited = 0; int arrivals = 0;
+        for (int round = 0; round < 60; round++)
+        {
+            foreach (var target in targets) Presence(sim, target);
+            var arrived = new int?[targets.Length];
+            for (int turn = 1; arrived.Any(a => a is null); turn++)
+            {
+                phase.Run(sim);
+                for (int t = 0; t < targets.Length; t++)
+                    if (arrived[t] is null && religion.Present(sim, targets[t].Id).Contains(Buddhism)) arrived[t] = turn;
+            }
+            waited += arrived.Sum(a => a!.Value); arrivals += targets.Length;
+        }
+        // A geometric wait with chance 1/33: mean 33 turns, and 1200 waits put the sample mean within about 3%.
+        double mean = (double)waited / arrivals;
+        Assert.InRange(mean, 33 * 0.9, 33 * 1.1);
+    }
+    [Fact]
+    public void Natural_spread_skips_unconnected_civic_barred_and_disabled_cities_without_drawing()
+    {
+        var sim = Scenario(); var source = City(sim, 0); Found(sim, source);
+        var connected = City(sim, 1); var isolated = City(sim, 8);
+        var religion = Service<IReligionService>(sim);
+        var phase = sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns");
+        void NeverSpreads(params City[] cities)
+        {
+            Assert.All(cities, c => Assert.Equal(0, religion.NaturalSpreadOdds(sim, c.Id, Buddhism).Threshold));
+            var rng = sim.Rng.State;
+            for (int i = 0; i < 200; i++) phase.Run(sim);
+            Assert.Equal(rng, sim.Rng.State);
+            Assert.All(cities, c => Assert.Empty(religion.Present(sim, c.Id)));
+        }
+        // Prophets' +50% spread rate scales the chance; a civic that lets only the state religion spread bars it.
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:prophets";
+        Assert.Equal(new ReligionSpreadOdds(150, 3300), religion.NaturalSpreadOdds(sim, connected.Id, Buddhism));
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:intolerant";
+        NeverSpreads(connected, isolated);
+        sim.State.PlayerById(0).Civics["religion:civicoption_religion"] = "religion:folklore";
+        sim.Settings.GameOptions["religion:gameoption_no_natural_spread"] = true;
+        NeverSpreads(connected, isolated);
+        sim.Settings.GameOptions["religion:gameoption_no_natural_spread"] = false;
+        Assert.Equal(100, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
+    }
+    [Fact]
+    public void A_natural_spread_mean_below_one_turn_is_a_content_problem()
+    {
+        var checks = mods.Content.Services.Get<IContentCheck>();
+        Assert.Contains(checks, c => c.GetType().Name == "ReligionConstantCheck");
+        Assert.Empty(checks.SelectMany(c => c.Problems(mods.Content)));
+        Assert.Equal(30, mods.Content.Attachment<RuleConstantsReligionDef>("foundation:rule_constants")!.NaturalSpreadMeanTurns);
+        Assert.Equal(["religion:rule_constants: NaturalSpreadMeanTurns 0 must be at least 1"],
+            new RuleConstantsReligionDef { Id = "religion:rule_constants", NaturalSpreadMeanTurns = 0 }.Problems());
     }
     [Fact]
     public void Missionary_commands_consume_the_unit_and_enforce_foreign_civic_and_ownership_gates()
@@ -571,25 +628,6 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.PlayerById(0).Civics.Clear();
         Assert.Null(Service<IReligionService>(sim).StateReligion(sim, 0));
         Assert.Equal("religion:hinduism", sim.State.PlayerById(0).Extensions.Get<ReligionPlayerState>(sim.Content)!.LastStateReligion);
-    }
-    [Fact]
-    public void Old_religion_spread_odds_scale_down_smoothly_instead_of_truncating_to_zero()
-    {
-        var sim = Scenario(); var source = City(sim, 0); Found(sim, source);
-        source.Buildings.AddRange(["religion:buddhist_temple", "religion:buddhist_shrine"]);
-        var connected = City(sim, 1);
-        var religion = Service<IReligionService>(sim);
-        int founded = sim.State.Turn;
-        // Base threshold is 41 for this pair. Range 1100 implies 110% growth, so the old-age line is 250 * 110 / 100 = 275.
-        // Threshold is then 41 * 275 / age, and the reported odds divide that by four.
-        sim.State.Turn = founded + 101;
-        Assert.Equal(10, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
-        sim.State.Turn = founded + 300;
-        Assert.Equal(9, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
-        sim.State.Turn = founded + 400;
-        Assert.Equal(7, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
-        sim.State.Turn = founded + 550;
-        Assert.Equal(5, religion.NaturalSpreadOdds(sim, connected.Id, Buddhism).Threshold);
     }
     [Fact]
     public void State_religion_buildings_need_an_active_state_religion_even_when_they_name_no_religion()

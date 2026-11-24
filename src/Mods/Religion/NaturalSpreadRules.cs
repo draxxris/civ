@@ -3,40 +3,59 @@ using Ariel.Game;
 
 namespace Ariel.Mods.Religion;
 
+/// <summary>Natural spread: a faith reaches a city from a trade-connected city that has it. Each turn, each eligible
+/// (city, faith) pair spreads with the same chance, whose mean wait is <see cref="RuleConstantsReligionDef.NaturalSpreadMeanTurns"/>
+/// scaled by the game speed's growth percent and divided by the city owner's civic spread rates. Distance, the number of
+/// sources, their buildings and the faith's age play no part.</summary>
 internal sealed partial class ReligionService
 {
-    /// <summary>Per-turn memo: sorted sources, per-source influence and the connected-source set of each target.</summary>
-    internal sealed class SpreadTurn(Simulation sim, ReligionService rules)
+    /// <summary>The setup switch that turns natural spread off; missionaries and founding still place faiths.</summary>
+    internal const string NoNaturalSpreadOption = "religion:gameoption_no_natural_spread";
+    internal const string MultipleSpreadOption = "religion:gameoption_multiple_religion_spread";
+
+    /// <summary>One spread pass: the cities in id order, where each faith was when the pass began (so a faith that arrives
+    /// during the pass spreads on from its new city only the next turn), the connected cities of each target, and each
+    /// city's active buildings for decay.</summary>
+    internal sealed class SpreadTurn
     {
-        public IReadOnlyList<City> Cities { get; } = sim.State.Cities.OrderBy(c => c.Id).ToArray();
-        private readonly Dictionary<(int City, string Religion), int> _influence = [];
+        private readonly Simulation _sim;
+        private readonly Dictionary<string, List<City>> _sources = new(StringComparer.Ordinal);
         private readonly Dictionary<int, HashSet<int>> _connected = [];
         private readonly Dictionary<int, IReadOnlyList<BuildingDef>> _active = [];
         private int[]? _ids;
 
-        public int Influence(City city, string religion)
+        public SpreadTurn(Simulation sim)
         {
-            if (_influence.TryGetValue((city.Id, religion), out int value)) return value;
-            value = rules.Influence(sim, city, religion, this);
-            _influence[(city.Id, religion)] = value;
-            return value;
+            _sim = sim;
+            Cities = sim.State.Cities.OrderBy(c => c.Id).ToArray();
+            foreach (var city in Cities)
+            {
+                if (city.Extensions.Get<ReligionCityState>(sim.Content) is not { } state) continue;
+                foreach (string religion in state.Religions)
+                {
+                    if (!_sources.TryGetValue(religion, out var holders)) _sources[religion] = holders = [];
+                    holders.Add(city);
+                }
+            }
         }
 
-        /// <summary>The city's active buildings, resolved once per pass: the influence sum asks for them per faith.</summary>
+        public IReadOnlyList<City> Cities { get; }
+
+        /// <summary>Whether a city that had the faith when the pass began is trade-connected to the city.</summary>
+        public bool Reaches(City city, string religion) =>
+            _sources.TryGetValue(religion, out var holders) && holders.Exists(source => source.Id != city.Id && TradeConnected(city, source));
+
+        /// <summary>The city's active buildings, resolved once per pass: decay asks for them per faith.</summary>
         public IReadOnlyList<BuildingDef> Active(City city)
         {
             if (_active.TryGetValue(city.Id, out var buildings)) return buildings;
-            buildings = ReligionData.Active(sim, city);
+            buildings = ReligionData.Active(_sim, city);
             _active[city.Id] = buildings;
             return buildings;
         }
 
-        /// <summary>Decay removes buildings, so its city's cached activity and influence are stale afterwards.</summary>
-        public void Forget(City city)
-        {
-            _active.Remove(city.Id);
-            foreach (var key in _influence.Keys.Where(k => k.City == city.Id).ToArray()) _influence.Remove(key);
-        }
+        /// <summary>Decay removes buildings, so its city's cached activity is stale afterwards.</summary>
+        public void Forget(City city) => _active.Remove(city.Id);
 
         public bool TradeConnected(City city, City source)
         {
@@ -45,44 +64,43 @@ internal sealed partial class ReligionService
                 linked = [];
                 // One flood from the city answers every candidate's network connection.
                 _ids ??= Cities.Select(c => c.Id).ToArray();
-                var network = sim.Rules().CityConnections?.ConnectedFrom(sim, city.Id, _ids);
+                var network = _sim.Rules().CityConnections?.ConnectedFrom(_sim, city.Id, _ids);
                 for (int i = 0; i < Cities.Count; i++)
-                    if (ReligionService.TradeConnected(sim, city, Cities[i], network?[i])) linked.Add(Cities[i].Id);
+                    if (ReligionService.TradeConnected(_sim, city, Cities[i], network?[i])) linked.Add(Cities[i].Id);
                 _connected[city.Id] = linked;
             }
             return linked.Contains(source.Id);
         }
     }
 
-    internal SpreadTurn BeginSpreadTurn(Simulation sim) => new(sim, this);
+    internal static SpreadTurn BeginSpreadTurn(Simulation sim) => new(sim);
 
     public ReligionSpreadOdds NaturalSpreadOdds(Simulation sim, int cityId, string religion) =>
-        NaturalSpreadOdds(sim, new SpreadTurn(sim, this), cityId, religion);
+        NaturalSpreadOdds(sim, new SpreadTurn(sim), cityId, religion);
 
+    /// <summary>The faith spreads when a draw in [0, mean turns x growth percent) falls below 100 plus the owner's civic
+    /// spread rates: a mean wait of the scaled mean turns at no rate, shorter with a positive rate, never with -100% or
+    /// less.</summary>
     private ReligionSpreadOdds NaturalSpreadOdds(Simulation sim, SpreadTurn turn, int cityId, string religion)
     {
         var city = sim.State.CityById(cityId);
-        int range = Math.Max(1, ReligionData.Rules(sim).SpreadRange * sim.Content.Get<GameSpeedDef>(sim.Settings.GameSpeed).GrowthPercent / 100);
-        if (ReligionData.Has(sim, city, religion) || ReligionData.BlocksSpread(sim, city, religion)) return new(0, range);
-        int count = ReligionData.Present(sim, city).Count;
-        if (count > 0 && !sim.IsOptionEnabled("religion:gameoption_multiple_religion_spread")) return new(0, range);
-        var def = sim.Content.Get<ReligionDef>(religion);
-        int threshold = 0;
-        foreach (var source in turn.Cities)
-        {
-            int spread = turn.Influence(source, religion) * def.SpreadFactor;
-            if (spread <= 0) continue;
-            if (!turn.TradeConnected(city, source)) continue;
-            int distance = sim.State.Grid.Distance(city.Position, source.Position);
-            int divisor = Math.Max(1, ReligionData.Rules(sim).SpreadDistanceDivisor * distance
-                / Math.Max(1, sim.State.Grid.MaximumDistance) - ReligionData.Rules(sim).SpreadDistanceFloor);
-            spread = spread / divisor / (count + ReligionData.Rules(sim).SpreadCountOffset);
-            threshold = Math.Max(threshold, spread + ReligionData.Rules(sim).SpreadThresholdBump);
-        }
-        int modifier = 100 + ReligionData.Civics(sim, city.Owner).Sum(c => c.Rules.ReligionSpreadRate);
-        threshold = threshold * Math.Max(0, modifier) / 100;
-        threshold = AgeAdjustment(sim, city, religion, threshold);
-        return new(threshold / Math.Max(1, ReligionData.Rules(sim).SpreadThresholdUnit), range);
+        int range = NaturalSpreadRange(sim);
+        if (!Eligible(sim, turn, city, religion)) return new(0, range);
+        int rate = 100 + ReligionData.Civics(sim, city.Owner).Sum(c => c.Rules.ReligionSpreadRate);
+        return new(Math.Clamp(rate, 0, range), range);
+    }
+
+    private static int NaturalSpreadRange(Simulation sim) => (int)Math.Clamp(
+        (long)ReligionData.Rules(sim).NaturalSpreadMeanTurns * sim.Content.Get<GameSpeedDef>(sim.Settings.GameSpeed).GrowthPercent, 1, int.MaxValue);
+
+    /// <summary>Natural spread is on, the city lacks the faith, its owner's civics let the faith in, it holds no faith
+    /// unless multiple religion spread is on, and a city that has the faith is trade-connected to it.</summary>
+    private static bool Eligible(Simulation sim, SpreadTurn turn, City city, string religion)
+    {
+        if (sim.IsOptionEnabled(NoNaturalSpreadOption)) return false;
+        if (ReligionData.Has(sim, city, religion) || ReligionData.BlocksSpread(sim, city, religion)) return false;
+        if (ReligionData.Count(sim, city) > 0 && !sim.IsOptionEnabled(MultipleSpreadOption)) return false;
+        return turn.Reaches(city, religion);
     }
 
     private static bool TradeConnected(Simulation sim, City city, City source) => TradeConnected(sim, city, source, null);
@@ -99,32 +117,17 @@ internal sealed partial class ReligionService
         if ((network ?? sim.Rules().CityConnections?.Connected(sim, city.Id, source.Id)) == true) return true;
         return sim.Rules().TradeLinks?.Linked(sim, city.Id, source.Id) == true;
     }
+
+    /// <summary>A city's hold on a faith for decay: its holy city influence and the faith's buildings there.</summary>
     private int Influence(Simulation sim, City city, string religion, SpreadTurn? turn = null)
     {
         int holy = HolyCity(sim, religion) == city.Id ? ReligionData.Rules(sim).HolyCityInfluence : 0;
         var buildings = turn?.Active(city) ?? ReligionData.Active(sim, city);
         return Math.Max(0, holy + buildings.Sum(b => ReligionData.Building(sim.Content, b.Id).ReligionChanges.GetValueOrDefault(religion)));
     }
-    private static int AgeAdjustment(Simulation sim, City city, string religion, int threshold)
-    {
-        var founded = ReligionData.Game(sim).Founded.GetValueOrDefault(religion);
-        if (founded is null) return threshold;
-        // Elapsed age, not a negative age: the original subtraction inverted the documented age policy.
-        int age = Math.Max(0, sim.State.Turn - founded.Turn);
-        int growth = sim.Content.Get<GameSpeedDef>(sim.Settings.GameSpeed).GrowthPercent;
-        int young = ReligionData.Rules(sim).NewSpreadTurns * growth / 100;
-        if (age < young)
-        {
-            threshold = threshold * ReligionData.Rules(sim).NewSpreadBoostPercent / 100;
-            var era = sim.State.PlayerById(city.Owner).Extensions.Get<CityPlayerState>(sim.Content)?.CurrentEra ?? sim.Settings.StartingEra;
-            int rank = sim.Content.Get<EraDef>().All.OrderBy(e => e.StartPercent).ThenBy(e => e.Id, StringComparer.Ordinal).Select(e => e.Id).ToList().IndexOf(era);
-            if (rank < 2) threshold /= 20;
-            else if (rank == 2) threshold /= 10;
-        }
-        int old = ReligionData.Rules(sim).OldSpreadTurns * growth / 100;
-        if (age > old) threshold = (int)((long)threshold * old / age);
-        return threshold;
-    }
+
+    /// <summary>Decay first, then each founded faith in id order; a faith that arrives is checked against the next, so
+    /// without multiple religion spread at most one arrives.</summary>
     internal void NaturalSpread(Simulation sim, City city, SpreadTurn turn)
     {
         Decay(sim, city, turn);
@@ -137,7 +140,6 @@ internal sealed partial class ReligionService
             // A faith that arrives is a write beyond a narrow declaration (ReligionTurns).
             sim.WidenWriteWindow();
             ReligionData.Add(sim, city, religion.Id);
-            break;
         }
     }
 }

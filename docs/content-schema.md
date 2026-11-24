@@ -309,8 +309,9 @@ definition without a row reads as the defaults:
   `memoryDecays` for `accepted_religion` and `denied_religion`, and `favoriteCivic` when it
   is one of Religion's civics, which amend the leader)
   and `data/rule-constants-religion.json` (`RuleConstantsReligionDef`:
-  `baseReligionAnarchyTurns` and the spread, decay, inquisition and conversion
-  constants). Its amending rows are `data/building-grants-religion.json`
+  `baseReligionAnarchyTurns`, `naturalSpreadMeanTurns` (30, at least 1: the mean turns
+  until a faith spreads to a city it may reach, scaled by the growth percent), and the
+  decay, inquisition and conversion constants). Its amending rows are `data/building-grants-religion.json`
   (`BuildingGrantsReligionDef`: `freePromotion`, and `requirementAlternatives`, a map from
   an alternative of one of the target's `any` groups to the requirements that join it),
   `data/unit-grants-religion.json`

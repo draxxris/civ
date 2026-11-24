@@ -26,6 +26,7 @@ internal static class ReligionData
         state = new(); owner.Extensions.Set(sim.Content, state); return state;
     }
     internal static IReadOnlyList<string> Present(Simulation sim, City city) => city.Extensions.Get<ReligionCityState>(sim.Content)?.Religions.ToArray() ?? [];
+    internal static int Count(Simulation sim, City city) => city.Extensions.Get<ReligionCityState>(sim.Content)?.Religions.Count ?? 0;
     internal static bool Has(Simulation sim, City city, string religion) => city.Extensions.Get<ReligionCityState>(sim.Content)?.Religions.Contains(religion) == true;
     internal static void Add(Simulation sim, City city, string religion)
     {

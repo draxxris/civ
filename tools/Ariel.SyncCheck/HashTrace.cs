@@ -17,7 +17,8 @@ namespace Ariel.SyncCheck;
 /// <c>--verify-modifier-cache</c> every modifier contribution kept across writes is computed again where it is used and
 /// compared, and every command and turn system that declares its writes is checked to write nothing else (slow). With <c>--save PATH</c> the run writes the final game as a save, for inspecting
 /// what the AIs did. With <c>--load PATH</c> the run continues that save instead of starting a new game (seed, players,
-/// world and era then come from the save), for measuring a late game without replaying it. With <c>--profile DIR</c> (or <c>ARIEL_PROFILE=DIR</c>) it times every turn system, AI planner,
+/// world and era then come from the save), for measuring a late game without replaying it. With <c>--game-option
+/// ID=true|false</c> (repeatable) a new game sets that game option. With <c>--profile DIR</c> (or <c>ARIEL_PROFILE=DIR</c>) it times every turn system, AI planner,
 /// AI seam, command and kernel step, prints the table sorted by cost to stderr and writes it with per-turn CSVs to DIR.
 /// </summary>
 internal static class HashTrace
@@ -40,7 +41,7 @@ internal static class HashTrace
         var profiler = SimulationProfiler.FromEnvironment(out string? profileDir);
         if (Option(args, "--profile") is { } dir) (profiler, profileDir) = (profiler ?? new SimulationProfiler(), dir);
 
-        var sim = load is null ? GameFactory.CreateAi(content, seed, players, world, mode, era) : SaveGame.Load(content, File.ReadAllText(load));
+        var sim = load is null ? GameFactory.CreateAi(content, seed, players, world, mode, era, GameOptions(args)) : SaveGame.Load(content, File.ReadAllText(load));
         sim.Profiler = profiler; sim.AiWaveLimit = waves; sim.VerifyReadEpochs = verify; sim.VerifyWrites = verifyWrites;
         string start = load is null ? $"seed={seed} players={players} era={era} turn-mode={mode}" : $"load={load} turn={sim.State.Turn}";
         Console.Error.WriteLine($"hash-trace {start} turns={turns} reload-every={reload} background={background} waves={waves} verify-read-epochs={verify} verify-modifier-cache={verifyWrites} " +
@@ -84,5 +85,14 @@ internal static class HashTrace
     {
         int i = Array.IndexOf(args, name);
         return i >= 0 && i + 1 < args.Length ? args[i + 1] : null;
+    }
+
+    /// <summary>Every <c>--game-option ID=true|false</c>, for a new game's setup.</summary>
+    internal static SortedDictionary<string, bool> GameOptions(string[] args)
+    {
+        var options = new SortedDictionary<string, bool>(StringComparer.Ordinal);
+        for (int i = 0; i < args.Length - 1; i++)
+            if (args[i] == "--game-option" && args[i + 1].Split('=') is [var id, var value]) options[id] = bool.Parse(value);
+        return options;
     }
 }

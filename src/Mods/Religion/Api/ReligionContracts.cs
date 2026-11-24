@@ -23,6 +23,8 @@ public sealed class ReligionGameState
 }
 public sealed record ReligionFounding(int HolyCity, int Turn);
 public sealed record ReligionConversion(int AnarchyTurns, int CooldownTurns, Ledger Ledger);
+/// <summary>A natural spread draw: the faith spreads when a draw in [0, <paramref name="RandomRange"/>) falls below
+/// <paramref name="Threshold"/>; zero when the city may not receive it.</summary>
 public sealed record ReligionSpreadOdds(int Threshold, int RandomRange);
 public sealed record ReligionFounded(string Religion, int City, int Player) : DomainEvent;
 public sealed record ReligionSpread(string Religion, int City) : DomainEvent;

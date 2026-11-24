@@ -104,6 +104,7 @@ public sealed class ReligionMod : IPreparableMod
         context.TurnSystems.Register(new ReligionTurns(service));
         context.RegisterService<ICapitalWeight>("capital_weight", new FaithCapitalWeight(service));
         context.RegisterService<ISetupPolicy>("setup", new ReligionSetupPolicy());
+        context.RegisterService<IContentCheck>("rule_constants", new ReligionConstantCheck());
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new ReligionAiPlanner());
         context.RegisterService<Ariel.Ai.IProductionWishes>("inquisitors", new InquisitorWishes());
         context.RegisterService<Ariel.Ai.IAiBuildingExclusion>("ai_buildings", new ReligiousBuildingExclusion());
@@ -119,7 +120,8 @@ public sealed class ReligionMod : IPreparableMod
 }
 
 /// <summary>The setup switches religion honours, this mod's own options (<c>religion:*</c>), which the setup screen
-/// offers only while it is loaded. Multiple religion spread has no source row, so it is offered here alone.</summary>
+/// offers only while it is loaded. Multiple religion spread and no natural spread have no source row, so they are
+/// offered here alone.</summary>
 internal sealed class ReligionSetupPolicy : ISetupPolicy
 {
     public string? Default(SetupField field) => null;
@@ -128,9 +130,18 @@ internal sealed class ReligionSetupPolicy : ISetupPolicy
     {
         foreach (string id in (string[])["religion:gameoption_religion_decay", "religion:gameoption_no_inquisitions"])
             if (content.TryGet<GameOptionDef>(id, out var option)) yield return new(option.Id, option.Name, option.Default, option.Help);
-        yield return new("religion:gameoption_multiple_religion_spread", "Multiple Religion Spread", false,
+        yield return new(ReligionService.MultipleSpreadOption, "Multiple Religion Spread", false,
             "Cities with an existing religion can still receive additional religions via natural spread.");
+        yield return new(ReligionService.NoNaturalSpreadOption, "No Natural Religion Spread", false,
+            "Religions never spread on their own along trade connections; only missionaries carry them.");
     }
+}
+
+/// <summary>The rule constants Religion attaches can run its rules (<see cref="RuleConstantsReligionDef.Problems"/>).</summary>
+internal sealed class ReligionConstantCheck : IContentCheck
+{
+    public IEnumerable<string> Problems(ContentDb content) =>
+        content.Get<RuleConstantsReligionDef>().All.SelectMany(row => row.Problems());
 }
 /// <summary>A new capital leans toward a city with more faiths: one point for each religion present.</summary>
 internal sealed class FaithCapitalWeight(IReligionService religion) : ICapitalWeight
@@ -146,7 +157,7 @@ internal sealed class ReligionTurns(ReligionService service) : IPlayerTurnSystem
     private static readonly IReadOnlyList<string> Conversion = ["religion:conversion"];
     public void Run(Simulation sim, int player)
     {
-        var spread = service.BeginSpreadTurn(sim);
+        var spread = ReligionService.BeginSpreadTurn(sim);
         foreach (var city in sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)) service.NaturalSpread(sim, city, spread);
         var state = sim.State.PlayerById(player).Extensions.Get<ReligionPlayerState>(sim.Content);
         if (state is not null) state.ConversionTimer = Math.Max(0, state.ConversionTimer - 1);

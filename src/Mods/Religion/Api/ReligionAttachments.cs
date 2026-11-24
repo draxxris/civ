@@ -93,24 +93,15 @@ public sealed class RuleConstantsReligionDef : ContentAttachment<RuleConstantsDe
     public int HolyCityRemovalGold { get; init; } = 500;
     /// <summary>Gold an inquisition pays for purging any other faith.</summary>
     public int RemovalGold { get; init; } = 50;
-    /// <summary>The roll natural spread and decay draw from, before the game speed's growth percent.</summary>
+    /// <summary>Mean turns until a faith spreads naturally to a city it may reach, before the game speed's growth
+    /// percent and the owner's civic spread rates: each turn the chance is 1 / (this x growth percent / 100). At least 1.</summary>
+    public int NaturalSpreadMeanTurns { get; init; } = 30;
+    /// <summary>The roll decay draws from, before twice the game speed's growth percent.</summary>
     public int SpreadRange { get; init; } = 1000;
-    /// <summary>Scales the distance to a faith's source against the map's largest distance.</summary>
-    public int SpreadDistanceDivisor { get; init; } = 100;
-    /// <summary>Subtracted from the scaled distance before it divides the spread.</summary>
-    public int SpreadDistanceFloor { get; init; } = 5;
-    /// <summary>Added to the number of faiths already present before it divides the spread.</summary>
-    public int SpreadCountOffset { get; init; } = 1;
-    /// <summary>The least a reachable source adds to the spread threshold.</summary>
-    public int SpreadThresholdBump { get; init; } = 1;
-    /// <summary>Divides the spread threshold into the chance a city rolls against.</summary>
-    public int SpreadThresholdUnit { get; init; } = 4;
-    /// <summary>Spread influence of a faith's holy city.</summary>
+    /// <summary>Decay influence of a faith's holy city.</summary>
     public int HolyCityInfluence { get; init; } = 1;
-    /// <summary>Turns, at normal speed, a faith counts as young: it spreads faster and decays slower.</summary>
+    /// <summary>Turns, at normal speed, a faith counts as young: it decays slower.</summary>
     public int NewSpreadTurns { get; init; } = 50;
-    /// <summary>Spread threshold of a young faith, in percent.</summary>
-    public int NewSpreadBoostPercent { get; init; } = 250;
     /// <summary>Turns, at normal speed, after which a faith counts as old and decays faster.</summary>
     public int OldSpreadTurns { get; init; } = 250;
     /// <summary>Weighs the faiths of the city's own empire in its decay roll.</summary>
@@ -131,6 +122,12 @@ public sealed class RuleConstantsReligionDef : ContentAttachment<RuleConstantsDe
     public int StateReligionHealth { get; init; } = 0;
     /// <summary>Turns, at normal speed, before a player may change state religion again.</summary>
     public int MinimumConversionTurns { get; init; } = 5;
+
+    /// <summary>Why the values cannot run the rules, or nothing.</summary>
+    public IEnumerable<string> Problems()
+    {
+        if (NaturalSpreadMeanTurns < 1) yield return $"{Id}: NaturalSpreadMeanTurns {NaturalSpreadMeanTurns} must be at least 1";
+    }
 }
 
 /// <summary>What a trait means to religion: whether a non-state faith's buildings keep their commerce.</summary>
