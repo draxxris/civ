@@ -4,8 +4,6 @@ using Schema = Ariel.Content.Schema;
 
 namespace Ariel.Client;
 
-public enum RateKind { Gold, Research, Culture, Espionage }
-
 public sealed record ResearchProgress(string Id, string Name, long Progress, long Cost, int? Turns);
 
 /// <summary>The numbers in the top bar: treasury, income, slider positions, research, turn and era.</summary>
@@ -77,14 +75,24 @@ public sealed partial class GameSession
     public int FreeResearchCredits => MyTeam.Extensions.Get<ResearchTeamState>(Sim.Content)?.FreeTechs ?? 0;
     public bool Research(string tech, bool free = false) => Submit(new SetTeamResearchCommand { Player = LocalPlayer, Tech = tech, FreeTech = free });
 
-    /// <summary>Move <paramref name="delta"/> percent of commerce into <paramref name="to"/>, paid from gold (or from research when raising gold).</summary>
-    public bool ShiftRate(RateKind to, int delta)
+    /// <summary>The commerce types the slider sets directly, in order: every loaded type but the one that takes the
+    /// remainder (gold), which gets what the others leave.</summary>
+    public IReadOnlyList<CommerceType> RateTypes()
     {
+        var commerce = Sim.Rules().Commerce;
+        return commerce.Types.Where(t => t != commerce.Remainder).ToArray();
+    }
+
+    /// <summary>Move <paramref name="delta"/> percent of commerce into the type with key <paramref name="to"/>, paid
+    /// from the remainder type, gold (or, when raising gold, from the next type in order, research).</summary>
+    public bool ShiftRate(string to, int delta)
+    {
+        var commerce = Sim.Rules().Commerce;
         var rates = Service<IPlayerEconomyService>().Rates(Sim, LocalPlayer);
-        var parts = new[] { rates.Gold, rates.Research, rates.Culture, rates.Espionage };
-        int donor = to == RateKind.Gold ? (int)RateKind.Research : (int)RateKind.Gold;
-        parts[(int)to] += delta;
-        parts[donor] -= delta;
-        return Submit(new SetCommerceRatesCommand { Player = LocalPlayer, Rates = new(parts[0], parts[1], parts[2], parts[3]) });
+        var type = commerce[to];
+        var donor = type != commerce.Remainder ? commerce.Remainder : commerce.Types.First(t => t != commerce.Remainder);
+        rates = rates.With(type, rates[type] + delta);
+        rates = rates.With(donor, rates[donor] - delta);
+        return Submit(new SetCommerceRatesCommand { Player = LocalPlayer, Rates = rates });
     }
 }

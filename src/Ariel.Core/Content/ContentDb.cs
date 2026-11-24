@@ -113,6 +113,7 @@ public sealed class ContentDb
     public void ValidateReferences(IEnumerable<Modding.ModManifest> manifests)
     {
         using var trace = Modding.StartupTrace.Phase("content reference validation");
+        IndexCommerce();
         var declared = manifests.ToDictionary(m => m.Id, m => m.Dependencies.Concat(m.References).ToHashSet(StringComparer.Ordinal), StringComparer.Ordinal);
         var targets = _registries.ToDictionary(e => e.Key, e => e.Value.Items().Select(d => d.Id).ToHashSet(StringComparer.Ordinal));
         targets[typeof(ContentDef)] = _registries.Values.SelectMany(e => e.Items()).Select(d => d.Id).ToHashSet(StringComparer.Ordinal);
@@ -132,7 +133,54 @@ public sealed class ContentDb
             }
         }
         ValidateModifierEffects(declared, errors);
+        ValidateCommerceVectors(declared, errors);
         if (errors.Count > 0) throw new InvalidDataException("Content reference validation failed:\n" + string.Join("\n", errors));
+    }
+
+    /// <summary>The loaded commerce types (<see cref="ICommerceType"/> rows of every registry), in order. Indexed when
+    /// references are validated, or when content freezes; reading it earlier is an error.</summary>
+    public CommerceTypes Commerce => _commerce ?? throw new InvalidOperationException("Commerce types are indexed when content is validated");
+    private CommerceTypes? _commerce;
+
+    private void IndexCommerce()
+    {
+        var rows = _registries.OrderBy(e => e.Key.FullName, StringComparer.Ordinal)
+            .Where(e => typeof(ICommerceType).IsAssignableFrom(e.Key)).SelectMany(e => e.Value.Items()).Cast<ICommerceType>().ToArray();
+        var errors = new SortedSet<string>(StringComparer.Ordinal);
+        foreach (var row in rows)
+            if (!CommerceTypes.IsValidKey(row.Key))
+                errors.Add($"{row.Id}: commerce key '{row.Key}' must be lower case letters, digits and underscores, starting with a letter");
+        foreach (var group in rows.GroupBy(r => r.Key, StringComparer.Ordinal).Where(g => g.Count() > 1))
+            errors.Add($"Commerce key '{group.Key}' is used by {string.Join(" and ", group.Select(r => r.Id).Order(StringComparer.Ordinal))}");
+        if (rows.Length > CommerceLayout.Capacity)
+            errors.Add($"{rows.Length} commerce types are loaded; at most {CommerceLayout.Capacity} are supported");
+        if (errors.Count > 0) throw new InvalidDataException("Commerce type validation failed:\n" + string.Join("\n", errors));
+        _commerce = rows.Length == 0 ? CommerceTypes.Empty : new CommerceTypes(rows);
+    }
+
+    /// <summary>Every commerce vector in content names only loaded commerce types, from providers its definition's mod
+    /// declares: a key nobody loads fails here instead of reading as zero.</summary>
+    private void ValidateCommerceVectors(Dictionary<string, HashSet<string>> declared, SortedSet<string> errors)
+    {
+        using var trace = Modding.StartupTrace.Phase("content commerce validation");
+        foreach (var definition in _registries.Values.SelectMany(e => e.Items()).OrderBy(d => d.Id, StringComparer.Ordinal))
+        {
+            var owner = definition.Id.Split(':')[0];
+            foreach (var (vector, path) in ContentReferences.Find<CommerceVector>(definition, definition.Id))
+                foreach (var (key, _) in vector)
+                {
+                    if (!Commerce.TryGet(key, out var type)) errors.Add($"{path}: '{key}' is not a loaded commerce type");
+                    else RequireProvider(declared, owner, type.Id, $"{path}: mod '{owner}' must declare commerce type provider", errors);
+                }
+        }
+    }
+
+    private static void RequireProvider(Dictionary<string, HashSet<string>> declared, string owner, string id, string message,
+        SortedSet<string> errors)
+    {
+        var provider = id.Split(':')[0];
+        if (provider != owner && (!declared.TryGetValue(owner, out var providers) || !providers.Contains(provider)))
+            errors.Add($"{message} '{provider}' in references or dependencies");
     }
 
     /// <summary>Every data-driven modifier names a typed key or a declared <see cref="ModifierKeyDef"/> from a provider
@@ -145,9 +193,11 @@ public sealed class ContentDb
             var owner = definition.Id.Split(':')[0];
             foreach (var (effect, path) in ContentReferences.Find<ModifierEffect>(definition, definition.Id))
             {
-                if (ModifierSink.IsTypedKey(effect.Key))
+                if (Commerce.IsTypedKey(effect.Key))
                 {
                     if (effect.Target is not null) errors.Add($"{path}: typed modifier key '{effect.Key}' takes no target");
+                    if (ModifierSink.CommerceKeyOf(effect.Key, out _) is { IsEmpty: false } type && Commerce.TryGet(type, out var commerce))
+                        RequireProvider(declared, owner, commerce.Id, $"{path}: mod '{owner}' must declare commerce type provider", errors);
                     continue;
                 }
                 if (keys is null || !keys.TryGet(effect.Key, out var key))
@@ -167,6 +217,7 @@ public sealed class ContentDb
     internal void Freeze()
     {
         using var trace = Modding.StartupTrace.Phase("content freeze");
+        if (_commerce is null) IndexCommerce();
         Requirements = new(Services.Get<IRequirementEvaluator>());
         _ruleset = Services.Get<IRuleset>().Count switch
         {

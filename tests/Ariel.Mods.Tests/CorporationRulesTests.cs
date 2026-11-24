@@ -246,7 +246,7 @@ public sealed class CorporationRulesTests
         long maintenance = P6RulesScenario.Service<ICorporationService>(sim).MaintenanceHundredths(sim, hq.Id);
         var cereal = sim.Content.Get<CorporationDef>(Cereal);
         long food = cereal.YieldProducedHundredths.Food * Corps(sim).ConsumedBonusCount(sim, hq.Id, Cereal) / 100;
-        Assert.Equal(-food * Ariel.Ai.PlannerPoints.Food + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, Adjust("government:planned"));
+        Assert.Equal(-food * Ariel.Ai.PlannerPoints.Food + maintenance * Ariel.Ai.PlannerPoints.Gold(sim.Content) / 100, Adjust("government:planned"));
         Assert.True(Adjust("government:corporatist") > 0, "a civic that cuts maintenance gains");
         Assert.Equal(0, Adjust("government:nationalist")); // bans only foreign corporations; this one is the player's own
         Assert.Equal(0, Adjust("government:chiefdom"));
@@ -672,7 +672,7 @@ public sealed class CorporationRulesTests
         var reduced = maintenance.Calculate(sim, branch.Id);
         Assert.Equal(full.TotalHundredths / 2, reduced.TotalHundredths);
         Assert.Equal(reduced.TotalHundredths, reduced.Ledger.Total("cities:maintenance_hundredths"));
-        economy.SetRates(sim, 0, new(0, 100, 0, 0));
+        economy.SetRates(sim, 0, TestCommerce.Vector(0, 100, 0, 0));
         var before = economy.Calculate(sim, 0);
         Assert.Equal(reduced.TotalHundredths, before.Ledger.Total("economy:maintenance_hundredths"));
         Assert.Equal(corporateCost, before.Ledger.Total("economy:corporate_maintenance_hundredths"));
@@ -684,7 +684,7 @@ public sealed class CorporationRulesTests
         Assert.Equal(treasury + settled.SettledCommerceHundredths.Gold / 100 - before.Expenses, owner.Treasury);
         Assert.Equal(0, settled.UnpaidGold);
         if (treasury == 0) Assert.True(economy.Rates(sim, 0).Gold > 0);
-        else Assert.Equal(new CommerceVector(0, 100, 0, 0), economy.Rates(sim, 0));
+        else Assert.Equal(TestCommerce.Vector(0, 100, 0, 0), economy.Rates(sim, 0));
     }
     [Fact]
     public void Razing_the_headquarters_dissolves_every_branch_and_allows_refounding()

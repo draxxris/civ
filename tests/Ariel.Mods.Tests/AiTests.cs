@@ -445,7 +445,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
         Assert.True(rates.Gold > 0, "Fixture must have recurring costs that require gold commerce");
         Assert.True(sim.TryApply(new SetCommerceRatesCommand
         {
-            Player = 0, Rates = new(rates.Gold - 5, rates.Research + 5, 0, 0),
+            Player = 0, Rates = TestCommerce.Vector(rates.Gold - 5, rates.Research + 5, 0, 0),
         }, out var error), error);
         Assert.True(economy.Calculate(sim, 0).NetGold < 0, "The AI left an affordable five-point research increase unused");
     }

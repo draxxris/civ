@@ -66,9 +66,9 @@ public static class LeaderBriefing
         if (trait.Health != 0) lines.Add($"{Labels.Signed(trait.Health)} health in every city");
         foreach (var (name, value) in new[] { ("food", trait.YieldChanges.Food), ("production", trait.YieldChanges.Production), ("commerce", trait.YieldChanges.Commerce) })
             if (value != 0) lines.Add($"{Labels.Signed(value)} {name} in every city");
-        foreach (var (name, value) in Commerce(trait.CommerceChanges))
+        foreach (var (name, value) in Commerce(content, trait.CommerceChanges))
             if (value != 0) lines.Add($"{Labels.Signed(value)} {name} in every city");
-        foreach (var (name, value) in Commerce(trait.CommerceModifiers))
+        foreach (var (name, value) in Commerce(content, trait.CommerceModifiers))
             if (value != 0) lines.Add($"{Labels.Signed(value)}% {name} in every city");
         if (trait.GreatPeopleRateModifier != 0) lines.Add($"{Labels.Signed(trait.GreatPeopleRateModifier)}% great people birth rate");
         if (trait.WorldWonderProductionPercent != 0) lines.Add($"{Labels.Signed(trait.WorldWonderProductionPercent)}% world wonder production");
@@ -136,8 +136,8 @@ public static class LeaderBriefing
         _ => string.Join(", ", items.Take(items.Count - 1)) + " and " + items[^1],
     };
 
-    private static IEnumerable<(string Name, long Value)> Commerce(CommerceVector vector) =>
-        [("gold", vector.Gold), ("research", vector.Research), ("culture", vector.Culture), ("espionage", vector.Espionage)];
+    private static IEnumerable<(string Name, long Value)> Commerce(ContentDb content, CommerceVector vector) =>
+        content.Commerce.Select(type => (type.Key, vector[type]));
 
     private static string Name<T>(ContentDb content, string id) where T : ContentDef =>
         content.TryGet<T>(id, out var def) ? def.Name : Labels.Humanize(id);

@@ -50,8 +50,8 @@ internal sealed class CorporationCivicValuer(ICorporationService corporations, N
                 points -= worth;
             }
             // Maintenance is in hundredths of gold. A ban ends it with the branches; a cut is a gain.
-            if (banned) points += city.MaintenanceHundredths * PlannerPoints.Gold / 100;
-            else if (maintenancePercent != 0) points -= city.MaintenanceHundredths * maintenancePercent / 100 * PlannerPoints.Gold / 100;
+            if (banned) points += city.MaintenanceHundredths * PlannerPoints.Gold(ctx.Sim.Content) / 100;
+            else if (maintenancePercent != 0) points -= city.MaintenanceHundredths * maintenancePercent / 100 * PlannerPoints.Gold(ctx.Sim.Content) / 100;
         }
         if (banned || foreignBanned)
             foreach (var prospect in ctx.Derived("corporations:civic_valuer:prospects", () => Prospects(ctx)))
@@ -77,7 +77,7 @@ internal sealed class CorporationCivicValuer(ICorporationService corporations, N
                 var def = sim.Content.Get<CorporationDef>(present[i]);
                 long copies = corporations.ConsumedBonusCount(sim, city.Id, present[i]);
                 var (yields, commerce) = CorporationService.BranchOutput(def, copies);
-                outputs[i] = (present[i], PlannerPoints.Yields(yields) + PlannerPoints.Commerce(commerce) + CorporationPlanner.Extras(sim.Content, def, copies));
+                outputs[i] = (present[i], PlannerPoints.Yields(yields) + PlannerPoints.Commerce(sim.Content, commerce) + CorporationPlanner.Extras(sim.Content, def, copies));
             }
             result.Add(new(outputs, corporations.MaintenanceHundredths(sim, city.Id)));
         }

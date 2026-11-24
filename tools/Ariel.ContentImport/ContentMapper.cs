@@ -18,6 +18,8 @@ public sealed record MappedDefinition(DefinitionMapping Mapping, ContentDef Defi
 /// <summary>Compiles merged trees into immutable Core definitions. No source table is read at game startup.</summary>
 public sealed partial class ContentMapper
 {
+    /// <summary>The source's native commerce enum, in its index order: a native commerce array reads in this layout.</summary>
+    private static readonly CommerceLayout NativeCommerce = CommerceLayout.Of(["gold", "research", "culture", "espionage"]);
     public static readonly JsonSerializerOptions Json = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true,
@@ -328,7 +330,13 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     private static ModifierEffect[] VectorEffects(FieldMapping field, string? target, YieldVector value) =>
         VectorEffects(field, target, [("food", value.Food), ("production", value.Production), ("commerce", value.Commerce)]);
     private static ModifierEffect[] VectorEffects(FieldMapping field, string? target, CommerceVector value) =>
-        VectorEffects(field, target, [("gold", value.Gold), ("research", value.Research), ("culture", value.Culture), ("espionage", value.Espionage)]);
+        VectorEffects(field, target, Parts(value));
+    private static (string Part, long Amount)[] Parts(CommerceVector value)
+    {
+        var parts = new List<(string, long)>();
+        foreach (var part in value) parts.Add(part);
+        return parts.ToArray();
+    }
     private static ModifierEffect[] VectorEffects(FieldMapping field, string? target, (string Part, long Amount)[] parts) => parts
         .Select(p => new ModifierEffect
         {
@@ -408,12 +416,9 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         {
             var id = RequiredReference("BuildingClassInfo", entry.Children[0].Text!, record, node.Name);
             var amount = Integer(entry.Children[2].Text);
-            var change = NativeKey(entry.Children[1].Text!) switch
-            {
-                "gold" => new CommerceVector(amount, 0, 0, 0), "research" => new(0, amount, 0, 0),
-                "culture" => new(0, 0, amount, 0), "espionage" => new(0, 0, 0, amount),
-                _ => throw new InvalidDataException("Unknown commerce type")
-            };
+            var type = NativeKey(entry.Children[1].Text!);
+            if (NativeCommerce.IndexOf(type) < 0) throw new InvalidDataException("Unknown commerce type");
+            var change = CommerceVector.Zero(NativeCommerce).With(type, amount);
             result[id] = result.GetValueOrDefault(id) + change;
         }
         return result;
@@ -518,7 +523,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     }
     internal static CommerceVector Commerce(DataNode? node)
     {
-        var n = Vector(node, 4); return new(n[0], n[1], n[2], n[3]);
+        var n = Vector(node, NativeCommerce.Count);
+        return CommerceVector.Of(NativeCommerce, Array.ConvertAll(n, v => (long)v));
     }
     private static int[] Vector(DataNode? node, int length)
     {

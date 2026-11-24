@@ -9,7 +9,6 @@ namespace Ariel.Rules.Government;
 
 internal sealed class CivicEffects : IModifierSource
 {
-    private static readonly string[] AllSpecialistKeys = SpecialistKeys("all");
     // Civics read populations (the largest cities), plot owners and the work area, which follows the culture level alone.
     private static readonly IReadOnlyList<string> Unread =
         [CityStateDomains.Work, CityStateDomains.Queue, CityStateDomains.Culture, CityStateDomains.PlotCulture, CityStateDomains.Production,
@@ -64,7 +63,7 @@ internal sealed class CivicEffects : IModifierSource
     {
         Capital(city, c, buildings, sink);
         Wellbeing(sim, city, c, buildings, sink);
-        SpecialistCommerce(c.Id, AllSpecialistKeys, c.SpecialistExtraCommerces * 100, sink);
+        SpecialistCommerce(sim.Rules().Commerce, c.Id, c.SpecialistExtraCommerces * 100, sink);
         foreach (var b in buildings)
         {
             sink.AddCommerce(c.Id, c.BuildingClassCommerceChanges.GetValueOrDefault(b.DefaultBuilding));
@@ -122,16 +121,10 @@ internal sealed class CivicEffects : IModifierSource
             .Take(count).Any(x => x.Id == city.Id);
         if (largest) sink.Add(c.Id + ":largest", "cities:happiness", c.LargestCityHappiness);
     }
-    private static string[] SpecialistKeys(string specialist) =>
-    [
-        "cities:specialist_gold_hundredths:" + specialist, "cities:specialist_research_hundredths:" + specialist,
-        "cities:specialist_culture_hundredths:" + specialist, "cities:specialist_espionage_hundredths:" + specialist,
-    ];
-    private static void SpecialistCommerce(string source, string[] keys, CommerceVector value, ModifierSink sink)
+    // Every specialist's extra commerce, under each type's targeted specialist key aimed at all specialists.
+    private static void SpecialistCommerce(CommerceRoster commerce, string source, CommerceVector value, ModifierSink sink)
     {
-        sink.Add(source, keys[0], value.Gold);
-        sink.Add(source, keys[1], value.Research);
-        sink.Add(source, keys[2], value.Culture);
-        sink.Add(source, keys[3], value.Espionage);
+        var keys = commerce.Names("cities:specialist_", "_hundredths:all");
+        for (int i = 0; i < keys.Length; i++) sink.Add(source, keys[i], value[commerce.Types[i]]);
     }
 }

@@ -1,7 +1,7 @@
 {
   "id": "corporations",
   "name": "Corporations",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "assembly": "Ariel.Mods.Corporations.dll",
   "api": "Ariel.Mods.Corporations.Api.dll",
   "dependencies": [],

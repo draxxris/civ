@@ -1307,7 +1307,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var city = P7ModFixture.City(sim, 39, owner: 0, population: 3);
         city.Extensions.Set(sim.Content, new CityRuleState { IsPuppet = true, OccupationTurns = 0 });
         sim.State.PlayerById(0).Treasury = 10000;
-        Assert.True(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = new(100, 0, 0, 0) }, out var error), error);
+        Assert.True(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(100, 0, 0, 0) }, out var error), error);
         Assert.True(Service<IPlayerEconomyService>(sim).Calculate(sim, 0).NetGold >= 0);
 
         sim.Content.PlayerAIs.Get("ai:standard").Decide(sim, 0).ToArray();
@@ -1840,9 +1840,9 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
             context.Content<ProjectDef>().Register(new() { Id = "probe:project", Name = "Project", Cost = 1 });
             context.RegisterService<IProductionKind>("probe_project", new ProbeProjectKind());
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:basic", Name = "Basic", DefaultBuilding = "probe:basic", Cost = 1,
-                YieldChanges = new(0, 2, 0), ObsoleteSafeCommerceChanges = new(0, 0, 3, 0), HurryAngerModifier = -50, ObsoleteTech = "research:pottery" });
+                YieldChanges = new(0, 2, 0), ObsoleteSafeCommerceChanges = TestCommerce.Vector(0, 0, 3, 0), HurryAngerModifier = -50, ObsoleteTech = "research:pottery" });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:unique_basic", Name = "Unique Basic", DefaultBuilding = "probe:basic", Cost = 1,
-                YieldChanges = new(0, 7, 0), ObsoleteSafeCommerceChanges = new(0, 0, 5, 0), HurryAngerModifier = -50 });
+                YieldChanges = new(0, 7, 0), ObsoleteSafeCommerceChanges = TestCommerce.Vector(0, 0, 5, 0), HurryAngerModifier = -50 });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:upgrade", Name = "Upgrade", DefaultBuilding = "probe:upgrade", Cost = 1,
                 YieldChanges = new(0, 11, 0), ReplaceBuildings = ImmutableDictionary<string, bool>.Empty.Add("probe:basic", true), ObsoleteTech = "research:writing" });
             context.Content<S.BuildingDef>().Register(new() { Id = "probe:extension", Name = "Extension", DefaultBuilding = "probe:extension", Cost = 1,
@@ -1875,7 +1875,7 @@ public sealed class CityRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
             sink.Add("probe:training", "cities:experience", 5);
             sink.Add("probe:item", "cities:building_class_production_percent:probe:enhanced_building", 50);
             sink.AddYield("probe:flat", new(4, 3, 4)); sink.AddYield("probe:percent", new(0, 50, 0), true);
-            sink.AddCommerce("probe:direct", new(0, 0, 2, 0)); sink.AddCommerce("probe:percent", new(0, 25, 0, 0), true);
+            sink.AddCommerce("probe:direct", TestCommerce.Vector(0, 0, 2, 0)); sink.AddCommerce("probe:percent", TestCommerce.Vector(0, 25, 0, 0), true);
         }
     }
 }

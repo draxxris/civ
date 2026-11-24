@@ -89,7 +89,7 @@ public sealed class ModContentTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal("research:meditation", religion.FoundingTech);
         Assert.Equal("military:buddhist_missionary", religion.Missionary);
         Assert.Equal(35, religion.SpreadFactor);
-        Assert.Equal(new CommerceVector(1, 0, 2, 0), religion.GlobalCityCommerce);
+        Assert.Equal(TestCommerce.Vector(1, 0, 2, 0), religion.GlobalCityCommerce);
 
         var wonder = db.Get<Schema.BuildingDef>("cities:abu_simbel");
         Assert.Equal(150, wonder.Cost);

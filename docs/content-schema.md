@@ -21,7 +21,9 @@ that output with the committed data so changes can be brought in piece-meal (see
 - Foundation: `YieldDef`, `CommerceDef`, `EraDef`, `GameSpeedDef`, `HandicapDef`,
   `WorldSizeDef`, `CultureLevelDef`, `SpecialistDef`, `RuleConstantsDef`,
   `HexOverridesDef`, `GameOptionDef`, `ConditionDef`, `ReligionIdentityDef`, and
-  `VictoryIdentityDef`.
+  `VictoryIdentityDef`. Any mod may register `CommerceDef` rows (`key`, `order`,
+  `initialPercent`, `takesRemainder`, `floorAtZero`, `deficitCut`, `aiPoints`); each is a
+  commerce type (DESIGN.md, Commerce types).
 - World: `TerrainDef`, `FeatureDef`, `BonusClassDef`, `BonusDef`, `ImprovementDef`,
   `RouteDef`, `BuildDef`, and `GoodyDef`.
 - Research: `TechDef`.
@@ -221,7 +223,7 @@ result once the option is chosen, and the resolution notice ends with it.
 to every calculation of that scope for a player who runs the civic, with the civic id as
 the ledger source. Scopes are `plot`, `city`, `player`, `team` and `unit`. The key is a
 typed vector key (`yield.flat.food`, `yield.percent.production`,
-`commerce.flat.gold`, `commerce.percent.research`, ...) or a key some loaded module
+`commerce.flat.gold`, `commerce.percent.research`, ..., for every loaded commerce type) or a key some loaded module
 declares in its `data/modifier-key.json`:
 
 ```json
@@ -333,9 +335,12 @@ Authoritative JSON numbers are integers. Collections use `ImmutableArray` and
 Definitions have init-only properties.
 
 `YieldVector` stores food, production, and commerce, in that order:
-`(Food, Production, Commerce)`. `CommerceVector` stores gold, research, culture, and
-espionage, in that order: `(Gold, Research, Culture, Espionage)`. Short source arrays
-receive zeroes in their remaining native slots. Excess entries fail the import. Vector
+`(Food, Production, Commerce)`. `CommerceVector` is an object of amounts by commerce type
+key, `{ "culture": 0, "espionage": 0, "gold": 2, "research": 1 }`: a key is a loaded
+`CommerceDef`'s `key`, a missing key is zero, and a key no loaded mod registers (or one from
+a mod the definition's mod does not reference) fails loading. The importer reads the
+source's native commerce arrays in its enum order (gold, research, culture, espionage).
+Short source arrays receive zeroes in their remaining native slots. Excess entries fail the import. Vector
 fields retain their own units: flat amounts, percentage modifiers, doubling times,
 thresholds, or integer flags.
 

@@ -48,10 +48,10 @@ internal sealed class CorporationPlanner(AiContext ctx, CorporationService servi
     public static long Worth(Ariel.Content.ContentDb content, CorporationDef c)
     {
         long copies = c.PrereqBonuses.Length > 0 ? 1 : 0;
-        long perCopy = (PlannerPoints.Yields(c.YieldProducedHundredths) + PlannerPoints.Commerce(c.CommerceProducedHundredths)
-            - c.MaintenanceHundredths * PlannerPoints.Gold) * copies;
-        return perCopy / 100 + PlannerPoints.Yields(c.YieldChanges) + PlannerPoints.Commerce(c.CommerceChanges)
-            + PlannerPoints.Commerce(c.HeadquartersCommerce) + Extras(content, c, copies);
+        long perCopy = (PlannerPoints.Yields(c.YieldProducedHundredths) + PlannerPoints.Commerce(content, c.CommerceProducedHundredths)
+            - c.MaintenanceHundredths * PlannerPoints.Gold(content)) * copies;
+        return perCopy / 100 + PlannerPoints.Yields(c.YieldChanges) + PlannerPoints.Commerce(content, c.CommerceChanges)
+            + PlannerPoints.Commerce(content, c.HeadquartersCommerce) + Extras(content, c, copies);
     }
 
     /// <summary>The weights the civic planner gives a point of happiness and of health in a city.</summary>
@@ -198,8 +198,8 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
     /// <summary>What an executive is worth to the city planner: the headquarters income of one more branch, in the
     /// planner's points, over its cost plus 60, which is how the planner rates a building's yield (see
     /// <see cref="ProductionWish"/>). The four gold of most corporations makes about 125 for a 100-hammer executive.</summary>
-    internal static long Score(CorporationDef corporation, UnitDef executive) =>
-        PlannerPoints.Commerce(corporation.HeadquartersCommerce) * 1000L / (executive.Cost + 60);
+    internal static long Score(Ariel.Content.ContentDb content, CorporationDef corporation, UnitDef executive) =>
+        PlannerPoints.Commerce(content, corporation.HeadquartersCommerce) * 1000L / (executive.Cost + 60);
 
     public IEnumerable<ProductionWish> Wishes(AiContext ctx, City city)
     {
@@ -220,7 +220,7 @@ internal sealed class ExecutiveWishes(CorporationService service) : IProductionW
             if (ExecutiveTargets.Foreign(ctx, service, corporation, city.Position).FirstOrDefault() is not { } target) continue;
             if (!CorporationPlanner.Affordable(ctx, service.SpreadCost(ctx.Sim, ctx.PlayerId, target, corporation), netGold.Value)) continue;
             foreach (var unit in ctx.Sim.Content.Get<UnitDef>().All.Where(u => CorporationService.Spreads(ctx.Sim, u.Id, corporation)))
-                yield return new("cities:unit", unit.Id, Score(corporation, unit));
+                yield return new("cities:unit", unit.Id, Score(ctx.Sim.Content, corporation, unit));
         }
     }
 

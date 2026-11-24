@@ -161,10 +161,10 @@ public static class ContentReferences
 
     /// <summary>Every <typeparamref name="T"/> nested in a value (properties, sequences, map values), with its diagnostic
     /// path, in property-name and sequence order.</summary>
-    public static IEnumerable<(T Value, string Path)> Find<T>(object? value, string path) where T : class =>
+    public static IEnumerable<(T Value, string Path)> Find<T>(object? value, string path) where T : notnull =>
         Find<T>(value, path, new HashSet<object>(ReferenceEqualityComparer.Instance));
 
-    private static IEnumerable<(T Value, string Path)> Find<T>(object? value, string path, HashSet<object> seen) where T : class
+    private static IEnumerable<(T Value, string Path)> Find<T>(object? value, string path, HashSet<object> seen) where T : notnull
     {
         if (value is null or string or Requirement || value.GetType().IsPrimitive || value.GetType().IsEnum || !seen.Add(value)) yield break;
         if (value is T found) { yield return (found, path); yield break; }

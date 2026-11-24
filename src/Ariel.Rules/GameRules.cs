@@ -39,6 +39,8 @@ public sealed class GameRules : IRuleset
     public IResearchService Research { get; private set; } = null!;
     /// <summary>Commerce rates, income and upkeep.</summary>
     public IPlayerEconomyService Economy { get; private set; } = null!;
+    /// <summary>The loaded commerce types and their behaviour.</summary>
+    public CommerceRoster Commerce { get; private set; } = null!;
     /// <summary>Research output a player's economy supplies.</summary>
     public IPlayerResearchSource ResearchSource { get; private set; } = null!;
     /// <summary>Espionage output a player's economy supplies.</summary>
@@ -173,6 +175,7 @@ public sealed class GameRules : IRuleset
         CityConnections = services.Get<ICityConnectionService>().Single();
         Research = services.Get<IResearchService>().Single();
         Economy = services.Get<IPlayerEconomyService>().Single();
+        Commerce = new CommerceRoster(content);
         ResearchSource = services.Get<IPlayerResearchSource>().Single();
         EspionageSource = services.Get<IPlayerEspionageSource>().Single();
         CityCultureSource = services.Get<ICityCultureSource>().Single();

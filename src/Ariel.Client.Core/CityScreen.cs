@@ -120,7 +120,7 @@ public sealed partial class GameSession
         (OptionalService<ICityBuildingService>()?.EffectiveBuildings(Sim, city.Id) ?? city.Buildings)
             .Select(id => Sim.Content.Get<Schema.BuildingDef>(id).Name).Order(StringComparer.Ordinal).ToList();
 
-    private static CommerceVector PerTurn(CommerceVector h) => new(h.Gold / 100, h.Research / 100, h.Culture / 100, h.Espionage / 100);
+    private static CommerceVector PerTurn(CommerceVector h) => h / 100;
     private string? CultureLevelName(City city) => OptionalService<ICityCultureService>()?.Level(Sim, city.Id).Name;
 
     private long CultureOf(City city) => OptionalService<ICityCultureSource>()?.CultureHundredths(Sim, city.Id) ?? 0;

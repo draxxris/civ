@@ -2752,10 +2752,52 @@ lists the phrase among the prerequisites; other kinds keep the generic
 player, team or unit calculation. The calculating mod calls `ModifierSink.Collect`, then
 applies its own formula.
 
-`YieldVector` holds food, production and commerce. `CommerceVector` holds gold,
-research, culture and espionage. Sources contribute flat vectors, percent vectors and
+`YieldVector` holds food, production and commerce. `CommerceVector` holds an amount per
+commerce type (see Commerce types below). Sources contribute flat vectors, percent vectors and
 namespaced integer effects such as `military:combat_percent`. Percentages add before
 integer multiplication and division. Division truncates toward zero.
+
+### Commerce types
+
+Commerce types are a registered set, not a fixed four. A content row whose type implements
+`ICommerceType` (the economy's `CommerceDef`) is a commerce type; any mod registers its own
+in its namespace. The foundation registers gold, research, culture and espionage
+(`data/commerce.json`). Each type has a short `Key` (`gold`), unique among the loaded types
+and separate from its id, so a row can move to another mod without changing a vector, a
+ledger key or the saved state, and an `Order`, the order the slider, the city screen and the
+ledgers list the types in. When references are validated, `ContentDb.Commerce` indexes the
+loaded types in that order (`CommerceTypes`); each type's position is its slot.
+
+`CommerceVector` is a fixed-capacity value (at most eight types, an inline array of longs,
+never allocating) that carries its own keys as an interned `CommerceLayout`. Vectors with
+one layout combine slot by slot; vectors of two layouts combine through a merge each layout
+keeps per pair, and a key a vector does not carry reads as zero, so `{gold: 5}` equals
+`{gold: 5, research: 0}`. Carrying its keys lets a vector read and write JSON without the
+database: content sidecars, saves, state clones, hashes and commands all use the static
+serializer options. A vector writes every key it carries, zeros included, named as the
+original four properties were (`Gold`, or `gold` under a camel case policy), so state that
+starts from `CommerceTypes.Zero` keeps the saved shape and the state hash of the four-slot
+struct. Loading rejects a vector in content that names a type no loaded mod registers, or
+a type from a mod its definition's mod does not reference; the typed modifier keys are
+`commerce.flat.<key>` and `commerce.percent.<key>` for every loaded type.
+
+`CommerceDef` carries what was positional: `InitialPercent` (the initial percents sum to
+100), `TakesRemainder` (exactly one type, gold, gets the unallocated hundredths of the
+slider split and every deficit cut), `FloorAtZero` (research and culture never go below
+zero in a city), `DeficitCut` (the order settlement cuts a type's rate into the remainder
+type when the treasury runs short; null never cuts) and `AiPoints` (the computer player's
+points for one unit). The economy reads them through `GameRules.Commerce`, a
+`CommerceRoster` built and checked when content freezes, and loops over the types: the city
+split, the per-type ledgers (`economy:<key>_split_hundredths`, `cities:direct_<key>_hundredths`,
+`cities:specialist_<key>_hundredths:all`, ...), rate validation with its
+`economy:max_rate:<key>` maximum, and settlement. Modules read the foundation's types by role
+through `FoundationCommerce` (`vector.Gold`, `vector.Research`, ...): gold pays the treasury,
+research feeds Research, culture feeds city culture and espionage the espionage feature. The
+slider command and the player state carry the open vector; `SetRates` stores it over
+`CommerceTypes.Zero`, so the state names every loaded type even when a command leaves one
+out. The client draws one rate box per type except the remainder type and one city stat
+row per type besides gold and research. The AI economy planner funds only gold, research and
+culture and values flat commerce of every type by its points.
 
 The sink produces a `Ledger` with ordered `(Source, Key, Amount)` lines and totals by
 key. Typed keys separate flat and percent units. Each calculating mod owns effect-key
@@ -2763,8 +2805,8 @@ meanings, final formulas and rounding boundaries. Test-ruleset civilization and 
 bonuses are modifier sources, not special cases in the turn systems.
 
 Content can carry modifiers as data. A `ModifierEffect` is `{scope, key, target,
-amount}`; `ModifierSink.Apply` routes the fourteen typed vector keys
-(`yield.flat.food`, `commerce.percent.research`, ...) to the typed vectors and every
+amount}`; `ModifierSink.Apply` routes the typed vector keys (the six yield keys and two
+per loaded commerce type: `yield.flat.food`, `commerce.percent.research`, ...) to the typed vectors and every
 other key to a ledger line, keyed `key:target` when the effect has a target. A
 non-typed key must be declared by a `ModifierKeyDef` from the module that reads it
 (`data/modifier-key.json`). The declaration gives the unit (`flat`, `percent`, `flag`,

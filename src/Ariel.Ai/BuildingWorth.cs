@@ -62,13 +62,23 @@ internal sealed class BuildingWorth(AiContext ctx)
 
     private int CommerceValue(BuildingDef b, CityView v)
     {
-        var c = b.CommerceChanges;
-        int flat = (int)(c.Gold * PlannerPoints.Gold + c.Research * (PlannerPoints.Research + ctx.Weight("science") / 5)
-            + c.Culture * (PlannerPoints.Culture + ctx.Weight("culture") / 8) + c.Espionage * PlannerPoints.Espionage);
-        var m = b.CommerceModifiers;
-        int percent = (int)(m.Gold * PlannerPoints.Gold + m.Research * (PlannerPoints.Research + ctx.Weight("science") / 5)
-            + m.Culture * PlannerPoints.Culture) * v.Commerce / 100;
-        return flat + percent + (int)b.CapitalExtraCommerce;
+        // Flat commerce of every type is worth its points, research and culture more for a leader who favours them.
+        // A percent modifier is worth something only on the types the slider planner funds (EconomyPlanner.Funded),
+        // and research's flavour bonus applies to it too.
+        long flat = 0, percent = 0;
+        foreach (var type in ctx.Sim.Content.Commerce)
+        {
+            long points = PlannerPoints.Of(type);
+            flat += b.CommerceChanges[type] * (points + type.Key switch
+            {
+                FoundationCommerce.ResearchKey => ctx.Weight("science") / 5,
+                FoundationCommerce.CultureKey => ctx.Weight("culture") / 8,
+                _ => 0,
+            });
+            if (Array.IndexOf(EconomyPlanner.Funded, type.Key) >= 0)
+                percent += b.CommerceModifiers[type] * (points + (type.Key == FoundationCommerce.ResearchKey ? ctx.Weight("science") / 5 : 0));
+        }
+        return (int)flat + (int)percent * v.Commerce / 100 + (int)b.CapitalExtraCommerce;
     }
 
     private static int WellbeingValue(BuildingDef b, CityView v)

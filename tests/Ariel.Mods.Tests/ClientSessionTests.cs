@@ -834,11 +834,11 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var s = NewSession();
         var before = s.Summary().Rates;
-        Assert.True(s.ShiftRate(RateKind.Research, 10));
+        Assert.True(s.ShiftRate("research", 10));
         var after = s.Summary().Rates;
         Assert.Equal(before.Research + 10, after.Research);
         Assert.Equal(before.Gold - 10, after.Gold);
-        Assert.False(s.ShiftRate(RateKind.Research, 7));
+        Assert.False(s.ShiftRate("research", 7));
         Assert.NotEqual("", s.Message);
     }
 

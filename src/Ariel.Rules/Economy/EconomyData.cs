@@ -16,16 +16,12 @@ internal static class EconomyData
     internal static IEnumerable<City> Cities(Simulation sim, int player) => sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id);
     internal static CivicDef[] Civics(Simulation sim, int player) => sim.State.PlayerById(player).Civics.Values.Order(StringComparer.Ordinal).Select(sim.Content.Get<CivicDef>).ToArray();
     internal static ModifierSink Effects(Simulation sim, int player) => ModifierSink.Collect(new(sim, ModifierScope.Player, player, Team: sim.TeamOf(player)));
-    internal static EconomyPlayerState Read(Simulation sim, int player) => sim.State.PlayerById(player).Extensions.Get<EconomyPlayerState>(sim.Content) ?? new() { Rates = InitialRates(sim) };
+    internal static EconomyPlayerState Read(Simulation sim, int player) => sim.State.PlayerById(player).Extensions.Get<EconomyPlayerState>(sim.Content)
+        ?? new() { Rates = sim.Rules().Commerce.InitialRates, SettledCommerceHundredths = sim.Rules().Commerce.Zero };
     internal static EconomyPlayerState Edit(Simulation sim, int player)
     {
         var state = Read(sim, player); sim.State.PlayerById(player).Extensions.Set(sim.Content, state); return state;
     }
-    private static CommerceVector InitialRates(Simulation sim) => new(
-        sim.Content.Get<CommerceDef>("foundation:commerce_gold").InitialPercent,
-        sim.Content.Get<CommerceDef>("foundation:commerce_research").InitialPercent,
-        sim.Content.Get<CommerceDef>("foundation:commerce_culture").InitialPercent,
-        sim.Content.Get<CommerceDef>("foundation:commerce_espionage").InitialPercent);
     internal static int EraIndex(Simulation sim, int player)
     {
         string current = sim.State.PlayerById(player).Extensions.Get<CityPlayerState>(sim.Content)?.CurrentEra ?? sim.Settings.StartingEra;

@@ -20,35 +20,40 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
     public string? ValidateRates(Simulation sim, int player, CommerceVector rates)
     {
         if (!sim.State.Players.Any(p => p.Id == player)) return "Unknown player";
-        var parts = CityCommerce.Parts(rates);
+        var commerce = sim.Rules().Commerce;
+        foreach (var (key, _) in rates)
+            if (!commerce.Types.TryGet(key, out _)) return "Unknown commerce type: " + key;
+        var parts = commerce.Parts(rates);
         if (parts.Any(p => p < 0 || p > 100) || parts.Sum() != 100) return "Commerce rates must be 0..100 and sum to 100";
         int step = Math.Max(1, EconomyData.Raw(sim, "COMMERCE_PERCENT_CHANGE_INCREMENTS", 5));
         if (parts.Any(p => p % step != 0)) return "Commerce rates must use steps of " + step;
         var effects = EconomyData.Effects(sim, player).Ledger;
+        var maxRateKeys = commerce.Names("economy:max_rate:", "");
         for (int i = 0; i < parts.Length; i++)
         {
             // Negative contributions reduce the default maximum. Future civic policies use the same hook.
-            long maximum = Math.Clamp(100 + effects.Total("economy:max_rate:" + CityCommerce.Types[i]), 0, 100);
-            if (parts[i] > maximum) return "Commerce rate exceeds maximum: " + CityCommerce.Types[i];
+            long maximum = Math.Clamp(100 + effects.Total(maxRateKeys[i]), 0, 100);
+            if (parts[i] > maximum) return "Commerce rate exceeds maximum: " + commerce.Types[i].Key;
         }
         return null;
     }
-    public void SetRates(Simulation sim, int player, CommerceVector rates) => EconomyData.Edit(sim, player).Rates = rates;
+    // Stored with every loaded type, so the state names each one whatever the command left out.
+    public void SetRates(Simulation sim, int player, CommerceVector rates) => EconomyData.Edit(sim, player).Rates = sim.Rules().Commerce.Zero + rates;
     public CityCommerceResult CalculateCity(Simulation sim, int city) => commerce.Calculate(sim, city, Rates(sim, sim.State.CityById(city).Owner));
     public PlayerEconomyResult Calculate(Simulation sim, int player)
     {
         // Only reads: every city's commerce shares one span's modifier sums and city scope.
         using var span = sim.OpenReadSpan();
         var lines = new List<LedgerLine>();
-        CommerceVector total = default;
+        var commerce = sim.Rules().Commerce;
+        var keys = commerce.Names("economy:", "_hundredths");
+        var total = commerce.Zero;
         foreach (var city in EconomyData.Cities(sim, player))
         {
             var result = CalculateCity(sim, city.Id);
             total += result.Hundredths;
-            lines.Add(new("economy:city:" + city.Id, "economy:gold_hundredths", result.Hundredths.Gold));
-            lines.Add(new("economy:city:" + city.Id, "economy:research_hundredths", result.Hundredths.Research));
-            lines.Add(new("economy:city:" + city.Id, "economy:culture_hundredths", result.Hundredths.Culture));
-            lines.Add(new("economy:city:" + city.Id, "economy:espionage_hundredths", result.Hundredths.Espionage));
+            string source = "economy:city:" + city.Id;
+            for (int i = 0; i < keys.Length; i++) lines.Add(new(source, keys[i], result.Hundredths[commerce.Types[i]]));
         }
         if (sim.Rules().EspionageSpending is { } espionage)
             foreach (var share in espionage.Spending(sim, player, total.Espionage))
@@ -78,7 +83,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
         public long NetGold(CommerceVector rates)
         {
             long gold = 0;
-            foreach (var city in cities) gold += CityCommerce.Split(city, rates).Result[0];
+            foreach (var city in cities) gold += CityCommerce.Split(city, rates).Result[city.Commerce[FoundationCommerce.GoldKey].Index];
             return gold / 100 + dealIncome - expenses;
         }
     }
@@ -95,16 +100,19 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
         long netGold = result.NetGold;
         var total = result.CommerceHundredths;
         int step = Math.Max(1, EconomyData.Raw(sim, "COMMERCE_PERCENT_CHANGE_INCREMENTS", 5));
-        // Science is reduced first. Each adjustment is legal under the same policy as a command.
-        for (int i = 1; i < 4; i++)
+        // Types are cut in their deficit order (science first) into the remainder type. Each adjustment is legal under
+        // the same policy as a command.
+        var commerce = sim.Rules().Commerce;
+        foreach (var cut in commerce.DeficitCuts)
         {
+            int i = cut.Index, into = commerce.Remainder.Index;
             while (owner.Treasury + netGold < 0)
             {
-                var parts = CityCommerce.Parts(state.Rates);
+                var parts = commerce.Parts(state.Rates);
                 if (parts[i] == 0) break;
                 long shift = Math.Min(step, parts[i]);
-                parts[i] -= shift; parts[0] += shift;
-                var next = CityCommerce.Vector(parts);
+                parts[i] -= shift; parts[into] += shift;
+                var next = commerce.Vector(parts);
                 if (ValidateRates(sim, player, next) is not null) break;
                 state.Rates = next;
                 // Sliders change output, not recurring costs. Keep the expense snapshot for this settlement.
@@ -232,7 +240,7 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
     };
     private CommerceVector CommerceTotal(Simulation sim, int player)
     {
-        CommerceVector total = default;
+        var total = sim.Rules().Commerce.Zero;
         foreach (var city in EconomyData.Cities(sim, player)) total += CalculateCity(sim, city.Id).Hundredths;
         return total;
     }

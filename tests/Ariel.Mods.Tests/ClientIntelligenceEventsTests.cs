@@ -258,7 +258,7 @@ public sealed class ClientIntelligenceEventsTests
     {
         var session = IntelligenceSession(out var points, out _); var sim = session.Sim;
         points.Points[1] = 100;
-        sim.Rules().Economy.SetRates(sim, 0, new(0, 0, 0, 100));
+        sim.Rules().Economy.SetRates(sim, 0, TestCommerce.Vector(0, 0, 0, 100));
         Assert.True(ScreenProbe.Press(session, EspionageId, "raise:1"));
         long before = Spending(ScreenProbe.Body(session, EspionageId));
         Assert.True(before > 0);
@@ -387,7 +387,7 @@ public sealed class ClientIntelligenceEventsTests
     {
         var session = IntelligenceSession(out var points, out var target); var sim = session.Sim;
         points.Points[1] = 100;
-        sim.Rules().Economy.SetRates(sim, 0, new(0, 0, 0, 100));
+        sim.Rules().Economy.SetRates(sim, 0, TestCommerce.Vector(0, 0, 0, 100));
         // An unset weight is zero, so the player must ask for the rival before the forecast moves.
         Assert.True(ScreenProbe.Press(session, EspionageId, "raise:1"));
         var spy = AddUnit(sim, target, "military:spy", 0);

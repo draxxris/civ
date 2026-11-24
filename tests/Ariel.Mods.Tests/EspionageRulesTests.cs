@@ -38,7 +38,7 @@ public sealed class EspionageRulesTests
         sim.State.Teams.Add(new Team { Id = 2, Members = new() { 2 } }); sim.State.RebuildIndexes();
         P6RulesScenario.AddCity(sim, 2, 80);
         var economy = P6RulesScenario.Service<IPlayerEconomyService>(sim);
-        economy.SetRates(sim, 0, new(0, 0, 0, 100));
+        economy.SetRates(sim, 0, TestCommerce.Vector(0, 0, 0, 100));
         // An unset weight is zero: the player must ask for a target before points move.
         Assert.Equal(0, Spies(sim).Weight(sim, 0, 1));
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 1, Weight = 1 });
@@ -202,7 +202,7 @@ public sealed class EspionageRulesTests
         sim.State.Players.Add(new Player { Id = 2, TeamId = 2, Treasury = 10000 });
         sim.State.Teams.Add(new Team { Id = 2, Members = new() { 2 } }); sim.State.RebuildIndexes();
         var colony = P6RulesScenario.AddCity(sim, 2, 80);
-        P6RulesScenario.Service<IPlayerEconomyService>(sim).SetRates(sim, 0, new(0, 0, 0, 100));
+        P6RulesScenario.Service<IPlayerEconomyService>(sim).SetRates(sim, 0, TestCommerce.Vector(0, 0, 0, 100));
         sim.Rules().Relations.EstablishContact(sim, 0, 2);
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 2, Weight = 3 });
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 1, Weight = 1 });

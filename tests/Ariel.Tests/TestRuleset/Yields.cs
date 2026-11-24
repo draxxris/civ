@@ -43,7 +43,7 @@ public static class Bonuses
 {
     public static Content.ModifierSink Collect(Simulation sim, int playerId) =>
         Content.ModifierSink.Collect(new(sim, Content.ModifierScope.Player, playerId));
-    public static int Research(Simulation sim, int playerId) => checked((int)Collect(sim, playerId).PercentCommerce.Research);
+    public static int Research(Simulation sim, int playerId) => checked((int)Collect(sim, playerId).PercentCommerce["research"]);
     public static int Production(Simulation sim, int playerId) => checked((int)Collect(sim, playerId).PercentYield.Production);
-    public static int Culture(Simulation sim, int playerId) => checked((int)Collect(sim, playerId).PercentCommerce.Culture);
+    public static int Culture(Simulation sim, int playerId) => checked((int)Collect(sim, playerId).PercentCommerce["culture"]);
 }

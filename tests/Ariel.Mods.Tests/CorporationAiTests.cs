@@ -28,7 +28,7 @@ public sealed class CorporationAiTests(ITestOutputHelper output)
         // Income must not be negative, as spreading requires: the first city is the capital, which cuts distance
         // maintenance, federal reserves' ten gold each pay the rest and new branches, and taxes take all commerce.
         own.Buildings.Add("cities:palace"); own.Buildings.Add("cities:federal_reserve"); hq.Buildings.Add("cities:federal_reserve");
-        P6RulesScenario.Apply(sim, new SetCommerceRatesCommand { Player = 0, Rates = new(100, 0, 0, 0) });
+        P6RulesScenario.Apply(sim, new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(100, 0, 0, 0) });
         GameFactory.GrantFoundingTechs(sim, hq, Cereal);
         GameFactory.FoundCorporation(sim, hq, Cereal);
         Assert.Equal(hq.Id, sim.Service<ICorporationService>()!.Headquarters(sim, Cereal));
@@ -62,7 +62,7 @@ public sealed class CorporationAiTests(ITestOutputHelper output)
         Assert.False(WishesExecutive(sim, own));
         var wish = Wishes(sim).Wishes(Ai(sim), hq).Single(w => w.ContentId == Executive);
         // Rated as the city planner rates a building's yield: one more branch's headquarters income, over cost plus 60.
-        Assert.Equal(PlannerPoints.Commerce(sim.Content.Get<CorporationDef>(Cereal).HeadquartersCommerce) * 1000L
+        Assert.Equal(PlannerPoints.Commerce(sim.Content, sim.Content.Get<CorporationDef>(Cereal).HeadquartersCommerce) * 1000L
             / (sim.Content.Get<UnitDef>(Executive).Cost + 60), wish.Score);
 
         // The city planner ranks it with its own options: what it chooses before is granted as though built, until the

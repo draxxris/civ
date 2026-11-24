@@ -60,21 +60,26 @@ public static class EconomyStateDomains
     /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
     public static readonly IReadOnlyList<string> TreasuryOnly = [Treasury], HurryAngerOnly = [HurryAnger];
 }
+/// <summary>A player's economy. Its commerce vectors carry every loaded commerce type: the economy creates the state
+/// from <see cref="CommerceRoster.InitialRates"/> and <see cref="CommerceRoster.Zero"/>.</summary>
 public sealed class EconomyPlayerState
 {
-    public CommerceVector Rates { get; set; } = new(50, 50, 0, 0);
+    /// <summary>Slider percent by commerce type.</summary>
+    public CommerceVector Rates { get; set; }
     public long AccruedCostRatioTimes10000 { get; set; } = 10000;
     public long UnpaidGold { get; set; }
     public int HurriedCount { get; set; }
     public int StrikeTurns { get; set; }
     public long EspionageHundredths { get; set; }
     public int SettledTurn { get; set; }
+    /// <summary>Commerce in hundredths by type at the last settlement (<see cref="SettledTurn"/>).</summary>
     public CommerceVector SettledCommerceHundredths { get; set; }
 }
 public sealed class EconomyCityState
 {
     public int HurryAngerTurns { get; set; }
 }
+/// <summary>Set the commerce slider: percent by commerce type. A type the rates leave out is set to zero.</summary>
 public sealed class SetCommerceRatesCommand : GameCommand
 {
     public CommerceVector Rates { get; init; }

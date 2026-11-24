@@ -333,7 +333,7 @@ public sealed class DiplomacyRulesTests
         for (int i = 0; i < 40; i++)
             sim.State.AddUnit(new Unit { Id = sim.State.NextUnitId++, Owner = recipient, Type = "military:warrior", Position = city.Position });
         var economy = sim.Rules().Economy;
-        var rates = new CommerceVector(0, 100, 0, 0);
+        var rates = TestCommerce.Vector(0, 100, 0, 0);
         economy.SetRates(sim, recipient, rates);
         var domestic = economy.Calculate(sim, recipient);
         Assert.True(domestic.NetGold < 0);
@@ -371,7 +371,7 @@ public sealed class DiplomacyRulesTests
         foreach (var city in sim.State.Cities) city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
         sim.State.Cities[0].Buildings.Add("cities:palace");
         var economy = sim.Rules().Economy;
-        economy.SetRates(sim, 0, new(0, 100, 0, 0));
+        economy.SetRates(sim, 0, TestCommerce.Vector(0, 100, 0, 0));
         var diplomacy = Service(sim);
         int deal = diplomacy.ProposeDeal(sim, 0, 1, [new(0, TradeItemKind.GoldPerTurn, Amount: 3)]);
         Assert.Null(diplomacy.ValidateExecution(sim, 1, deal)); diplomacy.ExecuteDeal(sim, deal);
@@ -386,7 +386,7 @@ public sealed class DiplomacyRulesTests
         Assert.Equal(0, settled.UnpaidGold); Assert.Equal(0, settled.StrikeTurns);
         Assert.Equal(DiplomaticDealStatus.Active, diplomacy.Deals(sim).Single().Status);
         Assert.True(economy.Calculate(sim, 0).NetGold >= 0);
-        economy.SetRates(sim, 0, new(rates.Gold - 5, rates.Research + 5, 0, 0));
+        economy.SetRates(sim, 0, TestCommerce.Vector(rates.Gold - 5, rates.Research + 5, 0, 0));
         Assert.True(economy.Calculate(sim, 0).NetGold < 0); // One fewer legal slider step cannot fund the payment.
     }
     [Fact]

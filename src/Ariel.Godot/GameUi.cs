@@ -25,9 +25,10 @@ internal sealed partial class GameUi : CanvasLayer
     private readonly HBoxContainer _summaryBox = Ui.HBox(10);
     private ViewRenderer _summary = null!;
     private Button _researchButton = null!;
-    private (Label Label, Button Minus, Button Plus) _scienceRate;
-    private (Label Label, Button Minus, Button Plus) _cultureRate;
-    private (Label Label, Button Minus, Button Plus) _espionageRate;
+    /// <summary>One slider box per commerce type the slider sets (<see cref="GameSession.RateTypes"/>), after the research
+    /// button; rebuilt when a loaded game brings other content.</summary>
+    private readonly List<(CommerceType Type, string Name, Label Label, HBoxContainer Box)> _rateBoxes = new();
+    private ContentDb? _rateBoxesContent;
     private Button _civicsButton = null!;
     private Button _conquestButton = null!;
     /// <summary>One top-bar button per registered mod screen, in <see cref="ScreenHost.Screens"/> order, rebuilt when a
@@ -130,6 +131,7 @@ internal sealed partial class GameUi : CanvasLayer
                 if (_modalKind == Modal.Screen) _modalKind = Modal.None;
             }
             RebuildScreenButtons();
+            RebuildRateBoxes();
         }
         if (!NeedsRefresh()) return;
         var city = _session.City;
@@ -310,9 +312,7 @@ internal sealed partial class GameUi : CanvasLayer
         _topRow.AddChild(_goldText);
         _topRow.AddChild(_summaryBox);
         _topRow.AddChild(_researchButton);
-        _scienceRate = RateBox("Science", RateKind.Research);
-        _cultureRate = RateBox("Culture", RateKind.Culture);
-        _espionageRate = RateBox("Espionage", RateKind.Espionage);
+        RebuildRateBoxes();
         _topRow.AddChild(_civicsButton);
         // Every optional button exists from the start and RefreshTop toggles Visible, so the flow layout never sees a
         // child appear or disappear in a different position.
@@ -365,9 +365,7 @@ internal sealed partial class GameUi : CanvasLayer
         Ui.Set(_researchButton, r == null ? "Choose research!" : $"{r.Name} {r.Progress}/{r.Cost}" + (r.Turns is int t ? $" ({t}t)" : ""));
         if (r == null) Ui.Tint(_researchButton, Ui.Bad);
         else if (_researchButton.HasThemeColorOverride("font_color")) _researchButton.RemoveThemeColorOverride("font_color");
-        Ui.Set(_scienceRate.Label, $"Science {s.Rates.Research}%");
-        Ui.Set(_cultureRate.Label, $"Culture {s.Rates.Culture}%");
-        Ui.Set(_espionageRate.Label, $"Espionage {s.Rates.Espionage}%");
+        foreach (var (type, name, label, _) in _rateBoxes) Ui.Set(label, $"{name} {s.Rates[type]}%");
         var anarchy = _session.Me.Extensions.Get<GovernmentPlayerState>(_session.Sim.Content)?.AnarchyTurns ?? 0;
         Ui.Set(_civicsButton, anarchy > 0 ? $"Civics · {anarchy}t anarchy" : "Civics");
 
@@ -397,17 +395,31 @@ internal sealed partial class GameUi : CanvasLayer
         }
     }
 
-    private (Label Label, Button Minus, Button Plus) RateBox(string name, RateKind kind)
+    /// <summary>Puts one slider box per commerce type the slider sets right after the research button. The set only
+    /// changes with the content, so this runs at start and when a loaded game brings other content.</summary>
+    private void RebuildRateBoxes()
     {
-        var box = Ui.HBox(2);
-        var label = Ui.Text("", 14, Colors.White, wrap: false);
-        var minus = Ui.Button("−", () => _session.ShiftRate(kind, -10), $"10% less {name}");
-        var plus = Ui.Button("+", () => _session.ShiftRate(kind, 10), $"10% more {name}");
-        box.AddChild(label);
-        box.AddChild(minus);
-        box.AddChild(plus);
-        _topRow.AddChild(box);
-        return (label, minus, plus);
+        var content = _session.Sim.Content;
+        if (ReferenceEquals(content, _rateBoxesContent)) return;
+        _rateBoxesContent = content;
+        foreach (var (_, _, _, old) in _rateBoxes) { _topRow.RemoveChild(old); old.QueueFree(); }
+        _rateBoxes.Clear();
+        int at = _researchButton.GetIndex() + 1;
+        foreach (var type in _session.RateTypes())
+        {
+            // The research slider has always read "Science" in the top bar.
+            string name = type.Key == FoundationCommerce.ResearchKey ? "Science"
+                : type.Definition is ContentDef { Name.Length: > 0 } def ? def.Name : type.Key;
+            string key = type.Key;
+            var box = Ui.HBox(2);
+            var label = Ui.Text("", 14, Colors.White, wrap: false);
+            box.AddChild(label);
+            box.AddChild(Ui.Button("−", () => _session.ShiftRate(key, -10), $"10% less {name}"));
+            box.AddChild(Ui.Button("+", () => _session.ShiftRate(key, 10), $"10% more {name}"));
+            _topRow.AddChild(box);
+            _topRow.MoveChild(box, at++);
+            _rateBoxes.Add((type, name, label, box));
+        }
     }
 
     // --- research dialog ------------------------------------------------------------------------

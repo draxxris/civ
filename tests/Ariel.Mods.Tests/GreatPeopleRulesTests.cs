@@ -339,7 +339,7 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         public void Register(IModContext context)
         {
             context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:sage", DefaultUnit = "gp_probe:sage", GoldenAge = true, Flavors = ImmutableDictionary<string, int>.Empty.Add("probe", 100) });
-            context.Content<S.SpecialistDef>().Register(new() { Id = "gp_probe:settled_sage", Commerces = new(0, 6, 0, 0), GreatPeopleRateChange = 2 });
+            context.Content<S.SpecialistDef>().Register(new() { Id = "gp_probe:settled_sage", Commerces = TestCommerce.Vector(0, 6, 0, 0), GreatPeopleRateChange = 2 });
             context.Content<S.PromotionDef>().Register(new() { Id = "gp_probe:leader_skill", Leader = true,
                 CombatTypes = ImmutableDictionary<string, bool>.Empty.Add("military:unitcombat_melee", true) });
             context.Content<S.UnitDef>().Register(new() { Id = "gp_probe:general", DefaultUnit = "gp_probe:general" });

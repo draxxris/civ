@@ -1,4 +1,5 @@
 using System.Text;
+using Ariel.Content;
 using Ariel.Game;
 using Godot;
 
@@ -11,7 +12,6 @@ internal sealed partial class CityUi : Control
 
 
     private const float LeftWidth = 370f, RightWidth = 440f, TopBarHeight = GameUi.TopBarHeight;
-    private static readonly string[] StatNames = ["Production", "Commerce", "Culture", "Espionage", "Maintenance"];
 
     private readonly GameSession _session;
     private readonly IconCache _icons;
@@ -30,7 +30,12 @@ internal sealed partial class CityUi : Control
     private readonly VBoxContainer _statusBox = Ui.VBox(6);
     private readonly Label _foodText = Ui.Text("", 14);
     private readonly ProgressBar _foodBar = Ui.Bar(0, 1, Ui.Good);
-    private readonly Label[] _statValues = new Label[StatNames.Length];
+    // Production, commerce (gold and research), one row per other commerce type, maintenance: built for the loaded
+    // commerce types (BuildStats), again when a loaded game brings other content.
+    private readonly List<Control> _statCells = new();
+    private Label[] _statValues = [];
+    private CommerceType[] _statTypes = [];
+    private Ariel.Content.ContentDb? _statsContent;
     private readonly GridContainer _stats = new() { Columns = 2 };
     /// <summary>The figures the mods add under the fixed ones (<see cref="CityPanelSlot.Stats"/>), two cells each.</summary>
     private readonly List<Control> _modStats = new();
@@ -131,13 +136,7 @@ internal sealed partial class CityUi : Control
         head.AddChild(_leftTitle);
         head.AddChild(new Control { SizeFlagsHorizontal = SizeFlags.ExpandFill });
         head.AddChild(Ui.Button("Close", _session.ClearSelection, "Back to the map (Esc)"));
-        var stats = _stats;
-        for (int i = 0; i < StatNames.Length; i++)
-        {
-            stats.AddChild(Ui.Text(StatNames[i], 14, Ui.Dim));
-            _statValues[i] = Ui.Text("", 14);
-            stats.AddChild(_statValues[i]);
-        }
+        BuildStats();
         var food = Ui.VBox(2);
         food.AddChild(_foodText);
         food.AddChild(_foodBar);
@@ -151,7 +150,7 @@ internal sealed partial class CityUi : Control
         _panelStatus.Visible = false;
         box.AddChild(_panelStatus);
         box.AddChild(food);
-        box.AddChild(stats);
+        box.AddChild(_stats);
         box.AddChild(wellbeing);
         for (int i = 0; i < _ledgers.Length; i++) { _ledgers[i] = Ui.VBox(6); _ledgers[i].Visible = false; box.AddChild(_ledgers[i]); }
         _left.AddChild(Ui.Scroll(box));
@@ -228,13 +227,42 @@ internal sealed partial class CityUi : Control
         }
     }
 
+    /// <summary>The fixed stat rows for the loaded commerce types. Clears the mods' rows, which FillModStats appends again
+    /// after them.</summary>
+    private void BuildStats()
+    {
+        var content = _session.Sim.Content;
+        if (ReferenceEquals(content, _statsContent)) return;
+        _statsContent = content;
+        foreach (var cell in _statCells.Concat(_modStats)) { _stats.RemoveChild(cell); cell.QueueFree(); }
+        _statCells.Clear(); _modStats.Clear(); _shownModStatsKey = null;
+        _statTypes = content.Commerce.Where(t => t.Key is not (FoundationCommerce.GoldKey or FoundationCommerce.ResearchKey)).ToArray();
+        var names = new List<string> { "Production", "Commerce" };
+        names.AddRange(_statTypes.Select(t => t.Definition is Ariel.Content.ContentDef { Name.Length: > 0 } def ? def.Name : t.Key));
+        names.Add("Maintenance");
+        _statValues = new Label[names.Count];
+        for (int i = 0; i < names.Count; i++)
+        {
+            var name = Ui.Text(names[i], 14, Ui.Dim);
+            _statValues[i] = Ui.Text("", 14);
+            _statCells.Add(name); _statCells.Add(_statValues[i]);
+            _stats.AddChild(name);
+            _stats.AddChild(_statValues[i]);
+        }
+    }
+
     private void FillStats(CityScreen c)
     {
+        BuildStats();
         Ui.Set(_statValues[0], $"{c.Production} per turn");
         Ui.Set(_statValues[1], $"{c.CommercePerTurn.Gold} gold, {c.CommercePerTurn.Research} research");
-        Ui.Set(_statValues[2], $"{c.CommercePerTurn.Culture} per turn" + (c.CultureLevel is { } l ? $"  ({l})" : ""));
-        Ui.Set(_statValues[3], $"{c.CommercePerTurn.Espionage} per turn");
-        Ui.Set(_statValues[4], $"{c.Maintenance} gold");
+        for (int i = 0; i < _statTypes.Length; i++)
+        {
+            var type = _statTypes[i];
+            string level = type.Key == FoundationCommerce.CultureKey && c.CultureLevel is { } l ? $"  ({l})" : "";
+            Ui.Set(_statValues[2 + i], $"{c.CommercePerTurn[type]} per turn" + level);
+        }
+        Ui.Set(_statValues[^1], $"{c.Maintenance} gold");
         FillModStats(c.Panels.Stats);
     }
 

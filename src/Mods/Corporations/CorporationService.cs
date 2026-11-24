@@ -157,7 +157,7 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
         var y = def.YieldProducedHundredths * copies;
         var c = def.CommerceProducedHundredths * copies;
         return (new YieldVector(y.Food / 100, y.Production / 100, y.Commerce / 100) + def.YieldChanges,
-            new CommerceVector(c.Gold / 100, c.Research / 100, c.Culture / 100, c.Espionage / 100) + def.CommerceChanges);
+            c / 100 + def.CommerceChanges);
     }
     /// <summary>Whether a unit is an executive of a corporation.</summary>
     internal static bool Spreads(Simulation sim, Unit unit, CorporationDef def) => Spreads(sim, unit.Type, def);

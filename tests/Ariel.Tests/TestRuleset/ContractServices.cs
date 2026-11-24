@@ -18,7 +18,7 @@ internal sealed class CivilizationModifiers : IModifierSource
         if (context.Scope != ModifierScope.Player) return;
         if (context.Sim.CivilizationOf(context.Player) is not { } civ) return;
         sink.AddYield(civ.Name, new(0, civ.ProductionBonus, 0), percent: true);
-        sink.AddCommerce(civ.Name, new(0, civ.ResearchBonus, civ.CultureBonus, 0), percent: true);
+        sink.AddCommerce(civ.Name, CommerceVector.Of(("research", civ.ResearchBonus), ("culture", civ.CultureBonus)), percent: true);
     }
 }
 
@@ -32,7 +32,7 @@ internal sealed class CivicModifiers : IModifierSource
         {
             var civic = context.Sim.Content.Get<CivicDef>(id);
             sink.AddYield(civic.Name, new(0, civic.ProductionBonus, 0), percent: true);
-            sink.AddCommerce(civic.Name, new(0, civic.ResearchBonus, civic.CultureBonus, 0), percent: true);
+            sink.AddCommerce(civic.Name, CommerceVector.Of(("research", civic.ResearchBonus), ("culture", civic.CultureBonus)), percent: true);
         }
     }
 }

@@ -53,6 +53,8 @@ internal static class Specialists
     internal static void Contribute(Simulation sim, City city, ModifierSink effects)
     {
         var buildings = CityData.Active(sim, city).ToArray();
+        var commerce = sim.Rules().Commerce;
+        var directKeys = commerce.Names("cities:direct_", "_hundredths");
         foreach (var pair in All(sim, city, effects))
         {
             var def = sim.Content.Get<S.SpecialistDef>(pair.Key);
@@ -65,10 +67,7 @@ internal static class Specialists
                 effects.AddCommerce(building.Id + ":" + def.Id, building.SpecialistExtraCommerces * pair.Value);
                 // These source fields are hundredths of a commerce point per specialist, not city rate percentages.
                 var fraction = building.SpecialistCommercePercentChanges.GetValueOrDefault(def.Id) * pair.Value;
-                effects.Add(building.Id, "cities:direct_gold_hundredths", fraction.Gold);
-                effects.Add(building.Id, "cities:direct_research_hundredths", fraction.Research);
-                effects.Add(building.Id, "cities:direct_culture_hundredths", fraction.Culture);
-                effects.Add(building.Id, "cities:direct_espionage_hundredths", fraction.Espionage);
+                for (int i = 0; i < directKeys.Length; i++) effects.Add(building.Id, directKeys[i], fraction[commerce.Types[i]]);
             }
         }
     }

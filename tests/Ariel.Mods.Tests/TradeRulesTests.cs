@@ -70,7 +70,7 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(foreign.ProfitHundredths, foreign.YieldsHundredths.Commerce);
         var yields = sim.Rules().CityYields.Calculate(sim, city.Id);
         Assert.Equal(result.Yields.Commerce, yields.Ledger.Lines.Where(l => l.Source == "trade:routes" && l.Key == "yield.flat.commerce").Sum(l => l.Amount));
-        var economy = sim.Rules().Economy; economy.SetRates(sim, 0, new(50, 50, 0, 0));
+        var economy = sim.Rules().Economy; economy.SetRates(sim, 0, TestCommerce.Vector(50, 50, 0, 0));
         var output = economy.CalculateCity(sim, city.Id);
         Assert.True(output.Hundredths.Research > 0); Assert.True(output.Hundredths.Gold > 0);
     }

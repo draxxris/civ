@@ -301,15 +301,15 @@ public sealed class CorporationSourceRulesTests
         // One consumed copy: a ban takes away the branch's output for it, and its happiness and health.
         long copies = Corps(sim).ConsumedBonusCount(sim, city.Id, Wonka);
         Assert.Equal(1, copies);
-        Assert.Equal(new YieldVector(), wonka.YieldChanges); Assert.Equal(new CommerceVector(), wonka.CommerceChanges);
+        Assert.Equal(new YieldVector(), wonka.YieldChanges); Assert.True(wonka.CommerceChanges.IsZero);
         var valuer = sim.Content.Services.Get<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>().Single(v => v.Id == "corporations:civic_valuer");
         int adjust = valuer.Adjust((Ariel.Ai.AiContext)AiBindings.NewAi(sim, "AiContext", sim, 0),
             new Ariel.Ai.CivicSubject(sim.Content.Get<Ariel.Content.Schema.CivicDef>("government:planned")));
         long maintenance = Corps(sim).MaintenanceHundredths(sim, city.Id);
         var produced = wonka.CommerceProducedHundredths * copies; var yields = wonka.YieldProducedHundredths * copies;
         long output = Ariel.Ai.PlannerPoints.Yields(new(yields.Food / 100, yields.Production / 100, yields.Commerce / 100))
-            + Ariel.Ai.PlannerPoints.Commerce(new(produced.Gold / 100, produced.Research / 100, produced.Culture / 100, produced.Espionage / 100));
-        Assert.Equal(-(output + 3 * 8 - 1 * 6) + maintenance * Ariel.Ai.PlannerPoints.Gold / 100, adjust);
+            + Ariel.Ai.PlannerPoints.Commerce(sim.Content, TestCommerce.Vector(produced.Gold / 100, produced.Research / 100, produced.Culture / 100, produced.Espionage / 100));
+        Assert.Equal(-(output + 3 * 8 - 1 * 6) + maintenance * Ariel.Ai.PlannerPoints.Gold(sim.Content) / 100, adjust);
     }
 
     [Fact]

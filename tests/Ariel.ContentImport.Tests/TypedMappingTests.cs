@@ -40,7 +40,8 @@ public sealed class TypedMappingTests
         Assert.Equal(1, building.Limits.World);
         Assert.Equal(-1, building.Limits.Player);
         Assert.Equal(-1, building.SpecialistSlots["foundation:specialist_example"]);
-        Assert.Equal(new CommerceVector(0, 3, 0, 0), building.CommerceChanges);
+        Assert.Equal(3, building.CommerceChanges["research"]);
+        Assert.Equal(4, building.CommerceChanges.Count);
     }
 
     [Fact]

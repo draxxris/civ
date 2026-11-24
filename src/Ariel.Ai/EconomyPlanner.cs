@@ -10,6 +10,11 @@ namespace Ariel.Ai;
 internal sealed class EconomyPlanner(AiContext ctx)
 {
     private const int MaxIterations = 100;
+    /// <summary>The commerce types the planner ever sets a rate on: gold and research, and culture for unrest. Every other
+    /// loaded type stays at zero.</summary>
+    internal static readonly string[] Funded = [FoundationCommerce.GoldKey, FoundationCommerce.ResearchKey, FoundationCommerce.CultureKey];
+    private CommerceVector Rates(long gold, long research, long culture = 0) => ctx.Sim.Rules().Commerce.Zero
+        .With(FoundationCommerce.GoldKey, gold).With(FoundationCommerce.ResearchKey, research).With(FoundationCommerce.CultureKey, culture);
     private int Step => Math.Max(1, int.TryParse(ctx.Sim.Content.Get<Ariel.Content.Schema.RuleConstantsDef>().All.Single()
         .Raw.GetValueOrDefault("COMMERCE_PERCENT_CHANGE_INCREMENTS", "5"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : 5);
 
@@ -43,7 +48,7 @@ internal sealed class EconomyPlanner(AiContext ctx)
         if (!Unrest()) return rates;
         long culture = Math.Min(rates.Research, (long)Step * CultureSteps);
         if (culture <= 0) return rates;
-        var next = new CommerceVector(rates.Gold, rates.Research - culture, culture, 0);
+        var next = Rates(rates.Gold, rates.Research - culture, culture);
         if (economy.ValidateRates(ctx.Sim, ctx.PlayerId, next) is not null) return rates;
         return forecast.NetGold(next) >= Math.Min(target, forecast.NetGold(rates)) ? next : rates;
     }
@@ -78,17 +83,20 @@ internal sealed class EconomyPlanner(AiContext ctx)
         if (economy.ValidateRates(ctx.Sim, ctx.PlayerId, rates) is null) return rates;
         for (int gold = 0; gold <= 100; gold += Step)
         {
-            var next = new CommerceVector(gold, 100 - gold, 0, 0);
+            var next = Rates(gold, 100 - gold);
             if (economy.ValidateRates(ctx.Sim, ctx.PlayerId, next) is null) return next;
         }
         return economy.Rates(ctx.Sim, ctx.PlayerId);
     }
 
-    private static CommerceVector Shift(CommerceVector r, int gold) => new(r.Gold + gold, r.Research - gold, 0, 0);
+    private CommerceVector Shift(CommerceVector r, int gold) => Rates(r.Gold + gold, r.Research - gold);
 
+    /// <summary>Only gold and research: everything not on research moves to gold, in whole steps.</summary>
     private CommerceVector Normalize(CommerceVector r)
     {
-        long gold = Math.Clamp((r.Gold + r.Culture + r.Espionage) / Step * Step, 0, 100);
-        return new(gold, 100 - gold, 0, 0);
+        long other = 0;
+        foreach (var (key, amount) in r) if (key != FoundationCommerce.ResearchKey) other += amount;
+        long gold = Math.Clamp(other / Step * Step, 0, 100);
+        return Rates(gold, 100 - gold);
     }
 }

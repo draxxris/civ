@@ -27,7 +27,7 @@ public static class ContentDescription
     public static string? Effect(ContentDb content, ModifierEffect effect)
     {
         if (effect.Amount == 0) return null;
-        var (unit, label) = Typed(effect.Key) ?? Declared(content, effect.Key);
+        var (unit, label) = Typed(content, effect.Key) ?? Declared(content, effect.Key);
         if (effect.Target is { } target)
             label = label.Replace("{target}", content.Find(target)?.Name is { Length: > 0 } name ? name : Labels.Humanize(target), StringComparison.Ordinal);
         return unit switch
@@ -39,9 +39,9 @@ public static class ContentDescription
         };
     }
 
-    private static (ModifierUnit, string)? Typed(string key)
+    private static (ModifierUnit, string)? Typed(ContentDb content, string key)
     {
-        if (!ModifierSink.IsTypedKey(key)) return null;
+        if (!content.Commerce.IsTypedKey(key)) return null;
         var parts = key.Split('.');
         return (parts[1] == "percent" ? ModifierUnit.Percent : ModifierUnit.Flat, parts[2]);
     }
@@ -54,13 +54,9 @@ public static class ContentDescription
     /// <see cref="S.CivicDef.Effects"/>. Rules the base game does not apply yet are left out.</summary>
     private static IEnumerable<string> Civic(ContentDb content, S.CivicDef civic)
     {
-        foreach (var line in Vector("in the capital", civic.CapitalYieldModifiers.Food, civic.CapitalYieldModifiers.Production,
-                     civic.CapitalYieldModifiers.Commerce, civic.CapitalCommerceModifiers.Gold, civic.CapitalCommerceModifiers.Research,
-                     civic.CapitalCommerceModifiers.Culture, civic.CapitalCommerceModifiers.Espionage, percent: true))
+        foreach (var line in Vector(content, "in the capital", civic.CapitalYieldModifiers, civic.CapitalCommerceModifiers, percent: true))
             yield return line;
-        foreach (var line in Vector("from each specialist", 0, 0, 0, civic.SpecialistExtraCommerces.Gold,
-                     civic.SpecialistExtraCommerces.Research, civic.SpecialistExtraCommerces.Culture,
-                     civic.SpecialistExtraCommerces.Espionage, percent: false))
+        foreach (var line in Vector(content, "from each specialist", default, civic.SpecialistExtraCommerces, percent: false))
             yield return line;
         foreach (var (building, amount) in civic.BuildingHappinessChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
             if (amount != 0) yield return $"{Labels.Signed(amount)} happiness from {Name(content, building)}";
@@ -74,14 +70,10 @@ public static class ContentDescription
         if (civic.Upkeep is { } upkeep) yield return "Upkeep: " + Name(content, upkeep);
     }
 
-    private static IEnumerable<string> Vector(string where, long food, long production, long commerce, long gold, long research,
-        long culture, long espionage, bool percent)
+    private static IEnumerable<string> Vector(ContentDb content, string where, YieldVector yields, CommerceVector commerce, bool percent)
     {
-        var parts = new (long Amount, string Name)[]
-        {
-            (food, "food"), (production, "production"), (commerce, "commerce"), (gold, "gold"), (research, "research"),
-            (culture, "culture"), (espionage, "espionage"),
-        };
+        var parts = new List<(long Amount, string Name)> { (yields.Food, "food"), (yields.Production, "production"), (yields.Commerce, "commerce") };
+        foreach (var type in content.Commerce) parts.Add((commerce[type], type.Key));
         foreach (var (amount, name) in parts)
             if (amount != 0) yield return $"{Labels.Signed(amount)}{(percent ? "%" : "")} {name} {where}";
     }

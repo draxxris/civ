@@ -63,7 +63,7 @@ public sealed class FeatureIntegrationReplayTests
             var city = P6RulesScenario.AddCity(sim, player, player == 0 ? 14 : 57);
             city.Extensions.Set(sim.Content, new CityRuleState { ManualWork = true });
             sim.State.PlayerById(player).Treasury = 10000;
-            Service<IPlayerEconomyService>(sim).SetRates(sim, player, new(100, 0, 0, 0));
+            Service<IPlayerEconomyService>(sim).SetRates(sim, player, TestCommerce.Vector(100, 0, 0, 0));
         }
         sim.Rules().Relations.EstablishContact(sim, 0, 1);
         return sim;

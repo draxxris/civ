@@ -15,16 +15,6 @@ public readonly record struct YieldVector(long Food, long Production, long Comme
     /// <summary>Apply percentage bonuses component-wise; 25 means +25%. Multipliers clamp at zero, so reductions below -100% yield nothing.</summary>
     public YieldVector WithPercent(YieldVector percent) => new(Food * Math.Max(0, 100 + percent.Food) / 100, Production * Math.Max(0, 100 + percent.Production) / 100, Commerce * Math.Max(0, 100 + percent.Commerce) / 100);
 }
-/// <summary>Integer gold, research, culture and espionage.</summary>
-public readonly record struct CommerceVector(long Gold, long Research, long Culture, long Espionage)
-{
-    /// <summary>Component-wise sum.</summary>
-    public static CommerceVector operator +(CommerceVector a, CommerceVector b) => new(a.Gold + b.Gold, a.Research + b.Research, a.Culture + b.Culture, a.Espionage + b.Espionage);
-    /// <summary>Integer scaling.</summary>
-    public static CommerceVector operator *(CommerceVector a, long n) => new(a.Gold * n, a.Research * n, a.Culture * n, a.Espionage * n);
-    /// <summary>Apply percentage bonuses component-wise. Multipliers clamp at zero, so reductions below -100% yield nothing.</summary>
-    public CommerceVector WithPercent(CommerceVector p) => new(Gold * Math.Max(0, 100 + p.Gold) / 100, Research * Math.Max(0, 100 + p.Research) / 100, Culture * Math.Max(0, 100 + p.Culture) / 100, Espionage * Math.Max(0, 100 + p.Espionage) / 100);
-}
 /// <summary>Target scope of a modifier calculation. Content names it in lower camel case (<c>"city"</c>).</summary>
 [JsonConverter(typeof(CamelCaseEnumConverter<ModifierScope>))]
 public enum ModifierScope
@@ -77,6 +67,11 @@ public sealed class Ledger
 public sealed class ModifierSink
 {
     private readonly List<LedgerLine> _lines = new();
+    /// <summary>An empty sink. Its commerce vectors carry the keys of whatever is added.</summary>
+    public ModifierSink() { }
+    /// <summary>An empty sink whose commerce vectors start with every loaded commerce type, so they and the ledger lines
+    /// <see cref="AddCommerce"/> writes follow the database's commerce order.</summary>
+    public ModifierSink(CommerceTypes commerce) { FlatCommerce = PercentCommerce = commerce.Zero; }
     /// <summary>Summed flat yield effects.</summary>
     public YieldVector FlatYield { get; private set; }
     /// <summary>Summed percent yield effects.</summary>
@@ -113,12 +108,16 @@ public sealed class ModifierSink
         string prefix = percent ? "yield.percent." : "yield.flat.";
         Line(source, prefix + "food", value.Food); Line(source, prefix + "production", value.Production); Line(source, prefix + "commerce", value.Commerce);
     }
-    /// <summary>Add flat or percentage commerce (keys commerce.flat.gold, commerce.percent.research, etc.).</summary>
+    /// <summary>Add flat or percentage commerce (keys commerce.flat.gold, commerce.percent.research, etc.): one line per
+    /// non-zero amount, in the order of the sink's commerce vector.</summary>
     public void AddCommerce(string source, CommerceVector value, bool percent = false)
     {
-        if (percent) PercentCommerce += value; else FlatCommerce += value;
-        string prefix = percent ? "commerce.percent." : "commerce.flat.";
-        Line(source, prefix + "gold", value.Gold); Line(source, prefix + "research", value.Research); Line(source, prefix + "culture", value.Culture); Line(source, prefix + "espionage", value.Espionage);
+        var total = (percent ? PercentCommerce : FlatCommerce) + value;
+        if (percent) PercentCommerce = total; else FlatCommerce = total;
+        if (total.Layout is not { } layout) return;
+        var keys = percent ? layout.PercentKeys : layout.FlatKeys;
+        bool same = ReferenceEquals(layout, value.Layout);
+        for (int i = 0; i < layout.Count; i++) Line(source, keys[i], same ? value.At(i) : value[layout[i]]);
     }
     /// <summary>Add a mod-defined integer effect. Keys must be namespaced to avoid collisions.</summary>
     public void Add(string source, string key, long amount)
@@ -126,7 +125,7 @@ public sealed class ModifierSink
         if (!key.Contains(':') || key.StartsWith(':') || key.EndsWith(':')) throw new ArgumentException("Modifier keys must be namespaced", nameof(key));
         Line(source, key, amount);
     }
-    /// <summary>Add one data-driven effect. A typed key (<see cref="IsTypedKey"/>) feeds the matching yield or commerce
+    /// <summary>Add one data-driven effect. A typed key (<see cref="CommerceTypes.IsTypedKey"/>) feeds the matching yield or commerce
     /// vector exactly as <see cref="AddYield"/> or <see cref="AddCommerce"/> would; any other key is added as
     /// <see cref="ModifierEffect.LineKey"/>. The caller has already matched the effect's scope.</summary>
     public void Apply(string source, ModifierEffect effect)
@@ -140,24 +139,33 @@ public sealed class ModifierSink
             case "yield.percent.food": AddYield(source, new(a, 0, 0), true); break;
             case "yield.percent.production": AddYield(source, new(0, a, 0), true); break;
             case "yield.percent.commerce": AddYield(source, new(0, 0, a), true); break;
-            case "commerce.flat.gold": AddCommerce(source, new(a, 0, 0, 0)); break;
-            case "commerce.flat.research": AddCommerce(source, new(0, a, 0, 0)); break;
-            case "commerce.flat.culture": AddCommerce(source, new(0, 0, a, 0)); break;
-            case "commerce.flat.espionage": AddCommerce(source, new(0, 0, 0, a)); break;
-            case "commerce.percent.gold": AddCommerce(source, new(a, 0, 0, 0), true); break;
-            case "commerce.percent.research": AddCommerce(source, new(0, a, 0, 0), true); break;
-            case "commerce.percent.culture": AddCommerce(source, new(0, 0, a, 0), true); break;
-            case "commerce.percent.espionage": AddCommerce(source, new(0, 0, 0, a), true); break;
-            default: Add(source, effect.LineKey(), a); break;
+            default:
+                if (CommerceKeyOf(effect.Key, out bool percent) is { IsEmpty: false } commerce) AddCommerce(source, effect.Key, commerce, a, percent);
+                else Add(source, effect.LineKey(), a);
+                break;
         }
     }
-    /// <summary>Whether a key names one component of the sink's own yield or commerce vectors, flat or percent
-    /// (<c>yield.percent.food</c>, <c>commerce.flat.gold</c>, ...). These are the ledger keys
-    /// <see cref="AddYield"/> and <see cref="AddCommerce"/> write, and need no <see cref="ModifierKeyDef"/>.</summary>
-    public static bool IsTypedKey(string key) => key is "yield.flat.food" or "yield.flat.production" or "yield.flat.commerce"
-        or "yield.percent.food" or "yield.percent.production" or "yield.percent.commerce"
-        or "commerce.flat.gold" or "commerce.flat.research" or "commerce.flat.culture" or "commerce.flat.espionage"
-        or "commerce.percent.gold" or "commerce.percent.research" or "commerce.percent.culture" or "commerce.percent.espionage";
+    /// <summary>Whether a key names one component of the sink's own yield vectors, flat or percent
+    /// (<c>yield.percent.food</c>, ...). Typed commerce keys depend on the loaded commerce types
+    /// (<see cref="CommerceTypes.IsTypedKey"/>). These are the ledger keys <see cref="AddYield"/> and
+    /// <see cref="AddCommerce"/> write, and need no <see cref="ModifierKeyDef"/>.</summary>
+    public static bool IsYieldKey(string key) => key is "yield.flat.food" or "yield.flat.production" or "yield.flat.commerce"
+        or "yield.percent.food" or "yield.percent.production" or "yield.percent.commerce";
+    /// <summary>The commerce type key of a typed commerce key (<c>commerce.flat.gold</c> gives <c>gold</c>), or an empty
+    /// span when the key has neither prefix.</summary>
+    public static ReadOnlySpan<char> CommerceKeyOf(string key, out bool percent)
+    {
+        const string flat = "commerce.flat.", percentPrefix = "commerce.percent.";
+        percent = key.StartsWith(percentPrefix, StringComparison.Ordinal);
+        if (percent) return key.AsSpan(percentPrefix.Length);
+        return key.StartsWith(flat, StringComparison.Ordinal) ? key.AsSpan(flat.Length) : default;
+    }
+    // One typed commerce line: the amount joins the vector under its type and the line keeps the typed key.
+    private void AddCommerce(string source, string lineKey, ReadOnlySpan<char> type, long amount, bool percent)
+    {
+        if (percent) PercentCommerce = PercentCommerce.Plus(type, amount); else FlatCommerce = FlatCommerce.Plus(type, amount);
+        Line(source, lineKey, amount);
+    }
     private void Line(string source, string key, long amount)
     {
         if (amount == 0) return;
@@ -189,14 +197,12 @@ public sealed class ModifierSink
                 case "yield.percent.food": PercentYield += new YieldVector(a, 0, 0); break;
                 case "yield.percent.production": PercentYield += new YieldVector(0, a, 0); break;
                 case "yield.percent.commerce": PercentYield += new YieldVector(0, 0, a); break;
-                case "commerce.flat.gold": FlatCommerce += new CommerceVector(a, 0, 0, 0); break;
-                case "commerce.flat.research": FlatCommerce += new CommerceVector(0, a, 0, 0); break;
-                case "commerce.flat.culture": FlatCommerce += new CommerceVector(0, 0, a, 0); break;
-                case "commerce.flat.espionage": FlatCommerce += new CommerceVector(0, 0, 0, a); break;
-                case "commerce.percent.gold": PercentCommerce += new CommerceVector(a, 0, 0, 0); break;
-                case "commerce.percent.research": PercentCommerce += new CommerceVector(0, a, 0, 0); break;
-                case "commerce.percent.culture": PercentCommerce += new CommerceVector(0, 0, a, 0); break;
-                case "commerce.percent.espionage": PercentCommerce += new CommerceVector(0, 0, 0, a); break;
+                default:
+                    if (CommerceKeyOf(line.Key, out bool percent) is { IsEmpty: false } type)
+                    {
+                        if (percent) PercentCommerce = PercentCommerce.Plus(type, a); else FlatCommerce = FlatCommerce.Plus(type, a);
+                    }
+                    break;
             }
         }
         _ledger = null; _totals = null;
@@ -219,7 +225,7 @@ public sealed class ModifierSink
         ModifierSink sink;
         using (sim.Profiler.Measure(ProfileKind.Rule, "modifiers:collect"))
         {
-            sink = new ModifierSink();
+            sink = new ModifierSink(sim.Content.Commerce);
             var sources = sim.Content.Services.Get<IModifierSource>();
             if (!sim.KeepsAnswers || !Kept(context))
                 foreach (var source in sources) source.Contribute(context, sink);
@@ -257,7 +263,7 @@ public sealed class ModifierSink
     }
     private static void Verify(IModifierSource source, ModifierContext context, LedgerLine[] kept)
     {
-        var fresh = new ModifierSink();
+        var fresh = new ModifierSink(context.Sim.Content.Commerce);
         source.Contribute(context, fresh);
         if (fresh._lines.SequenceEqual(kept)) return;
         int at = 0;
@@ -279,7 +285,7 @@ public sealed class ModifierSink
 /// <summary>One data-driven modifier: a definition that carries it adds <see cref="Amount"/> under <see cref="Key"/> to
 /// every calculation of <see cref="Scope"/> its holder takes part in, with the holder's id as the ledger source.
 /// <see cref="Key"/> is either a <see cref="ModifierKeyDef"/> id, declared by the module that reads the key, or one of
-/// the sink's typed vector keys (<see cref="ModifierSink.IsTypedKey"/>). A targeted key names the definition it is about
+/// the sink's typed vector keys (<see cref="CommerceTypes.IsTypedKey"/>). A targeted key names the definition it is about
 /// in <see cref="Target"/>, and the ledger line is written under <c>Key:Target</c>. Loading checks the key, its
 /// provider and its target, so a misspelt key fails instead of doing nothing. Immutable once loaded.</summary>
 public sealed class ModifierEffect

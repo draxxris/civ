@@ -55,8 +55,8 @@ public class ContractTests
         {
             sink.AddYield(label, new(2, 3, 4));
             sink.AddYield(label, new(0, percent, 0), true);
-            sink.AddCommerce(label, new(1, 2, 3, 4));
-            sink.AddCommerce(label, new(0, percent, 0, 0), true);
+            sink.AddCommerce(label, TestCommerce.Vector(1, 2, 3, 4));
+            sink.AddCommerce(label, TestCommerce.Vector(0, percent, 0, 0), true);
             sink.Add(label, "test:health", 5);
         }
     }
@@ -348,9 +348,9 @@ public class ContractTests
         var sim = new Simulation(Content(extra), new SimulationSettings { PlayerCount = 1, Civilizations = ["base:builders"] });
         var effects = ModifierSink.Collect(new(sim, ModifierScope.City, 0));
         Assert.Equal(new YieldVector(4, 6, 8), effects.FlatYield);
-        Assert.Equal(new CommerceVector(2, 4, 6, 8), effects.FlatCommerce);
+        Assert.Equal(TestCommerce.Vector(2, 4, 6, 8), effects.FlatCommerce);
         Assert.Equal(new YieldVector(4, 10, 8), effects.FlatYield.WithPercent(effects.PercentYield));
-        Assert.Equal(new CommerceVector(2, 7, 6, 8), effects.FlatCommerce.WithPercent(effects.PercentCommerce));
+        Assert.Equal(TestCommerce.Vector(2, 7, 6, 8), effects.FlatCommerce.WithPercent(effects.PercentCommerce));
         Assert.Equal(10, effects.Ledger.Total("test:health"));
         Assert.Equal(75, effects.Ledger.Total("yield.percent.production"));
         Assert.Equal(["First", "Second"], effects.Ledger.Lines.Select(l => l.Source).Distinct());
@@ -620,8 +620,8 @@ public class ContractTests
         Assert.Equal(new YieldVector(0, 20, 0), new YieldVector(10, 20, 30).WithPercent(new(-150, 0, -100)));
         Assert.Equal(new YieldVector(0, 0, 0), new YieldVector(10, 20, 30).WithPercent(new(-1000, -1000, -1000)));
         Assert.Equal(new YieldVector(5, 30, 45), new YieldVector(10, 20, 30).WithPercent(new(-50, 50, 50)));
-        Assert.Equal(new CommerceVector(0, 0, 0, 40), new CommerceVector(10, 20, 30, 40).WithPercent(new(-200, -150, -101, 0)));
-        Assert.Equal(new CommerceVector(5, 30, 45, 0), new CommerceVector(10, 20, 30, 0).WithPercent(new(-50, 50, 50, 0)));
+        Assert.Equal(TestCommerce.Vector(0, 0, 0, 40), TestCommerce.Vector(10, 20, 30, 40).WithPercent(TestCommerce.Vector(-200, -150, -101, 0)));
+        Assert.Equal(TestCommerce.Vector(5, 30, 45, 0), TestCommerce.Vector(10, 20, 30, 0).WithPercent(TestCommerce.Vector(-50, 50, 50, 0)));
     }
 
     [Fact]

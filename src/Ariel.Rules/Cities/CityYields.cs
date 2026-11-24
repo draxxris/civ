@@ -17,13 +17,15 @@ internal sealed class CityYields : ICityYieldService
         Specialists.Contribute(sim, city, sink);
         var yields = sink.FlatYield.WithPercent(sink.PercentYield);
         yields = new(Math.Max(0, yields.Food), Math.Max(0, yields.Production), Math.Max(0, yields.Commerce));
-        var direct = sink.FlatCommerce * 100 + new CommerceVector(CityData.Effect(sink, "direct_gold_hundredths"),
-            CityData.Effect(sink, "direct_research_hundredths"), CityData.Effect(sink, "direct_culture_hundredths"), CityData.Effect(sink, "direct_espionage_hundredths"));
-        if (GovernmentStatus.IsDisorder(sim, city)) { yields = default; direct = default; }
+        var commerce = sim.Rules().Commerce;
+        var directKeys = commerce.Names("cities:direct_", "_hundredths");
+        var direct = sink.FlatCommerce * 100;
+        for (int i = 0; i < directKeys.Length; i++) direct = direct.Plus(commerce.Types[i].Key, sink.Total(directKeys[i]));
+        if (GovernmentStatus.IsDisorder(sim, city)) { yields = default; direct = commerce.Zero; }
         sink.Add("cities:total", "cities:food", yields.Food); sink.Add("cities:total", "cities:production", yields.Production);
         sink.Add("cities:total", "cities:commerce", yields.Commerce);
-        sink.Add("cities:total", "cities:gold_hundredths", direct.Gold); sink.Add("cities:total", "cities:research_hundredths", direct.Research);
-        sink.Add("cities:total", "cities:culture_hundredths", direct.Culture); sink.Add("cities:total", "cities:espionage_hundredths", direct.Espionage);
+        var totalKeys = commerce.Names("cities:", "_hundredths");
+        for (int i = 0; i < totalKeys.Length; i++) sink.Add("cities:total", totalKeys[i], direct[commerce.Types[i]]);
         return new(sink.FlatYield, yields, direct, sink.PercentCommerce, sink.Ledger);
     }
     private static void AddPlot(Simulation sim, City city, TileId tile, bool center, IPlotYieldService plots, ModifierSink sink)

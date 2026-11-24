@@ -75,7 +75,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
             for (int trial = 0; trial < 60; trial++)
             {
                 int gold = random.Next(101), research = random.Next(101 - gold), culture = random.Next(101 - gold - research);
-                var rates = new CommerceVector(gold, research, culture, 100 - gold - research - culture);
+                var rates = TestCommerce.Vector(gold, research, culture, 100 - gold - research - culture);
                 economy.SetRates(sim, player.Id, rates);
                 Assert.Equal(economy.Calculate(sim, player.Id).NetGold, forecast.NetGold(rates));
             }
@@ -164,27 +164,27 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
     public void Slider_split_direct_commerce_and_negative_modifier_order_have_hundredth_ledgers()
     {
         var sim = Scenario(true); var service = Service<IPlayerEconomyService>(sim);
-        Assert.True(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = new(35, 35, 25, 5) }, out var error), error);
+        Assert.True(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(35, 35, 25, 5) }, out var error), error);
         var before = sim.ComputeHash(); var result = service.CalculateCity(sim, 1);
         // Five raw commerce: 175 research + 1 direct hundredth, then 133% => 234.
         // Gold: 175 - 200 direct, scaled inversely by 200% => -12 (toward zero).
-        Assert.Equal(new CommerceVector(-12, 234, 281, 25), result.Hundredths);
+        Assert.Equal(TestCommerce.Vector(-12, 234, 281, 25), result.Hundredths);
         Assert.Equal(175, result.Ledger.Total("economy:research_split_hundredths"));
         Assert.Equal(1, result.Ledger.Total("economy:research_direct_hundredths"));
         Assert.Equal(133, result.Ledger.Total("economy:research_factor_percent"));
         Assert.Equal(before, sim.ComputeHash());
-        Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = new(34, 36, 25, 5) }, out error));
+        Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(34, 36, 25, 5) }, out error));
         Assert.Contains("steps", error); Assert.Equal(before, sim.ComputeHash());
-        Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = new(10, 90, 0, 0) }, out error));
+        Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(10, 90, 0, 0) }, out error));
         Assert.Contains("maximum", error);
-        Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = new(50, 60, 0, 0) }, out error));
+        Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(50, 60, 0, 0) }, out error));
         Assert.Contains("sum", error);
     }
     [Fact]
     public void Commerce_culture_hook_and_disorder_cover_whole_final_rate()
     {
         var sim = Scenario(true); var service = Service<IPlayerEconomyService>(sim);
-        service.SetRates(sim, 0, new(50, 0, 50, 0));
+        service.SetRates(sim, 0, TestCommerce.Vector(50, 0, 50, 0));
         sim.AdvanceTurn();
         Assert.Equal(4, sim.State.Cities[0].Culture); // (250 split + 100 direct) * 125% = 437 hundredths.
         Assert.Equal(37, sim.State.Cities[0].Extensions.Get<CityRuleState>(sim.Content)!.CultureRemainder);
@@ -233,7 +233,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         Assert.True(sim.TryApply(new SetTeamResearchCommand { Player = 0, Tech = "research:agriculture" }, out _));
         sim.AdvanceTurn();
         var state = player.Extensions.Get<EconomyPlayerState>(sim.Content)!;
-        Assert.Equal(new CommerceVector(100, 0, 0, 0), state.Rates);
+        Assert.Equal(TestCommerce.Vector(100, 0, 0, 0), state.Rates);
         Assert.Equal(0, player.Treasury); Assert.True(state.UnpaidGold > 0);
         Assert.Equal(1, sim.TeamOf(0).ResearchProgress); // Base research remains, but slider science is gone.
         Assert.Equal(1, state.StrikeTurns);
@@ -259,7 +259,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         var city = sim.State.Cities.First(c => c.Owner == 0);
         for (int i = 0; i < 60; i++) P6RulesScenario.AddUnit(sim, 0, city, "military:warrior");
         var player = sim.State.PlayerById(0);
-        player.Extensions.Set(sim.Content, new EconomyPlayerState { Rates = new(100, 0, 0, 0), StrikeTurns = 1 });
+        player.Extensions.Set(sim.Content, new EconomyPlayerState { Rates = TestCommerce.Vector(100, 0, 0, 0), StrikeTurns = 1 });
         var economy = Service<IPlayerEconomyService>(sim);
         Assert.True(economy.Calculate(sim, 0).NetGold < 0);
         var diplomacy = Service<IDiplomacyService>(sim);
@@ -295,7 +295,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         var exempt = new[] { Add("probe:golden", outside), Add("probe:free", outside), Add("probe:garrison", city.Position) };
         for (int i = 0; i < 40; i++) Add("probe:regular", city.Position, 10000);
         var player = sim.State.PlayerById(0); player.Treasury = 0;
-        player.Extensions.Set(sim.Content, new EconomyPlayerState { StrikeTurns = 3, Rates = new(100, 0, 0, 0) });
+        player.Extensions.Set(sim.Content, new EconomyPlayerState { StrikeTurns = 3, Rates = TestCommerce.Vector(100, 0, 0, 0) });
         Assert.True(Service<IPlayerEconomyService>(sim).Calculate(sim, 0).NetGold < 0);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         sim.AdvanceTurn(); loaded.AdvanceTurn();
@@ -315,7 +315,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
     {
         var sim = Scenario(true); var city = sim.State.Cities[0]; city.Buildings.Add("cities:palace");
         var player = sim.State.PlayerById(0); player.Civics.Clear(); player.Treasury = 0;
-        player.Extensions.Set(sim.Content, new EconomyPlayerState { StrikeTurns = 5, Rates = new(100, 0, 0, 0) });
+        player.Extensions.Set(sim.Content, new EconomyPlayerState { StrikeTurns = 5, Rates = TestCommerce.Vector(100, 0, 0, 0) });
         var costly = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Position = city.Position, Type = "probe:burden" };
         var regular = new Unit { Id = sim.State.NextUnitId++, Owner = 0, Position = city.Position, Type = "probe:regular" };
         sim.State.AddUnit(costly); sim.State.AddUnit(regular);
@@ -339,7 +339,7 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
         city.Extensions.Get<CityRuleState>(sim.Content)!.Overflow = 12;
         var production = Service<ICityProductionService>(sim).Calculate(sim, 1, "economy:process", "economy:process_research");
         Assert.Equal(0, production.Cost); Assert.Equal(3, production.Production);
-        service.SetRates(sim, 0, new(50, 50, 0, 0));
+        service.SetRates(sim, 0, TestCommerce.Vector(50, 50, 0, 0));
         var result = service.CalculateCity(sim, 1);
         Assert.Equal(150, result.Ledger.Total("economy:research_process_hundredths")); // 3 modified production * 50.
         Assert.Equal(483, result.Hundredths.Research); // (250 + 1) * 133/100 = 333, then process 150.
@@ -545,9 +545,9 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
             if (context.Scope == ModifierScope.Player) sink.Add("probe:limits", "economy:max_rate:research", -20);
             if (context.Scope != ModifierScope.City) return;
             sink.AddYield("probe:flat", new(0, 0, 4)); sink.AddYield("probe:production", new(0, 50, 0), true);
-            sink.AddCommerce("probe:direct", new(-2, 0, 1, 0));
+            sink.AddCommerce("probe:direct", TestCommerce.Vector(-2, 0, 1, 0));
             sink.Add("probe:fraction", "cities:direct_research_hundredths", 1);
-            sink.AddCommerce("probe:modifier", new(100, 33, 25, 0), true);
+            sink.AddCommerce("probe:modifier", TestCommerce.Vector(100, 33, 25, 0), true);
         }
     }
 }
