@@ -304,7 +304,20 @@ definition without a row reads as the defaults:
   `corporationSpreads`), `data/handicap-corporations.json` (`HandicapCorporationsDef`:
   `corporationMaintenancePercent`) and `data/world-size-corporations.json`
   (`WorldSizeCorporationsDef`: `corporationMaintenancePercent`).
-- Espionage: `data/unit-espionage.json` (`UnitEspionageDef`: `spy`, `counterSpy`).
+- Espionage: `data/unit-espionage.json` (`UnitEspionageDef`: `spy`, `counterSpy`), and
+  rows that amend their targets with espionage amounts: `data/building-espionage.json`
+  (`BuildingEspionageDef`), `data/civic-espionage.json` (`CivicEspionageDef`: `effects`),
+  `data/trait-espionage.json` (`TraitEspionageDef`), `data/specialist-espionage.json`
+  (`SpecialistEspionageDef`: `commerces`), `data/religion/building-religion-espionage.json`
+  (`BuildingReligionEspionageDef`, with the Religion mod) and
+  `data/corporations/building-espionage.json` (with the Corporations mod).
+
+An attachment property marked `[AmendsTarget]` is not read by its mod: it adds into the
+target's property of the same name when content freezes (vectors are summed, arrays
+appended, dictionaries merged; see "Content amendments" in DESIGN.md). A row
+`{ "target": "cities:library", "commerceChanges": { "espionage": 1 } }` leaves the base
+row's gold, research and culture as they are and gives the library one espionage while the
+Espionage mod is loaded.
 - AirCombat: `data/unit-air-combat.json` (`UnitAirCombatDef`: `airCombatLimit`, `airRange`,
   `bombRate`, `evasionPercent`), `data/improvement-air-combat.json`
   (`ImprovementAirCombatDef`: `airBombDefense`) and `data/rule-constants-air-combat.json`
@@ -336,9 +349,10 @@ Definitions have init-only properties.
 
 `YieldVector` stores food, production, and commerce, in that order:
 `(Food, Production, Commerce)`. `CommerceVector` is an object of amounts by commerce type
-key, `{ "culture": 0, "espionage": 0, "gold": 2, "research": 1 }`: a key is a loaded
+key, `{ "culture": 0, "gold": 2, "research": 1 }`: a key is a loaded
 `CommerceDef`'s `key`, a missing key is zero, and a key no loaded mod registers (or one from
-a mod the definition's mod does not reference) fails loading. The importer reads the
+a mod the definition's mod does not reference) fails loading, even with a zero amount, so
+base rows never name a mod's type. The importer reads the
 source's native commerce arrays in its enum order (gold, research, culture, espionage).
 Short source arrays receive zeroes in their remaining native slots. Excess entries fail the import. Vector
 fields retain their own units: flat amounts, percentage modifiers, doubling times,

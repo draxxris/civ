@@ -4,17 +4,14 @@ using UnitDef = Ariel.Content.Schema.UnitDef;
 
 namespace Ariel.Rules.Economy;
 
-internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyService, IPlayerResearchSource, IPlayerEspionageSource
+internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyService, IPlayerResearchSource
 {
-    public long ResearchHundredths(Simulation sim, int player)
+    public long ResearchHundredths(Simulation sim, int player) =>
+        CommerceHundredths(sim, player, sim.Content.Commerce[FoundationCommerce.ResearchKey]);
+    public long CommerceHundredths(Simulation sim, int player, CommerceType type)
     {
         var state = EconomyData.Read(sim, player);
-        return state.SettledTurn == sim.State.Turn ? state.SettledCommerceHundredths.Research : Calculate(sim, player).CommerceHundredths.Research;
-    }
-    public long EspionageHundredths(Simulation sim, int player)
-    {
-        var state = EconomyData.Read(sim, player);
-        return state.SettledTurn == sim.State.Turn ? state.SettledCommerceHundredths.Espionage : Calculate(sim, player).CommerceHundredths.Espionage;
+        return state.SettledTurn == sim.State.Turn ? state.SettledCommerceHundredths[type] : Calculate(sim, player).CommerceHundredths[type];
     }
     public CommerceVector Rates(Simulation sim, int player) => EconomyData.Read(sim, player).Rates;
     public string? ValidateRates(Simulation sim, int player, CommerceVector rates)
@@ -55,9 +52,6 @@ internal sealed class PlayerEconomy(CityCommerce commerce) : IPlayerEconomyServi
             string source = "economy:city:" + city.Id;
             for (int i = 0; i < keys.Length; i++) lines.Add(new(source, keys[i], result.Hundredths[commerce.Types[i]]));
         }
-        if (sim.Rules().EspionageSpending is { } espionage)
-            foreach (var share in espionage.Spending(sim, player, total.Espionage))
-                lines.Add(new("economy:espionage_target:" + share.Key, "economy:espionage_spending", share.Value));
         long expenses = RecurringCosts.Calculate(sim, player, lines);
         var (dealIncome, dealExpenses) = DealGold(sim, player);
         long income = total.Gold / 100 + dealIncome;

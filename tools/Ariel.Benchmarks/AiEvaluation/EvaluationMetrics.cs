@@ -113,7 +113,7 @@ public static class EvaluationMetrics
             ["rawCommerce"] = total.Commerce,
             ["researchHundredths"] = result.CommerceHundredths.Research,
             ["cultureHundredths"] = result.CommerceHundredths.Culture,
-            ["espionageHundredths"] = result.CommerceHundredths.Espionage,
+            ["espionageHundredths"] = result.CommerceHundredths["espionage"],
             ["researchRatePercent"] = economy.Rates(sim, player.Id).Research,
             ["technologies"] = sim.TeamOf(player.Id).Techs.Count,
             ["buildings"] = cities.Sum(c => (long)c.Buildings.Count),
@@ -140,7 +140,7 @@ public static class EvaluationMetrics
             ["settledGoldHundredthsTotal"] = accumulated.Gold,
             ["settledResearchHundredthsTotal"] = accumulated.Research,
             ["settledCultureHundredthsTotal"] = accumulated.Culture,
-            ["settledEspionageHundredthsTotal"] = accumulated.Espionage,
+            ["settledEspionageHundredthsTotal"] = accumulated["espionage"],
         };
         return new(new(seed, player.Id, EvaluationConfig.Scenario, sim.State.Turn), sim.ComputeHash().ToString("X16"),
             state?.SettledTurn > 0 ? state.SettledTurn : null, metrics);

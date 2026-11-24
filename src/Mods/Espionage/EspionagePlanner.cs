@@ -4,12 +4,12 @@ using Ariel.Game;
 
 namespace Ariel.Mods.Espionage;
 
-/// <summary>The computer player's espionage, run in the standard AI's turn at <see cref="AiPlannerOrder.Espionage"/>,
-/// after the military planner has moved its army.</summary>
+/// <summary>The computer player's espionage, run in the standard AI's turn just after the military planner
+/// (<see cref="AiPlannerOrder.Military"/> + 100) has moved its army.</summary>
 internal sealed class EspionageAiPlanner : IAiPlanner
 {
     public string Id => "espionage:planner";
-    public int Order => AiPlannerOrder.Espionage;
+    public int Order => AiPlannerOrder.Military + 100;
     public void Plan(AiContext ctx) => new EspionagePlanner(ctx).Plan();
 }
 

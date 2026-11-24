@@ -59,7 +59,6 @@ public sealed class EspionageMod : IPreparableMod
             context.RegisterService<IMission>(EspionageMissions.Of(kind)["espionage:".Length..], new SpyMission(service, service.Missions, kind));
         context.Subscribe<EspionageMissionResult>("memory_spy", RememberCaughtSpy);
         context.TurnSystems.Register(new SpyAllocation(service));
-        context.RegisterService<IEspionageSpending>("spending", service);
         context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new EspionageScreen());
         context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new EspionageNotices());
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new EspionageAiPlanner());
@@ -115,9 +114,8 @@ public static class EspionageMemories
 internal sealed class SpyAllocation(EspionageService service) : IPlayerTurnSystem
 {
     public string Id => "espionage:allocation";
-    /// <summary>One slot after the economy's espionage phase (<see cref="TurnPhase.Espionage"/>), which banks the output
-    /// only when no feature spends it.</summary>
-    public int Order => TurnPhase.Espionage + 1;
+    /// <summary>After research settles, in the slot for spending a mod's own commerce type.</summary>
+    public int Order => TurnPhase.CommerceSpending;
     public IReadOnlyList<string>? WriteDomains => Points;
     private static readonly IReadOnlyList<string> Points = ["espionage:points"];
     public void Run(Simulation sim, int player) => service.Allocate(sim, player);

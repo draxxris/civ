@@ -99,8 +99,7 @@ internal sealed class EspionageService : IEspionageService
 
     internal void Allocate(Simulation sim, int player)
     {
-        long produced = sim.Rules().EspionageSource?.EspionageHundredths(sim, player)
-            ?? sim.Rules().Economy?.Calculate(sim, player).CommerceHundredths.Espionage ?? 0;
+        long produced = EspionageCommerce.Hundredths(sim, player);
         var state = PlayerState(sim, player);
         if (produced <= 0 && state.RemainderHundredths == 0) return;
         var spending = Spending(sim, player, produced);

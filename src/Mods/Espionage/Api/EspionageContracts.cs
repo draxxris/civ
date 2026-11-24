@@ -54,10 +54,31 @@ public sealed record PassiveEspionageStatus(PassiveEspionageKind Kind, long Thre
 /// <summary>A spy of <paramref name="Player"/> ran a mission; a failed spy is destroyed.</summary>
 public sealed record EspionageMissionResult(int Unit, int City, EspionageMissionKind Mission, bool Success, long Cost, int Player) : DomainEvent;
 
-/// <summary>Espionage points, weights, passive tiers and mission prices. The service also tells the base economy where
-/// a player's espionage commerce goes (<see cref="IEspionageSpending"/>).</summary>
-public interface IEspionageService : IEspionageSpending
+/// <summary>The commerce type this mod registers (<c>data/commerce.json</c>): its vector key and a player's output of it.</summary>
+public static class EspionageCommerce
 {
+    /// <summary>Vector key of the espionage commerce type, in vectors and in keys derived from it
+    /// (<c>commerce.percent.espionage</c>).</summary>
+    public const string Key = "espionage";
+
+    extension(Ariel.Content.CommerceVector vector)
+    {
+        /// <summary>The espionage amount; zero in a vector that does not carry it.</summary>
+        public long Espionage => vector[Key];
+    }
+
+    /// <summary>The player's espionage this turn, in hundredths: what settlement recorded once the player settled, else
+    /// the current calculation.</summary>
+    public static long Hundredths(Simulation sim, int player) =>
+        sim.Content.Commerce.TryGet(Key, out var type) ? sim.Rules().Economy.CommerceHundredths(sim, player, type) : 0;
+}
+
+/// <summary>Espionage points, weights, passive tiers and mission prices.</summary>
+public interface IEspionageService
+{
+    /// <summary>Forecast whole points per target team for this much espionage output (hundredths). Does not change
+    /// state.</summary>
+    IReadOnlyDictionary<int, long> Spending(Simulation sim, int player, long espionageHundredths);
     long Points(Simulation sim, int team, int targetTeam);
     int Weight(Simulation sim, int player, int targetTeam);
     /// <summary>Known, living rival teams for this player, lowest id first. The one rival query every caller shares.</summary>

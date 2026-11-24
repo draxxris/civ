@@ -50,10 +50,9 @@ public static class AiPlannerOrder
     /// <summary>Rebase, scout with and fly air units, before naval support and ground assaults. No built-in planner runs
     /// here; the AirCombat mod's does.</summary>
     public const int Air = 1200;
-    /// <summary>Garrisons, campaigns, assaults, fleets and explorers.</summary>
+    /// <summary>Garrisons, campaigns, assaults, fleets and explorers. The slots between this one and
+    /// <see cref="Stability"/> suit planners that move units after the armies, the Espionage mod's spies above all.</summary>
     public const int Military = 1300;
-    /// <summary>Weigh espionage spending and move spies. No built-in planner runs here; the Espionage mod's does.</summary>
-    public const int Espionage = 1400;
     /// <summary>Keep cities stable. No built-in planner runs here; the Revolution mod's does.</summary>
     public const int Stability = 1500;
     /// <summary>Set the commerce sliders.</summary>

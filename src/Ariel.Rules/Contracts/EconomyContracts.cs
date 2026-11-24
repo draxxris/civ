@@ -11,6 +11,9 @@ public interface IPlayerEconomyService
     void SetRates(Simulation sim, int player, CommerceVector rates);
     CityCommerceResult CalculateCity(Simulation sim, int city);
     PlayerEconomyResult Calculate(Simulation sim, int player);
+    /// <summary>The player's output of one commerce type this turn, in hundredths: what settlement recorded once the
+    /// player settled this turn, else the current calculation. A feature mod reads its own type's output here.</summary>
+    long CommerceHundredths(Simulation sim, int player, CommerceType type);
     /// <summary>The player's economy as it stands, with the commerce rates left open: everything the rates do not
     /// change is read once. Read-only; valid until the state changes.</summary>
     IEconomyForecast Forecast(Simulation sim, int player);
@@ -21,20 +24,6 @@ public interface IEconomyForecast
     /// <summary>The net gold <see cref="IPlayerEconomyService.Calculate"/> would report with these rates set, without
     /// setting them. The rates need not be legal.</summary>
     long NetGold(CommerceVector rates);
-}
-public interface IPlayerEspionageSource
-{
-    long EspionageHundredths(Simulation sim, int player);
-}
-/// <summary>Where a player's espionage commerce goes, answered by the feature that spends it, or null without one
-/// (<see cref="GameRules.EspionageSpending"/>). That feature banks the points itself; the economy lists the forecast
-/// in the player's ledger. Without one, the economy banks the output in
-/// <see cref="EconomyPlayerState.EspionageHundredths"/>.</summary>
-public interface IEspionageSpending
-{
-    /// <summary>Forecast whole points per target team for this much espionage output (hundredths). Does not change
-    /// state.</summary>
-    IReadOnlyDictionary<int, long> Spending(Simulation sim, int player, long espionageHundredths);
 }
 /// <summary>Infinite queue items. Conversion uses current production, never stored overflow.</summary>
 public interface ICityProcessService
@@ -53,7 +42,7 @@ public interface ICityHurryService
 public static class EconomyStateDomains
 {
     /// <summary>A player's gold and settlement: the treasury, and the Economy player state (rates, unpaid gold, the last
-    /// settlement, the inflation ratio, hurry and strike counts, banked espionage).</summary>
+    /// settlement, the inflation ratio, hurry and strike counts).</summary>
     public const string Treasury = "economy:treasury";
     /// <summary>A city's hurry anger: the Economy city state.</summary>
     public const string HurryAnger = "economy:hurry_anger";
@@ -70,7 +59,6 @@ public sealed class EconomyPlayerState
     public long UnpaidGold { get; set; }
     public int HurriedCount { get; set; }
     public int StrikeTurns { get; set; }
-    public long EspionageHundredths { get; set; }
     public int SettledTurn { get; set; }
     /// <summary>Commerce in hundredths by type at the last settlement (<see cref="SettledTurn"/>).</summary>
     public CommerceVector SettledCommerceHundredths { get; set; }

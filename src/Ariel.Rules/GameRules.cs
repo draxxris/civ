@@ -43,8 +43,6 @@ public sealed class GameRules : IRuleset
     public CommerceRoster Commerce { get; private set; } = null!;
     /// <summary>Research output a player's economy supplies.</summary>
     public IPlayerResearchSource ResearchSource { get; private set; } = null!;
-    /// <summary>Espionage output a player's economy supplies.</summary>
-    public IPlayerEspionageSource EspionageSource { get; private set; } = null!;
     /// <summary>Culture a city's commerce supplies.</summary>
     public ICityCultureSource CityCultureSource { get; private set; } = null!;
     /// <summary>Production-to-commerce processes.</summary>
@@ -107,9 +105,6 @@ public sealed class GameRules : IRuleset
     /// <summary>Interception by the feature that flies aircraft, or null without one: then no aircraft can be trained
     /// and no unit stands on intercept.</summary>
     public IAirOperations? AirOperations { get; private set; }
-    /// <summary>Where espionage commerce goes, answered by the feature that spends it, or null without one; the economy
-    /// banks it then.</summary>
-    public IEspionageSpending? EspionageSpending { get; private set; }
     /// <summary>Whether two cities trade, answered by the feature that runs trade routes, or null without one.</summary>
     public ICityTradeLinks? TradeLinks { get; private set; }
     /// <summary>How restless a city is, answered by the feature that tracks unrest, or null without one.</summary>
@@ -177,7 +172,6 @@ public sealed class GameRules : IRuleset
         Economy = services.Get<IPlayerEconomyService>().Single();
         Commerce = new CommerceRoster(content);
         ResearchSource = services.Get<IPlayerResearchSource>().Single();
-        EspionageSource = services.Get<IPlayerEspionageSource>().Single();
         CityCultureSource = services.Get<ICityCultureSource>().Single();
         Processes = services.Get<ICityProcessService>().Single();
         Hurry = services.Get<ICityHurryService>().Single();
@@ -207,7 +201,6 @@ public sealed class GameRules : IRuleset
         DealAppraiser = services.Get<IDealAppraiser>().SingleOrDefault();
         CityReligions = services.Get<ICityReligions>().SingleOrDefault();
         AirOperations = services.Get<IAirOperations>().SingleOrDefault();
-        EspionageSpending = services.Get<IEspionageSpending>().SingleOrDefault();
         TradeLinks = services.Get<ICityTradeLinks>().SingleOrDefault();
         CityUnrest = services.Get<ICityUnrest>().SingleOrDefault();
         CombatLeaders = services.Get<ICombatLeaders>().SingleOrDefault();

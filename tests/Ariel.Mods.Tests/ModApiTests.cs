@@ -110,7 +110,8 @@ public sealed class ModApiTests
                 .Concat(main.Select(name => Path.Combine(AppContext.BaseDirectory, GameContent.ModsFolder, name)))));
         var rules = content.Rules();
 
-        Assert.Same(content.Services.Find<IEspionageService>(), rules.EspionageSpending);
+        Assert.NotNull(content.Services.Find<IEspionageService>());
+        Assert.Equal("espionage:commerce_espionage", content.Commerce[EspionageCommerce.Key].Id);
         Assert.Same(content.Services.Find<IRevolutionService>(), rules.CityUnrest);
         Assert.Same(content.Services.Find<ITradeRouteService>(), rules.TradeLinks);
         Assert.Contains(rules.VictoryConditions, c => c.Id == ProjectVictories.Spaceship);
