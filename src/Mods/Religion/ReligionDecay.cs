@@ -24,7 +24,7 @@ internal sealed partial class ReligionService
     }
     private bool CanDecay(Simulation sim, City city, string religion, int count)
     {
-        // AND gates all decay on the game option (CvCity.cpp:20651): with it off no religion decays at all.
+        // The source gates all decay on the game option (CvCity.cpp:20651): with it off no religion decays at all.
         if (!sim.IsOptionEnabled("religion:gameoption_religion_decay")) return false;
         string? state = StateReligion(sim, city.Owner);
         if (!ReligionData.Has(sim, city, religion) || religion == state || HolyCity(sim, religion) == city.Id) return false;

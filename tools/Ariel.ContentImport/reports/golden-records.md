@@ -7,9 +7,9 @@ not need these local trees.
 ## Core tables
 
 - `XML/Technologies/CIV4TechInfos.xml`: Absolutism costs 2250. Its era is renaissance.
-  Social Contract is an OR prerequisite. Free Artistry is an AND prerequisite.
-- The same table: Bronze Working costs 90. Woodworking is an OR prerequisite. Mining is
-  an AND prerequisite.
+  Social Contract is an OR prerequisite. Free Artistry is a required prerequisite.
+- The same table: Bronze Working costs 90. Woodworking is an OR prerequisite. Mining is a
+  required prerequisite.
 - `XML/Buildings/CIV4BuildingInfos.xml`: Abu Simbel costs 150. It produces six
   obsolete-safe culture and has two priest slots.
 - `XML/Buildings/CIV4BuildingClassInfos.xml`: Abu Simbel has a world limit of one. Its
