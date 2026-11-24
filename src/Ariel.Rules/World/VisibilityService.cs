@@ -16,16 +16,22 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         // Capture before clearing: visible edits since acquisition are still observations,
         // even when the observer has just moved, died, or lost its city.
         var plots = sim.State.Plots;
+        // Only sight and memory change here; terrain and team technology stay fixed.
+        var levels = new RecomputeLevels(sim);
+        var teams = sim.State.Teams;
         for (int i = 0; i < plots.Length; i++)
         {
             var plot = plots[i];
             if (plot.Visible.IsEmpty) continue;
-            foreach (int team in plot.Visible) Remember(sim, plot, new TileId(i), team);
+            foreach (var team in teams)
+            {
+                if (!plot.Visible.Contains(team.Id)) continue;
+                Remember(sim, plot, new TileId(i), team.Id);
+                levels.SawBefore(i, team.Id);
+            }
             plot.Visible.Clear();
         }
         var tuning = Geography.Tuning(sim.Content);
-        // Only sight and memory change here; terrain and team technology stay fixed.
-        var levels = new RecomputeLevels(sim);
         foreach (var unit in sim.State.Units.OrderBy(u => u.Id)) RevealUnit(sim, unit, tuning.UnitSight, levels);
         foreach (var city in sim.State.Cities.OrderBy(c => c.Id))
             RevealTeam(sim, sim.TeamOf(city.Owner).Id, city.Position, tuning.CitySight, levels);
@@ -37,9 +43,25 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
     {
         var def = sim.Content.Get<S.UnitDef>(unit.Type);
         if (def.NoRevealMap || unit.Health <= 0) return;
-        int radius = Math.Max(0, range + unit.Promotions.Sum(p => sim.Content.Get<S.PromotionDef>(p).VisibilityChange));
+        int radius = Math.Max(0, range + SightChange(sim, unit));
         RevealTeam(sim, sim.TeamOf(unit.Owner).Id, unit.Position, radius, levels, def.Domain == "military:domain_air");
     }
+
+    /// <summary>What the unit's promotions add to its sight, asking only the promotions that change sight, so a unit
+    /// whose promotions do not enumerates nothing.</summary>
+    private static int SightChange(Simulation sim, Unit unit)
+    {
+        if (unit.Promotions.Count == 0) return 0;
+        int change = 0;
+        foreach (var promotion in SightPromotions(sim.Content))
+            if (unit.Promotions.Contains(promotion.Id)) change += promotion.VisibilityChange;
+        return change;
+    }
+
+    private static S.PromotionDef[] SightPromotions(ContentDb content) => SightPromotionTable.GetValue(content,
+        db => new(db.Get<S.PromotionDef>().All.Where(p => p.VisibilityChange != 0).ToArray())).Value;
+    private sealed class PromotionList(S.PromotionDef[] value) { public readonly S.PromotionDef[] Value = value; }
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ContentDb, PromotionList> SightPromotionTable = new();
 
     public bool CanSeePlot(Simulation sim, TileId observer, TileId target, int team, int range, bool aerial = false) =>
         CanSeePlot(sim, observer, target, team, range, aerial, null);
@@ -105,6 +127,17 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         private readonly (int Level, bool Water)?[] _from = new (int, bool)?[sim.State.Plots.Length];
         private readonly int?[] _through = new int?[sim.State.Plots.Length];
         private readonly Dictionary<int, bool> _waterSight = new();
+        // Which teams saw each plot before this recompute cleared sight, by plot and team id.
+        private readonly int _span = sim.State.Teams.Count == 0 ? 0 : sim.State.Teams.Max(t => t.Id) + 1;
+        private bool[]? _before;
+
+        /// <summary>Note that the team saw the plot before sight was cleared, and that its memory of it was captured
+        /// then.</summary>
+        internal void SawBefore(int plot, int team) => (_before ??= new bool[sim.State.Plots.Length * _span])[plot * _span + team] = true;
+
+        /// <summary>Whether the team saw the plot before sight was cleared, so that its memory was captured from the
+        /// state as it is now (only sight and memory change in a recompute).</summary>
+        internal bool SawBefore(TileId plot, int team) => _before is not null && _before[plot.Value * _span + team];
 
         internal int SeeFrom(TileId tile, int team)
         {
@@ -119,6 +152,24 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
         }
 
         internal int SeeThrough(TileId tile) => _through[tile.Value] ??= SeeThroughLevel(sim, tile);
+
+        // The widest radius revealed so far in this recompute for each team, origin and kind of sight.
+        private Dictionary<(int Team, int Tile, bool Aerial), int>? _observers;
+
+        /// <summary>Whether an observer of <paramref name="team"/> at <paramref name="origin"/> can see anything that
+        /// the observers revealed before it in this recompute did not: false when one of them stood on the same tile,
+        /// for the same team, with the same kind of sight and at least this radius. Sight only widens with the radius
+        /// (<see cref="CanSeePlot(Simulation, TileId, TileId, int, int, bool, RecomputeLevels?)"/>: a wider range
+        /// tests more tiles and is less strict at the edge), so that observer saw every plot this one would, and
+        /// revealing them again changes nothing. Stacks of units share a tile, so most of them are passed over.</summary>
+        internal bool Adds(int team, TileId origin, int radius, bool aerial)
+        {
+            _observers ??= new();
+            var key = (team, origin.Value, aerial);
+            if (_observers.TryGetValue(key, out int widest) && widest >= radius) return false;
+            _observers[key] = radius;
+            return true;
+        }
     }
 
     /// <summary>Terrain's own see level plus what standing on this tile's tier adds: a raised flat and a hill see one
@@ -217,6 +268,7 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
     private void RevealTeam(Simulation sim, int team, Hex position, int radius, RecomputeLevels levels, bool aerial = false)
     {
         var origin = sim.State.Grid.TileAt(position);
+        if (!levels.Adds(team, origin, radius, aerial)) return;
         foreach (var tile in sim.State.Grid.Range(origin, radius + (aerial ? 0 : 1)))
         {
             // Another observer of the team already saw this plot in this recompute, and revealed and captured it from
@@ -225,7 +277,10 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
             if (plot.Visible.Contains(team)) continue;
             if (!CanSeePlot(sim, origin, tile, team, radius, aerial, levels)) continue;
             plot.Visible.Add(team);
-            RevealPlot(sim, tile, team);
+            // A plot the team saw before this recompute was captured from this same state when sight was cleared, and
+            // capturing it again returns that memory unchanged.
+            if (levels.SawBefore(tile, team)) plot.Revealed.Add(team);
+            else RevealPlot(sim, tile, team);
         }
     }
 }
