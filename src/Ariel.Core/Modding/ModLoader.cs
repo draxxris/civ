@@ -96,6 +96,7 @@ public static class ModLoader
         using var trace = StartupTrace.Phase("content build");
         var ordered = Sort(mods.ToList());
         var data = PreparedModData.Prepare(ordered);
+        var loaded = ordered.Select(m => m.Manifest.Id).ToHashSet(StringComparer.Ordinal);
         var db = new ContentDb();
         db.CommandTypes.Register(new CommandTypeDef("core:end_turn", typeof(Game.EndTurnCommand)), "core");
         db.CommandTypes.Register(new CommandTypeDef("core:set_player_control", typeof(Game.SetPlayerControlCommand)), "core");
@@ -104,7 +105,7 @@ public static class ModLoader
             var mod = ordered[i];
             using var registration = StartupTrace.Phase($"mod register {mod.Manifest.Id}");
             data[i].ThrowInventoryError();
-            var ctx = new ModContext(mod.Manifest.Id, data[i], db);
+            var ctx = new ModContext(mod.Manifest.Id, data[i], db, loaded);
             mod.Instance.Register(ctx);
         }
         db.LoadedMods = ordered.Select(m => m.Manifest.Id).ToList();
@@ -169,6 +170,7 @@ internal sealed class DirectoryModData(string root) : IModData
 internal sealed class ModContext : IModContext
 {
     private readonly ContentDb _db;
+    private readonly IReadOnlySet<string> _loaded;
     public ModRegistry<T> Content<T>() where T : ContentDef => new(_db.Get<T>(), ModId);
     public void RegisterService<T>(string name, T service) where T : class => _db.Services.Register($"{ModId}:{name}", service, ModId);
     public void RegisterStateComponent<T>(string name) where T : class => _db.StateComponents.Register<T>($"{ModId}:{name}", ModId);
@@ -182,15 +184,16 @@ internal sealed class ModContext : IModContext
         public bool Handles(Type eventType) => typeof(TEvent).IsAssignableFrom(eventType);
     }
     public string ModId { get; }
+    public bool IsLoaded(string modId) => _loaded.Contains(modId);
     public IModData Data { get; }
     public ModRegistry<IPlayerAI> PlayerAIs { get; }
     public ModRegistry<IMapGenerator> MapGenerators { get; }
     public ModRegistry<ITurnSystem> TurnSystems { get; }
     public ModRegistry<CommandTypeDef> CommandTypes { get; }
 
-    public ModContext(string modId, IModData data, ContentDb db)
+    public ModContext(string modId, IModData data, ContentDb db, IReadOnlySet<string> loaded)
     {
-        _db = db; ModId = modId; Data = data;
+        _db = db; ModId = modId; Data = data; _loaded = loaded;
         PlayerAIs = new(db.PlayerAIs, modId);
         MapGenerators = new(db.MapGenerators, modId);
         TurnSystems = new(db.TurnSystems, modId);
