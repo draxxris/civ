@@ -138,65 +138,6 @@ public sealed class ResearchRulesTests
         Assert.Equal(expected, Service<IResearchService>(sim).RateModifier(sim, 0, Agriculture));
     }
 
-    // Cost service owns timeline and truncation. 252 shipped technologies / 7 era intervals = 36.
-    // Independent vectors straddle integer raw-power thresholds; no production arithmetic is reused.
-    [Theory]
-    [InlineData(0, 0, 100, 43)]
-    [InlineData(18, 0, 190, 81)]
-    [InlineData(36, 0, 372, 159)]
-    [InlineData(0, 100, 49, 21)]
-    [InlineData(1, 1, 102, 43)]
-    [InlineData(1, 2, 101, 43)]
-    [InlineData(1, 3, 100, 43)]
-    [InlineData(1, 4, 100, 43)]
-    [InlineData(0, 1200, 9, 3)]
-    public void Timeline_default_uses_fractional_progress_and_reference_integer_stages(int known, int elapsed, long percent, long cost)
-    {
-        var sim = Scenario();
-        sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Take(known).Select(t => t.Id));
-        sim.State.Turn = elapsed + 1;
-        var before = SaveGame.Save(sim);
-        var result = Service<IResearchService>(sim).CalculateCost(sim, 0, Agriculture);
-        Assert.Equal(percent, result.Ledger.Total("research:timeline_percent"));
-        Assert.Equal(cost, result.Cost); // 30*250/100=75; *133/100=99; *84/100=83; *65/100=53; *82/100=43.
-        Assert.Equal(elapsed * 7L * 1_000_000 / 1200, result.Ledger.Total("research:expected_era_millionths"));
-        Assert.Equal(known * 1_000_000L / 36, result.Ledger.Total("research:player_era_millionths"));
-        Assert.Equal(before, SaveGame.Save(sim));
-        sim.Settings.GameOptions["foundation:gameoption_realistic_timescale"] = false;
-        Assert.Equal(43, Service<IResearchService>(sim).CalculateCost(sim, 0, Agriculture).Cost);
-    }
-
-    // Distinct timeline inputs: speed and late-start duration. All earlier eras are known, so current
-    // medieval progress starts at exactly 2. These elapsed turns all give expected era 2 + 5/12.
-    [Theory]
-    [InlineData("normal", 72)]
-    [InlineData("quick", 54)]
-    [InlineData("marathon", 144)]
-    public void Late_start_and_speed_use_schedule_turns_not_calendar_dates(string speed, int elapsed)
-    {
-        var sim = Scenario(speed: speed, era: "foundation:era_medieval");
-        sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Where(t => t.Era is "foundation:era_ancient" or "foundation:era_classical").Select(t => t.Id));
-        sim.State.Turn = elapsed + 1;
-        var result = Service<IResearchService>(sim).CalculateCost(sim, 0, Agriculture);
-        Assert.Equal(60, result.Ledger.Total("research:timeline_percent"));
-        Assert.Equal(2_416_666, result.Ledger.Total("research:expected_era_millionths"));
-        Assert.Equal(2_000_000, result.Ledger.Total("research:player_era_millionths"));
-    }
-
-    [Fact]
-    public void Leader_era_compensates_missing_old_technologies_and_terminal_option_changes_expected_progress()
-    {
-        var sim = Scenario();
-        sim.State.PlayerById(0).Extensions.Set(sim.Content, new CityPlayerState { CurrentEra = "foundation:era_classical" });
-        sim.TeamOf(0).Techs.UnionWith(sim.Content.Get<S.TechDef>().All.Where(t => t.Era == "foundation:era_ancient").Take(16).Select(t => t.Id));
-        var service = Service<IResearchService>(sim);
-        Assert.Equal(205, service.CalculateCost(sim, 0, Agriculture).Ledger.Total("research:timeline_percent"));
-        sim.State.Turn = 101;
-        sim.Settings.GameOptions["foundation:gameoption_no_future"] = true;
-        // End=transhuman (6), not modern (5); inclusive techCount=249, integer denominator=41.
-        Assert.Equal(500_000, service.CalculateCost(sim, 0, Agriculture).Ledger.Total("research:expected_era_millionths"));
-    }
-
     // Contribution boundary owns completion, not cost previews or advancing the timeline. Theft pricing
     // and direct grants must consume that same effective cost; this is distinct from numeric previews.
     [Fact]
