@@ -3,7 +3,8 @@
 The espionage subsystem models passive intelligence and covert operations against
 rival civilizations. It is an optional feature mod, and the base game names no espionage:
 the mod registers its own commerce type, adds its amounts to base rows through amending
-attachments, and owns its process. The base game's relations supply
+attachments, and owns its process, its spy units and specialist, and its game options. The
+base game's relations supply
 contacts and remember a caught spy (`espionage:spy_caught`, a memory kind in the mod's
 `data/memory-kind.json`).
 
@@ -199,9 +200,25 @@ inert from its expiry turn and is dropped at the next turn boundary.
   mod) add the espionage amounts to the target rows when content freezes ("Content
   amendments" in DESIGN.md), so every reader of a building sees its espionage while the mod
   is loaded and none without it.
-- The espionage process (`espionage:process_espionage`) is the mod's.
-- `data/unit-espionage.json` attaches a `UnitEspionageDef` row to each spy and counter-spy
-  unit, with `spy: true` or `counterSpy: true`.
+- The mod's own rows: the espionage process (`espionage:process_espionage`), the six spy
+  units (`espionage:spy`, `espionage:agent`, `espionage:special_agent`, `espionage:007`,
+  `espionage:hacker`, `espionage:nanite_spy`, in `data/unit.json`, with their icons and
+  models in the mod's `art/`), the spy specialist (`espionage:specialist_spy`) and the
+  Advanced Espionage and No Espionage game options (`espionage:gameoption_*`, which no
+  rule reads yet). `data/unit-espionage.json` attaches a `UnitEspionageDef` row to each spy
+  unit, with `spy: true` and `counterSpy: true`.
+- Amendments also carry what the base rows said about those units and the specialist:
+  buildings' spy slots and free spies, civics' spy specialist effects, the barbarians'
+  ban on the nanite spy (`CivilizationEspionageDef`), each leader's attitude to a caught
+  spy (`LeaderEspionageDef`), and, with the Great People mod, the great person the spy
+  specialist's points produce (that mod's `SpecialistGreatPeopleDef`, registered only
+  when it is loaded).
+- What stays in the base game names espionage only where the base reads it or a base row
+  needs it: the great spy unit and specialist (base technologies, buildings and
+  corporations name them as single references, which an amendment cannot add), the
+  `unitcombat_spy` combat class and its promotions (base buildings grant them), the
+  `unitai_spy` roles (the ambassador and envoy use them too), the AI's flavor key, and
+  buildings, technologies and civics whose espionage is all in the mod's amendments.
 - The mod's contracts, commands, state and events live in its published API
   (`Ariel.Mods.Espionage`, assembly `Ariel.Mods.Espionage.Api`).
 - Revolution is optional. The mod incites a revolt through the Revolution mod's API when

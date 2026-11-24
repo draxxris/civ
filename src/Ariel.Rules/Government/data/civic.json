@@ -712,12 +712,6 @@
         "target": "foundation:specialist_scientist"
       },
       {
-        "amount": 100,
-        "key": "cities:specialist_food_hundredths",
-        "scope": "city",
-        "target": "foundation:specialist_spy"
-      },
-      {
         "amount": 1,
         "key": "cities:unlimited",
         "scope": "city",
@@ -5734,12 +5728,6 @@
     "civicPercentAnger": 0,
     "distantUnitSupportCostModifier": 0,
     "effects": [
-      {
-        "amount": 1,
-        "key": "cities:unlimited",
-        "scope": "city",
-        "target": "foundation:specialist_spy"
-      },
       {
         "amount": -20,
         "key": "commerce.percent.culture",

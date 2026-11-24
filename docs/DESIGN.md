@@ -495,10 +495,13 @@ technologies) stay in base. The mods' rows:
   (`UnitCorporationsDef`, `HandicapCorporationsDef`, `WorldSizeCorporationsDef`,
   `CivilizationCorporationsDef`). It also registers `BuildingGreatPeopleDef` rows, the Great
   People mod's type, about its own founding buildings.
-- Espionage: spies and counter-spies (`UnitEspionageDef`), and the espionage amounts it
-  adds to buildings, civics, traits and specialists (`BuildingEspionageDef`,
-  `CivicEspionageDef`, `TraitEspionageDef`, `SpecialistEspionageDef`, which amend their
-  targets; see "Content amendments").
+- Espionage: spies and counter-spies (`UnitEspionageDef`), and what it adds to base rows,
+  which amend their targets (see "Content amendments"): espionage amounts, spy slots and
+  free spies on buildings (`BuildingEspionageDef`), civics' espionage and spy specialist
+  effects (`CivicEspionageDef`), traits' and specialists' espionage (`TraitEspionageDef`,
+  `SpecialistEspionageDef`), a civilization's versions of the mod's spy units
+  (`CivilizationEspionageDef`) and each leader's attitude to a caught spy
+  (`LeaderEspionageDef`).
 - Votes: a seat building's forced candidacy, in the `BuildingVotesDef` row that already
   names its council.
 - AirCombat: mission range, strike limit, bombing, evasion and strike damage

@@ -6,6 +6,9 @@
     "target": "cities:ai_surveillance",
     "commerceChanges": {
       "espionage": 6
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -15,6 +18,15 @@
     "target": "cities:anglo_saxon_moot_hill",
     "commerceChanges": {
       "espionage": 2
+    }
+  },
+  {
+    "id": "espionage:bioenhancement_center",
+    "name": "",
+    "requirements": null,
+    "target": "cities:bioenhancement_center",
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -33,6 +45,9 @@
     "target": "cities:brothel",
     "commerceModifiers": {
       "espionage": 25
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 1
     }
   },
   {
@@ -51,6 +66,18 @@
     "target": "cities:cortegiane_oneste",
     "commerceModifiers": {
       "espionage": 25
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 1
+    }
+  },
+  {
+    "id": "espionage:courier_system",
+    "name": "",
+    "requirements": null,
+    "target": "cities:courier_system",
+    "specialistSlots": {
+      "espionage:specialist_spy": 1
     }
   },
   {
@@ -72,6 +99,9 @@
     },
     "commerceModifiers": {
       "espionage": 25
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -102,6 +132,9 @@
     },
     "commerceModifiers": {
       "espionage": 25
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -161,6 +194,9 @@
     },
     "commerceModifiers": {
       "espionage": 50
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -200,6 +236,18 @@
     },
     "commerceModifiers": {
       "espionage": 25
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
+    }
+  },
+  {
+    "id": "espionage:kremlin",
+    "name": "",
+    "requirements": null,
+    "target": "cities:kremlin",
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -209,6 +257,15 @@
     "target": "cities:lithuanian_piliakalnis",
     "commerceModifiers": {
       "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:meetingofminds",
+    "name": "",
+    "requirements": null,
+    "target": "cities:meetingofminds",
+    "freeSpecialistCounts": {
+      "espionage:specialist_spy": 1
     }
   },
   {
@@ -278,6 +335,27 @@
     "target": "cities:propaganda_net",
     "globalCommerceModifiers": {
       "espionage": 10
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
+    }
+  },
+  {
+    "id": "espionage:propaganda_office",
+    "name": "",
+    "requirements": null,
+    "target": "cities:propaganda_office",
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
+    }
+  },
+  {
+    "id": "espionage:reichstag",
+    "name": "",
+    "requirements": null,
+    "target": "cities:reichstag",
+    "freeSpecialistCounts": {
+      "espionage:specialist_spy": 1
     }
   },
   {
@@ -296,6 +374,9 @@
     "target": "cities:scotland_yard",
     "commerceModifiers": {
       "espionage": 100
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -314,6 +395,9 @@
     "target": "cities:secret_army_base",
     "commerceModifiers": {
       "espionage": 100
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -350,6 +434,9 @@
     "target": "cities:surveillance_network",
     "commerceChanges": {
       "espionage": 6
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 2
     }
   },
   {
@@ -361,7 +448,7 @@
       "espionage": 25
     },
     "specialistCommercePercentChanges": {
-      "foundation:specialist_spy": {
+      "espionage:specialist_spy": {
         "espionage": 200
       }
     }
@@ -373,6 +460,9 @@
     "target": "cities:townwatch",
     "commerceChanges": {
       "espionage": 1
+    },
+    "specialistSlots": {
+      "espionage:specialist_spy": 1
     },
     "techCommerceChanges": {
       "research:divine_right": {

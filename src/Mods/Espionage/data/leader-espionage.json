@@ -1,0 +1,1208 @@
+[
+  {
+    "id": "espionage:leader_abubakr",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_abubakr",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_afonso",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_afonso",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_alaric",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_alaric",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_alboin",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_alboin",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_alexander",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_alexander",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_alfred",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_alfred",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_andrea_gritti",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_andrea_gritti",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_arpad",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_arpad",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_ashur",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_ashur",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_asoka",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_asoka",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_atotoztli",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_atotoztli",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_attila",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_attila",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_augustus",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_augustus",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_barbarossa",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_barbarossa",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_basil",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_basil",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_bismarck",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_bismarck",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_boru",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_boru",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_boudica",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_boudica",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_brennus",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_brennus",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_bridei",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_bridei",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_cakste",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_cakste",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_calgacus",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_calgacus",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_canute",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_canute",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_casimir",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_casimir",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_catherine",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_catherine",
+    "memoryAttitudePercents": {
+      "spy_caught": -200
+    }
+  },
+  {
+    "id": "espionage:leader_cetshwayo",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_cetshwayo",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_charlemagne",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_charlemagne",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_charles_martel",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_charles_martel",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_charles_v",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_charles_v",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_chinese_leader",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_chinese_leader",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_christian_iv",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_christian_iv",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_churchill",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_churchill",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_cleopatra",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_cleopatra",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_clovis",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_clovis",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_collins",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_collins",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_cyrus",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_cyrus",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_darius",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_darius",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_de_gaulle",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_de_gaulle",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_deganawida",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_deganawida",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_dido",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_dido",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_dufour",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_dufour",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_elizabeth",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_elizabeth",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_enrico_dandolo",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_enrico_dandolo",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_franco",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_franco",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_franklin_roosevelt",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_franklin_roosevelt",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_frederick",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_frederick",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_fsforza",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_fsforza",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_gandhi",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_gandhi",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_genghis_khan",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_genghis_khan",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_genseric",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_genseric",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_gilgamesh",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_gilgamesh",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_gjergj_kastrioti",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_gjergj_kastrioti",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_godwinson",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_godwinson",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_haakon",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_haakon",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_haakonson",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_haakonson",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_hammurabi",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_hammurabi",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_hannibal",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_hannibal",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_haraldiii",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_haraldiii",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_hatshepsut",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_hatshepsut",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_henry_viii",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_henry_viii",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_hirohito",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_hirohito",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_huayna_capac",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_huayna_capac",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_hus",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_hus",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_isabella",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_isabella",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_ivan",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_ivan",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_jayavarman",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_jayavarman",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_joanofarc",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_joanofarc",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_joao",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_joao",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_jogaila",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_jogaila",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_julius_caesar",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_julius_caesar",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_justinian",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_justinian",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_kangxi",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_kangxi",
+    "memoryAttitudePercents": {
+      "spy_caught": -200
+    }
+  },
+  {
+    "id": "espionage:leader_kossuth",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_kossuth",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_kublai_khan",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_kublai_khan",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_lenin",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_lenin",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_leonidas",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_leonidas",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_lincoln",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_lincoln",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_llywelyn",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_llywelyn",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_louis_xiv",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_louis_xiv",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_magnus",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_magnus",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_mansa_musa",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_mansa_musa",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_marcus",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_marcus",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_margrete",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_margrete",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_mary_stuart",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_mary_stuart",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_masaryk",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_masaryk",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_masinissa",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_masinissa",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_matthias",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_matthias",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_mehmed",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_mehmed",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_menelik",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_menelik",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_mindaugas",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_mindaugas",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_mongkut",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_mongkut",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_montezuma",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_montezuma",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_napoleon",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_napoleon",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_nebuchadrezzar",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_nebuchadrezzar",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_nefertiti",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_nefertiti",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_niall",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_niall",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_owain_glyndwr",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_owain_glyndwr",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_pacal",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_pacal",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_pericles",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_pericles",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_peter",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_peter",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_qin_shi_huang",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_qin_shi_huang",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_ragnar",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_ragnar",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_ramesses",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_ramesses",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_ramkham",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_ramkham",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_richelieu",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_richelieu",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_robert_i",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_robert_i",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_ruga",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_ruga",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_saladin",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_saladin",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_sejong",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_sejong",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_selassie",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_selassie",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_shaka",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_shaka",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_simeon_i",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_simeon_i",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_sitting_bull",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_sitting_bull",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_sobieski",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_sobieski",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_stalin",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_stalin",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_stambolov",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_stambolov",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_stephen",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_stephen",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_suleiman",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_suleiman",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_suppi",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_suppi",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_suryavarman",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_suryavarman",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_teuta",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_teuta",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_theodora",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_theodora",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_theodoric",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_theodoric",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_thrasamund",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_thrasamund",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_tokugawa",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_tokugawa",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_victoria",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_victoria",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_wangkon",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_wangkon",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_washington",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_washington",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_wenceslaus",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_wenceslaus",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_wettstein",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_wettstein",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_wilhelmina",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_wilhelmina",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_willem_van_oranje",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_willem_van_oranje",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_wu",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_wu",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  },
+  {
+    "id": "espionage:leader_zara_yaqob",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:leader_zara_yaqob",
+    "memoryAttitudePercents": {
+      "spy_caught": -100
+    }
+  }
+]

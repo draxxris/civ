@@ -14,7 +14,7 @@ public sealed class EspionageRulesTests
         sim.State.TeamById(team).Extensions.Set(sim.Content, state); return state;
     }
     private static void Fund(Simulation sim, int team = 0, int target = 1, long points = 100000) => TeamState(sim, team).Points[target] = points;
-    private static Unit Spy(Simulation sim) => P6RulesScenario.AddUnit(sim, 0, sim.State.Cities[2], "military:spy");
+    private static Unit Spy(Simulation sim) => P6RulesScenario.AddUnit(sim, 0, sim.State.Cities[2], "espionage:spy");
     private static PerformMissionCommand Mission(Unit spy, City city, EspionageMissionKind mission, string? tech = null) => EspionageMissions.Order(spy.Owner, spy.Id, mission, tech);
 
     [Theory]
@@ -292,7 +292,7 @@ public sealed class EspionageRulesTests
     public void Detection_consumes_the_spy_and_spends_points_without_applying_the_mission(EspionageMissionKind mission)
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; Fund(sim);
-        for (int i = 0; i < 6; i++) P6RulesScenario.AddUnit(sim, 1, city, "military:spy");
+        for (int i = 0; i < 6; i++) P6RulesScenario.AddUnit(sim, 1, city, "espionage:spy");
         bool caught = false;
         for (int attempt = 0; attempt < 32 && !caught; attempt++)
         {
@@ -325,7 +325,7 @@ public sealed class EspionageRulesTests
         sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Fund(sim); Fund(sim, 1, 0);
         Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
-        var spy = P6RulesScenario.AddUnit(sim, 0, city, "military:spy");
+        var spy = P6RulesScenario.AddUnit(sim, 0, city, "espionage:spy");
         var command = Mission(spy, city, EspionageMissionKind.CounterEspionage);
         Assert.Equal(cost, Spies(sim).MissionCost(sim, 0, city.Id, EspionageMissionKind.CounterEspionage));
         int expires = sim.State.Turn + duration;
@@ -339,7 +339,7 @@ public sealed class EspionageRulesTests
         sim.State.Players.Add(new Player { Id = 2, TeamId = 0, Treasury = 10000 });
         sim.TeamOf(0).Members.Add(2); sim.State.RebuildIndexes();
         P6RulesScenario.AddCity(sim, 2, 18);
-        var teammateSpy = P6RulesScenario.AddUnit(sim, 2, city, "military:spy");
+        var teammateSpy = P6RulesScenario.AddUnit(sim, 2, city, "espionage:spy");
         var repeat = Mission(teammateSpy, city, EspionageMissionKind.CounterEspionage);
         Assert.Contains("already active", P6RulesScenario.Reject(sim, repeat));
         var loaded = SaveGame.Load(content, SaveGame.Save(sim));

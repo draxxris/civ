@@ -5,7 +5,7 @@
     "name": "",
     "requirements": null,
     "spy": true,
-    "target": "military:007"
+    "target": "espionage:007"
   },
   {
     "counterSpy": true,
@@ -13,7 +13,7 @@
     "name": "",
     "requirements": null,
     "spy": true,
-    "target": "military:agent"
+    "target": "espionage:agent"
   },
   {
     "counterSpy": true,
@@ -21,7 +21,7 @@
     "name": "",
     "requirements": null,
     "spy": true,
-    "target": "military:hacker"
+    "target": "espionage:hacker"
   },
   {
     "counterSpy": true,
@@ -29,7 +29,7 @@
     "name": "",
     "requirements": null,
     "spy": true,
-    "target": "military:nanite_spy"
+    "target": "espionage:nanite_spy"
   },
   {
     "counterSpy": true,
@@ -37,7 +37,7 @@
     "name": "",
     "requirements": null,
     "spy": true,
-    "target": "military:special_agent"
+    "target": "espionage:special_agent"
   },
   {
     "counterSpy": true,
@@ -45,6 +45,6 @@
     "name": "",
     "requirements": null,
     "spy": true,
-    "target": "military:spy"
+    "target": "espionage:spy"
   }
 ]

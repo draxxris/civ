@@ -189,7 +189,12 @@ type only those buildings use, every unit with a positive corporation spread, an
 corporations themselves. Those records take the owner's namespace
 (`corporations:corporation_1`, `corporations:corporation_mallwart_store`,
 `corporations:specialbuilding_corporate_store`, `corporations:executive_1`,
-`corporations:1`), and the owner emits every row about them into its own folder, other
+`corporations:1`). Espionage owns the espionage commerce type and process, every unit with
+`bSpy`, the spy specialist and the espionage game options (`espionage:spy`, ...). The
+espionage amounts in base rows' commerce vectors are not split out: the source's four-slot
+commerce arrays still map to vectors with an espionage key, and the mod keeps those
+amounts in hand-written amending rows, so a re-import must drop that key from base rows.
+The owner emits every row about its records into its own folder, other
 mods' attachments included (`Corporations/data/building.json`, `building-category.json`,
 `unit.json` and `building-great-people.json`). A base building that replaces a claimed one
 (the theatre and the Red Curtains Theater) loses that `ReplaceBuildings` key; the claimed

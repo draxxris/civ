@@ -21,9 +21,12 @@ public sealed class UnitEspionageDef : ContentAttachment<UnitDef>
 // when content freezes (see "Content amendments" in docs/DESIGN.md), so the base rows name no espionage and every
 // reader of a building, civic, trait or specialist sees the espionage it gives while this mod is loaded.
 
-/// <summary>The espionage a building gives: the amounts of the espionage commerce type in its commerce vectors.</summary>
+/// <summary>The espionage a building gives: the amounts of the espionage commerce type in its commerce vectors, and
+/// slots for and free copies of the spy specialist.</summary>
 public sealed class BuildingEspionageDef : ContentAttachment<BuildingDef>
 {
+    [AmendsTarget] public ImmutableDictionary<string, int> SpecialistSlots { get; init; } = ImmutableDictionary<string, int>.Empty;
+    [AmendsTarget] public ImmutableDictionary<string, int> FreeSpecialistCounts { get; init; } = ImmutableDictionary<string, int>.Empty;
     [AmendsTarget] public CommerceVector CommerceChanges { get; init; }
     [AmendsTarget] public CommerceVector CommerceModifiers { get; init; }
     [AmendsTarget] public CommerceVector GlobalCommerceModifiers { get; init; }
@@ -45,6 +48,20 @@ public sealed class TraitEspionageDef : ContentAttachment<TraitDef>
 {
     [AmendsTarget] public CommerceVector CommerceChanges { get; init; }
     [AmendsTarget] public CommerceVector CommerceModifiers { get; init; }
+}
+
+/// <summary>A civilization's own versions of the spy units (<see cref="CivilizationDef.UnitOverrides"/>), keyed by the
+/// spy unit they replace; a null replacement means the civilization cannot train that unit.</summary>
+public sealed class CivilizationEspionageDef : ContentAttachment<CivilizationDef>
+{
+    [AmendsTarget] public ImmutableDictionary<string, string?> UnitOverrides { get; init; } = ImmutableDictionary<string, string?>.Empty;
+}
+
+/// <summary>How much a leader minds a caught spy: the attitude percent for this mod's memory kind, by its leader key
+/// (<see cref="LeaderDef.MemoryAttitudePercents"/>).</summary>
+public sealed class LeaderEspionageDef : ContentAttachment<LeaderDef>
+{
+    [AmendsTarget] public ImmutableDictionary<string, int> MemoryAttitudePercents { get; init; } = ImmutableDictionary<string, int>.Empty;
 }
 
 /// <summary>The espionage each specialist of a kind produces.</summary>

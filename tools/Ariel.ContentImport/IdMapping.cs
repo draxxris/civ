@@ -54,6 +54,13 @@ public static class IdMapping
             is { Length: > 0 } users && users.All(CorporateBuilding)),
         new("UnitInfo", "corporations",
             (r, _) => r.Node.Child("CorporationSpreads")?.Children.Any(n => n.Children.Length > 1 && ContentMapper.Integer(n.Children[1].Text) > 0) == true),
+        // Espionage's commerce type, process, spies, spy specialist and options are its own (espionage:*). The espionage
+        // amounts in base rows are not split out: the mod keeps them in hand-written amending rows (docs/ESPIONAGE.md).
+        new("CommerceInfo", "espionage", (r, _) => r.Type == "COMMERCE_ESPIONAGE"),
+        new("ProcessInfo", "espionage", (r, _) => r.Type == "PROCESS_ESPIONAGE"),
+        new("SpecialistInfo", "espionage", (r, _) => r.Type == "SPECIALIST_SPY"),
+        new("UnitInfo", "espionage", (r, _) => ContentMapper.Boolean(r.Node.Value("bSpy"))),
+        new("GameOptionInfo", "espionage", (r, _) => r.Type.Contains("ESPIONAGE", StringComparison.Ordinal)),
     ];
     /// <summary>A building that founds a corporation, or that a corporation's branch in the city lets it build.</summary>
     private static bool CorporateBuilding(EffectiveRecord building) =>

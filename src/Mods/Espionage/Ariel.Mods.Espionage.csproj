@@ -12,6 +12,8 @@
     <ProjectReference Include="../Revolution/Api/Ariel.Mods.Revolution.Api.csproj" />
     <!-- The espionage of the Religion mod's rows amends them when that mod is loaded; copied here for the same reason. -->
     <ProjectReference Include="../Religion/Api/Ariel.Mods.Religion.Api.csproj" />
+    <!-- So is the Great People mod's row about the spy specialist. -->
+    <ProjectReference Include="../GreatPeople/Api/Ariel.Mods.GreatPeople.Api.csproj" />
     <None Update="mod.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="data/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

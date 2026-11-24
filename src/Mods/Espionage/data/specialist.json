@@ -1,0 +1,30 @@
+[
+  {
+    "commerces": {
+      "culture": 0,
+      "gold": 0,
+      "research": 0,
+      "espionage": 4
+    },
+    "era": null,
+    "greatPeopleRateChange": 3,
+    "happinessPercent": 0,
+    "healthPercent": 0,
+    "help": "",
+    "icon": "Art/Interface/MainScreen/CityScreen/spy.dds",
+    "id": "espionage:specialist_spy",
+    "name": "Spy",
+    "pedia": "[H1]Great Spy and Spy Specialist[\\H1][PARAGRAPH:2][BOLD]Spy Specialists[\\BOLD][PARAGRAPH:1]Spy specialists give a bonus to Espionage output and increase the chance of a Great Spy appearing in a city. The {link:cities:courthouse}Courthouse{/link}, {link:cities:jail}Jail{/link}, {link:cities:intelligence_agency}Intelligence Agency{/link}, {link:cities:national_security}Security Bureau{/link}, and {link:cities:kremlin}Kremlin{/link} World Wonder allow the assignment of Spy specialists in a city.[PARAGRAPH:2][BOLD]Great Spies[\\BOLD][PARAGRAPH:1]Great Spies may occasionally appear in your city through the use of Spy specialists or Espionage-related Wonders. Invisible to all other units, Great Spies can explore rival territory, and will give a massive bonus of Espionage Points against a specific civilization if you expend the unit in one of their cities. They may also join a city as a super specialist, increasing science and espionage output of a city; or they may construct a {link:cities:scotland_yard}Scotland Yard{/link} in a city, adding a significant bonus to Espionage production in that city.",
+    "requirements": null,
+    "strategy": "Specialist Spy Strategy",
+    "unsupported": [
+      "Texture",
+      "bVisible"
+    ],
+    "yields": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  }
+]

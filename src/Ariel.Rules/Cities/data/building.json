@@ -2421,9 +2421,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "Reduces Happiness, but also Maintenance and War Weariness.  Also increases Production.  This building requires Technocracy civic.",
     "teamShare": false,
@@ -12970,9 +12968,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "Bioenhancement Center gives \u002B2 free experience to all units built in this city and grants one free spy specialist in the city.",
     "teamShare": false,
@@ -15895,9 +15891,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 1
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "Brothels provides a small happiness bonus to your city and increases espionage.",
     "teamShare": false,
@@ -29748,9 +29742,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 1
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "A {color:building_text}Cortigiane Oneste{/color} is a {color:building_text}Brothel{/color} that gives a free Artist.",
     "teamShare": false,
@@ -30220,9 +30212,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 1
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "With National Courier System the important military messages and news spread faster throughout your empire. This decreases the effects of anarchy periods and more great people appear among your citizens.",
     "teamShare": false,
@@ -31121,8 +31111,7 @@
       "research": 0
     },
     "specialistSlots": {
-      "foundation:specialist_lawyer": 1,
-      "foundation:specialist_spy": 2
+      "foundation:specialist_lawyer": 1
     },
     "specialistYieldChanges": {},
     "strategy": "The {color:building_text}Cryogenic Prison{/color} decreases War Weariness and maintenance and increases Espionage production.",
@@ -46407,8 +46396,7 @@
       "research": 0
     },
     "specialistSlots": {
-      "foundation:specialist_lawyer": 1,
-      "foundation:specialist_spy": 2
+      "foundation:specialist_lawyer": 1
     },
     "specialistYieldChanges": {},
     "strategy": "{color:building_text}Plunder{/color} (the Goth replacement for a {color:building_text}Jail{/color}) lowers a city\u0027s {color:highlight_text}War Weariness{/color} and increases gold. Build this if you are involved in a long war and your citizens are starting to complain.",
@@ -61295,9 +61283,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "Build an {color:building_text}Intelligence Agency{/color} to increase the espionage points created by your city. It also allows for the creation of two Spy specialists.",
     "teamShare": false,
@@ -64484,8 +64470,7 @@
       "research": 0
     },
     "specialistSlots": {
-      "foundation:specialist_lawyer": 1,
-      "foundation:specialist_spy": 2
+      "foundation:specialist_lawyer": 1
     },
     "specialistYieldChanges": {},
     "strategy": "{color:building_text}Jails{/color} lower a city\u0027s {color:highlight_text}War Weariness{/color} and increase espionage significantly. Build them if you are involved in a long war and your citizens are starting to complain.",
@@ -67678,9 +67663,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "The {color:building_text}Kremlin{/color} reduces the cost of hurrying production and it increases its city\u0027s chances of generating {color:unit_text}Great Spies{/color}.",
     "teamShare": true,
@@ -74100,8 +74083,7 @@
       "foundation:specialist_merchant": 1,
       "foundation:specialist_noble": 1,
       "foundation:specialist_priest": 1,
-      "foundation:specialist_scientist": 1,
-      "foundation:specialist_spy": 1
+      "foundation:specialist_scientist": 1
     },
     "freeTechs": 0,
     "globalBuildingClassProductionModifiers": {},
@@ -96596,9 +96578,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "The {color:building_text}Propaganda Net{/color} decreases War Weariness and increases Espionage at the cost of some Culture.",
     "teamShare": false,
@@ -96827,9 +96807,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "The {color:building_text}Propaganda Office{/color} increases Happiness and provides 2 Spy slots. It requires the {color:highlight_text}Personality Cult{/color} civic.",
     "teamShare": false,
@@ -100302,9 +100280,7 @@
     "freeBuilding": null,
     "freePromotion": null,
     "freeSpecialist": 0,
-    "freeSpecialistCounts": {
-      "foundation:specialist_spy": 1
-    },
+    "freeSpecialistCounts": {},
     "freeTechs": 0,
     "globalBuildingClassProductionModifiers": {},
     "globalBuildingExtraCommerces": {},
@@ -104436,9 +104412,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "{color:building_text}Scotland Yard{/color} provides a \u002B100% bonus to Espionage output.",
     "teamShare": false,
@@ -105345,9 +105319,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "Secret Army Base increases city\u0027s espionage by 100%, doubles military production and gives \u002B2 free experience to units. Allows to build SR-71 spy planes.",
     "teamShare": false,
@@ -115878,9 +115850,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 2
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "{color:building_text}Surveillance Network{/color} provides espionage and espionage defense at the cost of some unhappiness.",
     "teamShare": false,
@@ -120371,13 +120341,7 @@
       "food": 0,
       "production": 0
     },
-    "specialistCommercePercentChanges": {
-      "foundation:specialist_spy": {
-        "culture": 0,
-        "gold": 0,
-        "research": 0
-      }
-    },
+    "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
       "gold": 0,
@@ -122723,9 +122687,7 @@
       "gold": 0,
       "research": 0
     },
-    "specialistSlots": {
-      "foundation:specialist_spy": 1
-    },
+    "specialistSlots": {},
     "specialistYieldChanges": {},
     "strategy": "Who knew that keeping watch for intruders could keep out spies?",
     "teamShare": false,

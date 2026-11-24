@@ -40,12 +40,5 @@
     "name": "",
     "requirements": null,
     "target": "foundation:specialist_scientist"
-  },
-  {
-    "greatPersonUnit": "military:great_spy",
-    "id": "great_people:specialist_spy",
-    "name": "",
-    "requirements": null,
-    "target": "foundation:specialist_spy"
   }
 ]

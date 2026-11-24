@@ -25,14 +25,5 @@
     "commerces": {
       "espionage": 3
     }
-  },
-  {
-    "id": "espionage:specialist_spy",
-    "name": "",
-    "requirements": null,
-    "target": "foundation:specialist_spy",
-    "commerces": {
-      "espionage": 4
-    }
   }
 ]

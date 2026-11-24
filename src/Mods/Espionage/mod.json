@@ -1,7 +1,7 @@
 {
   "id": "espionage",
   "name": "Espionage",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "assembly": "Ariel.Mods.Espionage.dll",
   "api": "Ariel.Mods.Espionage.Api.dll",
   "dependencies": [],
@@ -12,10 +12,12 @@
     "cities",
     "economy",
     "government",
-    "peoples"
+    "peoples",
+    "world"
   ],
   "optionalReferences": [
     "corporations",
+    "great_people",
     "religion"
   ]
 }

@@ -1,5 +1,19 @@
 [
   {
+    "id": "espionage:caste_system",
+    "name": "",
+    "requirements": null,
+    "target": "government:caste_system",
+    "effects": [
+      {
+        "amount": 100,
+        "key": "cities:specialist_food_hundredths",
+        "scope": "city",
+        "target": "espionage:specialist_spy"
+      }
+    ]
+  },
+  {
     "id": "espionage:cosmopolitan",
     "name": "",
     "requirements": null,
@@ -80,6 +94,20 @@
         "key": "commerce.percent.espionage",
         "scope": "city",
         "target": null
+      }
+    ]
+  },
+  {
+    "id": "espionage:single_party",
+    "name": "",
+    "requirements": null,
+    "target": "government:single_party",
+    "effects": [
+      {
+        "amount": 1,
+        "key": "cities:unlimited",
+        "scope": "city",
+        "target": "espionage:specialist_spy"
       }
     ]
   }

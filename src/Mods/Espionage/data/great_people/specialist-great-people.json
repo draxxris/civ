@@ -1,0 +1,9 @@
+[
+  {
+    "greatPersonUnit": "military:great_spy",
+    "id": "espionage:specialist_spy",
+    "name": "",
+    "requirements": null,
+    "target": "espionage:specialist_spy"
+  }
+]

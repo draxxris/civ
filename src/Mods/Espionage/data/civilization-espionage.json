@@ -1,0 +1,11 @@
+[
+  {
+    "id": "espionage:barbarian",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:barbarian",
+    "unitOverrides": {
+      "espionage:nanite_spy": null
+    }
+  }
+]

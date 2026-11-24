@@ -1,0 +1,28 @@
+[
+  {
+    "default": true,
+    "era": null,
+    "help": "Allows for powerful espionage attacks, including nuclear sabatoge, aiding rebel factions, and causing empire-wide anarchy. Also, espionage effects, like poisoning water, will correctly scale for gamespeeds.",
+    "icon": "",
+    "id": "espionage:gameoption_advanced_espionage",
+    "name": "Advanced Espionage",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "visible": true
+  },
+  {
+    "default": false,
+    "era": null,
+    "help": "Spies are not available, and Espionage Points are converted into Culture",
+    "icon": "",
+    "id": "espionage:gameoption_no_espionage",
+    "name": "No Espionage",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "visible": true
+  }
+]

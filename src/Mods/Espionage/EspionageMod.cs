@@ -16,6 +16,13 @@ public sealed class EspionageMod : IPreparableMod
     /// <summary>The espionage commerce type, and the process that turns production into it.</summary>
     private static readonly ModJsonFile<CommerceDef[]> Commerce = new("data/commerce.json");
     private static readonly ModJsonFile<ProcessDef[]> Processes = new("data/process.json");
+    /// <summary>The spy specialist, the spy units and the mod's game options.</summary>
+    private static readonly ModJsonFile<SpecialistDef[]> OwnSpecialists = new("data/specialist.json");
+    private static readonly ModJsonFile<UnitDef[]> OwnUnits = new("data/unit.json");
+    private static readonly ModJsonFile<GameOptionDef[]> Options = new("data/game-option.json");
+    /// <summary>Civilizations' versions of the spy units and leaders' attitudes to a caught spy, added to their rows.</summary>
+    private static readonly ModJsonFile<CivilizationEspionageDef[]> Civilizations = new("data/civilization-espionage.json");
+    private static readonly ModJsonFile<LeaderEspionageDef[]> Leaders = new("data/leader-espionage.json");
     /// <summary>The espionage the base game's buildings, civics, traits and specialists give, added to their rows.</summary>
     private static readonly ModJsonFile<BuildingEspionageDef[]> Buildings = new("data/building-espionage.json");
     private static readonly ModJsonFile<CivicEspionageDef[]> Civics = new("data/civic-espionage.json");
@@ -24,8 +31,11 @@ public sealed class EspionageMod : IPreparableMod
     /// <summary>The espionage optional mods' rows give, registered only when that mod is loaded.</summary>
     private static readonly ModJsonFile<BuildingEspionageDef[]> CorporationBuildings = new("data/corporations/building-espionage.json");
     private static readonly ModJsonFile<BuildingReligionEspionageDef[]> ReligionBuildings = new("data/religion/building-religion-espionage.json");
+    /// <summary>The great person the spy specialist's points produce, in the Great People mod's own row type.</summary>
+    private static readonly ModJsonFile<Ariel.Mods.GreatPeople.SpecialistGreatPeopleDef[]> GreatPeople = new("data/great_people/specialist-great-people.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
-        [Rules, Memories, Units, Commerce, Processes, Buildings, Civics, Traits, Specialists, CorporationBuildings, ReligionBuildings];
+        [Rules, Memories, Units, Commerce, Processes, OwnSpecialists, OwnUnits, Options, Buildings, Civics, Traits, Specialists,
+         Civilizations, Leaders, CorporationBuildings, ReligionBuildings, GreatPeople];
 
     public void Register(IModContext context)
     {
@@ -33,15 +43,21 @@ public sealed class EspionageMod : IPreparableMod
         Validate(rules);
         context.Content<EspionageRulesDef>().Register(rules);
         MemoryKinds.Load(context, Memories);
-        ContentRegistration.Load(context, Units);
         ContentRegistration.Load(context, Commerce);
         ContentRegistration.Load(context, Processes);
+        ContentRegistration.Load(context, OwnSpecialists);
+        ContentRegistration.Load(context, OwnUnits);
+        ContentRegistration.Load(context, Units);
+        ContentRegistration.Load(context, Options);
+        ContentRegistration.Load(context, Civilizations);
+        ContentRegistration.Load(context, Leaders);
         ContentRegistration.Load(context, Buildings);
         ContentRegistration.Load(context, Civics);
         ContentRegistration.Load(context, Traits);
         ContentRegistration.Load(context, Specialists);
         if (context.IsLoaded("corporations")) ContentRegistration.Load(context, CorporationBuildings);
         if (context.IsLoaded("religion")) ContentRegistration.Load(context, ReligionBuildings);
+        if (context.IsLoaded("great_people")) ContentRegistration.Load(context, GreatPeople);
         var service = new EspionageService();
         context.RegisterService<IEspionageService>("espionage", service);
         context.RegisterStateComponent<EspionageTeamState>("team_state");
