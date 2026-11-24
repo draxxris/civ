@@ -51,6 +51,33 @@ public sealed class LeaderBriefingTests(LoadedMods mods) : IClassFixture<LoadedM
         }
     }
 
+    /// <summary>A mod's row about a trait says what it adds (<c>IDescribedContent</c>): no shipped trait keeps non-state
+    /// religion commerce, so a probe row gives one to the first offered leader's first trait.</summary>
+    [Fact]
+    public void A_mods_row_about_a_trait_adds_its_own_lines()
+    {
+        var leader = mods.Catalog.Leaders.First();
+        string trait = leader.Traits.Order(StringComparer.Ordinal).First();
+        var probe = new Ariel.Modding.ModSource
+        {
+            Manifest = new Ariel.Modding.ModManifest { Id = "briefing_probe", References = ["peoples", "religion"] },
+            Root = AppContext.BaseDirectory,
+            Instance = new TraitProbe(mods.Content.Get<S.TraitDef>().All.First(t => t.Name == trait).Id),
+        };
+        var catalog = new GameCatalog([.. mods.Sources, probe]);
+        var lines = LeaderBriefing.Build(catalog, catalog.Leaders.Single(l => l.Id == leader.Id && l.CivilizationId == leader.CivilizationId))
+            .Single(section => section.Heading == "Traits").Groups.Single(group => group.Title == trait).Lines;
+        Assert.Contains("non-state religion buildings keep their commerce", lines);
+        Assert.DoesNotContain(LeaderBriefing.Build(mods.Catalog, leader).SelectMany(s => s.Groups).SelectMany(g => g.Lines),
+            line => line.Contains("non-state religion", StringComparison.Ordinal));
+    }
+
+    private sealed class TraitProbe(string trait) : Ariel.Modding.IMod
+    {
+        public void Register(Ariel.Modding.IModContext context) => context.Content<Ariel.Mods.Religion.TraitReligionDef>()
+            .Register(new() { Id = "briefing_probe:commerce", Target = trait, NonStateReligionCommerce = true });
+    }
+
     private static bool Linked(IReadOnlyDictionary<string, int> amounts, IReadOnlyCollection<string> traits) =>
         amounts.Any(pair => pair.Value != 0 && traits.Contains(pair.Key));
 

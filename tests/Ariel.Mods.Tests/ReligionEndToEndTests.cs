@@ -49,9 +49,11 @@ public sealed class ReligionEndToEndTests(ITestOutputHelper output)
                 if (carried.Contains((spread.City, spread.Religion))) missions++;
                 else if (!foundings.Contains((spread.City, spread.Religion))) natural++;
             }
+            // The faith's own effects (its state religion happiness, a building's state religion yields), not a temple's
+            // ordinary building happiness.
             effects |= sim.State.Cities.Any(city => religion.Present(sim, city.Id).Count > 0
                 && ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city)).Ledger.Lines
-                    .Any(l => l.Source.StartsWith("religion:", StringComparison.Ordinal) && l.Amount != 0));
+                    .Any(l => l.Amount != 0 && (religion.Present(sim, city.Id).Contains(l.Source) || l.Source.EndsWith(":state_religion", StringComparison.Ordinal))));
             var diplomacy = sim.Service<IDiplomacyService>()!;
             var players = sim.State.Players.Where(p => p.Ai == "ai:standard").Select(p => p.Id).ToArray();
             attitudes |= players.Any(a => players.Any(b => a != b

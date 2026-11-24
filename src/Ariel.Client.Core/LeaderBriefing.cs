@@ -59,7 +59,7 @@ public static class LeaderBriefing
         if (trait.GreatGeneralRateModifier != 0) lines.Add($"{Labels.Signed(trait.GreatGeneralRateModifier)}% great general emergence");
         if (trait.DomesticGreatGeneralRateModifier != 0)
             lines.Add($"{Labels.Signed(trait.DomesticGreatGeneralRateModifier)}% great general emergence in own territory");
-        if (trait.MaximumAnarchyTurns == 0) lines.Add("no anarchy from civic or religious change");
+        if (trait.MaximumAnarchyTurns == 0) lines.Add("no anarchy");
         else if (trait.MaximumAnarchyTurns > 0)
             lines.Add(trait.MaximumAnarchyTurns == 1 ? "anarchy lasts at most one turn" : $"anarchy lasts at most {trait.MaximumAnarchyTurns} turns");
         if (trait.Happiness != 0) lines.Add($"{Labels.Signed(trait.Happiness)} happiness in every city");

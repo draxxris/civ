@@ -1435,24 +1435,29 @@ without it saves no religion string beyond the civic category below.
   trait rows (the leader briefing) and the generic `cities:unit_production_percent` and
   `cities:building_production_percent` production keys. Its planner runs at
   `AiPlannerOrder.Missions`.
-- **Other mods** reach it only optionally. GreatPeople, Revolution, Votes and Corporations
-  ask `sim.Service<IReligionService>()` (null without the mod) or read its attachments, and
+- **Other mods** reach it only optionally. GreatPeople, Revolution and Votes ask
+  `sim.Service<IReligionService>()` (null without the mod) or read its attachments, and
   Espionage, Votes and ScriptedWonders keep their rows about religious buildings under
   `data/religion/`, registered only when `IModContext.IsLoaded("religion")`.
 
-What the base game keeps that mentions religion, by decision:
+What the base game keeps that mentions religion:
 
 - Prose (pedia, help, strategy and names), icon atlas paths, and the names of unmapped
   source fields in `unsupported` lists.
 - The `religion` key in the AI flavour weights of techs, buildings, civics, units and
   leaders: an open map that no rule reads without the mod's content.
-- The Government module's `government:civicoption_religion` civic category and its civics
-  (Folklore to Free Church). Their religious effects are `CivicReligionDef` rows; the
-  category and civic names are a product decision, so the category key is the one religion
-  string a religion-less save carries.
-- The throne room no longer accepts the Apadana Palace and the Alhambra as its palace
-  alternatives: the base row cannot name Religion's buildings, and requirement
-  alternatives have no amendment seam yet (the importer reports the dropped leaves).
+- Open: the Government module's `government:civicoption_religion` civic category and its
+  civics (Folklore to Free Church). Their religious effects are `CivicReligionDef` rows,
+  but the category key is the one religion string a religion-less save still carries.
+  Renaming it needs an importer id override (`IdMapping` has none) and a player-visible
+  name for the category, which is a product decision.
+- The Godot client's tooltip colour for the "Religions" pedia category, beside the
+  "Corporations" one: a colour for a category a mod may add, unused without it.
+- Open: the throne room no longer accepts the Apadana Palace and the Alhambra as its
+  palace alternatives, with the mod loaded too: the base row cannot name Religion's
+  buildings, and requirement alternatives have no amendment seam yet (the importer
+  reports the dropped leaves). An amendment that adds `any` alternatives to a target's
+  requirements would restore them.
 - `VictoryIdentityDef` rows stay in Foundation for the victories other mods implement;
   the religious one, implemented by no mod, is Religion's own row.
 

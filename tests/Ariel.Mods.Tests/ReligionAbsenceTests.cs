@@ -10,15 +10,16 @@ using Xunit;
 namespace Ariel.Mods.Tests;
 
 /// <summary>The Religion mod is self-contained: the base game and the other main mods load, play and save without it,
-/// and say nothing of religion beyond the leftovers docs/DESIGN.md lists under "Religion" (prose, source tags, the AI's
-/// religion flavour and the Government module's religion civic category).</summary>
+/// and say nothing of religion beyond the leftovers docs/DESIGN.md lists under "Religion" (prose, source tags and the
+/// AI's religion flavour) and the open item there, the Government module's religion civic category.</summary>
 public sealed class ReligionAbsenceTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     private static readonly Lazy<ContentDb> WithoutReligion = new(() =>
         ModLoader.Build(new LoadedMods().Sources.Where(s => s.Manifest.Id != "religion")));
     private static readonly Regex Religious = new("religio", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-    /// <summary>The civic category the Government module keeps for its faith civics (Paganism to Free Church); renaming it
-    /// is a product decision, not a split.</summary>
+    /// <summary>The civic category the Government module keeps for its faith civics (Folklore to Free Church). It is the
+    /// one open item of the split: renaming it needs an importer id override and a product name (docs/DESIGN.md,
+    /// "Religion").</summary>
     private const string CivicOption = "government:civicoption_religion";
 
     [Fact]
