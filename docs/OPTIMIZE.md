@@ -2705,10 +2705,12 @@ cheaper first. Every final state is byte-identical to the base tree.
   | New8 (seed 3, 8 players, standard world, 150 turns) | `a9ba4f3b5780707a` |
   | Corporation-heavy game (seed 3, 4 players, industrial era, 160 turns) | `30d7fbff18d96f13` |
 
-- Timing ran in alternating pairs (base, final, final, base), per subject. Pairs A
-  (sight and contacts only) and B (all four commits) ran at load 0.8 to 4.1. Pair C
-  added new8 and ran at load 3 to 12, because other agents shared the machine, so for
-  the saved games only pairs A and B are quoted. The profile is the built-in
+- Timing ran in alternating pairs (base, final, final, base), per subject. Pair A ran
+  an interim build (the observer skip and a first draft of the contact scan) and is
+  not quoted below. Pair B ran the worktree just before `cc880c76`, with all four
+  changes in their final form, at load 1.9 to 4.1. Pair C ran the extracted final
+  tree and added new8, at load 3 to 12 because other agents shared the machine, so it
+  is quoted only for new8. The profile is the built-in
   `--profile`, plus temporary probes that were not committed.
 
 #### Where the Time Went
@@ -2723,11 +2725,13 @@ At 552 + 8 on the base tree, with probes:
   are read again between two moves, so even a perfect declaration cannot show in wall
   time.
 - **The move itself.** There were 290 move commands, 872 ms in all, and 501 sight
-  recomputes, 995 ms (the turn system's runs included). Of a recompute:
-  - re-revealing from every unit, 271 ms, mostly stacked units revealing the same disk
-    again, and a LINQ sum of each unit's promotions;
-  - the clearing pass, 81 ms, which enumerated each plot's team mask through an
+  recomputes, 995 ms (the turn system's runs included). In a probed run of the same 8
+  turns (900 ms of recomputes, probe overhead included):
+  - re-revealing from every unit, 612 ms (142 MB), mostly stacked units revealing the
+    same disk again, and a LINQ sum of each unit's promotions;
+  - the clearing pass, 182 ms, which enumerated each plot's team mask through an
     allocating iterator;
+  - the cities, 104 ms;
   - capturing each still-visible plot a second time from the same state.
 - **Contact discovery**, 294 ms and 170 MB over 8 turns: sorted sets per tile, and two
   dictionary lookups for every team looked up. In these games many teams never meet:
@@ -2798,7 +2802,7 @@ unless stated:
 | 552 + 8, sight allocation | 205 MB | 99 MB | −52% |
 | 552 + 8, wall per turn | 1,359 / 1,346 ms | 1,316 / 1,303 ms | −3% |
 | 552 + 8, allocation per turn | 1,260 MiB | 1,234 to 1,236 MiB | −2% |
-| f450 + 8, `world:sight_recompute` | 409 / 334 ms | 307 / 327 ms | −10% |
+| f450 + 8, `world:sight_recompute` | 409 / 334 ms | 307 / 327 ms | within noise |
 | f450 + 8, wall per turn | 1,063 / 1,010 ms | 1,043 / 1,043 ms | within noise |
 | New8, `world:sight_recompute` (pair C) | 2,734 / 2,979 ms | 2,209 / 2,296 ms | −21% |
 | New8, `MoveUnitPathCommand` (pair C) | 2,317 / 2,443 ms | 2,011 / 2,069 ms | −14% |
@@ -2809,7 +2813,8 @@ unless stated:
 | Kept ledgers reused, new4 | 63,662 / 63,608 | 66,338 / 66,433 | +4.3% |
 | Kept ledgers reused, new8 (pair C) | 256,480 / 256,072 | 269,220 / 269,065 | +5% |
 
-The sight and contact changes are what saves time, most at 552, where stacks are large.
+The sight and contact changes are what saves time, most at 552, where stacks are large;
+at f450 the two base runs differ by more than the trees do.
 In new4 the sight and contact figures moved by as much between two runs of one tree as
 between the trees, so they are not quoted. The declaration raises reuse by 1 to 5% and
 moves `modifiers:collect` by less than its spread between runs. Its value is
@@ -2822,8 +2827,9 @@ and readers as the ledgers' limit, not moves.
   terrain, their techs) can change between recomputes without one, and every
   recompute refreshes all teams' plot memories, which are saved. Hashes would change.
   Not built.
-- **Promotion checks** (stretch). The AI plans inside a read epoch per segment, so a
-  unit's ledger is already built once per segment. The remaining builds are the first
+- **Promotion checks** (stretch, by inspection, not probed this pass). The AI plans
+  inside a read epoch per segment, so a unit's ledger is already built once per
+  segment. The remaining builds are the first
   check of each unit after each command. No exact bound lets a check skip the ledger:
   the percent key has no lower bound across sources. Keeping unit calculations across
   writes cost more than it saved in Pass 17. Not built.
@@ -2845,11 +2851,15 @@ All on the final code:
 - Every reference hash above matches the base tree.
 - `--verify-modifier-cache` passes on 552 + 8, 451 + 8, f450 + 8, the corporations
   save + 4, new4, the corporation-heavy game and new8.
-- `--verify-read-epochs` passes on 552 + 4 and new4.
+- `--verify-read-epochs` passes on 552 + 4, new4, the corporations save + 4 and the
+  corporation-heavy game.
 - `--waves max` and `DOTNET_PROCESSOR_COUNT=1` give the base hashes on 552 + 8 and new4.
 - `MoveWriteWindowTests` checks under verification that a plain move stamps only its
   domains, a first reveal adds `world:revealed` only, and a blockader's move stamps
   everything. `WriteWindowTests` covers widening by domains.
+- The blockade threshold rests on inspection of `NavalBlockades` and on the writer-side
+  test above: the AI plans no blockades, so no verified run had a blockading unit for
+  the reader side to catch.
 - `mise run test`, `mise run test:e2e`, `mise run test:worldgen` and
   `mise run check:sync` pass.
 
