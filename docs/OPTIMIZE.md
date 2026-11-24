@@ -235,6 +235,9 @@ ______________________________________________________________________
        ▼
 [Pass 19: Nov 23, 2026] AI Military Planning
                         (Commits: 2674fe14 .. 3055c377)
+       │
+       ▼
+[Pass 21: Nov 23, 2026] Content Amendments & Mixed Commerce Layouts (Cost Check)
 ```
 
 ______________________________________________________________________
@@ -2707,6 +2710,46 @@ builds) found one regression, which was fixed:
 - **Hashes**: the session, generated and founded hashes match the base. The content
   hash changes because a content vector now serializes only the keys it carries, and a
   default vector as `{}`.
+
+### Pass 21: Content Amendments and Mixed Commerce Layouts (Cost Check)
+
+This pass checks what merging amending attachments into their targets costs at content
+load. The Espionage mod amends 47 buildings, 8 civics, a trait, 3 specialists, a
+civilization, 134 leaders and, with their mods, the Alhambra, the Mapster headquarters and
+the spy specialist's great person row. The merge runs once per content build. It is the
+`content amendments` phase of `ARIEL_TRACE_STARTUP=1` (Release `Ariel.SyncCheck
+hash-trace`, then five content builds in one test process):
+
+| Content build | Amendments | Whole build |
+| :-- | --: | --: |
+| First in a process (cold JIT), five processes | 9.2–10.6 ms | 463–495 ms |
+| Second to fifth in one process (warm) | 0.9–2.2 ms | 157–225 ms |
+| Without the Espionage mod (no amending rows; phase skipped) | 0 ms | 413–448 ms |
+
+The first version scanned every registry, with a sort, to find each row's target, and
+merged empty maps through reflection. Finding the candidate registries once per target
+type and skipping empty maps made no measurable change (10.2–11.0 ms before, 9.2–10.6 ms
+after, within this machine's spread): the cold cost is first-call reflection and JIT.
+The content hash is unchanged.
+
+Mixed commerce layouts in play. Without the Espionage mod every vector carries the three
+base keys. With it, the state and the amended rows carry four keys while the other base
+rows carry three, so their sums go through the merge each layout pair caches, where the
+base game (`34d54cc5`, an archive copy) had four keys everywhere. Profiled 100-turn
+four-player AI games (`mise run ai:play -- --seed 3 --players 4 --turns 100 --profile`)
+ran alternately, base then change, two runs each:
+
+| Game | Side | Profiled time | Managed bytes | `modifiers:collect` |
+| :-- | :-- | --: | --: | --: |
+| All optional mods (Espionage loaded) | Base | 11.8 / 11.3 s | 2,421 / 2,430 MiB | 1,111 / 1,196 ms |
+| | Change | 11.7 / 10.2 s | 2,422 / 2,431 MiB | 1,134 / 1,114 ms |
+| Without Espionage (`--optional` the other six) | Base | 10.1 / 10.4 s | 2,420 / 2,424 MiB | 1,122 / 1,137 ms |
+| | Change | 10.5 / 11.2 s | 2,416 / 2,408 MiB | 1,131 / 1,065 ms |
+
+Every difference is within the run-to-run spread, and allocation moves by at most 0.7%.
+The cached merge costs nothing a player would notice. The games' hashes differ between
+base and change because the change removes the economy's saved espionage total (and,
+without the mod, the espionage commerce type); each side repeats its own hash.
 
 ______________________________________________________________________
 

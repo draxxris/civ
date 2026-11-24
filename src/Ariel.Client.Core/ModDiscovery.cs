@@ -146,6 +146,7 @@ public static class ModDiscovery
             throw new InvalidDataException("The manifest needs an id, name, version, and assembly.");
         ValidateRequirements(manifest.Dependencies);
         ValidateRequirements(manifest.References);
+        ValidateRequirements(manifest.OptionalReferences);
         return manifest;
     }
 

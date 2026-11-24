@@ -164,16 +164,16 @@ public sealed class ResearchEconomyTests(LoadedMods mods) : IClassFixture<Loaded
     public void Slider_split_direct_commerce_and_negative_modifier_order_have_hundredth_ledgers()
     {
         var sim = Scenario(true); var service = Service<IPlayerEconomyService>(sim);
-        Assert.True(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(35, 35, 25, 5) }, out var error), error);
+        Assert.True(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(30, 35, 35) }, out var error), error);
         var before = sim.ComputeHash(); var result = service.CalculateCity(sim, 1);
         // Five raw commerce: 175 research + 1 direct hundredth, then 133% => 234.
-        // Gold: 175 - 200 direct, scaled inversely by 200% => -12 (toward zero).
-        Assert.Equal(TestCommerce.Vector(-12, 234, 281, 25), result.Hundredths);
+        // Gold: 150 - 200 direct, scaled inversely by 200% => -25. Culture: (175 + 100 direct) * 125% => 343.
+        Assert.Equal(TestCommerce.Vector(-25, 234, 343), result.Hundredths);
         Assert.Equal(175, result.Ledger.Total("economy:research_split_hundredths"));
         Assert.Equal(1, result.Ledger.Total("economy:research_direct_hundredths"));
         Assert.Equal(133, result.Ledger.Total("economy:research_factor_percent"));
         Assert.Equal(before, sim.ComputeHash());
-        Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(34, 36, 25, 5) }, out error));
+        Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(34, 36, 30) }, out error));
         Assert.Contains("steps", error); Assert.Equal(before, sim.ComputeHash());
         Assert.False(sim.TryApply(new SetCommerceRatesCommand { Player = 0, Rates = TestCommerce.Vector(10, 90, 0, 0) }, out error));
         Assert.Contains("maximum", error);

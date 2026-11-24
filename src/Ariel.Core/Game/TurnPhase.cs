@@ -31,8 +31,9 @@ public static class TurnPhase
     public const int Gold = 2000;
     /// <summary>Research settlement and discovery.</summary>
     public const int Research = 2100;
-    /// <summary>Espionage allocation.</summary>
-    public const int Espionage = 2200;
+    /// <summary>A feature mod spends the settled output of the commerce type it registers (the Espionage mod allocates
+    /// espionage points).</summary>
+    public const int CommerceSpending = 2200;
     /// <summary>Taxes, resource consumption and inflation.</summary>
     public const int Economy = 2300;
     /// <summary>Prepare all owned cities and refresh eligibility.</summary>

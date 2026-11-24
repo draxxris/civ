@@ -145,7 +145,7 @@ public sealed class FeatureIntegrationReplayTests
         var sim = Scenario(); Budget(sim, 0, 400); Budget(sim, 1, 400);
         var home = sim.State.Cities.Single(c => c.Owner == 0);
         var target = sim.State.Cities.Single(c => c.Owner == 1);
-        var defender = P6RulesScenario.AddUnit(sim, 1, home, "military:spy");
+        var defender = P6RulesScenario.AddUnit(sim, 1, home, "espionage:spy");
         Assert.True(ResearchShown(Intelligence(new GameSession(sim), target.Id)));
         Apply(sim, EspionageMissions.Order(1, defender.Id, EspionageMissionKind.CounterEspionage));
         Assert.True(sim.Events.Published.OfType<EspionageMissionResult>().Single().Success);
@@ -167,7 +167,7 @@ public sealed class FeatureIntegrationReplayTests
                 Assert.Equal(new long[] { 50, 100, 150, 200 }.Select(b => b * 198 / 100), Thresholds(intel));
                 Assert.True(DetailsShown(intel));
                 if (game.State.Turn != expiry - 1) continue;
-                var spy = P6RulesScenario.AddUnit(game, 0, game.State.CityById(target.Id), "military:spy");
+                var spy = P6RulesScenario.AddUnit(game, 0, game.State.CityById(target.Id), "espionage:spy");
                 long victim = game.State.PlayerById(1).Treasury, own = game.State.PlayerById(0).Treasury;
                 Apply(game, EspionageMissions.Order(0, spy.Id, EspionageMissionKind.StealTreasury));
                 Assert.True(game.Events.Published.OfType<EspionageMissionResult>().Last().Success);
@@ -211,7 +211,7 @@ public sealed class FeatureIntegrationReplayTests
         if (disabled) sim.TeamOf(1).Techs.Add(sim.Content.Get<S.TechDef>().All.First(t => t.TechTrading).Id);
         sim.TeamOf(1).Techs.UnionWith([Agriculture, "research:assembly_line"]);
         var target = sim.State.Cities.Single(c => c.Owner == 1);
-        var spy = P6RulesScenario.AddUnit(sim, 0, target, "military:spy");
+        var spy = P6RulesScenario.AddUnit(sim, 0, target, "espionage:spy");
         var rng = sim.Rng.State;
         Assert.Equal(reason, P6RulesScenario.Reject(sim, new ProposeDealCommand
         {

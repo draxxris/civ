@@ -102,12 +102,6 @@
     "unit": "hundredths"
   },
   {
-    "id": "cities:specialist_espionage_hundredths",
-    "name": "espionage from each {target}",
-    "targeted": true,
-    "unit": "hundredths"
-  },
-  {
     "id": "cities:specialist_food_hundredths",
     "name": "food from each {target}",
     "targeted": true,

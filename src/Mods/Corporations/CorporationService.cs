@@ -128,7 +128,7 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
         foreach (var def in active)
         {
             var hq = def.HeadquartersCommerce;
-            long maintenance = 100L * (hq.Gold + hq.Research + hq.Culture + hq.Espionage);
+            long maintenance = 100L * hq.Total;
             long bonusMaintenance = (long)def.MaintenanceHundredths * Consumed(def, counts);
             maintenance += bonusMaintenance * world.CorporationMaintenancePercent / 100;
             maintenance = maintenance * (cityObj.Population + 17) / 18;

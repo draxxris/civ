@@ -1,0 +1,11 @@
+[
+  {
+    "id": "espionage:trait_deceiver",
+    "name": "",
+    "requirements": null,
+    "target": "peoples:trait_deceiver",
+    "commerceChanges": {
+      "espionage": 4
+    }
+  }
+]

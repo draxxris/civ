@@ -97,6 +97,7 @@ public sealed class CityQueryContractsTests(LoadedMods mods) : IClassFixture<Loa
         public void Subscribe<T>(string name, Action<Simulation, T> handler) where T : DomainEvent => inner.Subscribe(name, handler);
         public void RegisterCommand<T>(string name) where T : GameCommand => inner.RegisterCommand<T>(name);
         public string ModId => inner.ModId;
+        public bool IsLoaded(string modId) => inner.IsLoaded(modId);
         public IModData Data => inner.Data;
         public ModRegistry<IPlayerAI> PlayerAIs => inner.PlayerAIs;
         public ModRegistry<IMapGenerator> MapGenerators => inner.MapGenerators;

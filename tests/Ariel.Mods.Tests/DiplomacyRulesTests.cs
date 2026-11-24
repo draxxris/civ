@@ -380,7 +380,7 @@ public sealed class DiplomacyRulesTests
         sim.AdvanceTurn();
         var rates = economy.Rates(sim, 0);
         Assert.True(rates.Gold > 0); Assert.Equal(100, rates.Gold + rates.Research);
-        Assert.Equal(0, rates.Culture); Assert.Equal(0, rates.Espionage);
+        Assert.Equal(0, rates.Culture); Assert.Equal(0, rates["espionage"]);
         var settled = player.Extensions.Get<EconomyPlayerState>(sim.Content)!;
         Assert.Equal(settled.SettledCommerceHundredths.Gold / 100 - economy.Calculate(sim, 0).Expenses, player.Treasury);
         Assert.Equal(0, settled.UnpaidGold); Assert.Equal(0, settled.StrikeTurns);

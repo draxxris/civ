@@ -8,7 +8,6 @@
     "pedia": "",
     "productionToCommerceModifiers": {
       "culture": 50,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -25,31 +24,6 @@
     "unsupported": []
   },
   {
-    "era": "foundation:era_medieval",
-    "help": "",
-    "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,8,16",
-    "id": "economy:process_espionage",
-    "name": "Espionage",
-    "pedia": "",
-    "productionToCommerceModifiers": {
-      "culture": 0,
-      "espionage": 50,
-      "gold": 0,
-      "research": 0
-    },
-    "requirements": {
-      "all": [
-        {
-          "all": [
-            "research:paper"
-          ]
-        }
-      ]
-    },
-    "strategy": "Focusing on espionage converts production into espionage within that particular city.",
-    "unsupported": []
-  },
-  {
     "era": null,
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/Source_misc_buttons.dds,3,15",
@@ -58,7 +32,6 @@
     "pedia": "",
     "productionToCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -75,7 +48,6 @@
     "pedia": "",
     "productionToCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 50
     },
@@ -100,7 +72,6 @@
     "pedia": "",
     "productionToCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 50,
       "research": 0
     },

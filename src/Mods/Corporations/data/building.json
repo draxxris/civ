@@ -43,13 +43,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 15
     },
@@ -84,7 +82,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -143,7 +140,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -191,7 +187,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -286,13 +281,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -323,7 +316,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -382,7 +374,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -430,7 +421,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -525,13 +515,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -566,7 +554,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -625,7 +612,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -676,7 +662,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -750,13 +735,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -790,7 +773,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -849,7 +831,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -894,7 +875,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -971,13 +951,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1011,7 +989,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1070,7 +1047,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1120,7 +1096,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1197,13 +1172,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1237,7 +1210,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1296,7 +1268,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1341,7 +1312,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1418,13 +1388,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1458,7 +1426,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1517,7 +1484,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1562,7 +1528,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1639,13 +1604,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1679,7 +1642,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1738,7 +1700,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1783,7 +1744,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1860,13 +1820,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1900,7 +1858,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -1959,7 +1916,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2004,7 +1960,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2081,13 +2036,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2121,7 +2074,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2180,7 +2132,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2225,7 +2176,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2328,13 +2278,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 1,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2369,7 +2317,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2428,7 +2375,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2476,7 +2422,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2548,13 +2493,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2592,7 +2535,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2651,7 +2593,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 2,
       "research": 0
     },
@@ -2696,7 +2637,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2773,13 +2713,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2813,7 +2751,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2872,7 +2809,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -2927,7 +2863,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3005,13 +2940,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3045,7 +2978,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3104,7 +3036,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3159,7 +3090,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3237,13 +3167,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3277,7 +3205,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3336,7 +3263,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3391,7 +3317,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3469,13 +3394,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3509,7 +3432,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3568,7 +3490,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3623,7 +3544,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3701,13 +3621,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3745,7 +3663,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3804,7 +3721,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 2,
       "research": 0
     },
@@ -3849,7 +3765,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3952,13 +3867,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -3993,7 +3906,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4052,7 +3964,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4100,7 +4011,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4172,13 +4082,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4212,7 +4120,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4271,7 +4178,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4326,7 +4232,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4404,13 +4309,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4444,7 +4347,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4503,7 +4405,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4558,7 +4459,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4636,13 +4536,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4676,7 +4574,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4735,7 +4632,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4790,7 +4686,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4868,13 +4763,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4908,7 +4801,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -4967,7 +4859,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5022,7 +4913,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5100,13 +4990,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5140,7 +5028,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5199,7 +5086,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5244,7 +5130,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5321,13 +5206,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5361,7 +5244,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5420,7 +5302,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5475,7 +5356,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5553,13 +5433,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5597,7 +5475,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5656,7 +5533,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
@@ -5701,7 +5577,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5804,13 +5679,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5845,7 +5718,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5904,7 +5776,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -5952,7 +5823,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6026,13 +5896,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6066,7 +5934,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6125,7 +5992,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6170,7 +6036,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6247,13 +6112,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6287,7 +6150,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6346,7 +6208,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6401,7 +6262,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6479,13 +6339,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6519,7 +6377,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6578,7 +6435,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6633,7 +6489,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6711,13 +6566,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6751,7 +6604,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6810,7 +6662,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6865,7 +6716,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6943,13 +6793,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -6983,7 +6831,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7042,7 +6889,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7097,7 +6943,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7175,13 +7020,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7219,7 +7062,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7278,7 +7120,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
@@ -7323,7 +7164,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7436,13 +7276,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7477,7 +7315,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7536,7 +7373,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7588,7 +7424,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7662,13 +7497,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7702,7 +7535,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7761,7 +7593,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 6,
       "gold": 0,
       "research": 0
     },
@@ -7806,7 +7637,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7883,13 +7713,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7923,7 +7751,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -7982,7 +7809,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8037,7 +7863,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8115,13 +7940,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8155,7 +7978,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8214,7 +8036,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8269,7 +8090,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8378,13 +8198,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 1,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8415,7 +8233,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8474,7 +8291,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8522,7 +8338,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8594,13 +8409,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8634,7 +8447,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8693,7 +8505,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 2,
       "research": 0
     },
@@ -8738,7 +8549,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8815,13 +8625,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8859,7 +8667,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8918,7 +8725,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -8963,7 +8769,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9066,13 +8871,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9107,7 +8910,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9166,7 +8968,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9216,7 +9017,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9288,13 +9088,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9328,7 +9126,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9387,7 +9184,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9432,7 +9228,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9535,13 +9330,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9572,7 +9365,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9631,7 +9423,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9679,7 +9470,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9751,13 +9541,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9795,7 +9583,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9854,7 +9641,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9899,7 +9685,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -9994,13 +9779,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 6,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10035,7 +9818,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10094,7 +9876,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10149,7 +9930,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10247,13 +10027,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10288,7 +10066,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10347,7 +10124,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10395,7 +10171,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10471,13 +10246,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10515,7 +10288,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10574,7 +10346,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 2,
       "research": 0
     },
@@ -10619,7 +10390,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10696,13 +10466,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10740,7 +10508,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10799,7 +10566,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10844,7 +10610,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10935,13 +10700,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -10980,7 +10743,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11039,7 +10801,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11092,7 +10853,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11164,13 +10924,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11204,7 +10962,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11263,7 +11020,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11308,7 +11064,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11411,13 +11166,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11452,7 +11205,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11511,7 +11263,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11559,7 +11310,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11657,13 +11407,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11698,7 +11446,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11757,7 +11504,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11805,7 +11551,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11905,13 +11650,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -11946,7 +11689,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12005,7 +11747,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12053,7 +11794,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12153,13 +11893,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12194,7 +11932,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12253,7 +11990,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12301,7 +12037,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12406,13 +12141,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12447,7 +12180,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12506,7 +12238,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12554,7 +12285,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12660,13 +12390,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12697,7 +12425,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12756,7 +12483,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12804,7 +12530,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12898,13 +12623,11 @@
     "coastalLocation": false,
     "commerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "commerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12939,7 +12662,6 @@
     "globalBuildingExtraCommerces": {},
     "globalCommerceModifiers": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -12998,7 +12720,6 @@
     "nukeModifier": 0,
     "obsoleteSafeCommerceChanges": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -13046,7 +12767,6 @@
     "specialistCommercePercentChanges": {},
     "specialistExtraCommerces": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },

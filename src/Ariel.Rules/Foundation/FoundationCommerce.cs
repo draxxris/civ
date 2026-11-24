@@ -1,12 +1,12 @@
 namespace Ariel.Content;
 
 /// <summary>The commerce types the foundation registers (<c>data/commerce.json</c>) and the reads other modules make of
-/// them by role: gold pays the treasury, research feeds the research module, culture the city's culture, espionage the
-/// espionage feature. Any other loaded type is read through <see cref="ContentDb.Commerce"/>.</summary>
+/// them by role: gold pays the treasury, research feeds the research module, culture the city's culture. A type a mod
+/// registers is read by its key through <see cref="ContentDb.Commerce"/> and the mod's own API.</summary>
 public static class FoundationCommerce
 {
     /// <summary>Vector keys of the foundation's commerce types.</summary>
-    public const string GoldKey = "gold", ResearchKey = "research", CultureKey = "culture", EspionageKey = "espionage";
+    public const string GoldKey = "gold", ResearchKey = "research", CultureKey = "culture";
 
     extension(CommerceVector vector)
     {
@@ -16,7 +16,5 @@ public static class FoundationCommerce
         public long Research => vector[ResearchKey];
         /// <summary>The culture amount.</summary>
         public long Culture => vector[CultureKey];
-        /// <summary>The espionage amount.</summary>
-        public long Espionage => vector[EspionageKey];
     }
 }

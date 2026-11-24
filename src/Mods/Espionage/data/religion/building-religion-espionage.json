@@ -1,0 +1,11 @@
+[
+  {
+    "id": "espionage:alhambra",
+    "name": "",
+    "requirements": null,
+    "target": "religion:alhambra",
+    "stateReligionCommerces": {
+      "espionage": 1
+    }
+  }
+]

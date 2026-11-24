@@ -10,7 +10,8 @@ namespace Ariel.Content;
 /// <summary>Frozen mod content and services. Generic content registries are shared across feature mods.</summary>
 public sealed class ContentDb
 {
-    private sealed record Entry(object Registry, Action Freeze, Func<IEnumerable<ContentDef>> Items);
+    private sealed record Entry(object Registry, Action Freeze, Func<IEnumerable<ContentDef>> Items,
+        Func<string, ContentDef?> Find, Action<ContentDef> Replace);
 
     // Serialize each runtime type with its own root writer, without retaining a per-item JSON tree.
     [JsonConverter(typeof(HashDefinitionConverter))]
@@ -39,7 +40,8 @@ public sealed class ContentDb
         if (_registries.TryGetValue(typeof(T), out var entry)) return (Registry<T>)entry.Registry;
         if (_frozen) throw new KeyNotFoundException($"Content type '{typeof(T).FullName}' is not registered");
         var registry = new Registry<T>(typeof(T).Name);
-        _registries.Add(typeof(T), new(registry, registry.Freeze, () => registry.All));
+        _registries.Add(typeof(T), new(registry, registry.Freeze, () => registry.All,
+            id => registry.TryGet(id, out var item) ? item : null, item => registry.Replace((T)item)));
         return registry;
     }
     /// <summary>Get a definition directly by its subtype and id.</summary>
@@ -114,7 +116,7 @@ public sealed class ContentDb
     {
         using var trace = Modding.StartupTrace.Phase("content reference validation");
         IndexCommerce();
-        var declared = manifests.ToDictionary(m => m.Id, m => m.Dependencies.Concat(m.References).ToHashSet(StringComparer.Ordinal), StringComparer.Ordinal);
+        var declared = manifests.ToDictionary(m => m.Id, m => m.Dependencies.Concat(m.References).Concat(m.OptionalReferences).ToHashSet(StringComparer.Ordinal), StringComparer.Ordinal);
         var targets = _registries.ToDictionary(e => e.Key, e => e.Value.Items().Select(d => d.Id).ToHashSet(StringComparer.Ordinal));
         targets[typeof(ContentDef)] = _registries.Values.SelectMany(e => e.Items()).Select(d => d.Id).ToHashSet(StringComparer.Ordinal);
         var kinds = Services.Get<IRequirementEvaluator>().OfType<IContentRequirementEvaluator>()
@@ -232,6 +234,7 @@ public sealed class ContentDb
     {
         using var trace = Modding.StartupTrace.Phase("content freeze");
         if (_commerce is null) IndexCommerce();
+        ApplyAmendments();
         Requirements = new(Services.Get<IRequirementEvaluator>());
         _ruleset = Services.Get<IRuleset>().Count switch
         {
@@ -250,6 +253,31 @@ public sealed class ContentDb
         MapGenerators.Freeze(); PlayerAIs.Freeze(); TurnSystems.Freeze(); CommandTypes.Freeze(); Services.Freeze(); StateComponents.Freeze(); StateDomains.Freeze();
         _frozen = true;
         _ruleset?.Bind(this);
+    }
+    /// <summary>Replace each definition an attachment amends (<see cref="AmendsTargetAttribute"/>) by a copy carrying the
+    /// amending fields, rows applied in ordinal id order, before attachments are indexed and content is hashed.</summary>
+    private void ApplyAmendments()
+    {
+        var rows = _registries.Where(e => ContentAmendments.Fields(e.Key).Length > 0)
+            .SelectMany(e => e.Value.Items().Cast<ContentAttachment>())
+            .OrderBy(r => r.Id, StringComparer.Ordinal).ThenBy(r => r.GetType().FullName, StringComparer.Ordinal).ToArray();
+        if (rows.Length == 0) return;
+        using var trace = Modding.StartupTrace.Phase("content amendments");
+        var errors = new SortedSet<string>(StringComparer.Ordinal);
+        // The registries that may hold a target of each type, found once per type rather than once per row.
+        var holders = new Dictionary<Type, Entry[]>();
+        foreach (var row in rows)
+        {
+            var targetType = row.TargetType();
+            if (!holders.TryGetValue(targetType, out var candidates))
+                holders[targetType] = candidates = _registries.Where(e => targetType.IsAssignableFrom(e.Key))
+                    .OrderBy(e => e.Key.FullName, StringComparer.Ordinal).Select(e => e.Value).ToArray();
+            var holder = candidates.Select(entry => (Entry: entry, Target: entry.Find(row.Target))).FirstOrDefault(found => found.Target is not null);
+            if (holder.Target is not { } target) { errors.Add($"{row.Id}.Target: '{row.Target}' does not resolve to {targetType.FullName}"); continue; }
+            if (ContentAmendments.Fields(target.GetType()).Length > 0) { errors.Add($"{row.Id}.Target: '{row.Target}' amends another definition and cannot be amended"); continue; }
+            holder.Entry.Replace(ContentAmendments.Amend(target, row, Commerce.Zero, errors));
+        }
+        if (errors.Count > 0) throw new InvalidDataException("Content amendment failed:\n" + string.Join("\n", errors));
     }
     /// <summary>One row per (attachment type, target): two rows of one type about one definition are a load error, as
     /// neither mod could know which the type's owner would read.</summary>

@@ -111,7 +111,7 @@ public sealed class AiPlannerTests
         Assert.Null(content.Services.Find<IRevolutionService>());
         Assert.Null(content.Services.Find<IScriptedWonderService>());
         Assert.Null(content.Services.Find<IProjectService>());
-        Assert.Null(rules.EspionageSpending);
+        Assert.False(content.Commerce.TryGet("espionage", out _));
         Assert.Null(rules.TradeLinks);
         Assert.Null(rules.CityUnrest);
         // Score and the four base victories need no mod.

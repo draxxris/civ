@@ -46,6 +46,14 @@ public sealed class Registry<T> where T : class, IHasId
         _owners[item.Id] = modId;
     }
 
+    /// <summary>Swap in an amended copy of an entry (<see cref="AmendsTargetAttribute"/>); the entry keeps its owner.</summary>
+    internal void Replace(T item)
+    {
+        EnsureOpen();
+        if (!_items.ContainsKey(item.Id)) throw new InvalidOperationException($"Cannot replace unknown {Kind} '{item.Id}'");
+        _items[item.Id] = item;
+    }
+
     internal void Freeze()
     {
         _lookup = new(_items, StringComparer.Ordinal);

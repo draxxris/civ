@@ -36,9 +36,9 @@ public sealed class CommerceTypeTests
     public void Registered_type_joins_the_commerce_set_in_order_with_typed_modifier_keys()
     {
         var commerce = Content.Value.Commerce;
-        Assert.Equal(["gold", "research", "culture", "espionage", Faith], commerce.Select(t => t.Key));
+        Assert.Equal(["gold", "research", "culture", Faith], commerce.Select(t => t.Key));
         Assert.Equal("faith_probe:commerce_faith", commerce[Faith].Id);
-        Assert.Equal(5, commerce.Zero.Count);
+        Assert.Equal(4, commerce.Zero.Count);
         Assert.True(commerce.IsTypedKey("commerce.flat.faith"));
         Assert.True(commerce.IsTypedKey("commerce.percent.faith"));
         Assert.False(commerce.IsTypedKey("commerce.flat.piety"));
@@ -54,7 +54,7 @@ public sealed class CommerceTypeTests
         var ledger = result.Ledger;
         long split = ledger.Total("economy:faith_split_hundredths");
         long raw = ledger.Total("economy:gold_split_hundredths") + ledger.Total("economy:research_split_hundredths") + split
-            + ledger.Total("economy:culture_split_hundredths") + ledger.Total("economy:espionage_split_hundredths");
+            + ledger.Total("economy:culture_split_hundredths");
         Assert.True(raw > 0);
         Assert.Equal(raw * 20 / 100, split);
         Assert.Equal(3, ledger.Total("commerce.flat.faith"));
@@ -65,7 +65,7 @@ public sealed class CommerceTypeTests
         Assert.Equal(result.Hundredths[Faith], ledger.Total("economy:faith_hundredths"));
         var player = sim.Rules().Economy.Calculate(sim, 0);
         Assert.Equal(result.Hundredths[Faith], player.CommerceHundredths[Faith]);
-        Assert.Equal(5, player.CommerceHundredths.Count);
+        Assert.Equal(4, player.CommerceHundredths.Count);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public sealed class CommerceTypeTests
         // A command may leave a type out; the state still names every loaded type.
         P6RulesScenario.Apply(sim, new SetCommerceRatesCommand { Player = 0, Rates = CommerceVector.Of(("gold", 50), (Faith, 50)) });
         var rates = economy.Rates(sim, 0);
-        Assert.Equal(5, rates.Count);
+        Assert.Equal(4, rates.Count);
         Assert.Equal(50, rates[Faith]);
         Assert.Equal(0, rates.Research);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
@@ -106,7 +106,7 @@ public sealed class CommerceTypeTests
         Assert.Equal(0, state.Rates.Culture);
         Assert.True(state.Rates[Faith] < 50);
         Assert.Equal(100 - state.Rates[Faith], state.Rates.Gold);
-        Assert.Equal(5, state.SettledCommerceHundredths.Count);
+        Assert.Equal(4, state.SettledCommerceHundredths.Count);
     }
 
     [Fact]

@@ -390,7 +390,7 @@ public sealed class ClientIntelligenceEventsTests
         sim.Rules().Economy.SetRates(sim, 0, TestCommerce.Vector(0, 0, 0, 100));
         // An unset weight is zero, so the player must ask for the rival before the forecast moves.
         Assert.True(ScreenProbe.Press(session, EspionageId, "raise:1"));
-        var spy = AddUnit(sim, target, "military:spy", 0);
+        var spy = AddUnit(sim, target, "espionage:spy", 0);
         Assert.True(ScreenProbe.Press(session, EspionageId, $"city:{target.Id}"));
         var unlocked = ScreenProbe.Body(session, EspionageId);
         Assert.False(DetailsLocked(unlocked));

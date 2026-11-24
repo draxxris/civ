@@ -200,6 +200,15 @@ civilization unit overrides. A field mapping marked `owned` keeps only those ent
 the owner's attachment (`CivilizationCorporationsDef`). Any other reference to them fails
 the import, so a new edge cannot pull a feature mod into the base game.
 
+The importer has not followed Espionage out of the base game. It still emits the espionage
+commerce type, process, spy units, spy specialist and options under their base modules'
+ids, and an espionage key in every base commerce vector (the source's four-slot arrays,
+`NativeCommerce`). The committed data has those rows in the Espionage mod and the
+espionage amounts in the mod's hand-written amending rows (docs/ESPIONAGE.md), so a
+re-import would put them back in the base. Claiming them needs an owner for each record
+and an emitter for amending rows, which splits a source vector between a base row and an
+attachment.
+
 Specialists belong to foundation, as the plan specifies. Great-person units remain
 military records. Great-people and trade have no dedicated Info classes in this profile.
 Later rules consume units, specialists, routes, and constants.

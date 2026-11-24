@@ -21,4 +21,8 @@ public sealed class ModManifest
     public string[] Dependencies { get; init; } = [];
     /// <summary>Required content providers. May be cyclic; does not affect registration order.</summary>
     public string[] References { get; init; } = [];
+    /// <summary>Content providers this mod names only when they are loaded: a missing one is no error, and a loaded one
+    /// counts as a reference. The mod checks <see cref="IModContext.IsLoaded"/> before it registers content that names
+    /// one, such as its amendments to another optional mod's rows. Does not affect registration order.</summary>
+    public string[] OptionalReferences { get; init; } = [];
 }

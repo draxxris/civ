@@ -14,7 +14,7 @@ public sealed class EspionageRulesTests
         sim.State.TeamById(team).Extensions.Set(sim.Content, state); return state;
     }
     private static void Fund(Simulation sim, int team = 0, int target = 1, long points = 100000) => TeamState(sim, team).Points[target] = points;
-    private static Unit Spy(Simulation sim) => P6RulesScenario.AddUnit(sim, 0, sim.State.Cities[2], "military:spy");
+    private static Unit Spy(Simulation sim) => P6RulesScenario.AddUnit(sim, 0, sim.State.Cities[2], "espionage:spy");
     private static PerformMissionCommand Mission(Unit spy, City city, EspionageMissionKind mission, string? tech = null) => EspionageMissions.Order(spy.Owner, spy.Id, mission, tech);
 
     [Theory]
@@ -47,23 +47,25 @@ public sealed class EspionageRulesTests
         var forecast = economy.Calculate(sim, 0);
         Assert.Equal(beforeForecast, sim.ComputeHash());
         long generated = forecast.CommerceHundredths.Espionage;
-        Assert.Equal(generated / 100, Assert.Single(forecast.Ledger.Lines, l => l.Source == "economy:espionage_target:1").Amount);
-        Assert.DoesNotContain(forecast.Ledger.Lines, l => l.Source == "economy:espionage_target:2");
+        var shares = Spies(sim).Spending(sim, 0, generated);
+        Assert.Equal(generated / 100, shares[1]);
+        Assert.False(shares.ContainsKey(2));
         Assert.True(generated > 0);
         sim.AdvanceTurn();
         Assert.Equal(generated / 100, Spies(sim).Points(sim, 0, 1)); Assert.Equal(0, Spies(sim).Points(sim, 0, 2));
         var settled = sim.State.PlayerById(0).Extensions.Get<EconomyPlayerState>(sim.Content)!;
-        Assert.Equal(0, settled.EspionageHundredths);
         Assert.Equal(generated, settled.SettledCommerceHundredths.Espionage);
+        Assert.Equal(generated, EspionageCommerce.Hundredths(sim, 0));
         sim.Rules().Relations.EstablishContact(sim, 0, 2);
         P6RulesScenario.Apply(sim, new SetEspionageWeightCommand { Player = 0, TargetTeam = 2, Weight = 3 });
         long previous = Spies(sim).Points(sim, 0, 1);
-        generated = economy.Calculate(sim, 0).CommerceHundredths.Espionage + sim.State.PlayerById(0).Extensions.Get<EspionagePlayerState>(sim.Content)!.RemainderHundredths;
-        var allocations = economy.Calculate(sim, 0).Ledger.Lines.Where(l => l.Key == "economy:espionage_spending").ToDictionary(l => l.Source, l => l.Amount);
+        long produced = economy.Calculate(sim, 0).CommerceHundredths.Espionage;
+        generated = produced + sim.State.PlayerById(0).Extensions.Get<EspionagePlayerState>(sim.Content)!.RemainderHundredths;
+        var allocations = Spies(sim).Spending(sim, 0, produced);
         var loaded = SaveGame.Load(sim.Content, SaveGame.Save(sim));
         sim.AdvanceTurn(); loaded.AdvanceTurn(); Assert.Equal(sim.ComputeHash(), loaded.ComputeHash());
-        Assert.Equal(allocations["economy:espionage_target:1"], Spies(sim).Points(sim, 0, 1) - previous);
-        Assert.Equal(allocations["economy:espionage_target:2"], Spies(sim).Points(sim, 0, 2));
+        Assert.Equal(allocations[1], Spies(sim).Points(sim, 0, 1) - previous);
+        Assert.Equal(allocations[2], Spies(sim).Points(sim, 0, 2));
         long points = generated / 100;
         Assert.Equal(points, Spies(sim).Points(sim, 0, 1) - previous + Spies(sim).Points(sim, 0, 2));
         // The larger fractional remainder gets the indivisible point; ties go to the lower team id.
@@ -290,7 +292,7 @@ public sealed class EspionageRulesTests
     public void Detection_consumes_the_spy_and_spends_points_without_applying_the_mission(EspionageMissionKind mission)
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[2]; Fund(sim);
-        for (int i = 0; i < 6; i++) P6RulesScenario.AddUnit(sim, 1, city, "military:spy");
+        for (int i = 0; i < 6; i++) P6RulesScenario.AddUnit(sim, 1, city, "espionage:spy");
         bool caught = false;
         for (int attempt = 0; attempt < 32 && !caught; attempt++)
         {
@@ -323,7 +325,7 @@ public sealed class EspionageRulesTests
         sim.Rules().Relations.EstablishContact(sim, 0, 1);
         Fund(sim); Fund(sim, 1, 0);
         Assert.Null(Spies(sim).CounterEspionage(sim, 0, 1));
-        var spy = P6RulesScenario.AddUnit(sim, 0, city, "military:spy");
+        var spy = P6RulesScenario.AddUnit(sim, 0, city, "espionage:spy");
         var command = Mission(spy, city, EspionageMissionKind.CounterEspionage);
         Assert.Equal(cost, Spies(sim).MissionCost(sim, 0, city.Id, EspionageMissionKind.CounterEspionage));
         int expires = sim.State.Turn + duration;
@@ -337,7 +339,7 @@ public sealed class EspionageRulesTests
         sim.State.Players.Add(new Player { Id = 2, TeamId = 0, Treasury = 10000 });
         sim.TeamOf(0).Members.Add(2); sim.State.RebuildIndexes();
         P6RulesScenario.AddCity(sim, 2, 18);
-        var teammateSpy = P6RulesScenario.AddUnit(sim, 2, city, "military:spy");
+        var teammateSpy = P6RulesScenario.AddUnit(sim, 2, city, "espionage:spy");
         var repeat = Mission(teammateSpy, city, EspionageMissionKind.CounterEspionage);
         Assert.Contains("already active", P6RulesScenario.Reject(sim, repeat));
         var loaded = SaveGame.Load(content, SaveGame.Save(sim));

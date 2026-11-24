@@ -13,7 +13,29 @@ public sealed class EspionageMod : IPreparableMod
     private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
     /// <summary>Which units are spies and which defend against them, attached to the base units.</summary>
     private static readonly ModJsonFile<UnitEspionageDef[]> Units = new("data/unit-espionage.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules, Memories, Units];
+    /// <summary>The espionage commerce type, and the process that turns production into it.</summary>
+    private static readonly ModJsonFile<CommerceDef[]> Commerce = new("data/commerce.json");
+    private static readonly ModJsonFile<ProcessDef[]> Processes = new("data/process.json");
+    /// <summary>The spy specialist, the spy units and the mod's game options.</summary>
+    private static readonly ModJsonFile<SpecialistDef[]> OwnSpecialists = new("data/specialist.json");
+    private static readonly ModJsonFile<UnitDef[]> OwnUnits = new("data/unit.json");
+    private static readonly ModJsonFile<GameOptionDef[]> Options = new("data/game-option.json");
+    /// <summary>Civilizations' versions of the spy units and leaders' attitudes to a caught spy, added to their rows.</summary>
+    private static readonly ModJsonFile<CivilizationEspionageDef[]> Civilizations = new("data/civilization-espionage.json");
+    private static readonly ModJsonFile<LeaderEspionageDef[]> Leaders = new("data/leader-espionage.json");
+    /// <summary>The espionage the base game's buildings, civics, traits and specialists give, added to their rows.</summary>
+    private static readonly ModJsonFile<BuildingEspionageDef[]> Buildings = new("data/building-espionage.json");
+    private static readonly ModJsonFile<CivicEspionageDef[]> Civics = new("data/civic-espionage.json");
+    private static readonly ModJsonFile<TraitEspionageDef[]> Traits = new("data/trait-espionage.json");
+    private static readonly ModJsonFile<SpecialistEspionageDef[]> Specialists = new("data/specialist-espionage.json");
+    /// <summary>The espionage optional mods' rows give, registered only when that mod is loaded.</summary>
+    private static readonly ModJsonFile<BuildingEspionageDef[]> CorporationBuildings = new("data/corporations/building-espionage.json");
+    private static readonly ModJsonFile<BuildingReligionEspionageDef[]> ReligionBuildings = new("data/religion/building-religion-espionage.json");
+    /// <summary>The great person the spy specialist's points produce, in the Great People mod's own row type.</summary>
+    private static readonly ModJsonFile<Ariel.Mods.GreatPeople.SpecialistGreatPeopleDef[]> GreatPeople = new("data/great_people/specialist-great-people.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles =>
+        [Rules, Memories, Units, Commerce, Processes, OwnSpecialists, OwnUnits, Options, Buildings, Civics, Traits, Specialists,
+         Civilizations, Leaders, CorporationBuildings, ReligionBuildings, GreatPeople];
 
     public void Register(IModContext context)
     {
@@ -21,7 +43,21 @@ public sealed class EspionageMod : IPreparableMod
         Validate(rules);
         context.Content<EspionageRulesDef>().Register(rules);
         MemoryKinds.Load(context, Memories);
+        ContentRegistration.Load(context, Commerce);
+        ContentRegistration.Load(context, Processes);
+        ContentRegistration.Load(context, OwnSpecialists);
+        ContentRegistration.Load(context, OwnUnits);
         ContentRegistration.Load(context, Units);
+        ContentRegistration.Load(context, Options);
+        ContentRegistration.Load(context, Civilizations);
+        ContentRegistration.Load(context, Leaders);
+        ContentRegistration.Load(context, Buildings);
+        ContentRegistration.Load(context, Civics);
+        ContentRegistration.Load(context, Traits);
+        ContentRegistration.Load(context, Specialists);
+        if (context.IsLoaded("corporations")) ContentRegistration.Load(context, CorporationBuildings);
+        if (context.IsLoaded("religion")) ContentRegistration.Load(context, ReligionBuildings);
+        if (context.IsLoaded("great_people")) ContentRegistration.Load(context, GreatPeople);
         var service = new EspionageService();
         context.RegisterService<IEspionageService>("espionage", service);
         context.RegisterStateComponent<EspionageTeamState>("team_state");
@@ -39,7 +75,6 @@ public sealed class EspionageMod : IPreparableMod
             context.RegisterService<IMission>(EspionageMissions.Of(kind)["espionage:".Length..], new SpyMission(service, service.Missions, kind));
         context.Subscribe<EspionageMissionResult>("memory_spy", RememberCaughtSpy);
         context.TurnSystems.Register(new SpyAllocation(service));
-        context.RegisterService<IEspionageSpending>("spending", service);
         context.RegisterService<Ariel.Presentation.IGameScreen>("screen", new EspionageScreen());
         context.RegisterService<Ariel.Presentation.INotificationSource>("notices", new EspionageNotices());
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new EspionageAiPlanner());
@@ -78,6 +113,13 @@ public sealed class EspionageMod : IPreparableMod
     }
 }
 
+/// <summary>The espionage a building gives to the state religion's buildings (<see cref="BuildingReligionDef.StateReligionCommerces"/>),
+/// added to the Religion mod's row about it. Registered only with the Religion mod.</summary>
+public sealed class BuildingReligionEspionageDef : ContentAttachment<Ariel.Mods.Religion.BuildingReligionDef>
+{
+    [AmendsTarget] public CommerceVector StateReligionCommerces { get; init; }
+}
+
 /// <summary>Memory kinds the Espionage mod records (<c>data/memory-kind.json</c>).</summary>
 public static class EspionageMemories
 {
@@ -88,9 +130,8 @@ public static class EspionageMemories
 internal sealed class SpyAllocation(EspionageService service) : IPlayerTurnSystem
 {
     public string Id => "espionage:allocation";
-    /// <summary>One slot after the economy's espionage phase (<see cref="TurnPhase.Espionage"/>), which banks the output
-    /// only when no feature spends it.</summary>
-    public int Order => TurnPhase.Espionage + 1;
+    /// <summary>After research settles, in the slot for spending a mod's own commerce type.</summary>
+    public int Order => TurnPhase.CommerceSpending;
     public IReadOnlyList<string>? WriteDomains => Points;
     private static readonly IReadOnlyList<string> Points = ["espionage:points"];
     public void Run(Simulation sim, int player) => service.Allocate(sim, player);

@@ -313,7 +313,7 @@ public sealed class RevolutionRulesTests(P7ModFixture mods) : IClassFixture<P7Mo
         var sim = P7ModFixture.Scenario(SpiesAndRevolution.Value);
         var city = P7ModFixture.City(sim, 57, owner: 1);
         P7ModFixture.City(sim, 40, owner: 0); // A return city for the spy; every mission needs one.
-        var spy = P7ModFixture.Unit(sim, city, "military:spy", owner: 0);
+        var spy = P7ModFixture.Unit(sim, city, "espionage:spy", owner: 0);
         spy.MovesLeft = 60;
         sim.Rules().Relations.EstablishContact(sim, 0, 1);
         var team = new EspionageTeamState(); team.Points[1] = 1000;

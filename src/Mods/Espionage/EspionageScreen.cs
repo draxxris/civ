@@ -90,9 +90,8 @@ internal sealed class EspionageScreen : IGameScreen
         return items;
     }
 
-    /// <summary>Points per turn from the espionage slider: the mod's own source when one answers, else the economy.</summary>
-    private static long Budget(Simulation sim, int player) => sim.Service<IPlayerEspionageSource>()?.EspionageHundredths(sim, player)
-        ?? sim.Service<IPlayerEconomyService>()?.Calculate(sim, player).CommerceHundredths.Espionage ?? 0;
+    /// <summary>Points per turn from the espionage slider.</summary>
+    private static long Budget(Simulation sim, int player) => EspionageCommerce.Hundredths(sim, player);
 
     internal static string PassiveLabel(PassiveEspionageKind kind) => kind switch
     {

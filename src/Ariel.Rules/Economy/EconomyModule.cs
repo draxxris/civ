@@ -20,7 +20,6 @@ public sealed class EconomyModule : IPreparableMod
         context.RegisterService<IProductionKind>("process_kind", new ProcessKind(commerce));
         context.RegisterService<IPlayerEconomyService>("economy", economy);
         context.RegisterService<IPlayerResearchSource>("research_source", economy);
-        context.RegisterService<IPlayerEspionageSource>("espionage_source", economy);
         context.RegisterService<ICityCultureSource>("culture", commerce);
         context.RegisterService<ICityProcessService>("processes", commerce);
         context.RegisterService<ICityHurryService>("hurry", hurry);
@@ -36,12 +35,5 @@ public sealed class EconomyModule : IPreparableMod
         context.TurnSystems.Register(new EconomyPhase("reconcile_gold", TurnPhase.Map + 2, economy.ReconcileGold));
         context.TurnSystems.Register(new EconomyPhase("inflation", TurnPhase.Economy, Inflation.Update, EconomyStateDomains.TreasuryOnly));
         context.TurnSystems.Register(new EconomyPhase("anger", TurnPhase.PlayerEnd, CityHurry.DecayAnger, EconomyStateDomains.HurryAngerOnly));
-        context.TurnSystems.Register(new EconomyPhase("espionage", TurnPhase.Espionage, (sim, player) =>
-        {
-            // A feature that spends espionage banks it itself.
-            if (sim.Rules().EspionageSpending is not null) return;
-            var state = EconomyData.Edit(sim, player);
-            state.EspionageHundredths += economy.EspionageHundredths(sim, player);
-        }, EconomyStateDomains.TreasuryOnly));
     }
 }

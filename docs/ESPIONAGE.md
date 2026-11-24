@@ -1,32 +1,37 @@
 # Espionage Subsystem
 
 The espionage subsystem models passive intelligence and covert operations against
-rival civilizations. It is a separate mod. Cities, economy and military supply the units
-and commerce that it uses; the base game's relations supply contacts and remember a caught
-spy (`espionage:spy_caught`, a memory kind in `data/memory-kind.json`).
+rival civilizations. It is an optional feature mod, and the base game names no espionage:
+the mod registers its own commerce type, adds its amounts to base rows through amending
+attachments, and owns its process, its spy units and specialist, and its game options. The
+base game's relations supply
+contacts and remember a caught spy (`espionage:spy_caught`, a memory kind in the mod's
+`data/memory-kind.json`).
 
 ```mermaid
 flowchart TB
     subgraph Presentation
-        UI[Godot espionage panel]
-        Client[Client.Core projections]
+        Screen[EspionageScreen and EspionageNotices]
     end
     subgraph Core["Ariel.Mods.Espionage"]
         Service[IEspionageService]
+        Missions[SpyMission, one IMission per kind]
         Rules[data/espionage-rules.json]
+        Amend[amending attachments]
     end
     subgraph Domains
-        Economy[Economy commerce slider]
+        Economy[Economy commerce output]
         Cities[Cities buildings and specialists]
-        Military[Military spy and counter-spy units]
+        Military[Military unit movement]
         Relations[Base relations contact and memory]
         Revolution[Revolution instability]
     end
-    UI --> Client --> Service
+    Screen --> Service
+    Missions --> Service
     Service --> Rules
     Economy --> Service
-    Cities --> Economy
-    Military --> Service
+    Amend -.adds espionage to.-> Cities
+    Military --> Missions
     Relations --> Service
     Service -.optional.-> Revolution
 ```
@@ -57,7 +62,7 @@ never with its research rate. `GamePace.Scale` is the only scaling helper.
 
 ## State
 
-The mod registers three state components:
+The mod registers two state components:
 
 - `EspionageTeamState`: `Points` and lifetime `Spent`.
 - `EspionagePlayerState`: target `Weights` and fractional `RemainderHundredths`.
@@ -73,8 +78,12 @@ spy effects never reach the new owner.
 
 ## Points and allocation
 
-Espionage is the fourth commerce channel. `PlayerEconomy` produces espionage
-hundredths; `EspionageService.Allocate` runs at `TurnPhase.Espionage + 1`.
+Espionage is a commerce type the mod registers (`espionage:commerce_espionage`, key
+`espionage`, in `data/commerce.json`), so the slider, the city split and the ledgers carry it
+while the mod is loaded. The economy does not bank it: `EspionageService.Allocate`, the mod's
+turn system at `TurnPhase.CommerceSpending`, reads the player's output of the type
+(`EspionageCommerce.Hundredths`, over `IPlayerEconomyService.CommerceHundredths`) and
+divides it among rivals.
 
 1. Only met, living, non-barbarian rival teams receive points.
 2. An unset weight is zero. Points stay in `RemainderHundredths` until the player
@@ -185,29 +194,58 @@ inert from its expiry turn and is dropped at the next turn boundary.
 
 ## Integration
 
-- Buildings and specialists (`src/Ariel.Rules/Cities`) add espionage commerce.
-- Spy and counter-spy units are base units (`src/Ariel.Rules/Military`); the mod's
-  `data/unit-espionage.json` attaches a `UnitEspionageDef` row to each, with `spy: true`
-  or `counterSpy: true`.
+- Base rows carry no espionage. The mod's amending attachments (`BuildingEspionageDef`,
+  `CivicEspionageDef`, `TraitEspionageDef`, `SpecialistEspionageDef`, and rows for the
+  Religion mod's Alhambra and the Corporations mod's headquarters, each loaded only with that
+  mod) add the espionage amounts to the target rows when content freezes ("Content
+  amendments" in DESIGN.md), so every reader of a building sees its espionage while the mod
+  is loaded and none without it.
+- The mod's own rows: the espionage process (`espionage:process_espionage`), the six spy
+  units (`espionage:spy`, `espionage:agent`, `espionage:special_agent`, `espionage:007`,
+  `espionage:hacker`, `espionage:nanite_spy`, in `data/unit.json`, with their icons and
+  models in the mod's `art/`), the spy specialist (`espionage:specialist_spy`) and the
+  Advanced Espionage and No Espionage game options (`espionage:gameoption_*`, which no
+  rule reads yet). `data/unit-espionage.json` attaches a `UnitEspionageDef` row to each spy
+  unit, with `spy: true` and `counterSpy: true`.
+- Amendments also carry what the base rows said about those units and the specialist:
+  buildings' spy slots and free spies, civics' spy specialist effects, the barbarians'
+  ban on the nanite spy (`CivilizationEspionageDef`), each leader's attitude to a caught
+  spy (`LeaderEspionageDef`), and, with the Great People mod, the great person the spy
+  specialist's points produce (that mod's `SpecialistGreatPeopleDef`, registered only
+  when it is loaded).
+- What stays in the base game names espionage only where the base reads it or a base row
+  needs it: the great spy unit and specialist (base technologies, buildings and
+  corporations name them as single references, which an amendment cannot add), the
+  `unitcombat_spy` combat class and its promotions (base buildings grant them), the
+  `unitai_spy` roles (the ambassador and envoy use them too), the AI's flavor key, and
+  buildings, technologies and civics whose espionage is all in the mod's amendments.
 - The mod's contracts, commands, state and events live in its published API
   (`Ariel.Mods.Espionage`, assembly `Ariel.Mods.Espionage.Api`).
 - Revolution is optional. The mod incites a revolt through the Revolution mod's API when
   it is loaded; without it, a spy revolt still causes disorder, but adds no instability.
-- The service answers the base economy's `IEspionageSpending` seam, so the economy lists
-  the per-rival forecast and leaves banking to the mod. Without the mod the economy
-  accumulates espionage itself.
-- The computer player's espionage is the mod's own planner (`espionage:planner`), and its
-  `espionage:spies` production wish asks AI cities for spies.
+- Each mission is an `IMission` (`SpyMission`, one per `EspionageMissionKind`), run by the
+  base `PerformMissionCommand`; the caught-spy memory is the mod's handler of its own
+  `EspionageMissionResult` event.
+- The computer player's espionage is the mod's own planner (`espionage:planner`, at
+  `AiPlannerOrder.Military + 100`), and its `espionage:spies` production wish asks AI
+  cities for spies. The base AI knows no espionage: it values the commerce type by its
+  `AiPoints` like any other.
 
 ## Client and presentation
 
-- `GameSession.DescribeEspionage` returns one row per known rival plus the held points.
-- `GameSession.DescribeRivalIntelligence` reads the settled budget snapshot. It does
-  not recalculate city commerce.
-- `GameSession.SpyActions` offers the one-click missions. `StealableTechs` and
-  `StealTechnology` back the spy panel's technology picker.
-- The espionage panel is `src/Ariel.Godot/GameUi.Espionage.cs`. Weight controls step by
-  one and by ten.
+The client has no espionage code. The mod registers its presentation through the
+presentation seams, and the client draws whatever they describe:
+
+- `EspionageScreen` (`espionage:screen`, an `IGameScreen`) is the espionage advisor: every
+  known rival with its points and weight, the intelligence the points unlock against the
+  selected rival (locked sections are left out, never zero-filled), the budget
+  (`EspionageCommerce.Hundredths`), and the selected spy's missions with the technology
+  picker for a theft. Weight controls step by one and by ten. Its button is hidden when
+  the service is absent.
+- A spy's one-click missions also appear among the unit's orders, since each is an
+  `IMission`.
+- `EspionageNotices` (an `INotificationSource`) tells the player how their spies' missions
+  went and about missions run in their cities.
 
 ## Notes
 

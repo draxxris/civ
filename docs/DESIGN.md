@@ -271,7 +271,10 @@ and `MoveUnit`. After bulk data edits, `RebuildIndexes` restores the caches.
 Each mod folder contains `mod.json`, the mod's DLL, the API assemblies it publishes
 or compiles against (see Mod APIs) and optional JSON sidecars. Dependencies
 determine load order. Ordinal mod ids break ties. Ids use `modid:name`. Registration
-requires the owning namespace. Overrides can replace earlier content.
+requires the owning namespace. `references` names the mods whose content a mod's rows
+name, and `optionalReferences` the mods it names content of only when they are loaded: the
+mod registers those files after `IModContext.IsLoaded(modId)`, and the loader neither
+requires nor orders by them. Overrides can replace earlier content.
 
 - `ctx.Content<T>()` returns `ModRegistry<T>` for any `ContentDef` subtype.
 - `ContentDb.Get<T>()`, `Get<T>(id)` and `TryGet<T>(id, out item)` resolve generic
@@ -407,8 +410,7 @@ Manifest fields and API use:
   mod, and a feature mod contributes the planner that plays it (`IAiPlanner`), the
   production it wants (`IProductionWishes`) and what its content is worth to the AI
   (`IAiValuer<TSubject>`, all below).
-- A mod's API interface may extend the seam it answers (`IEspionageService :
-  IEspionageSpending`, `ITradeRouteService :
+- A mod's API interface may extend the seam it answers (`ITradeRouteService :
   ICityTradeLinks`, `IRevolutionService : ICityUnrest`), and the mod registers its
   service under both. A seam answered by a helper (a capital weight, a free-building
   grant) is registered on its own.
@@ -428,7 +430,6 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `IFreeBuildingGrants` | `FreeBuildingGrants` (list) | Cities, for empire-wide free buildings | ScriptedWonders | only constructed buildings grant |
 | `ICityUnrest` | `CityUnrest` | Religion (inquisition compensation calms the city) and its planner, the great people planner | Revolution (the instability index) | no unrest; compensation is paid in gold |
 | `ICityTradeLinks` | `TradeLinks` | Religion, for natural spread | Trade | spread follows city connections only |
-| `IEspionageSpending` | `EspionageSpending` | Economy, for the ledger forecast and the espionage phase | Espionage | the economy banks espionage output |
 | `ITradeTerms` | `TradeTerms` (list) | Relations (`MayTrade`, `FreeTrade`), so deals and trade routes | Diplomacy (embargoes in deals), Votes (sanctions, free trade) | teams at peace trade as their borders allow |
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
@@ -494,7 +495,13 @@ technologies) stay in base. The mods' rows:
   (`UnitCorporationsDef`, `HandicapCorporationsDef`, `WorldSizeCorporationsDef`,
   `CivilizationCorporationsDef`). It also registers `BuildingGreatPeopleDef` rows, the Great
   People mod's type, about its own founding buildings.
-- Espionage: spies and counter-spies (`UnitEspionageDef`).
+- Espionage: spies and counter-spies (`UnitEspionageDef`), and what it adds to base rows,
+  which amend their targets (see "Content amendments"): espionage amounts, spy slots and
+  free spies on buildings (`BuildingEspionageDef`), civics' espionage and spy specialist
+  effects (`CivicEspionageDef`), traits' and specialists' espionage (`TraitEspionageDef`,
+  `SpecialistEspionageDef`), a civilization's versions of the mod's spy units
+  (`CivilizationEspionageDef`) and each leader's attitude to a caught spy
+  (`LeaderEspionageDef`).
 - Votes: a seat building's forced candidacy, in the `BuildingVotesDef` row that already
   names its council.
 - AirCombat: mission range, strike limit, bombing, evasion and strike damage
@@ -526,6 +533,34 @@ namespace and file, so any mod can still attach a row to its own civics.
 Attachments replace typed fields where the reading module is a mod or, like Diplomacy,
 attaches its rows to another module's definitions. A rule the base
 game applies to any calculation is an open effect instead (Modifiers and ledgers).
+
+#### Content amendments
+
+An attachment is read by its own mod. When a mod's content belongs in a field every
+reader of the target already reads (the espionage a building gives is one more amount in
+its `CommerceChanges`, read by the city yield code, the pedia and the AI), the attachment
+amends its target instead: a property marked `[AmendsTarget]` adds into the target's
+property of the same name and type when content freezes, after the commerce types are
+indexed and before attachments are indexed and content is hashed. The base row names
+nothing of the mod, and without the mod nothing is added.
+
+- A commerce vector is summed (over `CommerceTypes.Zero`, so the result carries every
+  loaded type); an immutable array is appended to; an immutable dictionary is merged,
+  and a key the target already has is an error unless both values are vectors, arrays or
+  dictionaries, which combine the same way. A scalar field cannot amend (a load error),
+  so an amendment only adds and never overrides: replacing a value is an override by id.
+- Rows apply in ordinal id order, so the result does not depend on mod load order. The
+  amended definition keeps its id and owner; the target's reference attributes apply to
+  the amending field, so an amended reference is checked as the target's own.
+- An amending row is still an attachment: one row per (type, target), and its target's
+  mod must be referenced. Two mods that amend one definition use their own types. A row
+  that amends another amending row is an error.
+- A mod amends a definition of a mod it does not need by listing that mod in
+  `optionalReferences` and registering the file only when `IModContext.IsLoaded` says the
+  mod is there (Espionage amends the Religion mod's Alhambra and the Corporations mod's
+  Mapster headquarters this way).
+- The amended values are in the content hash. The merge runs once per content load, over
+  only the amending rows (the amending properties of each type are found once and cached).
 
 ## Setup and presentation services
 
@@ -595,7 +630,7 @@ outside the player interval.
 | `AssignWork`         |  1100 | City work assignments           |
 | `Gold`               |  2000 | Treasury settlement             |
 | `Research`           |  2100 | Research and discoveries        |
-| `Espionage`          |  2200 | Espionage allocation            |
+| `CommerceSpending`   |  2200 | Commerce a feature spends       |
 | `Economy`            |  2300 | Taxes, consumption, inflation   |
 | `CityBegin`          |  3000 | City preparation                |
 | `CityGrowth`         |  4000 | Food, growth, starvation        |
@@ -995,7 +1030,7 @@ multiplying per-turn inflation by `(100 + HurriedCount) / 100`. `HurriedCount` d
 elapsed turn boundaries based on game speed and civic `HurryInflationModifier`.
 
 `CorporationService.MaintenanceHundredths` calculates city corporate branch expenses:
-base headquarter commerce (100 per gold, research, culture, and espionage), resource
+base headquarter commerce (100 per unit of every commerce type it gives), resource
 consumption scaled by world size (`WorldSizeCorporationsDef`), population scaling
 `(population + 17) / 18`, handicap scaling (`HandicapCorporationsDef`), player civic modifier (`corporations:maintenance_percent`, from the civic's
 `CivicCorporationsDef`, selecting `RealisticMaintenancePercent` when Realistic
@@ -1027,17 +1062,18 @@ level, city defense, extra cost, territory ownership (own territory score is div
 military happiness are exempt. Disbanding halts early once `NetGold` reaches
 non-negative equilibrium.
 
-`PlayerEconomy` implements `IPlayerEspionageSource.EspionageHundredths`. When a feature
-answers `IEspionageSpending` (`GameRules.EspionageSpending`, the Espionage mod), the
-economy's espionage phase leaves accumulation to it, preventing duplicate aggregate
-pooling, and `PlayerEconomy.Calculate` asks it to project per-rival points under
-`economy:espionage_target:<team>`.
+`IPlayerEconomyService.CommerceHundredths(sim, player, type)` is a player's output of one
+commerce type this turn, in hundredths, summed over its cities' splits. The economy banks
+and spends only the types it knows (gold pays the treasury, research feeds Research,
+culture feeds city culture). A type a feature mod registers is the mod's to read and spend:
+the Espionage mod reads its type there in the `CommerceSpending` phase and keeps the points
+in its own state, so the economy names no espionage and has no espionage phase or ledger.
 
 Player modifier keys include `economy:max_rate:<type>`, `economy:upkeep_percent`,
 `economy:inflation_percent`, and `economy:hurry_percent`. Team key
 `research:cost_percent` changes research costs after the normal scaling steps.
 `EconomyPlayerState` saves sliders, settlement snapshots, unpaid gold, strike turns,
-hurried count, aggregate espionage (when nothing answers `IEspionageSpending`), and the inflation
+hurried count and the inflation
 accumulator. `EconomyCityState` saves hurry anger. The imported profile disables
 inflation. Enabled profiles use the source binomial formula and momentum update after
 research.
@@ -1851,8 +1887,8 @@ the mod loads.
 Espionage allocates whole points from saved commerce output across met rival teams by
 player-set weights. An unset weight is zero, and unspent points stay held and visible.
 Passive thresholds unlock demographics, city visibility, research inspection, and city
-investigation. The service answers the base seam `IEspionageSpending`, so the economy
-leaves banking to it. Spy missions spend points and use a calculated success chance; running a
+investigation. The mod registers its own commerce type, and its allocation system reads the
+player's output of it (`EspionageCommerce.Hundredths`) in the `CommerceSpending` phase. Spy missions spend points and use a calculated success chance; running a
 mission lowers the attacker's own investment, so later missions cost more. Counter-
 espionage raises both cost and risk for a fixed number of turns. Fomented unhappiness is
 a timer on the city (Timers). All numbers come from
@@ -2001,15 +2037,13 @@ planners register the same way, at the slots `AiPlannerOrder` publishes, a hundr
 | 200 | `ai:war` | 1100 | `ai:workers` |
 | 300 | `ai:civics` | 1200 | (`air_combat:planner`) |
 | 400 | `ai:diplomacy` | 1300 | `ai:military` |
-| 500 | `ai:settlers` | 1400 | (`espionage:planner`) |
-| 600 | `ai:citizens` (renews cached views first) | 1500 | (`revolution:planner`) |
-| 700 | (`religion:planner`) | 1600 | `ai:economy` |
-| | | 1700 | `ai:hurry` |
+| 500 | `ai:settlers` | 1500 | (`revolution:planner`) |
+| 600 | `ai:citizens` (renews cached views first) | 1600 | `ai:economy` |
+| 700 | (`religion:planner`) | 1700 | `ai:hurry` |
 
-Feature mods fill the gaps, and four mods fill slots the AI keeps for them: the Votes mod
+Feature mods fill the gaps, and three mods fill slots the AI keeps for them: the Votes mod
 runs `votes:planner` at `Diplomacy + 50` (after `ai:diplomacy`), the Religion mod the
-700 slot (state religion, missionaries and inquisitors) with `religion:planner`, the Espionage mod the
-1400 slot (spending weights, spy moves and missions) with `espionage:planner`, and the
+700 slot (state religion, missionaries and inquisitors) with `religion:planner`, and the
 Revolution mod the 1500 slot (suppressing unrest with a garrison or gold) with
 `revolution:planner`. The Corporations mod runs `corporations:planner` at
 `Religion + 100` (walks executives to foreign cities, as the religion planner walks
@@ -2018,7 +2052,9 @@ one branch a turn either way and none while income is negative; in the realistic
 does nothing, as there are no executives or paid spreads) and the GreatPeople mod runs
 `great_people:planner` at `Religion + 200`, so corporations spread before
 the great people planner looks at the empire's units, and both act before cities choose
-production (where a headquarters, which founds a corporation, competes). That ordering lives in those two numbers; a mod that must run
+production (where a headquarters, which founds a corporation, competes). The Espionage mod
+runs `espionage:planner` (spending weights, spy moves and missions) at `Military + 100`, so
+spies move after the army has chosen its targets. That ordering lives in those numbers; a mod that must run
 before or after another contributed planner says so in its own value.
 
 How a mod adds AI behaviour:
@@ -2775,8 +2811,8 @@ integer multiplication and division. Division truncates toward zero.
 
 Commerce types are a registered set, not a fixed four. A content row whose type implements
 `ICommerceType` (the economy's `CommerceDef`) is a commerce type; any mod registers its own
-in its namespace. The foundation registers gold, research, culture and espionage
-(`data/commerce.json`). Each type has a short `Key` (`gold`), unique among the loaded types
+in its namespace. The foundation registers gold, research and culture
+(`data/commerce.json`); the Espionage mod registers espionage (`espionage:commerce_espionage`). Each type has a short `Key` (`gold`), unique among the loaded types
 and separate from its id, so a row can move to another mod without changing a vector, a
 ledger key or the saved state, and an `Order`, the order the slider, the city screen and the
 ledgers list the types in. When references are validated, `ContentDb.Commerce` indexes the
@@ -2806,7 +2842,8 @@ split, the per-type ledgers (`economy:<key>_split_hundredths`, `cities:direct_<k
 `cities:specialist_<key>_hundredths:all`, ...), rate validation with its
 `economy:max_rate:<key>` maximum, and settlement. Modules read the foundation's types by role
 through `FoundationCommerce` (`vector.Gold`, `vector.Research`, ...): gold pays the treasury,
-research feeds Research, culture feeds city culture and espionage the espionage feature. The
+research feeds Research and culture feeds city culture; the Espionage mod reads its own
+type through `EspionageCommerce` (`vector.Espionage`). The
 slider command and the player state carry the open vector; `SetRates` stores it over
 `CommerceTypes.Zero`, so the state names every loaded type even when a command leaves one
 out. The client draws one rate box per type except the remainder type and one city stat
@@ -2960,7 +2997,7 @@ declare both sides.
       `cities:queue` and `economy:treasury`; completion widens once an order completes.
     - `cities:conquest_timers` writes `cities:occupation`, and `cities:conscript_anger`
       writes `cities:conscript_anger`.
-    - `economy:gold`, `economy:inflation` and `economy:espionage` write
+    - `economy:gold` and `economy:inflation` write
       `economy:treasury`, and `economy:anger` writes `economy:hurry_anger`.
     - The `research:progress` and `government:timers` systems write the private
       domains of the same names.

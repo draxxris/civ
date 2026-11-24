@@ -80,9 +80,14 @@ public static class ContentReferences
         .GetProperties(BindingFlags.Instance | BindingFlags.Public)
         .OrderBy(p => p.Name, StringComparer.Ordinal)
         .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)
-        .Select(p => new ReferenceProperty(p, p.GetCustomAttributes<ContentReferenceAttribute>().ToArray()))
+        .Select(p => new ReferenceProperty(p, p.GetCustomAttributes<ContentReferenceAttribute>().Concat(AmendedReferences(type, p)).ToArray()))
         .Where(p => p.Attributes.Length > 0 || (!p.Property.PropertyType.IsPrimitive && !p.Property.PropertyType.IsEnum))
         .ToArray();
+    /// <summary>An amending field (<see cref="AmendsTargetAttribute"/>) names what its target field names.</summary>
+    private static IEnumerable<ContentReferenceAttribute> AmendedReferences(Type type, PropertyInfo property) =>
+        property.IsDefined(typeof(AmendsTargetAttribute), true) && ContentAmendments.TargetTypeOf(type) is { } target
+            && ContentAmendments.TargetField(target, property) is { } field
+            ? field.GetCustomAttributes<ContentReferenceAttribute>() : [];
     /// <summary>Find all annotated identities and neutral text links in a definition.</summary>
     public static IEnumerable<ContentRef> Enumerate(ContentDef definition, IEnumerable<IRequirementEvaluator> evaluators)
     {

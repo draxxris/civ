@@ -41,6 +41,9 @@ public interface IModContext
     void Subscribe<TEvent>(string name, Action<Game.Simulation, TEvent> handler) where TEvent : Game.DomainEvent;
     /// <summary>This mod's unqualified id.</summary>
     string ModId { get; }
+    /// <summary>Whether a mod is part of this build, whatever its registration order: what a mod asks before it registers
+    /// content that names one of its <see cref="ModManifest.OptionalReferences"/>.</summary>
+    bool IsLoaded(string modId);
     /// <summary>This mod's sidecar reader.</summary>
     IModData Data { get; }
     /// <summary>Deterministic player AI registry.</summary>

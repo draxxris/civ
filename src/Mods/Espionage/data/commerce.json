@@ -1,0 +1,20 @@
+[
+  {
+    "aiPoints": 1,
+    "deficitCut": 3,
+    "era": null,
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Process/ProcessCulture.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,8,16",
+    "id": "espionage:commerce_espionage",
+    "initialPercent": 0,
+    "key": "espionage",
+    "name": "Espionage",
+    "order": 3,
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "iAIWeightPercent"
+    ]
+  }
+]

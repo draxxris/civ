@@ -308,7 +308,7 @@ public sealed class CorporationSourceRulesTests
         long maintenance = Corps(sim).MaintenanceHundredths(sim, city.Id);
         var produced = wonka.CommerceProducedHundredths * copies; var yields = wonka.YieldProducedHundredths * copies;
         long output = Ariel.Ai.PlannerPoints.Yields(new(yields.Food / 100, yields.Production / 100, yields.Commerce / 100))
-            + Ariel.Ai.PlannerPoints.Commerce(sim.Content, TestCommerce.Vector(produced.Gold / 100, produced.Research / 100, produced.Culture / 100, produced.Espionage / 100));
+            + Ariel.Ai.PlannerPoints.Commerce(sim.Content, produced / 100);
         Assert.Equal(-(output + 3 * 8 - 1 * 6) + maintenance * Ariel.Ai.PlannerPoints.Gold(sim.Content) / 100, adjust);
     }
 

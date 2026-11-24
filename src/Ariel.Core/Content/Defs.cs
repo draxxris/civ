@@ -16,6 +16,8 @@ public abstract class ContentDef : IHasId
     public string Name { get; init; } = "";
     /// <summary>Optional eligibility expression, interpreted by registered leaf evaluators.</summary>
     public Requirement? Requirements { get; init; }
+    /// <summary>A shallow copy, for the amended definition content freezes with (<see cref="AmendsTargetAttribute"/>).</summary>
+    internal ContentDef ShallowCopy() => (ContentDef)MemberwiseClone();
 }
 
 /// <summary>Command serialization identity and its CLR type.</summary>
