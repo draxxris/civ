@@ -5,5 +5,8 @@
     <!-- The host supplies the kernel and the base game; an API never carries its own copy. -->
     <ProjectReference Include="../../../Ariel.Core/Ariel.Core.csproj" Private="false" />
     <ProjectReference Include="../../../Ariel.Rules/Ariel.Rules.csproj" Private="false" />
+    <!-- The row type that amends the Religion mod's building rows; the mod's folder carries that API (it registers the row
+         only when the Religion mod is loaded). -->
+    <ProjectReference Include="../../Religion/Api/Ariel.Mods.Religion.Api.csproj" Private="false" />
   </ItemGroup>
 </Project>

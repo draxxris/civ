@@ -31,12 +31,16 @@ deliberately no apply mode: copy or edit the records you want into the committed
 yourself. A repository-local staging folder (rather than `/tmp`) keeps the layout beside the
 data it is compared with and survives between sessions; it is ignored by git.
 
-`import:diff` compares each staged file with the committed file of the same name, record by
-record by `id`, and prints which records differ (with the names of the differing fields, or
-the values with `--values`), which exist only in staging (`+`), and which are gone from
-staging (`-`). Property order and formatting are ignored. Files the importer does not write
-(hand-authored sidecars such as `hex-overrides.json`) are not compared. The diff is
-read-only and informational: a difference is not a failure.
+`import:diff` compares each staged file with the committed files of the same family, record
+by record by `id`, and prints which records differ (with the names of the differing fields,
+or the values with `--values`), which exist only in staging (`+`), and which are gone from
+staging (`-`). A record pairs with its committed row wherever that file lives: a mod keeps
+rows it registers only with an optional provider under `data/<provider>/` (Espionage's
+`data/corporations/building-espionage.json`), and a row the importer now writes to another
+file or folder pairs with the committed one and is listed as moved (`>`). Property order
+and formatting are ignored. Files the importer does not write (hand-authored sidecars such
+as `hex-overrides.json`) are not compared. The diff is read-only and informational: a
+difference is not a failure.
 
 `--out-rules`, `--out-mods` and `--reports` select other output directories outside `src/`,
 and `--dump <directory>` writes the optional generic dump (for example
@@ -200,14 +204,46 @@ civilization unit overrides. A field mapping marked `owned` keeps only those ent
 the owner's attachment (`CivilizationCorporationsDef`). Any other reference to them fails
 the import, so a new edge cannot pull a feature mod into the base game.
 
-The importer has not followed Espionage out of the base game. It still emits the espionage
-commerce type, process, spy units, spy specialist and options under their base modules'
-ids, and an espionage key in every base commerce vector (the source's four-slot arrays,
-`NativeCommerce`). The committed data has those rows in the Espionage mod and the
-espionage amounts in the mod's hand-written amending rows (docs/ESPIONAGE.md), so a
-re-import would put them back in the base. Claiming them needs an owner for each record
-and an emitter for amending rows, which splits a source vector between a base row and an
-attachment.
+Espionage is self-contained, and so is its import (docs/ESPIONAGE.md). It owns the
+espionage commerce type, the espionage process, the spy specialist, every unit with
+`bSpy`, and the espionage game options (`espionage:commerce_espionage`,
+`espionage:process_espionage`, `espionage:specialist_spy`, `espionage:spy`,
+`espionage:gameoption_no_espionage`, ...). The great spy, its specialist, the spy unit
+combat and the spy roles stay in the base, because base rows name them as single
+references. The source's 25 espionage and spy constants (`ESPIONAGE_*`, `SPY_*`,
+`NO_ESPIONAGE_*` and the like, which no rule reads) are left out of the base game's raw
+constants and kept nowhere.
+
+The source's commerce arrays have four slots (gold, research, culture, espionage). A row
+carries only the commerce types its mod may name: the base game's three, plus the
+espionage slot in a row Espionage owns. The espionage slot of a base row is a separate
+amending row of Espionage (`[AmendsTarget]`, docs/DESIGN.md "Content amendments") with
+the base row's field name, so an import splits one source vector into two rows:
+
+- A field mapping marked `part: "espionage"` carries only that slot (an amending row's
+  vector holds just `espionage`, and a map or effect list holds just the entries and
+  effects that add something). The mappings for `BuildingEspionageDef`,
+  `BuildingReligionEspionageDef`, `CivicEspionageDef`, `TraitEspionageDef` and
+  `SpecialistEspionageDef` in `SchemaMapping.json` list the fields the committed
+  `*-espionage.json` files amend; a field marked `owned` keeps only the entries about
+  Espionage's own records (the spy specialist's slots, its civic effects, the nanite spy
+  in a civilization's overrides), and `onlyKeys`/`exceptKeys` split a map keyed by native
+  names (a leader's `spy_caught` attitude).
+- The mod's own record carries its slot in its own row, so no amending row repeats it.
+- The row `espionage:<name>` targets the base row `<mod>:<name>`. With `targetMod` the
+  target is that mod's own row about the building instead (`religion:alhambra`), and a row
+  about content of an optional provider (`optionalReferences`, `IdMapping.OptionalProviders`)
+  stays in Espionage, in `data/corporations/`, `data/religion/` or `data/great_people/`,
+  instead of moving into the provider with the other rows about a record it owns.
+- A base vector field with non-zero espionage and no amending field is not dropped
+  silently: the run lists it in `data-issues`.
+
+Limits that a re-import has not been checked against (no source extraction was available
+when this was written; the synthetic tests in `EspionageSplitTests` cover the rules): a base
+row that names a moved record through a single reference (rather than a map entry) fails the
+reference check, text links from base rows to moved records come out as `{link:espionage:...}`,
+and the hand-written `process.json` carries only the espionage key where an import writes all
+four (the same value).
 
 Specialists belong to foundation, as the plan specifies. Great-person units remain
 military records. Great-people and trade have no dedicated Info classes in this profile.

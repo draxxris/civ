@@ -134,7 +134,7 @@ public sealed class ExtractionSmokeTests
         ContentEmission.Write(result, Roots(directory.Path), directory.Path);
         // One file per family, one per mod's rule constants row, Foundation's conditions and rule constants, and the
         // buildings and units Corporations owns outright, written even when the filter leaves none.
-        Assert.Equal(SchemaCatalog.Definitions.Count + SchemaCatalog.Constants.Attachments.Length + 2 + 2, ContentEmission.Families(result).Count);
+        Assert.Equal(SchemaCatalog.Definitions.Count + SchemaCatalog.Constants.Attachments.Length + 2 + 2 + 5 + 1, ContentEmission.Families(result).Count);
         Assert.Equal(ContentEmission.Families(result).Count, Directory.GetFiles(directory.Path, "*.json", SearchOption.AllDirectories).Count(p => p.Contains("/data/", StringComparison.Ordinal)));
         Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "rules/Foundation/data/handicap.json")).Trim());
         Assert.Equal("[]", File.ReadAllText(System.IO.Path.Combine(directory.Path, "mods/Corporations/data/building.json")).Trim());

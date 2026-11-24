@@ -113,13 +113,6 @@ public sealed class EspionageMod : IPreparableMod
     }
 }
 
-/// <summary>The espionage a building gives to the state religion's buildings (<see cref="BuildingReligionDef.StateReligionCommerces"/>),
-/// added to the Religion mod's row about it. Registered only with the Religion mod.</summary>
-public sealed class BuildingReligionEspionageDef : ContentAttachment<Ariel.Mods.Religion.BuildingReligionDef>
-{
-    [AmendsTarget] public CommerceVector StateReligionCommerces { get; init; }
-}
-
 /// <summary>Memory kinds the Espionage mod records (<c>data/memory-kind.json</c>).</summary>
 public static class EspionageMemories
 {

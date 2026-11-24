@@ -4569,7 +4569,8 @@
         "property": "MemoryAttitudePercents",
         "kind": "mapInt",
         "key": "MemoryType",
-        "value": "iMemoryAttitudePercent"
+        "value": "iMemoryAttitudePercent",
+        "exceptKeys": [ "spy_caught" ]
       },
       {
         "source": "MemoryDecays",
@@ -5778,6 +5779,85 @@
         "kind": "int",
         "default": 0
       }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingEspionageDef",
+    "mod": "espionage",
+    "fields": [
+      { "source": "CommerceChanges", "property": "CommerceChanges", "kind": "commerce", "part": "espionage" },
+      { "source": "CommerceModifiers", "property": "CommerceModifiers", "kind": "commerce", "part": "espionage" },
+      { "source": "GlobalBuildingExtraCommerces", "property": "GlobalBuildingExtraCommerces", "kind": "buildingCommerce", "target": "BuildingClassInfo", "part": "espionage" },
+      { "source": "GlobalCommerceModifiers", "property": "GlobalCommerceModifiers", "kind": "commerce", "part": "espionage" },
+      { "source": "ObsoleteSafeCommerceChanges", "property": "ObsoleteSafeCommerceChanges", "kind": "commerce", "part": "espionage" },
+      { "source": "SpecialistExtraCommerces", "property": "SpecialistExtraCommerces", "kind": "commerce", "part": "espionage" },
+      { "source": "TechCommerceChanges", "property": "TechCommerceChanges", "kind": "mapCommerce", "target": "TechInfo", "key": "PrereqTech", "value": "TechCommerce", "part": "espionage" },
+      { "source": "SpecialistCommercePercentChanges", "property": "SpecialistCommercePercentChanges", "kind": "mapCommerce", "target": "SpecialistInfo", "key": "SpecialistType", "value": "SpecialistCommercePercents", "part": "espionage" },
+      { "source": "SpecialistCommercePercentChanges", "property": "SpecialistCommercePercentChanges", "kind": "mapCommerce", "target": "SpecialistInfo", "key": "SpecialistType", "value": "SpecialistCommercePercents", "owned": true },
+      { "source": "SpecialistCounts", "property": "SpecialistSlots", "kind": "mapInt", "target": "SpecialistInfo", "key": "SpecialistType", "value": "iSpecialistCount", "owned": true },
+      { "source": "FreeSpecialistCounts", "property": "FreeSpecialistCounts", "kind": "mapInt", "target": "SpecialistInfo", "key": "SpecialistType", "value": "iFreeSpecialistCount", "owned": true }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "BuildingInfo",
+    "definition": "BuildingReligionEspionageDef",
+    "mod": "espionage",
+    "targetMod": "religion",
+    "fields": [
+      { "source": "StateReligionCommerces", "property": "StateReligionCommerces", "kind": "commerce", "part": "espionage" }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivicInfo",
+    "definition": "CivicEspionageDef",
+    "mod": "espionage",
+    "fields": [
+      { "source": "CommerceModifiers", "property": "Effects", "kind": "effectCommerce", "scope": "city", "modifier": "commerce.percent", "part": "espionage" },
+      { "source": "SpecialistCommercePercentChanges", "property": "Effects", "kind": "effectMapCommerce", "target": "SpecialistInfo", "key": "SpecialistType", "value": "SpecialistCommercePercents", "scope": "city", "modifier": "cities:specialist_{}_hundredths", "part": "espionage" },
+      { "source": "SpecialistCommercePercentChanges", "property": "Effects", "kind": "effectMapCommerce", "target": "SpecialistInfo", "key": "SpecialistType", "value": "SpecialistCommercePercents", "scope": "city", "modifier": "cities:specialist_{}_hundredths", "owned": true },
+      { "source": "SpecialistYieldPercentChanges", "property": "Effects", "kind": "effectMapYield", "target": "SpecialistInfo", "key": "SpecialistType", "value": "SpecialistYieldPercents", "scope": "city", "modifier": "cities:specialist_{}_hundredths", "owned": true },
+      { "source": "SpecialistValids", "property": "Effects", "kind": "effectMapBool", "target": "SpecialistInfo", "key": "SpecialistType", "value": "bValid", "scope": "city", "modifier": "cities:unlimited", "owned": true }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "TraitInfo",
+    "definition": "TraitEspionageDef",
+    "mod": "espionage",
+    "fields": [
+      { "source": "CommerceChanges", "property": "CommerceChanges", "kind": "commerce", "part": "espionage" },
+      { "source": "CommerceModifiers", "property": "CommerceModifiers", "kind": "commerce", "part": "espionage" }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "SpecialistInfo",
+    "definition": "SpecialistEspionageDef",
+    "mod": "espionage",
+    "fields": [
+      { "source": "Commerces", "property": "Commerces", "kind": "commerce", "part": "espionage" }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "CivilizationInfo",
+    "definition": "CivilizationEspionageDef",
+    "mod": "espionage",
+    "fields": [
+      { "source": "Units", "property": "UnitOverrides", "kind": "civilization", "owned": true }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "LeaderHeadInfo",
+    "definition": "LeaderEspionageDef",
+    "mod": "espionage",
+    "fields": [
+      { "source": "MemoryAttitudePercents", "property": "MemoryAttitudePercents", "kind": "mapInt", "key": "MemoryType", "value": "iMemoryAttitudePercent", "onlyKeys": [ "spy_caught" ] }
     ],
     "requirements": []
   }

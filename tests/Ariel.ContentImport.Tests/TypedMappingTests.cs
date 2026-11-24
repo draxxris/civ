@@ -41,7 +41,7 @@ public sealed class TypedMappingTests
         Assert.Equal(-1, building.Limits.Player);
         Assert.Equal(-1, building.SpecialistSlots["foundation:specialist_example"]);
         Assert.Equal(3, building.CommerceChanges["research"]);
-        Assert.Equal(4, building.CommerceChanges.Count);
+        Assert.Equal(3, building.CommerceChanges.Count);
     }
 
     [Fact]

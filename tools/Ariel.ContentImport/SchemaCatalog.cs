@@ -10,17 +10,28 @@ namespace Ariel.ContentImport;
 /// <see cref="Property"/>. With <see cref="Owned"/>, a map keeps only the entries naming records the emitting mod owns
 /// outright (<see cref="IdMapping.RecordOwners"/>): what a mod says about a base row in terms of its own records. A
 /// <c>leafRef</c> field names its <see cref="Target"/> record as a <see cref="LeafReference"/> of <see cref="LeafKind"/>;
-/// a missing reference leaves the property as it is, so several source fields can fill one reference.</summary>
+/// a missing reference leaves the property as it is, so several source fields can fill one reference.
+/// <para>A commerce field (<c>commerce</c>, <c>mapCommerce</c>, <c>buildingCommerce</c>, <c>effectCommerce</c>,
+/// <c>effectMapCommerce</c>) carries only the commerce types its row may name: the base game's, and those the emitting mod
+/// owns. With <see cref="Part"/>, it carries only that type, which is how an amending row (<c>AmendsTarget</c>) keeps a mod's
+/// share of a vector a base row has given up. <see cref="OnlyKeys"/> and <see cref="ExceptKeys"/> split a map whose keys
+/// are native names (a leader's memory attitudes) the same way.</para></summary>
 public sealed record FieldMapping(string Source, string Property, string Kind, string? Target = null,
     string? ValueTarget = null, string? Key = null, string? Value = null, JsonElement Default = default,
-    string? Scope = null, string? Modifier = null, bool Owned = false, string? LeafKind = null);
+    string? Scope = null, string? Modifier = null, bool Owned = false, string? LeafKind = null,
+    string? Part = null, string[]? OnlyKeys = null, string[]? ExceptKeys = null);
 public sealed record RequirementMapping(string Source, string Kind, string Target, string Mode, int? Scope = null);
 /// <summary>One emitted family. A family whose definition is a <see cref="ContentAttachment"/> is what a feature mod says
 /// about the same source records in its own vocabulary: each record with a non-default field becomes one row, with
-/// id <c>mod:name</c>, attached to the record's primary definition.</summary>
+/// id <c>mod:name</c>, attached to the record's primary definition. With <see cref="TargetMod"/>, the row is about that
+/// mod's own row about the record (Espionage's amendment of the Religion mod's building row), whose id is
+/// <c>TargetMod:name</c>, not the record's.</summary>
 public sealed record DefinitionMapping(string SourceClass, string Definition, string Mod,
-    FieldMapping[] Fields, RequirementMapping[] Requirements)
+    FieldMapping[] Fields, RequirementMapping[] Requirements, string? TargetMod = null)
 {
+    /// <summary>The folder under the mod's <c>data</c> its rows go to, when the mod registers them only with another mod
+    /// (<see cref="IdMapping.OptionalProviders"/>): empty for the data folder itself.</summary>
+    public string Folder => TargetMod is null ? "" : IdMapping.Subfolder(Mod, TargetMod) ?? "";
     public Type DefinitionType => SchemaCatalog.DefinitionType(Definition);
     public bool IsAttachment => typeof(ContentAttachment).IsAssignableFrom(DefinitionType);
 }

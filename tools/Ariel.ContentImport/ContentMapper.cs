@@ -9,17 +9,24 @@ namespace Ariel.ContentImport;
 
 public sealed record DataIssue(string Record, string Field, string SourceValue, string Resolution);
 /// <summary>One emitted definition. <see cref="Mod"/> is the mod whose folder it is written to: the mapping's, unless the
-/// record belongs to a mod that owns it outright (<see cref="IdMapping.RecordOwners"/>), which then emits every row about it.</summary>
-public sealed record MappedDefinition(DefinitionMapping Mapping, ContentDef Definition, string? Emitter = null)
+/// record belongs to a mod that owns it outright (<see cref="IdMapping.RecordOwners"/>), which then emits every row about it.
+/// <see cref="Subfolder"/> is the folder under the mod's <c>data</c> a row goes to when the mod registers it only with
+/// another mod (<see cref="IdMapping.OptionalProviders"/>).</summary>
+public sealed record MappedDefinition(DefinitionMapping Mapping, ContentDef Definition, string? Emitter = null, string? Subfolder = null)
 {
     public string Mod => Emitter ?? Mapping.Mod;
+    /// <summary>The folder under <c>data</c>, empty for the folder itself.</summary>
+    public string Folder => Subfolder ?? "";
 }
 
 /// <summary>Compiles merged trees into immutable Core definitions. No source table is read at game startup.</summary>
 public sealed partial class ContentMapper
 {
-    /// <summary>The source's native commerce enum, in its index order: a native commerce array reads in this layout.</summary>
-    private static readonly CommerceLayout NativeCommerce = CommerceLayout.Of(["gold", "research", "culture", "espionage"]);
+    /// <summary>The source's native commerce enum, in its index order: a native commerce array reads in this order.</summary>
+    private static readonly string[] NativeCommerce = ["gold", "research", "culture", "espionage"];
+    /// <summary>The commerce types the base game has. A native array's other slots belong to the mod that owns that commerce
+    /// type (<see cref="IdMapping.RecordOwners"/>): only its own rows and its amending rows carry them.</summary>
+    private static readonly string[] BaseCommerce = ["gold", "research", "culture"];
     public static readonly JsonSerializerOptions Json = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase, PropertyNameCaseInsensitive = true,
@@ -32,6 +39,12 @@ public sealed partial class ContentMapper
     private readonly Dictionary<string, IdEntry> symbols;
     /// <summary>The records a feature mod owns outright (<see cref="IdMapping.RecordOwners"/>), by id, with that mod.</summary>
     private readonly Dictionary<string, string> claimed;
+    /// <summary>The native commerce types a mod owns (<c>espionage</c>), by key, with that mod.</summary>
+    private readonly Dictionary<string, string> commerceOwners;
+    /// <summary>The (class, source field, commerce key) triples an amending row carries (<see cref="FieldMapping.Part"/>): a
+    /// base row's amount of a commerce type it cannot name is lost unless one of these keeps it.</summary>
+    private readonly HashSet<(string Class, string Source, string Part)> amended = SchemaCatalog.Definitions
+        .SelectMany(d => d.Fields.Where(f => f.Part is not null).Select(f => (d.SourceClass, f.Source, f.Part!))).ToHashSet();
     /// <summary>The mod the row being mapped is written for. Only it may name its own claimed records: a row of any other
     /// mod leaves out a map entry that names one, since that mod cannot depend on the owner.</summary>
     private string emitter = "";
@@ -60,16 +73,27 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             .ToDictionary(g => g.Key, g => g.Single(), StringComparer.OrdinalIgnoreCase);
         claimed = effectiveRecords.Select(r => (Record: r, Owner: IdMapping.Claimant(r, all))).Where(r => r.Owner is not null)
             .ToDictionary(r => ids[(r.Record.Class, r.Record.Type)], r => r.Owner!, StringComparer.Ordinal);
+        commerceOwners = effectiveRecords.Where(r => IdMapping.CanonicalClass(r.Class) == "CommerceInfo" && claimed.ContainsKey(ids[(r.Class, r.Type)]))
+            .ToDictionary(r => NativeKey(r.Type), r => claimed[ids[(r.Class, r.Type)]], StringComparer.Ordinal);
     }
 
     /// <summary>The mod that owns this id outright, or null for a record of its class's module.</summary>
     public string? Claimant(string id) => claimed.GetValueOrDefault(id);
     /// <summary>Whether the row being mapped may name the record: one a mod owns outright only from that mod's own rows,
     /// and with <paramref name="owned"/> only those (a mod's attachment that lists just its own records).</summary>
-    private bool Names(string id, bool owned) => claimed.TryGetValue(id, out var owner) ? owner == emitter : !owned;
-    /// <summary>The mod that writes the rows about the record: the one owning it outright, else the mapping's.</summary>
+    private bool Names(string id, bool owned, bool amending = false) =>
+        claimed.TryGetValue(id, out var owner) ? owner == emitter && !amending : !owned;
+    /// <summary>The mod that writes the rows about the record: the one owning it outright (<see cref="IdMapping.Emitter"/>),
+    /// else the mapping's.</summary>
     private string Emitter(EffectiveRecord record, DefinitionMapping mapping) =>
-        claimed.GetValueOrDefault(ids[(record.Class, record.Type)]) ?? mapping.Mod;
+        IdMapping.Emitter(claimed.GetValueOrDefault(ids[(record.Class, record.Type)]), mapping.Mod);
+    /// <summary>The folder under the emitter's <c>data</c> the row about the record goes to: the optional provider whose
+    /// content or row type it is (<see cref="IdMapping.OptionalProviders"/>), else none.</summary>
+    private string? Subfolder(EffectiveRecord record, DefinitionMapping mapping)
+    {
+        var owner = claimed.GetValueOrDefault(ids[(record.Class, record.Type)]);
+        return IdMapping.Subfolder(emitter, mapping.TargetMod ?? (owner is not null && owner != emitter ? owner : mapping.Mod));
+    }
 
     public IReadOnlyList<MappedDefinition> Map()
     {
@@ -84,12 +108,12 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
                 foreach (var mapping in attachments)
                 {
                     emitter = Emitter(record, mapping);
-                    if (MapAttachment(record, mapping, attached) is { } row) result.Add(new(mapping, row, emitter));
+                    if (MapAttachment(record, mapping, attached) is { } row) result.Add(new(mapping, row, emitter, Subfolder(record, mapping)));
                 }
                 foreach (var mapping in family.Where(m => !m.IsAttachment))
                 {
                     emitter = Emitter(record, mapping);
-                    result.Add(new(mapping, MapRecord(record, mapping, attached), emitter));
+                    result.Add(new(mapping, MapRecord(record, mapping, attached), emitter, Subfolder(record, mapping)));
                 }
             }
         }
@@ -100,19 +124,28 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     /// default, so a mod only lists the records its rules care about.</summary>
     private ContentAttachment? MapAttachment(EffectiveRecord record, DefinitionMapping mapping, HashSet<string> mapped)
     {
-        var target = ids[(record.Class, record.Type)];
+        var recordId = ids[(record.Class, record.Type)];
+        var name = recordId[(recordId.IndexOf(':') + 1)..];
         var identity = new Dictionary<string, object?>(StringComparer.Ordinal)
         {
-            ["id"] = emitter + ":" + target[(target.IndexOf(':') + 1)..], ["target"] = target,
+            ["id"] = emitter + ":" + name, ["target"] = (mapping.TargetMod ?? recordId[..recordId.IndexOf(':')]) + ":" + name,
         };
         var values = new Dictionary<string, object?>(identity, StringComparer.Ordinal);
+        var effects = new List<ModifierEffect>();
         foreach (var field in mapping.Fields)
         {
             var node = record.Node.Child(field.Source);
             if (node is null) continue;
-            values[JsonNamingPolicy.CamelCase.ConvertName(field.Property)] = MapValue(record, node, field);
+            // The mod's own record already carries its commerce type in its own row: an amendment would count it twice.
+            if (field.Part is { } part && claimed.TryGetValue(recordId, out var owner) && commerceOwners.GetValueOrDefault(part) == owner) continue;
+            var value = MapValue(record, node, field);
             Mark(node, field.Source, mapped);
+            // Several source fields can fill one property: effects add up, and maps of different keys join.
+            if (field.Kind.StartsWith("effect", StringComparison.Ordinal)) effects.AddRange((IEnumerable<ModifierEffect>)value!);
+            else Assign(values, JsonNamingPolicy.CamelCase.ConvertName(field.Property), value);
         }
+        if (mapping.Fields.Any(f => f.Kind.StartsWith("effect", StringComparison.Ordinal)))
+            values["effects"] = CanonicalEffects(effects);
         if (!MappedPaths.TryGetValue(record.Class, out var paths)) MappedPaths[record.Class] = paths = new(StringComparer.Ordinal);
         paths.UnionWith(mapped);
         var row = (ContentAttachment)JsonSerializer.Deserialize(JsonSerializer.Serialize(values, Json), mapping.DefinitionType, Json)!;
@@ -131,6 +164,46 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         if (mapping.DefinitionType.GetProperty("Identity") is null)
             throw new InvalidDataException($"{mapping.Definition} is emitted by {mapping.Mod} for {id} but has no Identity to name it by");
         return mapping.Mod + id[colon..];
+    }
+
+    /// <summary>The effects of a row: those that change something, in one order whichever source field gave them.</summary>
+    private static ModifierEffect[] CanonicalEffects(IEnumerable<ModifierEffect> effects) => effects.Where(e => e.Amount != 0)
+        .OrderBy(e => e.Key, StringComparer.Ordinal).ThenBy(e => e.Target ?? "", StringComparer.Ordinal).ToArray();
+
+    /// <summary>Sets a row's property; a second field for the same property adds its entries (the maps the fields give are
+    /// disjoint: an amending row's entries for records its mod owns, and its share of the rest).</summary>
+    private static void Assign(Dictionary<string, object?> values, string property, object? value)
+    {
+        if (values.TryGetValue(property, out var existing) && existing is System.Collections.IDictionary map && value is System.Collections.IDictionary more)
+            foreach (System.Collections.DictionaryEntry entry in more) map.Add(entry.Key, entry.Value);
+        else values[property] = value;
+    }
+
+    private static bool IsCommerceKind(string kind) =>
+        kind is "commerce" or "mapCommerce" or "buildingCommerce" or "effectCommerce" or "effectMapCommerce";
+
+    /// <summary>Whether a vector of the row being mapped carries this commerce type: the base game's, or one the emitting mod owns.</summary>
+    private bool Carries(string key) => BaseCommerce.Contains(key) || commerceOwners.GetValueOrDefault(key) == emitter;
+
+    /// <summary>Whether a mapped value holds any non-zero amount.</summary>
+    private static bool HasAmount(object? value) => value switch
+    {
+        null => false,
+        CommerceVector vector => !vector.IsZero,
+        ModifierEffect[] effects => effects.Any(e => e.Amount != 0),
+        System.Collections.IDictionary map => map.Values.Cast<object?>().Any(HasAmount),
+        _ => true,
+    };
+
+    /// <summary>A base row cannot carry a commerce type another mod owns, so its amount there is for an amending row. When no
+    /// field of the schema catalog carries it, the amount is lost: say so instead of dropping it silently.</summary>
+    private void NoteDroppedCommerce(EffectiveRecord record, DataNode node, FieldMapping field)
+    {
+        if (!IsCommerceKind(field.Kind) || field.Part is not null) return;
+        foreach (var key in NativeCommerce.Where(k => !Carries(k) && !amended.Contains((record.Class, field.Source, k))))
+            if (HasAmount(MapValue(record, node, field with { Part = key })))
+                Issues.Add(new(ids[(record.Class, record.Type)], field.Source, key,
+                    $"The {key} amount is dropped: no amending row type carries this field for the mod that owns {key}."));
     }
 
     private object? MapValue(EffectiveRecord record, DataNode node, FieldMapping field)
@@ -161,11 +234,10 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             if (field.Kind.StartsWith("effect", StringComparison.Ordinal)) effects.AddRange((IEnumerable<ModifierEffect>)value!);
             else values[JsonNamingPolicy.CamelCase.ConvertName(field.Property)] = value;
             Mark(node, field.Source, mapped);
+            NoteDroppedCommerce(record, node, field);
         }
         // One canonical order, whichever source field gave an effect.
-        if (mapping.Fields.Any(f => f.Kind.StartsWith("effect", StringComparison.Ordinal)))
-            values["effects"] = effects.Where(e => e.Amount != 0).OrderBy(e => e.Key, StringComparer.Ordinal)
-                .ThenBy(e => e.Target ?? "", StringComparer.Ordinal).ToArray();
+        if (mapping.Fields.Any(f => f.Kind.StartsWith("effect", StringComparison.Ordinal))) values["effects"] = CanonicalEffects(effects);
         var requirements = new PrerequisiteMapper(this).Map(record, mapping.Requirements, mapped);
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
         NoteAmbiguousReligion(record, requirements);
@@ -284,7 +356,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "refs" => node.Children.Select(n => Reference(field.Target!, n.Text, record, field.Source)).Where(v => v is not null).ToArray(),
         "texts" => node.Children.Select(n => Text(n.Text ?? "")).ToArray(),
         "intList" => node.Children.Select(n => Integer(n.Text)).ToArray(),
-        "yield" => Yield(node), "commerce" => Commerce(node),
+        "yield" => Yield(node), "commerce" => Commerce(node, field),
         "turns" => node.Children.Select(n => new TurnIncrement(Integer(n.Value("iMonthIncrement")), Integer(n.Value("iTurnsPerIncrement")))).ToArray(),
         "civilization" => CivilizationField(record, node, field),
         "improvementBonuses" => Indexed(record, node, field, n => new ImprovementBonus
@@ -303,23 +375,25 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             .Select(t => RequiredReference("UnitCombatInfo", t.Text!, record, field.Source)).ToArray()),
         "techSpecialists" => Indexed(record, node, field, n => new SpecialistSlotsChange
         { Slots = PairMap(record, n.Child("SpecialistCounts"), "SpecialistInfo", n => Integer(n.Children[1].Text)).ToImmutable() }),
-        "buildingCommerce" => BuildingCommerce(record, node),
+        "buildingCommerce" => BuildingCommerce(record, node, field),
         "civicAttitudes" => Indexed(record, node, field, n => new Ariel.Content.Schema.CivicAttitudeEffect(Integer(n.Value("iAttitudeChange")), Text(n.Value("Description")))),
         "effect" => Effects(field, (null, Integer(node.Text, DefaultInt(field)))),
         "effectFlag" => Effects(field, (null, GetterBoolean(node.Text, DefaultBool(field)) ? 1 : 0)),
         "effectYield" => VectorEffects(field, null, Yield(node)),
-        "effectCommerce" => VectorEffects(field, null, Commerce(node)),
+        "effectCommerce" => VectorEffects(field, null, Commerce(node, field)),
         "effectMapInt" => Effects(field, Indexed(record, node, field, n => Integer(n.Children[1].Text)).Select(p => ((string?)p.Key, (long)p.Value)).ToArray()),
         "effectMapBool" => Effects(field, Indexed(record, node, field, n => Boolean(n.Children[1].Text)).Select(p => ((string?)p.Key, p.Value ? 1L : 0L)).ToArray()),
         "effectMapYield" => Indexed(record, node, field, n => Yield(n.Children[1])).SelectMany(p => VectorEffects(field, p.Key, p.Value)).ToArray(),
-        "effectMapCommerce" => Indexed(record, node, field, n => Commerce(n.Children[1])).SelectMany(p => VectorEffects(field, p.Key, p.Value)).ToArray(),
+        "effectMapCommerce" => Indexed(record, node, field, n => Commerce(n.Children[1], field)).SelectMany(p => VectorEffects(field, p.Key, p.Value)).ToArray(),
         "mapInt" => Indexed(record, node, field, n => Integer(n.Children[1].Text)),
         "mapBool" => Indexed(record, node, field, n => Boolean(n.Children[1].Text)),
         // The keys of a (reference, flag) pair list whose flag is set: a false pair says nothing.
         "flaggedRefs" => Indexed(record, node, field, n => Boolean(n.Children[1].Text)).Where(p => p.Value).Select(p => p.Key).ToArray(),
         "mapRef" => Indexed(record, node, field, n => Reference(field.ValueTarget!, n.Children[1].Text, record, field.Source)),
         "mapYield" => Indexed(record, node, field, n => Yield(n.Children[1])),
-        "mapCommerce" => Indexed(record, node, field, n => Commerce(n.Children[1])),
+        // An amending row lists only the entries that add something.
+        "mapCommerce" => Indexed(record, node, field, n => Commerce(n.Children[1], field))
+            .Where(p => field.Part is null && !field.Owned || !p.Value.IsZero).ToSortedDictionary(),
         _ => throw new InvalidDataException("Unknown mapping kind: " + field.Kind)
     };
 
@@ -357,11 +431,14 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     }
 
     private SortedDictionary<string, T> Indexed<T>(EffectiveRecord record, DataNode node, FieldMapping field, Func<DataNode, T> value) =>
-        PairMap(record, node, field.Target, value, field.Owned);
+        PairMap(record, node, field.Target, value, field.Owned, field);
 
     /// <summary>A (reference, value) pair list keyed by id. An entry whose key the row may not name (<see cref="Names"/>)
-    /// is left out.</summary>
-    private SortedDictionary<string, T> PairMap<T>(EffectiveRecord record, DataNode? node, string? target, Func<DataNode, T> value, bool owned = false)
+    /// is left out, and so is one the field's <see cref="FieldMapping.OnlyKeys"/> or <see cref="FieldMapping.ExceptKeys"/>
+    /// give to another row. A field that carries only a commerce <see cref="FieldMapping.Part"/> leaves the entries about
+    /// the emitting mod's own records to the field that carries them whole.</summary>
+    private SortedDictionary<string, T> PairMap<T>(EffectiveRecord record, DataNode? node, string? target, Func<DataNode, T> value, bool owned = false,
+        FieldMapping? field = null)
     {
         var result = new SortedDictionary<string, T>(StringComparer.Ordinal);
         foreach (var entry in node?.Children ?? [])
@@ -370,7 +447,10 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             var key = entry.Children[0].Text;
             if (!Present(key)) continue;
             var id = target is null ? NativeKey(key!) : Reference(target, key, record, node!.Name);
-            if (id is not null && (target is null || Names(id, owned))) result[id] = value(entry); // Native positional pairs use the last slot assignment.
+            if (id is null || (target is null || Names(id, owned, field?.Part is not null)) is false) continue;
+            if (field?.OnlyKeys is { } only && !only.Contains(id, StringComparer.Ordinal)) continue;
+            if (field?.ExceptKeys is { } except && except.Contains(id, StringComparer.Ordinal)) continue;
+            result[id] = value(entry); // Native positional pairs use the last slot assignment.
         }
         return result;
     }
@@ -409,7 +489,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         return replacement is null ? defaultId : Reference(unit ? "UnitInfo" : "BuildingInfo", replacement, record, list);
     }
 
-    private SortedDictionary<string, CommerceVector> BuildingCommerce(EffectiveRecord record, DataNode node)
+    private SortedDictionary<string, CommerceVector> BuildingCommerce(EffectiveRecord record, DataNode node, FieldMapping field)
     {
         var result = new SortedDictionary<string, CommerceVector>(StringComparer.Ordinal);
         foreach (var entry in node.Children)
@@ -417,10 +497,20 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             var id = RequiredReference("BuildingClassInfo", entry.Children[0].Text!, record, node.Name);
             var amount = Integer(entry.Children[2].Text);
             var type = NativeKey(entry.Children[1].Text!);
-            if (NativeCommerce.IndexOf(type) < 0) throw new InvalidDataException("Unknown commerce type");
-            var change = CommerceVector.Zero(NativeCommerce).With(type, amount);
+            if (Array.IndexOf(NativeCommerce, type) < 0) throw new InvalidDataException("Unknown commerce type");
+            if (!Wanted(type, field)) continue;
+            // An amending row lists only the entries that add something.
+            if (field.Part is not null && amount == 0) continue;
+            var change = field.Part is null ? CommerceVector.Zero(Layout(field)).With(type, amount) : CommerceVector.Of((type, amount));
             result[id] = result.GetValueOrDefault(id) + change;
         }
+        // A base row keeps every entry the source lists, even for a type it cannot carry: the entry is then all zeros.
+        if (field.Part is null)
+            foreach (var entry in node.Children)
+            {
+                var id = RequiredReference("BuildingClassInfo", entry.Children[0].Text!, record, node.Name);
+                if (!result.ContainsKey(id)) result[id] = CommerceVector.Zero(Layout(field));
+            }
         return result;
     }
 
@@ -521,10 +611,18 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
     {
         var n = Vector(node, 3); return new(n[0], n[1], n[2]);
     }
-    internal static CommerceVector Commerce(DataNode? node)
+    /// <summary>Whether a field carries this commerce type: only its <see cref="FieldMapping.Part"/> when it has one, else
+    /// every type the row being mapped may name (<see cref="Carries"/>).</summary>
+    private bool Wanted(string key, FieldMapping field) => field.Part is { } part ? key == part : Carries(key);
+    /// <summary>The layout of a field's vectors: the commerce types the row may name, in source order.</summary>
+    private CommerceLayout Layout(FieldMapping field) => CommerceLayout.Of(NativeCommerce.Where(k => Wanted(k, field)).ToArray());
+    /// <summary>A native commerce array as a vector of the types the field carries. A field with a <see cref="FieldMapping.Part"/>
+    /// that has no amount there gives the default vector, which an amending row leaves out.</summary>
+    internal CommerceVector Commerce(DataNode? node, FieldMapping field)
     {
-        var n = Vector(node, NativeCommerce.Count);
-        return CommerceVector.Of(NativeCommerce, Array.ConvertAll(n, v => (long)v));
+        var n = Vector(node, NativeCommerce.Length);
+        var parts = NativeCommerce.Select((key, i) => (Key: key, Amount: (long)n[i])).Where(p => Wanted(p.Key, field)).ToArray();
+        return parts.Length == 0 || field.Part is not null && parts.All(p => p.Amount == 0) ? default : CommerceVector.Of(parts);
     }
     private static int[] Vector(DataNode? node, int length)
     {
@@ -546,4 +644,6 @@ internal static class ImmutableMapExtensions
 {
     public static System.Collections.Immutable.ImmutableDictionary<string, T> ToImmutable<T>(this SortedDictionary<string, T> map) =>
         System.Collections.Immutable.ImmutableDictionary.CreateRange(StringComparer.Ordinal, map);
+    public static SortedDictionary<string, T> ToSortedDictionary<T>(this IEnumerable<KeyValuePair<string, T>> pairs) =>
+        new(pairs.ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal), StringComparer.Ordinal);
 }

@@ -54,7 +54,40 @@ public static class IdMapping
             is { Length: > 0 } users && users.All(CorporateBuilding)),
         new("UnitInfo", "corporations",
             (r, _) => r.Node.Child("CorporationSpreads")?.Children.Any(n => n.Children.Length > 1 && ContentMapper.Integer(n.Children[1].Text) > 0) == true),
+        // Espionage's commerce type, process, spy specialist, spy units and options are its own (espionage:*). The great
+        // spy, its specialist and the spy unit combat and roles stay in the base: base rows name them as single references.
+        new("CommerceInfo", "espionage", (r, _) => r.Type == "COMMERCE_ESPIONAGE"),
+        new("ProcessInfo", "espionage", (r, _) => r.Type == "PROCESS_ESPIONAGE"),
+        new("SpecialistInfo", "espionage", (r, _) => r.Type == "SPECIALIST_SPY"),
+        new("UnitInfo", "espionage", (r, _) => ContentMapper.Boolean(r.Node.Value("bSpy"))),
+        new("GameOptionInfo", "espionage", (r, _) => r.Type.Contains("ESPIONAGE", StringComparison.Ordinal)),
     ];
+
+    /// <summary>The mods a feature mod registers content for only when they are loaded (its <c>optionalReferences</c>, which
+    /// a test keeps equal to the committed manifests). A row of that mod about a record such a provider owns, or in the
+    /// provider's own row type, stays in the feature mod and lives under <c>data/&lt;provider&gt;/</c>.</summary>
+    public static readonly IReadOnlyDictionary<string, IReadOnlySet<string>> OptionalProviders = new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
+    {
+        ["espionage"] = new HashSet<string>(["corporations", "great_people", "religion"], StringComparer.Ordinal),
+    };
+    /// <summary>Whether rows of <paramref name="mod"/> may name records of <paramref name="provider"/>: its own, or an
+    /// optional provider's.</summary>
+    public static bool MayName(string mod, string provider) =>
+        mod == provider || OptionalProviders.TryGetValue(mod, out var optional) && optional.Contains(provider);
+    /// <summary>The mod that writes a row of <paramref name="mappingMod"/>'s vocabulary about a record that <paramref name="owner"/>
+    /// owns outright: the owner (which then emits every row about its record), unless the row's mod registers content for
+    /// the owner only when it is loaded, which then keeps its own rows.</summary>
+    public static string Emitter(string? owner, string mappingMod) => owner is null || MayName(mappingMod, owner) ? mappingMod : owner;
+    /// <summary>The folder, under the emitting mod's <c>data</c>, of a row about <paramref name="provider"/>'s content: that
+    /// provider's name when the emitter registers it only when loaded, else none (the data folder itself).</summary>
+    public static string? Subfolder(string emitter, string provider) =>
+        emitter != provider && OptionalProviders.TryGetValue(emitter, out var optional) && optional.Contains(provider) ? provider : null;
+
+    /// <summary>Defines a feature mod owns, read by no rule: the importer keeps them out of Foundation's raw constants. Espionage's
+    /// mission costs, intercept chances and multipliers, none of which the mod reads yet.</summary>
+    private static readonly Regex EspionageConstant = new(@"(^|_)(ESPIONAGE|SPY)_", RegexOptions.CultureInvariant);
+    /// <summary>The mod that owns a source define, or null for the base game's.</summary>
+    public static string? ConstantOwner(string define) => EspionageConstant.IsMatch(define) ? "espionage" : null;
     /// <summary>A building that founds a corporation, or that a corporation's branch in the city lets it build.</summary>
     private static bool CorporateBuilding(EffectiveRecord building) =>
         ContentMapper.Present(building.Node.Value("FoundsCorporation")) || ContentMapper.Present(building.Node.Value("PrereqCorporation"));

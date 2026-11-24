@@ -37,6 +37,14 @@ public sealed class BuildingEspionageDef : ContentAttachment<BuildingDef>
     [AmendsTarget] public ImmutableDictionary<string, CommerceVector> TechCommerceChanges { get; init; } = ImmutableDictionary<string, CommerceVector>.Empty;
 }
 
+/// <summary>The espionage a building gives to the state religion's buildings (<c>BuildingReligionDef.StateReligionCommerces</c>),
+/// added to the Religion mod's row about it. Registered only with the Religion mod; it lives in this API, beside the other
+/// amending rows, so the content importer can emit it.</summary>
+public sealed class BuildingReligionEspionageDef : ContentAttachment<Ariel.Mods.Religion.BuildingReligionDef>
+{
+    [AmendsTarget] public CommerceVector StateReligionCommerces { get; init; }
+}
+
 /// <summary>The espionage a civic gives: modifiers added to its plain effects.</summary>
 public sealed class CivicEspionageDef : ContentAttachment<CivicDef>
 {
