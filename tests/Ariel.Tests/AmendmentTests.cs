@@ -99,6 +99,28 @@ public class AmendmentTests
         Assert.Contains("entries:shop.Alternatives[base:gate]: no 'any' group of the target holds the alternative 'base:gate'", error.Message);
     }
 
+    /// <summary>A leaf kind naming a shop, so its ids are content references.</summary>
+    private sealed class ShopLeaves : IContentRequirementEvaluator
+    {
+        public string Kind => "shop";
+        public Type DefinitionType => typeof(ShopDef);
+        public string? Evaluate(Requirement.Leaf leaf, RequirementContext context) => null;
+    }
+
+    [Fact]
+    public void RequirementAlternativesNamingAnUnknownDefinitionFailTheLoad()
+    {
+        var gated = Src("base", ctx =>
+        {
+            ctx.RegisterService<IRequirementEvaluator>("pass", new Passes());
+            ctx.RegisterService<IRequirementEvaluator>("shop", new ShopLeaves());
+            ctx.Content<ShopDef>().Register(new ShopDef { Id = "base:shop", Requirements = new Requirement.Any([Pass("base:key")]) });
+        });
+        var error = Assert.Throws<InvalidDataException>(() => ModLoader.Build([gated, Entries("base:key", new Requirement.Leaf("shop", "base:nowhere"))]));
+        Assert.StartsWith("Content reference validation failed:\nentries:shop.Alternatives", error.Message);
+        Assert.Contains("base:nowhere", error.Message);
+    }
+
     private sealed class TestMod(Action<IModContext> body) : IMod
     {
         public void Register(IModContext ctx) => body(ctx);

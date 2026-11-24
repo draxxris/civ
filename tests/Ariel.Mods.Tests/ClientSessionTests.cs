@@ -474,6 +474,20 @@ public sealed class ClientSessionTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Civics_panel_refuses_a_base_civic_that_a_held_religion_civic_forbids()
+    {
+        // Secular forbids Theocracy; the Theocracy row cannot name Secular, yet the panel still refuses it.
+        var s = CitySession("peoples:leader_julius_caesar", "peoples:leader_gjergj_kastrioti");
+        s.MyTeam.Techs.Add("research:scriptures");
+        IReadOnlyList<string> TheocracyBlockers() => s.Government().Groups.Single(g => g.Id == "government:civicoption_power")
+            .Choices.Single(c => c.Id == "government:theocracy").Blockers;
+        s.Me.Civics["religion:civicoption_religion"] = "religion:folklore";
+        Assert.Empty(TheocracyBlockers());
+        s.Me.Civics["religion:civicoption_religion"] = "religion:secular";
+        Assert.NotEmpty(TheocracyBlockers());
+    }
+
+    [Fact]
     public void Civics_panel_previews_without_mutation_and_adoption_tracks_anarchy_through_session_turns()
     {
         var s = CitySession("peoples:leader_julius_caesar", "peoples:leader_gjergj_kastrioti");
