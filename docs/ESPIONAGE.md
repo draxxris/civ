@@ -213,6 +213,10 @@ inert from its expiry turn and is dropped at the next turn boundary.
   spy (`LeaderEspionageDef`), and, with the Great People mod, the great person the spy
   specialist's points produce (that mod's `SpecialistGreatPeopleDef`, registered only
   when it is loaded).
+- The Religion mod owns every religious building, so the mod's rows about them (their
+  espionage amounts, `BuildingEspionageDef`, and the state religion espionage of the
+  Religion mod's own rows, `BuildingReligionEspionageDef`) live under `data/religion/` and
+  load only with that mod.
 - What stays in the base game names espionage only where the base reads it or a base row
   needs it: the great spy unit and specialist (base technologies, buildings and
   corporations name them as single references, which an amendment cannot add), the

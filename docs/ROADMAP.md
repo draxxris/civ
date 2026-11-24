@@ -47,7 +47,8 @@ Status reflects executable simulation rules, loaded definitions, and engine-free
 - **Features as mods**: Religion, Barbarians, AirCombat, RangedCombat, Espionage,
   Corporations, Trade, Great People, Events, Revolution, Projects & Victory, Votes,
   Scripted Wonders and Card Research are mods; Diplomacy and the tech tree are base
-  modules. A mod can publish its own API
+  modules. Religion, Corporations and Espionage are self-contained: without one, no base
+  row, constant, option or save names what it adds. A mod can publish its own API
   assembly, attach data to any definition, open civic effects, and contribute screens,
   panels, pedia pages, notices, AI planners, production wishes and AI valuers.
 - **Relations in the base game**: Contact, war and peace, peace treaties and the memory

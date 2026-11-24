@@ -20,8 +20,7 @@ that output with the committed data so changes can be brought in piece-meal (see
 
 - Foundation: `YieldDef`, `CommerceDef`, `EraDef`, `GameSpeedDef`, `HandicapDef`,
   `WorldSizeDef`, `CultureLevelDef`, `SpecialistDef`, `RuleConstantsDef`,
-  `HexOverridesDef`, `GameOptionDef`, `ConditionDef`, `ReligionIdentityDef`, and
-  `VictoryIdentityDef`. Any mod may register `CommerceDef` rows (`key`, `order`,
+  `HexOverridesDef`, `GameOptionDef`, `ConditionDef`, and `VictoryIdentityDef`. Any mod may register `CommerceDef` rows (`key`, `order`,
   `initialPercent`, `takesRemainder`, `floorAtZero`, `deficitCut`, `aiPoints`); each is a
   commerce type (DESIGN.md, Commerce types).
 - World: `TerrainDef`, `FeatureDef`, `BonusClassDef`, `BonusDef`, `ImprovementDef`,
@@ -38,11 +37,16 @@ that output with the committed data so changes can be brought in piece-meal (see
   rows beside the condition it registers: ProjectsVictory the space race, Votes the
   diplomatic victory.
 - Religion (a mod, `src/Mods/Religion`; definitions in its API `Ariel.Mods.Religion.Api`):
-  `ReligionDef` with its `identity`, founding technology, missionary, spread factor,
-  commerce vectors, and related building ids, and `CivicReligionDef` attached to civics
-  (`data/civic-religion.json`). The mod also registers one founding wonder per
-  religion: a `BuildingDef` whose `founds` names the religion (kind `religion`), from the hand-written
-  `data/founding-wonders.json`. The importer does not own that file.
+  `ReligionDef` (leaf kind `religion`) with its founding technology, missionary, spread
+  factor and commerce vectors, `ReligionConditionDef` (leaf kind `religion-condition`,
+  `data/religion-condition.json`), and `CivicReligionDef` attached to civics
+  (`data/civic-religion.json`). Its own base-typed rows are the religious buildings, units
+  and promotions (`data/building.json`, `unit.json`, `promotion.json`), its game options
+  (`data/game-option.json`), the placeholder technology (`data/tech.json`) and the
+  religious victory identity (`data/victory-identity.json`). The mod also registers one
+  founding wonder per religion: a `BuildingDef` whose `founds` names the religion (kind
+  `religion`), from the hand-written `data/founding-wonders.json`. The importer does not
+  own that file.
 - ProjectsVictory: `ProjectDef` for production projects. It lives in the mod's published
   API (`Ariel.Mods.ProjectsVictory`, assembly `Ariel.Mods.ProjectsVictory.Api`); the mod's
   space race is a base `VictoryDef` row in its own `data/victory.json`.
@@ -78,18 +82,17 @@ The Barbarians mod keeps its own hand-authored hex tuning in `data/barbarian-rul
 into `ContentDb`, it scales `HandicapBarbariansDef.UnownedTilesPerBarbarianUnit` by that
 multiplier. The importer never writes `barbarian-rules.json` either.
 
-Foundation reserves `GameOptionDef` and `ConditionDef`, plus identity records
-`ReligionIdentityDef` (`data/religion-identity.json`) and `VictoryIdentityDef`. Religion
-gameplay executes through `ReligionDef` in its feature mod, victory gameplay through the
-Victory module's `VictoryDef`. A corporation has no base identity: no base row names one,
-and the Corporations mod's `CorporationDef` (`corporations:1`) is its only record. Base content (buildings, units, leaders, the `religion` requirement leaf)
-names a faith by its identity (`foundation:buddhism`); the Religion mod's `ReligionDef`
-has its own id (`religion:buddhism`, kept in saves) and names the identity it plays in
-`identity`. The importer emits both from one source record: a family a mod emits for
-another mod's records gets the id `mod:name` and an `identity`. `ReligionDef` retains `StateReligionCommerce`,
-`HolyCityCommerce`, and `GlobalCityCommerce` vectors in whole points. Building
-happiness, civic religion effects, missionary chances, trait commerce policy, and leader
-favorites retain their existing typed properties.
+Foundation reserves `GameOptionDef` and `ConditionDef`, plus the identity record
+`VictoryIdentityDef`; victory gameplay executes through the Victory module's `VictoryDef`.
+A religion or a corporation has no base identity: no base row names one, and the Religion
+mod's `ReligionDef` (`religion:buddhism`, kept in saves) and the Corporations mod's
+`CorporationDef` (`corporations:1`) are their only records. The importer assigns
+`ReligionInfo` to the Religion mod and gives it every building, unit and promotion that
+names a faith or needs a religion, the religion and inquisition game options, the
+religion technology and the religious victory (`IdMapping.RecordOwners`); a family a mod
+emits for another mod's records gets the id `mod:name`. `ReligionDef` retains
+`StateReligionCommerce`, `HolyCityCommerce`, and `GlobalCityCommerce` vectors in whole
+points.
 
 Every definition inheriting from `GameContentDef` has an id, localized display name,
 requirements expression, era, help text, pedia text, strategy text, icon path, and
@@ -295,11 +298,21 @@ definition without a row reads as the defaults:
   `data/rule-constants-great-people.json` (`RuleConstantsGreatPeopleDef`:
   `goldenAgeTurns`, `goldenAgeGreatPeoplePercent`). `TechGreatPeopleDef`
   (`tradeMissionModifier`) ships no rows; no source field sets it.
-- Religion: `data/building-religion.json` (`BuildingReligionDef`: `religionChanges`,
+- Religion: `data/building-religion.json` (`BuildingReligionDef`: `religion`,
+  `requiresReligion`, `requiresStateReligion`, `religionChanges`,
   `stateReligionCommerces`, `freeFromStateReligion`, `stateReligionHappiness`,
   `globalReligionCommerce`), `data/unit-religion.json` (`UnitReligionDef`:
-  `religionSpreads`) and `data/rule-constants-religion.json` (`RuleConstantsReligionDef`:
-  `baseReligionAnarchyTurns`).
+  `religionSpreads`, `inquisitor`), `data/trait-religion.json` (`TraitReligionDef`:
+  `nonStateReligionCommerce`), `data/leader-religion.json` (`LeaderReligionDef`: the six
+  same and different religion attitude fields, and `memoryAttitudePercents` and
+  `memoryDecays` for `accepted_religion` and `denied_religion`, which amend the leader)
+  and `data/rule-constants-religion.json` (`RuleConstantsReligionDef`:
+  `baseReligionAnarchyTurns` and the spread, decay, inquisition and conversion
+  constants). Its amending rows are `data/building-grants-religion.json`
+  (`BuildingGrantsReligionDef`: `freePromotion`), `data/unit-grants-religion.json`
+  (`UnitGrantsReligionDef`: `constructibleBuildings`, `freePromotions`) and
+  `data/civilization-religion.json` (`CivilizationReligionDef`: `buildingOverrides`,
+  `unitOverrides`).
 - Corporations: `data/unit-corporations.json` (`UnitCorporationsDef`:
   `corporationSpreads`), `data/handicap-corporations.json` (`HandicapCorporationsDef`:
   `corporationMaintenancePercent`) and `data/world-size-corporations.json`
@@ -377,7 +390,7 @@ hurried production, conscription, anger and city defense damage. The
 food-wastage growth factor uses permille: the source value 0.05 becomes 50 in
 `FoodWastageGrowthPermille`. Conversion is exact without rounding. A constant only a mod
 reads is that mod's row about `foundation:rule_constants` instead (Trade's
-`tradeProfitPercent`, GreatPeople's golden age length and great people percent, Religion's conversion anarchy, AirCombat's air strike damage). `Raw` retains all
+`tradeProfitPercent`, GreatPeople's golden age length and great people percent, Religion's conversion anarchy, spread, decay and inquisition numbers, AirCombat's air strike damage). A mod's define it does not read typed (`IdMapping.ConstantOwner`: espionage's, and religion's other ones) is dropped. `Raw` retains all
 other XML define entries as exact string key-value pairs. Raw floating-point strings are
 preserved for reference but are not authoritative JSON numbers.
 
@@ -390,8 +403,8 @@ schema assemblies, so a mod's API declares its own (the Corporations API's
 `CorporationDef` declares `corporation`). The registered kinds retain their own typed
 evaluators: `tech`, `bonus`, `feature`, `terrain`, `improvement`, `route`, `build`,
 `building`, `building-class`, `unit`, `unit-class`, `unit-combat`, `promotion`, `civic`,
-`era`, `culture-level`, `condition`, `game-option`, `religion`, `victory` and, with the
-Corporations mod, `corporation`.
+`era`, `culture-level`, `condition`, `game-option`, `victory` and, with their mods,
+`religion` and `religion-condition` (Religion) and `corporation` (Corporations).
 
 Building-class leaves refer to the default building definition. Parameter 0 (or omitted)
 means a local city class requirement. Parameter 1 means an empire-wide count. The cities
@@ -411,8 +424,8 @@ and river flags requires either location, not both. Minimum coastal area size is
 coastal leaf count (`foundation:coastal`). Other condition predicates represent river
 access (`foundation:river`), fresh water (`foundation:fresh_water`), population
 (`foundation:population`), city count (`foundation:city_count`), team count
-(`foundation:team_count`), or religion state (`foundation:any_religion`,
-`foundation:state_religion`). Latitude and setup-era bounds remain typed definition
+(`foundation:team_count`). Religion state is the Religion mod's `religion-condition` leaf
+(`religion:any_religion`, `religion:state_religion`), which only its own rows name. Latitude and setup-era bounds remain typed definition
 fields for setup and location queries.
 
 Building and unit classes are folded into their definitions. `DefaultBuilding` and
@@ -463,9 +476,10 @@ Each mod owns evaluators for its leaf kinds:
 - World evaluates `bonus` connected resource counts through `IResourceNetwork`,
   delegating vicinity resource checks (`Param == 2`) to `ICityRequirementService` in
   Cities.
-- Foundation evaluates `game-option`, `victory` identity, and
-  `religion` identity (presence, state religion, and holy city), asking the
-  `ICityReligions` seam the Religion mod answers; without the mod the leaf fails.
+- Foundation evaluates `game-option` and `victory` identity.
+- Religion evaluates `religion` (presence, state religion, and holy city) and
+  `religion-condition` (a state religion, any religion); without the mod no row names
+  either kind.
 - Corporations evaluates `corporation` (a branch in the city, or with parameter 2 its
   headquarters); without the mod no row names the kind.
 

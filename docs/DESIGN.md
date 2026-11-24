@@ -402,10 +402,11 @@ Manifest fields and API use:
 - Never make the base game reference a mod API. When base rules need an answer from a
   mod, the base game owns a small seam, named after the question it asks, and the mod
   implements it (below). Without the mod the base game applies its default. Base content
-  names religions and victories only by `ReligionIdentityDef` and `VictoryIdentityDef`,
-  which therefore stay in Foundation. No base row names a corporation, so a corporation
-  has no base identity: `CorporationDef` is the Corporations API's, and that type declares
-  the `corporation` leaf kind itself with `[ContentLeafKind]` (see content-schema.md); `ProjectDef` belongs to the ProjectsVictory API,
+  names victories only by `VictoryIdentityDef`, which therefore stays in Foundation. No
+  base row names a religion or a corporation, so neither has a base identity:
+  `ReligionDef` is the Religion API's and `CorporationDef` the Corporations API's, and each
+  type declares its leaf kind itself with `[ContentLeafKind]` (`religion`, `corporation`;
+  Religion's `ReligionConditionDef` adds `religion-condition`, see content-schema.md); `ProjectDef` belongs to the ProjectsVictory API,
   while `VictoryDef` is the Victory module's, so a mod adds a victory as base content. The computer player follows the same rule: it knows no feature
   mod, and a feature mod contributes the planner that plays it (`IAiPlanner`), the
   production it wants (`IProductionWishes`) and what its content is worth to the AI
@@ -424,7 +425,9 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | --- | --- | --- | --- | --- |
 | `IUnitTrainingRule` | `TrainingRules` (list) | production eligibility, for why a city may not train a unit beyond its requirements | Corporations (executives with Realistic Guilds/Corporations, and an executive the training civilization's `CivilizationCorporationsDef` replaces or removes) | no unit is refused |
 | `IAirOperations` | `AirOperations` | production eligibility (aircraft), the intercept activity | AirCombat | aircraft are refused with "Air operations are unavailable"; no unit can stand on intercept |
-| `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
+| `IBuildingRule` | `BuildingRules` (list) | production eligibility, for why a city may not build a building beyond its requirements; also the unit side through `IUnitTrainingRule` | Religion (a faith's buildings need it present or as the state religion; inquisitors need a state religion that allows them) | no building is refused |
+| `IRazeProtection` | `RazeProtections` (list) | conquest, before the raze roll of a city the computer player takes, beside its own reasons (a former capital, a world wonder, a strategic resource) | Religion (a holy city) | only the base reasons keep a city |
+| `IAttitudeSource` | `AttitudeSources` (list) | Diplomacy's attitude, for every pair; `AttitudeGrowth.Of` grows a counter towards a limit as the base reasons do | Religion (`religion:same_religion`, `religion:different_religion`, from its own counters) | personality, borders, wars, agreements, deals, civics and memories alone |
 | `IDealAppraiser` | `DealAppraiser` | the Diplomacy screen, to predict a computer leader's answer to a deal | the computer player (`ai`) | no prediction is shown |
 | `ICapitalWeight` | `CapitalWeights` (list) | Cities, when a lost capital moves | Religion (one per faith), Corporations (one per branch), GreatPeople (two per settled great person) | size, yields, level and culture alone |
 | `IFreeBuildingGrants` | `FreeBuildingGrants` (list) | Cities, for empire-wide free buildings | ScriptedWonders | only constructed buildings grant |
@@ -434,7 +437,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
-| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`BuildingDef.Founds`, a `LeafReference` such as `{"kind": "religion", "id": "foundation:buddhism"}`), and every `BuildingCompleted` | Religion (founding wonders, kind `religion`), Corporations (its own headquarters and Master Guilds, kind `corporation`) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
+| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`BuildingDef.Founds`, a `LeafReference` such as `{"kind": "religion", "id": "religion:buddhism"}`), and every `BuildingCompleted` | Religion (founding wonders, kind `religion`), Corporations (its own headquarters and Master Guilds, kind `corporation`) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
 | `IContentCheck` | (list, run once by `GameRules.Bind`) | the load, once content freezes, for invariants that read other mods' rows | Corporations (one founding building per corporation, no building or unit naming an undefined corporation, every executive trainable) | nothing is checked |
 | `ICityResourceSupply` | (list, read by `ResourceAccess.Supplied`) | `ResourceAccess.Counts` and Cities' city bonus set, for every city use of a resource (never for trade: `ResourceAccess.TradeCounts`) | Corporations (a branch's produced resource) | a city has only its network and deal copies |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
@@ -486,10 +489,20 @@ technologies) stay in base. The mods' rows:
   (`BuildingGreatPeopleDef`, `UnitGreatPeopleDef`, `SpecialistGreatPeopleDef`,
   `YieldGreatPeopleDef`, `TechGreatPeopleDef`, `GameSpeedGreatPeopleDef`,
   `EraGreatPeopleDef`, `RuleConstantsGreatPeopleDef`).
-- Religion: faith spread, state religion yields, shrines and conversion anarchy
-  (`BuildingReligionDef`, `UnitReligionDef`, `RuleConstantsReligionDef`). GreatPeople,
-  which skips shrines when a great person builds, reads `BuildingReligionDef` through the
-  Religion API it already references.
+- Religion: a building's faith and its need for a religion or a state religion, faith
+  spread, state religion yields and shrines (`BuildingReligionDef`), missionaries'
+  spreads and the inquisitor (`UnitReligionDef`), a trait's non-state religion commerce
+  (`TraitReligionDef`), a leader's regard for shared and other faiths (`LeaderReligionDef`)
+  and the spread, decay, inquisition and conversion constants (`RuleConstantsReligionDef`).
+  What it adds to base rows amends them: the Shaolin Temple's promotion
+  (`BuildingGrantsReligionDef`), the great prophet's shrines and the crusader's and
+  Shaolin monk's promotions (`UnitGrantsReligionDef`), each civilization's religious
+  buildings and units (`CivilizationReligionDef`) and the leaders' memory weights for
+  accepted and refused faiths (`LeaderReligionDef`). The amending fields of buildings and
+  units live in their own `Grants` types because Espionage amends `BuildingReligionDef`
+  rows, and an amended row may not amend. GreatPeople, which skips shrines when a great
+  person builds, reads `BuildingReligionDef` through the Religion API it already
+  references.
 - Corporations: executives' spreads, the per-handicap and per-world-size maintenance
   percents, and a civilization's overrides of the mod's own executives
   (`UnitCorporationsDef`, `HandicapCorporationsDef`, `WorldSizeCorporationsDef`,
@@ -547,11 +560,16 @@ nothing of the mod, and without the mod nothing is added.
 - A commerce vector is summed (over `CommerceTypes.Zero`, so the result carries every
   loaded type); an immutable array is appended to; an immutable dictionary is merged,
   and a key the target already has is an error unless both values are vectors, arrays or
-  dictionaries, which combine the same way. A scalar field cannot amend (a load error),
-  so an amendment only adds and never overrides: replacing a value is an override by id.
+  dictionaries, which combine the same way. Any other field fills in a target field that
+  is empty (null), such as the promotion a base building grants when that promotion is a
+  mod's; amending a set value is a load error, so an amendment only adds and never
+  overrides: replacing a value is an override by id.
 - Rows apply in ordinal id order, so the result does not depend on mod load order. The
   amended definition keeps its id and owner; the target's reference attributes apply to
-  the amending field, so an amended reference is checked as the target's own.
+  the amending field, checked against the amending row's mod, which must declare every
+  provider it names. The merged target is validated as its own mod registered it, never
+  again with the additions, so a base row amended with a mod's ids still needs no
+  reference to that mod.
 - An amending row is still an attachment: one row per (type, target), and its target's
   mod must be referenced. Two mods that amend one definition use their own types. A row
   that amends another amending row is an error.
@@ -1383,31 +1401,64 @@ and shrine construction. Its API (`Ariel.Mods.Religion.Api`) publishes `IReligio
 state components, events, `SetStateReligionCommand`, `ReligionMissions`,
 `ReligionMemories`, `CivicReligionDef` and its rows about buildings (`BuildingReligionDef`:
 spread influence, state religion yields and the shrine's faith), units (`UnitReligionDef`:
-missionary spread chances) and the rule constants (`RuleConstantsReligionDef`: conversion
-anarchy). Other mods read it through
+missionary spread chances and the inquisitor), traits (`TraitReligionDef`), leaders
+(`LeaderReligionDef`) and the rule constants (`RuleConstantsReligionDef`: conversion anarchy,
+spread, decay and inquisition numbers). Other mods read it through
 `sim.Service<IReligionService>()`, null when the mod is not loaded.
 
-What stays in the base game:
+Nothing about religion stays in the base game: removing the mod removes every faith,
+religious building, unit, promotion, condition, option, constant and attitude, and a game
+without it saves no religion string beyond the civic category below.
 
-- **Identities.** Foundation's `ReligionIdentityDef` (`foundation:buddhism`, ...) is what
-  buildings (`ReligionType`, a founding wonder's `Founds`), the
-  `religion` requirement leaf and the mod's own building and unit rows
-  (`GlobalReligionCommerce`, `ReligionChanges`, `ReligionSpreads`) name. A `ReligionDef` is the mod's rules about one
-  identity: its id (`religion:buddhism`, kept in saves) and `Identity`. `ReligionIdentities`
-  translates both ways.
-- **The question seam** `ICityReligions` (`GameRules.CityReligions`): which faiths a city
-  has, a player's state religion, holy cities, and whether a city may build a religious
-  building or train a unit. The Foundation `religion` leaf (presence; parameter 1 the
-  player's state religion; 2 the holy city), Cities' `any_religion` and `state_religion`
-  conditions, production eligibility and holy-city capture ask it. Without the mod the
-  leaves fail, religious buildings and inquisitors are refused with "Religion state is
-  unavailable", and no city is holy.
-- The building, unit, trait and leader fields that describe faith, and the computer
-  player's refusal to plan buildings for an unavailable mechanic.
+- **The mod's own content.** Its faiths (`religion:buddhism`, ...) are `ReligionDef` rows,
+  which declare the `religion` leaf kind (presence; parameter 1 the player's state
+  religion; 2 the holy city), and `ReligionConditionDef` rows declare `religion-condition`
+  (`religion:state_religion`, `religion:any_religion`). `ReligionRequirements` registers
+  both evaluators. The temples, monasteries, cathedrals, shrines, religious wonders and
+  founding wonders, the missionaries, the inquisitor and the faiths' promotions are the
+  mod's own `BuildingDef`, `UnitDef` and `PromotionDef` rows (`religion:*`; the crusader
+  promotion is `religion:crusader`, and the crusader unit stays Military's
+  `military:crusader`). So are its game options (`religion:gameoption_religion_decay`,
+  `religion:gameoption_no_inquisitions`, `religion:gameoption_limited_religions`,
+  `religion:gameoption_pick_religion`; `religion:gameoption_multiple_religion_spread` is
+  offered by its setup policy alone), the disabled placeholder technology
+  `religion:religion` and the deferred victory `religion:victory_religious`.
+- **Its rows about base content**, listed under "Content attachments": the religion fields
+  of buildings, units, traits, leaders and the rule constants, and the amendments that put
+  its promotions, shrines, civilization overrides and leader memory weights into base
+  rows.
+- **Generic seams it answers**: `IBuildingRule` and `IUnitTrainingRule` (a faith's
+  buildings and the inquisitor), `IRazeProtection` (holy cities), `IAttitudeSource`
+  (shared and other faiths, from its `religion:attitudes` counters), `IBuildingFounder`
+  (founding wonders), `ICapitalWeight` (one per faith), `IAiBuildingExclusion` (the city
+  planner leaves a faith's buildings to the religion planner), `IDescribedContent` on its
+  trait rows (the leader briefing) and the generic `cities:unit_production_percent` and
+  `cities:building_production_percent` production keys. Its planner runs at
+  `AiPlannerOrder.Missions`.
+- **Other mods** reach it only optionally. GreatPeople, Revolution, Votes and Corporations
+  ask `sim.Service<IReligionService>()` (null without the mod) or read its attachments, and
+  Espionage, Votes and ScriptedWonders keep their rows about religious buildings under
+  `data/religion/`, registered only when `IModContext.IsLoaded("religion")`.
 
-The mod registers its rules, the `ICityReligions` answer, a `CityRazed` handler that
+What the base game keeps that mentions religion, by decision:
+
+- Prose (pedia, help, strategy and names), icon atlas paths, and the names of unmapped
+  source fields in `unsupported` lists.
+- The `religion` key in the AI flavour weights of techs, buildings, civics, units and
+  leaders: an open map that no rule reads without the mod's content.
+- The Government module's `government:civicoption_religion` civic category and its civics
+  (Folklore to Free Church). Their religious effects are `CivicReligionDef` rows; the
+  category and civic names are a product decision, so the category key is the one religion
+  string a religion-less save carries.
+- The throne room no longer accepts the Apadana Palace and the Alhambra as its palace
+  alternatives: the base row cannot name Religion's buildings, and requirement
+  alternatives have no amendment seam yet (the importer reports the dropped leaves).
+- `VictoryIdentityDef` rows stay in Foundation for the victories other mods implement;
+  the religious one, implemented by no mod, is Religion's own row.
+
+The mod registers its rules, a `CityRazed` handler that
 records `religion:razed_holy_city`, the AI's religion planner (`religion:planner` at
-`AiPlannerOrder.Religion`), inquisitor production wishes, a founding-wonder valuer and a
+`AiPlannerOrder.Missions`), inquisitor production wishes, a founding-wonder valuer and a
 civic valuer that rules out a state-religion civic for an empire without a faith, a setup
 policy for its game options (religion decay, no inquisitions, multiple religion spread),
 and its presentation: the Religion screen (`religion:screen`), the faiths in the city
@@ -1446,14 +1497,14 @@ Religion mechanics:
   city, and its owner gets the religion's free missionaries. Discovering the technology
   founds nothing by itself. Once the religion is founded, no one can build its wonder,
   and barbarians never can. A founding wonder's `BuildingDef.Founds` names the religion
-  (`{"kind": "religion", "id": "foundation:buddhism"}`). The mod
+  (`{"kind": "religion", "id": "religion:buddhism"}`). The mod
   is the wonder's `IBuildingFounder` (`ReligionFounder`): Cities refuses barbarians and
   asks it whether the religion is founded already, and hands it the completed wonder.
 - **Foreign trade spread**: International trade routes connect cities across open
   borders and revealed road/water networks. Natural spread evaluates connected foreign
   trade partners, spreading state religions to foreign cities when allowed by standard
-  spread rules or the `foundation:gameoption_multiple_religion_spread` option.
-- **Religion decay & attrition**: When `foundation:gameoption_religion_decay` is
+  spread rules or the `religion:gameoption_multiple_religion_spread` option.
+- **Religion decay & attrition**: When `religion:gameoption_religion_decay` is
   enabled, cities with non-state minority religions lacking religious buildings roll for
   decay based on elapsed city turns and foreign pressure. Holy cities and the player's
   active state religion are immune. When decay triggers, minority religions and their
@@ -1625,9 +1676,8 @@ defensive pact calls the partner into a war against it and is never attacked by 
 and an offensive declaration dissolves the aggressor's pacts, `CallToArms`) and how
 players regard each other (the attitude tier); Cities and Economy ask it what deals
 exchange (`ResourceAccess`, deal gold per turn). A war ends the two teams' agreements and
-deals (`WarDeclared`). Attitude adds personality, religion (the state religion
-identities `ICityReligions.StateReligion` reports, when a mod runs religion), favourite
-civic, borders, war and peace, war history, agreements, trade and civics, and every
+deals (`WarDeclared`). Attitude adds personality, every `IAttitudeSource` (Religion's
+shared and other faiths, when it is loaded), favourite civic, borders, war and peace, war history, agreements, trade and civics, and every
 remembered count weighed by the leader's `MemoryAttitudePercents` or else the memory
 kind's `AttitudePercent`. Its own memory kinds are a technology received in a deal, a
 gift (`give_help`, limit 3), a stopped active trade, embargoes (hired, accepted or

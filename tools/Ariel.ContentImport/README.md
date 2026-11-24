@@ -235,6 +235,17 @@ reported in `data-issues`: a requirement alternative a base row may not name (th
 Apadana Palace and the Alhambra as the throne room's palace), and the link of a base row's
 text to a religious record, which keeps only its words.
 
+The rest of religion is Religion's too. `ReligionInfo` is its class, so the faiths have no
+base identity. The building and unit religion fields (`ReligionType`, `bPrereqReligion`,
+`bStateReligion`, `bInquisitor`), a trait's `bNonStateReligionCommerce` and a leader's six
+religion attitude fields map onto its attachments, and the leader memory tables split
+their `accepted_religion` and `denied_religion` entries into Religion's amending
+`LeaderReligionDef` (`onlyKeys`/`exceptKeys`). The `state_religion` and `any_religion`
+conditions become its `religion-condition` leaves. The religion and inquisition game
+options, `TECH_RELIGION` and `VICTORY_RELIGIOUS` are claimed records (`religion:*`). Of the
+religion, holy-city, inquisition and conversion defines, the ones Religion reads are
+typed in `RuleConstantMapping.json`; the rest are dropped like Espionage's.
+
 The source's commerce arrays have four slots (gold, research, culture, espionage). A row
 carries only the commerce types its mod may name: the base game's three, plus the
 espionage slot in a row Espionage owns. The espionage slot of a base row is a separate
@@ -357,7 +368,7 @@ missionaries, commerce vectors, and related buildings. Religion references now u
 ids. Corporations likewise emits 36 playable `CorporationDef` records (21 corporations
 and 15 guilds, told apart by the special building type of their headquarters), the only
 records of a corporation: no base row names one. Foundation reserves
-victory identities for future rules. Their definitions have `Deferred = true` and no
+victory identities for future rules (the religious one is Religion's own row). Their definitions have `Deferred = true` and no
 gameplay effects. Their evaluators fail closed. Prerequisites retain these identities
 instead of silently disappearing. A prerequisite on a building that founds a corporation
 (an executive's headquarters) becomes a `corporation` leaf with parameter 2, the
