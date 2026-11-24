@@ -163,15 +163,29 @@ public sealed class ContentDb
     private void ValidateCommerceVectors(Dictionary<string, HashSet<string>> declared, SortedSet<string> errors)
     {
         using var trace = Modding.StartupTrace.Phase("content commerce validation");
-        foreach (var definition in _registries.Values.SelectMany(e => e.Items()).OrderBy(d => d.Id, StringComparer.Ordinal))
+        var providers = Commerce.Select(t => t.Id.Split(':')[0]).ToArray();
+        foreach (var definition in _registries.Values.SelectMany(e => e.Items()))
         {
             var owner = definition.Id.Split(':')[0];
+            // The cheap walk clears almost every definition; only a failing one pays for the walk that names paths.
+            if (!ContentReferences.AnyInvalid<CommerceVector>(definition, vector => Declared(vector, owner))) continue;
             foreach (var (vector, path) in ContentReferences.Find<CommerceVector>(definition, definition.Id))
                 foreach (var (key, _) in vector)
                 {
                     if (!Commerce.TryGet(key, out var type)) errors.Add($"{path}: '{key}' is not a loaded commerce type");
                     else RequireProvider(declared, owner, type.Id, $"{path}: mod '{owner}' must declare commerce type provider", errors);
                 }
+        }
+
+        bool Declared(CommerceVector vector, string owner)
+        {
+            foreach (var (key, _) in vector)
+            {
+                if (!Commerce.TryGet(key, out var type)) return false;
+                var provider = providers[type.Index];
+                if (provider != owner && (!declared.TryGetValue(owner, out var named) || !named.Contains(provider))) return false;
+            }
+            return true;
         }
     }
 

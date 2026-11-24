@@ -2665,6 +2665,49 @@ belongs to), summed over the 8 turns:
 `mise run benchmark` was not run in this pass. The alternating `ai:play` pairs above
 are the measurement.
 
+### Pass 20: Registered Commerce Types (Regression Check)
+
+This pass was not an optimization. It checks that replacing the four-slot
+`CommerceVector` with registered commerce types (an interned key layout plus an inline
+array of eight amounts) costs nothing where players wait. The base was `9d87de83` (an
+archive copy) and the change was `cbdd46e4` plus the validation fix below. Base and
+change ran alternately, two runs each. The machine was thermally throttled throughout,
+so world generation, which the change does not touch, serves as the noise control.
+
+| Subject (`mise run benchmark`) | Base | Change |
+| :-- | --: | --: |
+| World generation, seed 1 (noise control) | 441.8 / 361.8 ms | 365.8 / 415.5 ms |
+| Fifty-city turn | 255.3 / 367.8 ms | 251.9 / 318.5 ms |
+| Eight-player preparation (99 turns, save/load) | 13,806 / 13,979 ms | 14,623 / 13,485 ms |
+| Eight-player AI decisions at turn 100 | 49.0 / 52.8 ms | 93.1 / 60.8 ms |
+
+These differences are within the noise. The 93 ms AI-decision sample came from a run
+whose world-generation control was also slow.
+
+Content loading (`mise run benchmark -- --quick`, the median of five paired catalog
+builds) found one regression, which was fixed:
+
+| Catalog build allocation | Managed bytes |
+| :-- | --: |
+| Base | 137.3 MiB |
+| Change, first version | 181.8 MiB |
+| Change, final | 141.3 MiB |
+
+- **The cause**: the new load-time check walked every content definition with
+  `ContentReferences.Find<CommerceVector>`, which builds a diagnostic path string for
+  every property and boxes every struct. Disabling the check returned allocation to
+  139.6 MiB.
+- **The fix**: `ContentReferences.AnyInvalid<T>` walks the same values with no paths,
+  and descends only into members whose declared type can hold a `T`, judged once per
+  type. Only a definition that fails pays for the walk that names paths.
+- **The remainder**: the final 4 MiB (about 3%) is the 1.7 MiB check plus the wider
+  vector, whose layout reference and eight slots weigh 72 bytes against the old 32.
+  Catalog wall time did not move: serial builds ran 316 / 326 ms on the base and
+  230 / 226 ms on the change, a gap within this machine's spread.
+- **Hashes**: the session, generated and founded hashes match the base. The content
+  hash changes because a content vector now serializes only the keys it carries, and a
+  default vector as `{}`.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary

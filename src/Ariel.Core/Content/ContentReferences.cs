@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -177,6 +178,73 @@ public static class ContentReferences
         }
         foreach (var metadata in Properties.GetValue(value.GetType(), DescribeProperties))
             foreach (var nested in Find<T>(metadata.Property.GetValue(value), path + "." + metadata.Property.Name, seen)) yield return nested;
+    }
+
+    /// <summary>Whether any <typeparamref name="T"/> nested in a value fails <paramref name="valid"/>. It walks what
+    /// <see cref="Find{T}(object?, string)"/> walks, but builds no paths and descends only into members whose declared
+    /// type can hold a <typeparamref name="T"/>, so it is cheap enough to run over all content. On a failure, call
+    /// <see cref="Find{T}(object?, string)"/> to name the paths.</summary>
+    public static bool AnyInvalid<T>(object? value, Func<T, bool> valid) where T : notnull =>
+        AnyInvalid(value, valid, new HashSet<object>(ReferenceEqualityComparer.Instance));
+
+    private static bool AnyInvalid<T>(object? value, Func<T, bool> valid, HashSet<object> seen) where T : notnull
+    {
+        if (value is null or string or Requirement) return false;
+        var type = value.GetType();
+        if (type.IsPrimitive || type.IsEnum || !seen.Add(value)) return false;
+        if (value is T found) return !valid(found);
+        if (value is IEnumerable sequence)
+        {
+            if (!Holders<T>.CanHold(type)) return false;
+            foreach (var item in sequence)
+                if (AnyInvalid(MapEntryValue(item), valid, seen)) return true;
+            return false;
+        }
+        foreach (var property in Holders<T>.Members(type))
+            if (AnyInvalid(property.GetValue(value), valid, seen)) return true;
+        return false;
+    }
+
+    /// <summary>Which types can hold a <typeparamref name="T"/>, judged from declared types. A type whose instances may be
+    /// a subtype (an unsealed class, an interface, <see cref="object"/>) can hold one; a sealed type or a struct can when a
+    /// readable property or its sequence element can.</summary>
+    private static class Holders<T>
+    {
+        private static readonly ConcurrentDictionary<Type, bool> Holds = new();
+        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> Plans = new();
+
+        public static PropertyInfo[] Members(Type type) => Plans.GetOrAdd(type, static t => Readable(t).Where(p => CanHold(p.PropertyType)).ToArray());
+
+        public static bool CanHold(Type type)
+        {
+            if (Holds.TryGetValue(type, out bool holds)) return holds;
+            // A type that refers to itself counts as a holder while it is being judged; that only costs a descent.
+            Holds[type] = true;
+            return Holds[type] = Judge(type);
+        }
+
+        private static bool Judge(Type type)
+        {
+            if (typeof(T).IsAssignableFrom(type) || type.IsAssignableFrom(typeof(T))) return true;
+            if (type == typeof(string) || type.IsPrimitive || type.IsEnum || typeof(Requirement).IsAssignableFrom(type)) return false;
+            if (!type.IsValueType && !type.IsSealed) return true;
+            if (typeof(IEnumerable).IsAssignableFrom(type))
+                return Element(type) is not { } element || CanHold(element);
+            return Readable(type).Any(p => CanHold(p.PropertyType));
+        }
+
+        private static Type? Element(Type type)
+        {
+            if (type.IsArray) return type.GetElementType();
+            var sequence = type.GetInterfaces().Append(type)
+                .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            var element = sequence?.GetGenericArguments()[0];
+            return element is { IsGenericType: true } pair && pair.GetGenericTypeDefinition() == typeof(KeyValuePair<,>)
+                ? pair.GetGenericArguments()[1] : element;
+        }
+
+        private static IEnumerable<PropertyInfo> Readable(Type type) => type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(p => p.CanRead && p.GetIndexParameters().Length == 0).OrderBy(p => p.Name, StringComparer.Ordinal);
     }
 
     /// <summary>Traverse leaves in expression order, retaining scope and count.</summary>
