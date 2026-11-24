@@ -75,6 +75,8 @@ internal sealed class CityConscript(ICityWorkService work, ICityCultureService c
     private static int AngerLength(Simulation sim) => Math.Max(1,
         CityData.Constants(sim).ConscriptAngerDivisor * CityData.Speed(sim).HurryConscriptAngerPercent / 100);
 
+    /// <summary>Only city calculations.</summary>
+    public bool ContributesTo(ModifierScope scope) => scope == ModifierScope.City;
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;

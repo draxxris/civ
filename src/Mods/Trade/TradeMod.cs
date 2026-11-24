@@ -33,6 +33,8 @@ public sealed class TradeMod : IPreparableMod
 }
 internal sealed class TradeEffects(ITradeRouteService service) : IModifierSource
 {
+    /// <summary>Only city calculations.</summary>
+    public bool ContributesTo(ModifierScope scope) => scope == ModifierScope.City;
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;

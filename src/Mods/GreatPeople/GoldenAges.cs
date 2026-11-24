@@ -46,6 +46,8 @@ internal static class GoldenAges
 
 internal sealed class GreatPeopleEffects : IModifierSource, IPlotYieldFinalizer
 {
+    /// <summary>Only city calculations.</summary>
+    public bool ContributesTo(ModifierScope scope) => scope == ModifierScope.City;
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;

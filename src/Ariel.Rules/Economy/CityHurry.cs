@@ -95,6 +95,8 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
     public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(Unread, content);
     private static readonly IReadOnlyList<string> Unread =
         CityStateDomains.NeverReadByBuildings.Where(d => d != EconomyStateDomains.HurryAnger).ToArray();
+    /// <summary>Only city calculations.</summary>
+    public bool ContributesTo(ModifierScope scope) => scope == ModifierScope.City;
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;

@@ -126,6 +126,21 @@ internal sealed class CorporationSetupPolicy : ISetupPolicy
 
 internal sealed class CorporationEffects(CorporationService service) : IModifierSource
 {
+    // Branches follow which corporations a city holds and their founding, civics, techs and resource counts. Their
+    // maintenance also reads the city's population (growth), the owner's inflation (in the economy's player state,
+    // so the treasury domain) and the owner's whole player ledger.
+    private static readonly IReadOnlyList<string> Unread = CityStateDomains.NeverReadByBuildings
+        .Where(d => d != CityStateDomains.Growth && d != EconomyStateDomains.Treasury).ToArray();
+
+    /// <summary>What the source never reads, as far as the resource suppliers and building grant providers the
+    /// resource counts ask, and every other source of the player ledger the maintenance collects, never read it
+    /// either.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) =>
+        ModifierSources.UnreadThroughCalculation(CityStateDomains.UnreadThroughBuildings(Unread, content), content, ModifierScope.Player, this);
+
+    /// <summary>Branches in city calculations, civic maintenance changes in player ones.</summary>
+    public bool ContributesTo(ModifierScope scope) => scope is ModifierScope.City or ModifierScope.Player;
+
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope == ModifierScope.Player) { CivicMaintenance(context.Sim, context.Player, sink); return; }

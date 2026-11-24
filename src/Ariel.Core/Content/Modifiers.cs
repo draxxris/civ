@@ -42,6 +42,26 @@ public interface IModifierSource : IStateReader
 {
     /// <summary>Append typed effects to a calculation's sink; ignore unsupported scopes.</summary>
     void Contribute(ModifierContext context, ModifierSink sink);
+    /// <summary>Whether the source may add anything to a calculation of this scope. True, the default, for every
+    /// scope. A source that adds nothing to some scope says so, and <see cref="ModifierSink.Collect"/> does not ask it
+    /// there: a reader that collects a nested calculation of a scope then depends only on the sources that contribute
+    /// to it (<see cref="ModifierSources.UnreadThroughCalculation"/>). Answered once per content database.
+    /// <see cref="Game.Simulation.VerifyWrites"/> asks a skipped source anyway and throws if it adds a line.</summary>
+    bool ContributesTo(ModifierScope scope) => true;
+}
+
+/// <summary>Declarations for readers of whole calculations.</summary>
+public static class ModifierSources
+{
+    /// <summary>What a reader that collects a nested calculation of <paramref name="scope"/> may declare unread
+    /// (<see cref="IStateReader.UnreadDomains"/>), given its own list: the part of <paramref name="own"/> that every other
+    /// source contributing to that scope also declares. <paramref name="self"/>, when the reader is itself a source, is
+    /// left out, since its own declaration already covers what it adds there. Two sources that each collect the
+    /// other's scope this way would recurse; neither may.</summary>
+    public static IReadOnlyList<string> UnreadThroughCalculation(IReadOnlyList<string> own, ContentDb content, ModifierScope scope,
+        IModifierSource? self = null) =>
+        StateDomainRegistry.UnreadByAll(own, content,
+            content.Services.Get<IModifierSource>().Where(s => !ReferenceEquals(s, self) && s.ContributesTo(scope)));
 }
 /// <summary>One explainable contribution to a calculation.</summary>
 public sealed record LedgerLine(string Source, string Key, long Amount);
@@ -227,9 +247,15 @@ public sealed class ModifierSink
         {
             sink = new ModifierSink(sim.Content.Commerce);
             var sources = sim.Content.Services.Get<IModifierSource>();
+            var table = Table(sim.Content, sources);
+            var asks = table.Asks[(int)context.Scope];
             if (!sim.KeepsAnswers || !Kept(context))
-                foreach (var source in sources) source.Contribute(context, sink);
-            else Contribute(sim, sources, context, sink);
+            {
+                for (int i = 0; i < sources.Count; i++)
+                    if (asks[i]) sources[i].Contribute(context, sink);
+                    else if (sim.VerifyWrites) VerifySkipped(sources[i], context);
+            }
+            else Contribute(sim, sources, table.Masks, asks, context, sink);
         }
         Memo.Set(sim, context, sink.Copy());
         return sink;
@@ -240,12 +266,13 @@ public sealed class ModifierSink
     /// and emptied the table.</summary>
     private static bool Kept(ModifierContext context) => context.ProposedPlot is null
         && context.Scope is ModifierScope.City or ModifierScope.Player or ModifierScope.Team;
-    private static void Contribute(Simulation sim, IReadOnlyList<IModifierSource> sources, ModifierContext context, ModifierSink sink)
+    private static void Contribute(Simulation sim, IReadOnlyList<IModifierSource> sources, ulong[] unread, bool[] asks,
+        ModifierContext context, ModifierSink sink)
     {
-        var unread = UnreadMasks(sim.Content, sources);
         var cache = sim.ModifierCache;
         for (int i = 0; i < sources.Count; i++)
         {
+            if (!asks[i]) { if (sim.VerifyWrites) VerifySkipped(sources[i], context); continue; }
             ulong mask = unread[i];
             if (sim.WritingNow(mask)) { sources[i].Contribute(context, sink); continue; }
             if (cache.TryGet(i, context, out var entry) && !sim.WrittenSince(mask, entry.Stamp))
@@ -274,11 +301,21 @@ public sealed class ModifierSink
             + $"{(at < fresh._lines.Count ? fresh._lines[at] : null)}. A writer wrote what the source reads without declaring "
             + "it, or the source reads a domain it declares unread.");
     }
-    // Each source's unread domains as a mask, for each content database; sources and domains are frozen with it.
-    private static ulong[] UnreadMasks(ContentDb content, IReadOnlyList<IModifierSource> sources) =>
-        UnreadMaskTable.GetValue(content, db => new(sources.Select(s => db.StateDomains.UnreadMask(s, db)).ToArray())).Masks;
-    private sealed class UnreadMaskBox(ulong[] masks) { public readonly ulong[] Masks = masks; }
-    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ContentDb, UnreadMaskBox> UnreadMaskTable = new();
+    private static void VerifySkipped(IModifierSource source, ModifierContext context)
+    {
+        var fresh = new ModifierSink(context.Sim.Content.Commerce);
+        source.Contribute(context, fresh);
+        if (fresh._lines.Count > 0)
+            throw new InvalidOperationException($"Modifier source {source.GetType().Name} says it adds nothing to a "
+                + $"{context.Scope} calculation but added {fresh._lines[0]}.");
+    }
+    // Each source's unread domains as a mask, and whether it is asked for each scope, for each content database;
+    // sources and domains are frozen with it.
+    private static SourceTable Table(ContentDb content, IReadOnlyList<IModifierSource> sources) =>
+        SourceTables.GetValue(content, db => new(sources.Select(s => db.StateDomains.UnreadMask(s, db)).ToArray(),
+            Enum.GetValues<ModifierScope>().Select(scope => sources.Select(s => s.ContributesTo(scope)).ToArray()).ToArray()));
+    private sealed class SourceTable(ulong[] masks, bool[][] asks) { public readonly ulong[] Masks = masks; public readonly bool[][] Asks = asks; }
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ContentDb, SourceTable> SourceTables = new();
     private static readonly ReadEpochMemo<ModifierContext, ModifierSink> Memo = new();
 }
 

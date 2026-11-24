@@ -75,6 +75,8 @@ internal static class MilitaryData
 /// <summary>Promotions remain data, never permanently baked into the unit's base definition.</summary>
 internal sealed class PromotionEffects : IModifierSource
 {
+    /// <summary>Only unit calculations.</summary>
+    public bool ContributesTo(ModifierScope scope) => scope == ModifierScope.Unit;
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.Unit || context.Unit is not { } unit) return;

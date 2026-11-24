@@ -326,6 +326,62 @@ public sealed class WriteWindowTests
         Assert.Equal(own, StateDomainRegistry.UnreadByAll(own, content, []));
     }
 
+    /// <summary>Says it adds only to city calculations; <see cref="Lies"/> makes it add to player ones too.</summary>
+    private sealed class CityOnlySource : IModifierSource
+    {
+        public int Calls;
+        public bool Lies { get; init; }
+        public bool ContributesTo(ModifierScope scope) => scope == ModifierScope.City;
+        public void Contribute(ModifierContext context, ModifierSink sink)
+        {
+            Interlocked.Increment(ref Calls);
+            if (context.Scope == ModifierScope.City || Lies) sink.Add("city_only", "probe:city", 1);
+        }
+    }
+
+    [Fact]
+    public void A_source_is_not_asked_outside_its_scopes_and_verification_catches_one_that_adds_there()
+    {
+        var honest = new CityOnlySource();
+        var content = Content(Source("probe", ctx => ctx.RegisterService<IModifierSource>("city_only", honest)));
+        var sim = new Simulation(content, new SimulationSettings { PlayerCount = 1, Civilizations = ["base:builders"] });
+        Assert.Equal(0, Player(sim).Total("probe:city"));
+        Assert.Equal(0, honest.Calls);
+        sim.VerifyWrites = true;
+        Player(sim);
+        Assert.Equal(1, honest.Calls); // verification asks a skipped source, and it added nothing
+
+        var liar = new CityOnlySource { Lies = true };
+        var lying = new Simulation(Content(Source("probe", ctx => ctx.RegisterService<IModifierSource>("city_only", liar))),
+            new SimulationSettings { PlayerCount = 1, Civilizations = ["base:builders"] }) { VerifyWrites = true };
+        Assert.Throws<InvalidOperationException>(() => Player(lying));
+    }
+
+    [Fact]
+    public void A_reader_of_a_nested_calculation_keeps_only_what_every_other_source_of_that_scope_declares()
+    {
+        var reader = new TreasurySource { Unread = ["probe:culture", "probe:treasury"] };
+        var cityOnly = new CityOnlySource(); // declares nothing, but adds nothing to player calculations
+        var playerSource = new TreasurySource { Unread = ["probe:culture"] };
+        // Alone, without the base ruleset's sources.
+        var probe = new TestMod(ctx =>
+        {
+            ctx.RegisterStateDomain("culture", "Players/*/Culture");
+            ctx.RegisterStateDomain("treasury", "Players/*/Treasury");
+            ctx.RegisterService<IModifierSource>("reader", reader);
+            ctx.RegisterService<IModifierSource>("city_only", cityOnly);
+            ctx.RegisterService<IModifierSource>("player", playerSource);
+        });
+        var content = ModLoader.Build([new ModSource
+        {
+            Manifest = new ModManifest { Id = "probe", Version = "1" }, Instance = probe, Root = AppContext.BaseDirectory,
+        }]);
+        IReadOnlyList<string> own = ["probe:culture", "probe:treasury"];
+        Assert.Equal(["probe:culture"], ModifierSources.UnreadThroughCalculation(own, content, ModifierScope.Player, reader));
+        // In city calculations the undeclared city source may read anything.
+        Assert.Empty(ModifierSources.UnreadThroughCalculation(own, content, ModifierScope.City, reader));
+    }
+
     [Fact]
     public void An_event_published_outside_any_window_dispatches_inside_one()
     {

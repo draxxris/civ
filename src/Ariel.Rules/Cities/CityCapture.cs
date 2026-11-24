@@ -166,6 +166,8 @@ internal sealed class CityCapture : ICityCaptureService
 /// <summary>Building grants use Military's modifier keys without an assembly dependency.</summary>
 internal sealed class BuildingMilitaryEffects : IModifierSource
 {
+    /// <summary>Only unit calculations.</summary>
+    public bool ContributesTo(ModifierScope scope) => scope == ModifierScope.Unit;
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.Unit || context.Unit is not { } unit || context.City is not { } city) return;

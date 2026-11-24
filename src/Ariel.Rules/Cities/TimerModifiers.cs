@@ -9,6 +9,9 @@ namespace Ariel.Rules.Cities;
 /// modifiers are collected; the timers themselves are the Foundation's.</summary>
 internal sealed class TimerModifiers : IModifierSource
 {
+    /// <summary>Timer modifiers follow the stored timers, the turn and who owns a city, never a city's work, queue or
+    /// tallies, the treasury, units, sight or worker orders.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.NeverReadByBuildings;
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (Timers.Read(context.Sim) is not { Timers.Count: > 0 } state) return;
