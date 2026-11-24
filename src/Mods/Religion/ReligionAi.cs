@@ -147,7 +147,7 @@ internal sealed class FoundingWonderValuer : IAiValuer<BuildingSubject>
 {
     internal const int FoundingValue = 80;
     public string Id => "religion:founding_valuer";
-    public int Adjust(AiContext ctx, in BuildingSubject subject) => subject.Building.FoundsReligion is null ? 0 : FoundingValue;
+    public int Adjust(AiContext ctx, in BuildingSubject subject) => ReligionFounder.Founded(subject.Building) is null ? 0 : FoundingValue;
 }
 
 /// <summary>A civic that needs a state religion is only worth adopting when one of the empire's religions is present,

@@ -54,9 +54,10 @@ public interface IProductionCompletion
     void Complete(Simulation sim, int city, string content);
 }
 
-/// <summary>The rules behind buildings that found something when a city completes them: a religion's founding wonder
-/// (<see cref="Content.Schema.BuildingDef.FoundsReligion"/>), a corporation's headquarters
-/// (<see cref="Content.Schema.BuildingDef.FoundsCorporation"/>). Founding is two steps: the building's own requirements
+/// <summary>The rules behind buildings that found something when a city completes them
+/// (<see cref="Content.Schema.BuildingDef.Founds"/>): a religion's founding wonder, a corporation's headquarters. Each
+/// founder claims the buildings whose reference names a kind it runs and validates those references when content
+/// freezes. Founding is two steps: the building's own requirements
 /// (its technology) make it available, and completing it founds what it names in that city. Cities asks every
 /// registered founder (<see cref="GameRules.Founders"/>). A building that names something to found is refused when no
 /// founder claims it, so a feature that is not loaded founds nothing, and always for barbarians; completing a claimed
@@ -71,4 +72,13 @@ public interface IBuildingFounder
     /// <summary>The city has completed the claimed building: found what it names there. A founding that can no longer
     /// happen (another city founded it first) does nothing.</summary>
     void Found(Simulation sim, City city, Content.Schema.BuildingDef building);
+}
+
+/// <summary>A feature's reason a city may not train a unit, beyond what the unit's own requirements say (an executive in a
+/// game where corporations spread on their own). Production eligibility asks every registered rule
+/// (<see cref="GameRules.TrainingRules"/>) for every unit. Queries never change state or use the RNG.</summary>
+public interface IUnitTrainingRule
+{
+    /// <summary>Why the city may not train the unit, or null.</summary>
+    string? RefuseUnit(Simulation sim, City city, Content.Schema.UnitDef unit);
 }

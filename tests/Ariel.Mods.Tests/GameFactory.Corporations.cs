@@ -9,14 +9,11 @@ namespace Ariel.Mods.Tests;
 /// the shared harness the sync checker compiles.</summary>
 public static partial class GameFactory
 {
-    /// <summary>The building whose completion founds the corporation, its headquarters or Master Guild: the base building
-    /// naming its identity, which the Corporations mod's founder claims.</summary>
-    public static string Headquarters(Simulation sim, string corporation)
-    {
-        string identity = sim.Content.Get<CorporationDef>(corporation).Identity;
-        return sim.Content.Get<BuildingDef>().All
-            .Single(b => b.FoundsCorporation == identity && sim.Rules().Founders.Any(f => f.Claims(sim.Content, b))).Id;
-    }
+    /// <summary>The building whose completion founds the corporation, its headquarters or Master Guild: the building
+    /// whose <see cref="BuildingDef.Founds"/> names it, which the Corporations mod's founder claims.</summary>
+    public static string Headquarters(Simulation sim, string corporation) =>
+        sim.Content.Get<BuildingDef>().All
+            .Single(b => b.Founds is { Kind: "corporation" } founds && founds.Id == corporation && sim.Rules().Founders.Any(f => f.Claims(sim.Content, b))).Id;
 
     /// <summary>The technologies the corporation's founding building requires.</summary>
     public static IReadOnlyList<string> FoundingTechs(Simulation sim, string corporation) =>

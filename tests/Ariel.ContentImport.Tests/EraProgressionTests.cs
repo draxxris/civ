@@ -127,7 +127,7 @@ public sealed class EraProgressionTests
                 typeof(EmittedDataMod).GetMethod(nameof(Load), BindingFlags.NonPublic | BindingFlags.Static)!
                     .MakeGenericMethod(mapping.DefinitionType).Invoke(null, [context, mapping.Definition]);
             if (context.ModId == "foundation")
-                foreach (var (kind, type) in ContentLeafKinds.Types)
+                foreach (var (kind, type) in SchemaCatalog.LeafKinds)
                     context.RegisterService<IRequirementEvaluator>("leaf_" + kind, new IdentityEvaluator(kind, type));
         }
 

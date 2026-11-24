@@ -13,7 +13,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:asatru",
+    "founds": {
+      "id": "foundation:asatru",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -34,7 +37,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:buddhism",
+    "founds": {
+      "id": "foundation:buddhism",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -55,7 +61,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:christianity",
+    "founds": {
+      "id": "foundation:christianity",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -76,7 +85,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:confucianism",
+    "founds": {
+      "id": "foundation:confucianism",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -97,7 +109,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:egypt_mythology",
+    "founds": {
+      "id": "foundation:egypt_mythology",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -118,7 +133,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:hellenism",
+    "founds": {
+      "id": "foundation:hellenism",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -139,7 +157,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:hinduism",
+    "founds": {
+      "id": "foundation:hinduism",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -160,7 +181,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:islam",
+    "founds": {
+      "id": "foundation:islam",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -181,7 +205,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:judaism",
+    "founds": {
+      "id": "foundation:judaism",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -202,7 +229,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:mesoamericanism",
+    "founds": {
+      "id": "foundation:mesoamericanism",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -223,7 +253,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:shinto",
+    "founds": {
+      "id": "foundation:shinto",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -244,7 +277,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:taoism",
+    "founds": {
+      "id": "foundation:taoism",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },
@@ -265,7 +301,10 @@
     "limits": {
       "world": 1
     },
-    "foundsReligion": "foundation:zoroastrianism",
+    "founds": {
+      "id": "foundation:zoroastrianism",
+      "kind": "religion"
+    },
     "flavors": {
       "religion": 10
     },

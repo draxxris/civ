@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>CultureLevel content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("culture-level")]
 public sealed class CultureLevelDef : GameContentDef
 {
     [ContentReference(typeof(GameSpeedDef), ReferencePart.Keys)]

@@ -183,11 +183,17 @@ fails if disambiguated IDs still collide. Neutral substitutions occur before low
 conversion.
 
 A class belongs to one module, but `IdMapping.RecordOwners` can give single records of a
-base class to a feature mod outright. Corporations owns every building that founds a
-corporation and every unit with a positive corporation spread. Those records take the
-owner's namespace (`corporations:corporation_1`, `corporations:executive_1`), and the
-owner emits every row about them into its own folder, other mods' attachments included
-(`Corporations/data/building.json`, `unit.json` and `building-great-people.json`). An
+base class to a feature mod outright. Corporations owns every building that founds or
+needs a corporation (the headquarters, Master Guilds and stores), every special building
+type only those buildings use, every unit with a positive corporation spread, and the
+corporations themselves. Those records take the owner's namespace
+(`corporations:corporation_1`, `corporations:corporation_mallwart_store`,
+`corporations:specialbuilding_corporate_store`, `corporations:executive_1`,
+`corporations:1`), and the owner emits every row about them into its own folder, other
+mods' attachments included (`Corporations/data/building.json`, `building-category.json`,
+`unit.json` and `building-great-people.json`). A base building that replaces a claimed one
+(the theatre and the Red Curtains Theater) loses that `ReplaceBuildings` key; the claimed
+row names the base building in `ReplacedBy` instead. An
 attachment a mod keeps about its own record shares that record's id. Other rows leave out
 map entries that name these records: great people's constructible buildings, and
 civilization unit overrides. A field mapping marked `owned` keeps only those entries, in
@@ -284,8 +290,8 @@ presence first, then checks reference types after all mods register.
 Religion emits 13 playable `ReligionDef` records with founding technologies,
 missionaries, commerce vectors, and related buildings. Religion references now use `religion:*`
 ids. Corporations likewise emits 36 playable `CorporationDef` records (21 corporations
-and 15 guilds, told apart by the special building type of their headquarters) beside the
-Foundation corporation identities the rest of the content names. Foundation reserves
+and 15 guilds, told apart by the special building type of their headquarters), the only
+records of a corporation: no base row names one. Foundation reserves
 victory identities for future rules. Their definitions have `Deferred = true` and no
 gameplay effects. Their evaluators fail closed. Prerequisites retain these identities
 instead of silently disappearing. A prerequisite on a building that founds a corporation

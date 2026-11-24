@@ -11,6 +11,7 @@ namespace Ariel.Content.Schema;
 /// module reads directly. A feature mod says what a civic means to it by attaching its own data
 /// (<see cref="ContentAttachment"/>), never through a field here.
 /// </remarks>
+[ContentLeafKind("civic")]
 public sealed class CivicDef : GameContentDef
 {
     /// <summary>Plain modifiers, in key then target order.</summary>

@@ -20,7 +20,7 @@ that output with the committed data so changes can be brought in piece-meal (see
 
 - Foundation: `YieldDef`, `CommerceDef`, `EraDef`, `GameSpeedDef`, `HandicapDef`,
   `WorldSizeDef`, `CultureLevelDef`, `SpecialistDef`, `RuleConstantsDef`,
-  `HexOverridesDef`, `GameOptionDef`, `ConditionDef`, `CorporationIdentityDef`, and
+  `HexOverridesDef`, `GameOptionDef`, `ConditionDef`, `ReligionIdentityDef`, and
   `VictoryIdentityDef`.
 - World: `TerrainDef`, `FeatureDef`, `BonusClassDef`, `BonusDef`, `ImprovementDef`,
   `RouteDef`, `BuildDef`, and `GoodyDef`.
@@ -39,7 +39,7 @@ that output with the committed data so changes can be brought in piece-meal (see
   `ReligionDef` with its `identity`, founding technology, missionary, spread factor,
   commerce vectors, and related building ids, and `CivicReligionDef` attached to civics
   (`data/civic-religion.json`). The mod also registers one founding wonder per
-  religion: a `BuildingDef` with `foundsReligion` set, from the hand-written
+  religion: a `BuildingDef` whose `founds` names the religion (kind `religion`), from the hand-written
   `data/founding-wonders.json`. The importer does not own that file.
 - ProjectsVictory: `ProjectDef` for production projects. It lives in the mod's published
   API (`Ariel.Mods.ProjectsVictory`, assembly `Ariel.Mods.ProjectsVictory.Api`); the mod's
@@ -77,10 +77,10 @@ into `ContentDb`, it scales `HandicapBarbariansDef.UnownedTilesPerBarbarianUnit`
 multiplier. The importer never writes `barbarian-rules.json` either.
 
 Foundation reserves `GameOptionDef` and `ConditionDef`, plus identity records
-`CorporationIdentityDef`, `ReligionIdentityDef` (`data/religion-identity.json`) and
-`VictoryIdentityDef`. Corporation and religion gameplay executes through
-`CorporationDef` and `ReligionDef` in their feature mods, victory gameplay through the
-Victory module's `VictoryDef`. Base content (buildings, units, leaders, the `religion` requirement leaf)
+`ReligionIdentityDef` (`data/religion-identity.json`) and `VictoryIdentityDef`. Religion
+gameplay executes through `ReligionDef` in its feature mod, victory gameplay through the
+Victory module's `VictoryDef`. A corporation has no base identity: no base row names one,
+and the Corporations mod's `CorporationDef` (`corporations:1`) is its only record. Base content (buildings, units, leaders, the `religion` requirement leaf)
 names a faith by its identity (`foundation:buddhism`); the Religion mod's `ReligionDef`
 has its own id (`religion:buddhism`, kept in saves) and names the identity it plays in
 `identity`. The importer emits both from one source record: a family a mod emits for
@@ -120,28 +120,35 @@ first time victory by id weighs every player's score, enabled or not.
 ### Corporation fields
 
 `CorporationDef` (imported, `data/corporation.json`, 36 rows: 21 corporations and 15
-guilds) links an `Identity` reference, its `Seat` (what the founding building is called:
+guilds) has its `Seat` (what the founding building is called:
 `headquarters` or `Master Guild`, from the special building type of the source
 headquarters) and prerequisite resources
 (`PrereqBonuses`, empty for the four guilds that consume none). Each corporation is
-founded by exactly one building whose `FoundsCorporation` names its identity, the
+founded by exactly one building whose `Founds` names it (`{"kind": "corporation", "id":
+"corporations:1"}`), the
 imported headquarters or, for a guild, the Master Guild (`Seat` names it in the
 corporations screen, the city panel, notices and the encyclopedia; the Guild Hall is a
 different, common building). That building's own requirements gate founding
 (its technology; for a guild also buildings of its trade across the empire) and its
 world limit is one. Once content freezes, the mod refuses a corporation without exactly
 one founding building, a founding building with a negative cost or no technology, any
-building or unit row that names an identity no `CorporationDef` has, and an executive
+building or unit row that names a corporation no `CorporationDef` defines (frozen
+reference validation reports it), and an executive
 that spreads one of the mod's corporations but that no city could train (a negative
 cost, or every way through its requirements needs a building nothing can build or a
 corporation the mod does not define).
 
-The founding buildings and the executives are the mod's own `BuildingDef` and `UnitDef`
-rows (`data/building.json`, `data/unit.json`, ids `corporations:corporation_*` and
+The founding buildings, the stores a branch opens, their special building types and
+the executives are the mod's own `BuildingDef`, `BuildingCategoryDef` and `UnitDef` rows
+(`data/building.json`, `data/building-category.json`, `data/unit.json`, ids
+`corporations:corporation_*`, `corporations:specialbuilding_*` and
 `corporations:*executive*`), imported like the base rows of their class. The importer
 gives a source record to a feature mod outright when a rule in `IdMapping.RecordOwners`
-claims it: a building with `FoundsCorporation`, or a unit with a positive
-`CorporationSpreads`. The claiming mod then emits every row about the record, including
+claims it: a building that founds or needs a corporation (`FoundsCorporation` or
+`PrereqCorporation`), a special building type only such buildings use, or a unit with a
+positive `CorporationSpreads`. A base building that replaces a claimed building (the
+theatre and the Red Curtains Theater) cannot name it in `ReplaceBuildings`; the claimed
+row lists the base building in `ReplacedBy` instead, which the rules read the same way. The claiming mod then emits every row about the record, including
 other mods' attachments (`data/building-great-people.json`). A row of any other mod
 leaves out a map entry that names the record, such as a great person's
 `ConstructibleBuildings` or a civilization's `UnitOverrides`. A mapping field marked
@@ -358,11 +365,14 @@ preserved for reference but are not authoritative JSON numbers.
 ## Prerequisites and classes
 
 `Requirements` retains separate `All` and `Any` composite groups. Negative prerequisites
-use `Not`. The 21 registered leaf kinds (`ContentLeafKinds`) retain their own typed
+use `Not`. Each definition type names the leaf kinds that refer to it with
+`[ContentLeafKind]`; the importer and reference validation collect them from the loaded
+schema assemblies, so a mod's API declares its own (the Corporations API's
+`CorporationDef` declares `corporation`). The registered kinds retain their own typed
 evaluators: `tech`, `bonus`, `feature`, `terrain`, `improvement`, `route`, `build`,
 `building`, `building-class`, `unit`, `unit-class`, `unit-combat`, `promotion`, `civic`,
-`era`, `culture-level`, `condition`, `game-option`, `religion`, `corporation`, and
-`victory`.
+`era`, `culture-level`, `condition`, `game-option`, `religion`, `victory` and, with the
+Corporations mod, `corporation`.
 
 Building-class leaves refer to the default building definition. Parameter 0 (or omitted)
 means a local city class requirement. Parameter 1 means an empire-wide count. The cities
@@ -372,7 +382,7 @@ parameter 2 means a vicinity resource (within the city's workable radius). Relig
 parameter 0 (or omitted) means city presence; parameters 1 and 2 mean state religion and
 holy city. Corporation parameter 0 (or omitted) means a branch in the city; parameter 2
 means the city is the corporation's headquarters. The importer writes a requirement for an
-imported headquarters building (one with `FoundsCorporation`) as that headquarters leaf,
+imported headquarters building (one whose `Founds` names a corporation) as that headquarters leaf,
 since the imported headquarters cannot be built: executives are trained in the city that
 founded their corporation. Unit building prerequisites can contain technology or era alternatives
 (`TechOverride`, `EraOverride`) that bypass the building requirement.
@@ -434,10 +444,11 @@ Each mod owns evaluators for its leaf kinds:
 - World evaluates `bonus` connected resource counts through `IResourceNetwork`,
   delegating vicinity resource checks (`Param == 2`) to `ICityRequirementService` in
   Cities.
-- Foundation evaluates `game-option`, `corporation` identity (branch or headquarters),
-  `victory` identity, and
+- Foundation evaluates `game-option`, `victory` identity, and
   `religion` identity (presence, state religion, and holy city), asking the
   `ICityReligions` seam the Religion mod answers; without the mod the leaf fails.
+- Corporations evaluates `corporation` (a branch in the city, or with parameter 2 its
+  headquarters); without the mod no row names the kind.
 
 Feature services evaluate diplomacy permissions, project prerequisites, corporation
 rules, and event choices where runtime state exists. Unsupported predicates fail closed

@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>Era content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("era")]
 public sealed class EraDef : GameContentDef
 {
     public bool NoGoodies { get; init; } = false;

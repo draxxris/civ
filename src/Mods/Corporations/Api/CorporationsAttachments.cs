@@ -8,13 +8,13 @@ namespace Ariel.Mods.Corporations;
 // docs/DESIGN.md). A definition without a row means nothing to corporations: read it as None, whose values are all
 // zero or empty.
 
-/// <summary>What a unit means to corporations: the corporations, by identity, it can spread as an executive, each with
+/// <summary>What a unit means to corporations: the corporations it can spread as an executive, each with
 /// its base percent chance. Executives are not trained with Realistic Guilds/Corporations (<see cref="CorporationMode"/>).</summary>
 public sealed class UnitCorporationsDef : ContentAttachment<UnitDef>, Ariel.Game.IDescribedContent
 {
     /// <summary>The row of a unit nothing attached to.</summary>
     public static readonly UnitCorporationsDef None = new();
-    [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Keys)]
+    [ContentReference(typeof(CorporationDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> CorporationSpreads { get; init; } = ImmutableDictionary<string, int>.Empty;
 
     public IEnumerable<string> Describe(ContentDb content)

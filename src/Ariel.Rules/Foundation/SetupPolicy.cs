@@ -23,7 +23,6 @@ internal sealed class SetupPolicy : ISetupPolicy
         string[] implemented =
         [
             "foundation:gameoption_assimilation",
-            "foundation:gameoption_realistic_corporations",
             "foundation:gameoption_realistic_culture_spread",
             "foundation:gameoption_no_revolution",
         ];

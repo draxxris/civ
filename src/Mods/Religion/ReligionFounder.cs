@@ -4,20 +4,27 @@ using Ariel.Game;
 
 namespace Ariel.Mods.Religion;
 
-/// <summary>A religion is founded by completing its founding wonder (<see cref="BuildingDef.FoundsReligion"/>): the
+/// <summary>A religion is founded by completing its founding wonder (<see cref="BuildingDef.Founds"/> names the
+/// religion's identity, <see cref="Kind"/>): the
 /// completing city becomes the holy city and its owner receives the religion's free missionaries. Cities offers the
 /// wonder once its technology is known and refuses it to barbarians; this founder refuses it once the religion is
 /// founded.</summary>
 internal sealed class ReligionFounder : IBuildingFounder
 {
-    public bool Claims(ContentDb content, BuildingDef building) => ReligionIdentities.Religion(content, building.FoundsReligion) is not null;
+    /// <summary>The leaf kind of a religion reference, declared by <see cref="ReligionIdentityDef"/>.</summary>
+    internal const string Kind = "religion";
+
+    /// <summary>The religion identity a building founds, or null when it founds no religion.</summary>
+    internal static string? Founded(BuildingDef building) => building.Founds is { Kind: Kind } founds ? founds.Id : null;
+
+    public bool Claims(ContentDb content, BuildingDef building) => ReligionIdentities.Religion(content, Founded(building)) is not null;
 
     public string? Refuse(Simulation sim, City city, BuildingDef building) =>
-        ReligionData.Game(sim).Founded.ContainsKey(ReligionIdentities.Religion(sim.Content, building.FoundsReligion)!) ? "Religion is already founded" : null;
+        ReligionData.Game(sim).Founded.ContainsKey(ReligionIdentities.Religion(sim.Content, Founded(building))!) ? "Religion is already founded" : null;
 
     public void Found(Simulation sim, City city, BuildingDef building)
     {
-        var id = ReligionIdentities.Religion(sim.Content, building.FoundsReligion)!;
+        var id = ReligionIdentities.Religion(sim.Content, Founded(building))!;
         var state = ReligionData.EditGame(sim);
         // The world limit and building validation keep a second copy from completing; a scenario may still pre-found.
         if (state.Founded.ContainsKey(id)) return;

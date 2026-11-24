@@ -129,9 +129,8 @@ public sealed class CorporationRulesTests
     {
         var sim = P6RulesScenario.Create();
         var corporations = sim.Content.Get<CorporationDef>().All;
-        // Every corporation identity the base game names has its rules: 21 corporations and 15 guilds.
-        Assert.Equal(sim.Content.Get<Ariel.Content.Schema.CorporationIdentityDef>().All.Select(i => i.Id).Order(),
-            corporations.Select(c => c.Identity).Order());
+        // 21 corporations and 15 guilds, all this mod's own.
+        Assert.All(corporations, c => Assert.StartsWith("corporations:", c.Id));
         Assert.Equal(21, corporations.Count(c => c.Seat == "headquarters"));
         Assert.Equal(15, corporations.Count(c => c.Seat == "Master Guild"));
         foreach (var corporation in corporations)
@@ -412,12 +411,65 @@ public sealed class CorporationRulesTests
         Assert.Null(sim.State.FindUnit(executive.Id));
     }
     [Fact]
+    public void Without_realistic_corporations_a_built_headquarters_and_a_trained_executive_open_the_store_only_where_a_branch_is()
+    {
+        // The whole manual path, through production and commands only: build the headquarters, train an executive
+        // there, spread into a foreign city, then build the corporation's store where a branch stands and nowhere else.
+        var sim = P6RulesScenario.Create(realistic: false); var hq = sim.State.Cities[0]; var plain = sim.State.Cities[1]; var foreign = sim.State.Cities[2];
+        Assert.False(CorporationMode.Realistic(sim));
+        const string Executive = "corporations:executive_1", Store = "corporations:cereal_mills_factory";
+        sim.TeamOf(0).Techs.Add("research:organic_chemistry");
+        foreach (var city in sim.State.Cities) P6RulesScenario.Resource(sim, city, "world:corn");
+        Assert.Contains(BranchRefusal, Refusals(sim, hq, Store));
+
+        QueueFinished(sim, hq, GameFactory.Headquarters(sim, Cereal));
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+        Assert.Equal(hq.Id, Corps(sim).Headquarters(sim, Cereal));
+        Assert.Contains(sim.Events.Published.OfType<BuildingCompleted>(), e => e.City == hq.Id && e.Building == GameFactory.Headquarters(sim, Cereal));
+
+        P6RulesScenario.Apply(sim, new SetCityProductionCommand { Player = 0, CityId = hq.Id, Kind = "cities:unit", ContentId = Executive });
+        hq.ProductionQueue[0] = hq.ProductionQueue[0] with { Progress = Production(sim).Calculate(sim, hq.Id, "cities:unit", Executive).Cost };
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+        var executive = Assert.Single(sim.State.Units, u => u.Owner == 0 && u.Type == Executive);
+        sim.State.MoveUnit(executive.Id, foreign.Position); executive.MovesLeft = 60;
+        P6RulesScenario.Apply(sim, new PerformMissionCommand { Player = 0, Unit = executive.Id, Mission = CorporationMissions.Spread, Subject = Cereal });
+        Assert.Contains(Cereal, Corps(sim).Present(sim, foreign.Id));
+
+        // The store is the mod's building, gated by the mod's leaf: a branch city may build it, a city without one not.
+        Assert.DoesNotContain(BranchRefusal, Refusals(sim, hq, Store));
+        Assert.DoesNotContain(BranchRefusal, Refusals(sim, foreign, Store));
+        Assert.Contains(BranchRefusal, Refusals(sim, plain, Store));
+        QueueFinished(sim, hq, Store);
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+        Assert.Contains(Store, hq.Buildings);
+    }
+    [Fact]
+    public void A_base_theatre_replaces_the_corporations_theater_store_from_the_stores_own_row()
+    {
+        // The base theatre cannot name the mod's store, so the store names the theatre (ReplacedBy): the replacement
+        // works as the source's theatre row said, without the base row knowing the mod.
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        const string Theater = "corporations:corporation_red_theater";
+        var store = sim.Content.Get<Ariel.Content.Schema.BuildingDef>(Theater);
+        var theatre = sim.Content.Get<Ariel.Content.Schema.BuildingDef>("cities:theatre");
+        Assert.DoesNotContain(theatre.ReplaceBuildings.Keys, k => k.StartsWith("corporations:", StringComparison.Ordinal));
+        Assert.Contains("cities:theatre", store.ReplacedBy);
+        Assert.True(CityBuildingRules.Replaces(theatre, store));
+        Assert.False(CityBuildingRules.Replaces(store, theatre));
+        Assert.Equal(["cities:theatre"], CityBuildingRules.Active(sim, city, ["cities:theatre", Theater]).Select(b => b.Id));
+        city.Buildings.Add("cities:theatre");
+        Assert.Contains("Replaced by an upgraded building", Refusals(sim, city, Theater));
+    }
+    [Fact]
     public void An_executive_whose_training_needs_a_building_no_city_can_build_fails_the_load()
     {
         // The shape the executives had while the imported headquarters were not buildable: no city could train one.
         var error = Assert.Throws<InvalidDataException>(() => P6RulesScenario.With(new UntrainableExecutiveMod()));
-        Assert.Contains("corporations:executive_1: spreads foundation:1 but can never be trained: it needs building 'corporations:corporation_1'", error.Message);
-        Assert.Contains("corporations:corporation_1: founds foundation:1 but has a negative cost, so no city can build it", error.Message);
+        Assert.Contains("corporations:executive_1: spreads corporations:1 but can never be trained: it needs building 'corporations:corporation_1'", error.Message);
+        Assert.Contains("corporations:corporation_1: founds corporations:1 but has a negative cost, so no city can build it", error.Message);
     }
     private sealed class UntrainableExecutiveMod : IMod
     {
@@ -426,33 +478,32 @@ public sealed class CorporationRulesTests
             // The headquarters as the source left it, for a great person only.
             context.Content<Ariel.Content.Schema.BuildingDef>().Override(new()
             {
-                Id = "corporations:corporation_1", Name = "Cereal Mills", DefaultBuilding = "corporations:corporation_1", Cost = -1, FoundsCorporation = "foundation:1",
+                Id = "corporations:corporation_1", Name = "Cereal Mills", DefaultBuilding = "corporations:corporation_1", Cost = -1, Founds = new("corporation", "corporations:1"),
             });
             context.Content<Ariel.Content.Schema.UnitDef>().Override(new()
             {
                 Id = "corporations:executive_1", Name = "Executive", DefaultUnit = "corporations:executive_1", Cost = 100,
-                Requirements = new Requirement.All([new Requirement.Leaf("building", "corporations:corporation_1"), new Requirement.Leaf("corporation", "foundation:1")]),
+                Requirements = new Requirement.All([new Requirement.Leaf("building", "corporations:corporation_1"), new Requirement.Leaf("corporation", "corporations:1")]),
             });
         }
     }
     [Fact]
-    public void A_corporation_identity_with_no_rules_fails_the_load_where_a_building_or_unit_names_it()
+    public void A_corporation_no_rules_define_fails_the_load_where_a_building_or_unit_names_it()
     {
-        // An identity only the base game knows would leave its headquarters and executives inert, as 29 were before
-        // the corporation rules were imported.
+        // A corporation without rules would leave its headquarters and executives inert, as 29 were before the
+        // corporation rules were imported. The mod's leaf kind resolves what a building founds and an executive spreads.
         var error = Assert.Throws<InvalidDataException>(() => P6RulesScenario.With(new OrphanCorporationMod()));
-        Assert.Contains("probe:orphan_hq: founds 'probe:orphan', which no corporation of this mod has as its identity", error.Message);
-        Assert.Contains("military:warrior: spreads 'probe:orphan', which no corporation of this mod has as its identity", error.Message);
+        Assert.Contains("probe:orphan_hq.Founds: 'probe:orphan' does not resolve to Ariel.Mods.Corporations.CorporationDef", error.Message);
+        Assert.Contains("probe:orphan_spread.CorporationSpreads: 'probe:orphan' does not resolve to Ariel.Mods.Corporations.CorporationDef", error.Message);
     }
     private sealed class OrphanCorporationMod : IMod
     {
         public void Register(IModContext context)
         {
-            context.Content<Ariel.Content.Schema.CorporationIdentityDef>().Register(new() { Id = "probe:orphan", Name = "Orphan" });
             context.Content<Ariel.Content.Schema.BuildingDef>().Register(new()
             {
                 Id = "probe:orphan_hq", Name = "Orphan Headquarters", DefaultBuilding = "probe:orphan_hq", Cost = 100,
-                FoundsCorporation = "probe:orphan",
+                Founds = new("corporation", "probe:orphan"),
             });
             context.Content<UnitCorporationsDef>().Register(new()
             {
@@ -469,18 +520,18 @@ public sealed class CorporationRulesTests
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
         var requirements = sim.Content.Requirements;
-        string? Explain(int? param) => requirements.Evaluate(new Requirement.Leaf("corporation", "foundation:1", Param: param),
+        string? Explain(int? param) => requirements.Evaluate(new Requirement.Leaf("corporation", "corporations:1", Param: param),
             new RequirementContext(sim, 0, city)).Failures.Single().Explanation;
         Assert.Equal(BranchRefusal, Explain(null));
         Assert.Equal(BranchRefusal, Explain(0));
         Assert.Equal(HeadquartersRefusal, Explain(2));
         // A parameter the leaf does not define keeps the generic reason.
-        Assert.Equal("Required corporation: foundation:1", Explain(1));
-        Assert.Equal("the headquarters of Cereal Mills", requirements.Describe(new("corporation", "foundation:1", Param: 2), sim.Content));
+        Assert.Equal("Required corporation: corporations:1", Explain(1));
+        Assert.Equal("the headquarters of Cereal Mills", requirements.Describe(new("corporation", "corporations:1", Param: 2), sim.Content));
         // A guild's seat is its Master Guild, named by its founding building, never the common Guild Hall; its
         // branches read as a corporation's do.
-        Assert.Equal("the Masons Master Guild", requirements.Describe(new("corporation", "foundation:masonguild", Param: 2), sim.Content));
-        Assert.Equal("a branch of Masons Guild", requirements.Describe(new("corporation", "foundation:masonguild"), sim.Content));
+        Assert.Equal("the Masons Master Guild", requirements.Describe(new("corporation", "corporations:masonguild", Param: 2), sim.Content));
+        Assert.Equal("a branch of Masons Guild", requirements.Describe(new("corporation", "corporations:masonguild"), sim.Content));
 
         // The pedia lists the same phrases among an executive's prerequisites.
         var entry = new Ariel.Client.GameSession(sim).Pedia.Find("corporations:executive_1")!;
@@ -505,9 +556,9 @@ public sealed class CorporationRulesTests
         var production = P6RulesScenario.Service<ICityProductionService>(sim);
         static bool CorporationFailure(RequirementResult result) =>
             result.Failures.Any(f => f.Leaf?.Kind == "corporation");
-        Assert.True(CorporationFailure(production.Validate(sim, hq.Id, "cities:building", "cities:cereal_mills_factory")));
+        Assert.True(CorporationFailure(production.Validate(sim, hq.Id, "cities:building", "corporations:cereal_mills_factory")));
         Found(sim, hq);
-        Assert.False(CorporationFailure(production.Validate(sim, hq.Id, "cities:building", "cities:cereal_mills_factory")));
+        Assert.False(CorporationFailure(production.Validate(sim, hq.Id, "cities:building", "corporations:cereal_mills_factory")));
     }
     [Fact]
     public void Competing_branches_are_displaced_but_headquarters_are_protected()

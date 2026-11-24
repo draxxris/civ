@@ -8,7 +8,7 @@ namespace Ariel.Rules.Cities;
 internal static class BuildingFounding
 {
     /// <summary>Whether the building names something it founds, whether or not a loaded feature claims it.</summary>
-    internal static bool NamesFounding(S.BuildingDef building) => building.FoundsReligion is not null || building.FoundsCorporation is not null;
+    internal static bool NamesFounding(S.BuildingDef building) => building.Founds is not null;
 
     /// <summary>The first registered founder that claims the building, or null.</summary>
     internal static IBuildingFounder? Founder(Simulation sim, S.BuildingDef building)

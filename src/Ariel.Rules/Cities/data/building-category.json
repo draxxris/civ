@@ -50,48 +50,6 @@
     "unsupported": []
   },
   {
-    "era": "foundation:era_industrial",
-    "help": "",
-    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,16",
-    "id": "cities:specialbuilding_corporate_store",
-    "name": "Corporation Store",
-    "pedia": "",
-    "requirements": {
-      "all": [
-        {
-          "all": [
-            "research:corporation"
-          ]
-        }
-      ]
-    },
-    "strategy": "",
-    "unsupported": [
-      "bValid"
-    ]
-  },
-  {
-    "era": "foundation:era_industrial",
-    "help": "",
-    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,15",
-    "id": "cities:specialbuilding_corporation_hq",
-    "name": "Corporation Headquarters",
-    "pedia": "",
-    "requirements": {
-      "all": [
-        {
-          "all": [
-            "research:corporation"
-          ]
-        }
-      ]
-    },
-    "strategy": "",
-    "unsupported": [
-      "bValid"
-    ]
-  },
-  {
     "era": null,
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/and_building_atlas_2.dds,3,7",
@@ -123,28 +81,6 @@
     "requirements": null,
     "strategy": "",
     "unsupported": []
-  },
-  {
-    "era": "foundation:era_medieval",
-    "help": "",
-    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,6,6",
-    "id": "cities:specialbuilding_guild_hq",
-    "name": "Guild Headquarters",
-    "pedia": "",
-    "requirements": {
-      "all": [
-        {
-          "all": [
-            "research:guilds"
-          ]
-        }
-      ]
-    },
-    "strategy": "",
-    "unsupported": [
-      "ObsoleteTech",
-      "bValid"
-    ]
   },
   {
     "era": "foundation:era_medieval",

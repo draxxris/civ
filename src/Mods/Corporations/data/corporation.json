@@ -27,7 +27,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,1,6",
     "id": "corporations:1",
-    "identity": "foundation:1",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Cereal Mills",
@@ -88,7 +87,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,2,6",
     "id": "corporations:2",
-    "identity": "foundation:2",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Sid\u0027s Sushi Co",
@@ -151,7 +149,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,3,6",
     "id": "corporations:3",
-    "identity": "foundation:3",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Standard Ethanol",
@@ -213,7 +210,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,4,6",
     "id": "corporations:4",
-    "identity": "foundation:4",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Creative Constructions",
@@ -276,7 +272,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,5,6",
     "id": "corporations:5",
-    "identity": "foundation:5",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Mining Inc",
@@ -340,7 +335,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,6,6",
     "id": "corporations:6",
-    "identity": "foundation:6",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Aluminum Co",
@@ -400,7 +394,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,7,6",
     "id": "corporations:7",
-    "identity": "foundation:7",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Civilized Jewelers Inc",
@@ -462,7 +455,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,8",
     "id": "corporations:adventure",
-    "identity": "foundation:adventure",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Adventure Tours",
@@ -513,10 +505,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:artistguild",
-      "foundation:clerksguild",
-      "foundation:drapersguild",
-      "foundation:equestguild"
+      "corporations:artistguild",
+      "corporations:clerksguild",
+      "corporations:drapersguild",
+      "corporations:equestguild"
     ],
     "era": null,
     "foundingBuildingClasses": {
@@ -533,7 +525,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,1",
     "id": "corporations:apotheguild",
-    "identity": "foundation:apotheguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Apothecaries Guild",
@@ -577,10 +568,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:apotheguild",
-      "foundation:clerksguild",
-      "foundation:drapersguild",
-      "foundation:equestguild"
+      "corporations:apotheguild",
+      "corporations:clerksguild",
+      "corporations:drapersguild",
+      "corporations:equestguild"
     ],
     "era": null,
     "foundingBuildingClasses": {
@@ -597,7 +588,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,4,1",
     "id": "corporations:artistguild",
-    "identity": "foundation:artistguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Artists Guild",
@@ -641,10 +631,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:butcherguild",
-      "foundation:fishmonguild",
-      "foundation:grocerguild",
-      "foundation:mercerguild"
+      "corporations:butcherguild",
+      "corporations:fishmonguild",
+      "corporations:grocerguild",
+      "corporations:mercerguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -659,7 +649,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,1",
     "id": "corporations:bakerguild",
-    "identity": "foundation:bakerguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Bakers Guild",
@@ -708,10 +697,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:carpenterguild",
-      "foundation:glassguild",
-      "foundation:goldsmguild",
-      "foundation:masonguild"
+      "corporations:carpenterguild",
+      "corporations:glassguild",
+      "corporations:goldsmguild",
+      "corporations:masonguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -726,7 +715,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,2,2",
     "id": "corporations:blacksmguild",
-    "identity": "foundation:blacksmguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Blacksmiths Guild",
@@ -786,7 +774,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,6,9",
     "id": "corporations:burgerworld",
-    "identity": "foundation:burgerworld",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Burgerworld",
@@ -836,10 +823,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:bakerguild",
-      "foundation:fishmonguild",
-      "foundation:grocerguild",
-      "foundation:mercerguild"
+      "corporations:bakerguild",
+      "corporations:fishmonguild",
+      "corporations:grocerguild",
+      "corporations:mercerguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -854,7 +841,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,2",
     "id": "corporations:butcherguild",
-    "identity": "foundation:butcherguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Butchers Guild",
@@ -903,10 +889,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:blacksmguild",
-      "foundation:glassguild",
-      "foundation:goldsmguild",
-      "foundation:masonguild"
+      "corporations:blacksmguild",
+      "corporations:glassguild",
+      "corporations:goldsmguild",
+      "corporations:masonguild"
     ],
     "era": null,
     "foundingBuildingClasses": {
@@ -923,7 +909,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,2",
     "id": "corporations:carpenterguild",
-    "identity": "foundation:carpenterguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Carpenters Guild",
@@ -967,10 +952,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:apotheguild",
-      "foundation:artistguild",
-      "foundation:drapersguild",
-      "foundation:equestguild"
+      "corporations:apotheguild",
+      "corporations:artistguild",
+      "corporations:drapersguild",
+      "corporations:equestguild"
     ],
     "era": null,
     "foundingBuildingClasses": {
@@ -987,7 +972,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,3",
     "id": "corporations:clerksguild",
-    "identity": "foundation:clerksguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Clerks Guild",
@@ -1031,10 +1015,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:apotheguild",
-      "foundation:artistguild",
-      "foundation:clerksguild",
-      "foundation:equestguild"
+      "corporations:apotheguild",
+      "corporations:artistguild",
+      "corporations:clerksguild",
+      "corporations:equestguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -1049,7 +1033,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,6,3",
     "id": "corporations:drapersguild",
-    "identity": "foundation:drapersguild",
     "maintenanceHundredths": 45,
     "militaryProductionPercent": 0,
     "name": "Drapers Guild",
@@ -1112,7 +1095,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,11",
     "id": "corporations:empcloth",
-    "identity": "foundation:empcloth",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Emperors Clothing",
@@ -1162,10 +1144,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:apotheguild",
-      "foundation:artistguild",
-      "foundation:clerksguild",
-      "foundation:drapersguild"
+      "corporations:apotheguild",
+      "corporations:artistguild",
+      "corporations:clerksguild",
+      "corporations:drapersguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -1180,7 +1162,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,4",
     "id": "corporations:equestguild",
-    "identity": "foundation:equestguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Equestrians Guild",
@@ -1240,7 +1221,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,10",
     "id": "corporations:ewtrade",
-    "identity": "foundation:ewtrade",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "East West Traders",
@@ -1303,7 +1283,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,11",
     "id": "corporations:fashion",
-    "identity": "foundation:fashion",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Fashion House",
@@ -1353,10 +1332,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:bakerguild",
-      "foundation:butcherguild",
-      "foundation:grocerguild",
-      "foundation:mercerguild"
+      "corporations:bakerguild",
+      "corporations:butcherguild",
+      "corporations:grocerguild",
+      "corporations:mercerguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -1371,7 +1350,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,4,4",
     "id": "corporations:fishmonguild",
-    "identity": "foundation:fishmonguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Fishmongers Guild",
@@ -1421,10 +1399,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:blacksmguild",
-      "foundation:carpenterguild",
-      "foundation:goldsmguild",
-      "foundation:masonguild"
+      "corporations:blacksmguild",
+      "corporations:carpenterguild",
+      "corporations:goldsmguild",
+      "corporations:masonguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -1439,7 +1417,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,4",
     "id": "corporations:glassguild",
-    "identity": "foundation:glassguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Glassblowers Guild",
@@ -1486,10 +1463,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:blacksmguild",
-      "foundation:carpenterguild",
-      "foundation:glassguild",
-      "foundation:masonguild"
+      "corporations:blacksmguild",
+      "corporations:carpenterguild",
+      "corporations:glassguild",
+      "corporations:masonguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -1504,7 +1481,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,2,5",
     "id": "corporations:goldsmguild",
-    "identity": "foundation:goldsmguild",
     "maintenanceHundredths": 50,
     "militaryProductionPercent": 0,
     "name": "Goldsmiths Guild",
@@ -1553,10 +1529,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:bakerguild",
-      "foundation:butcherguild",
-      "foundation:fishmonguild",
-      "foundation:mercerguild"
+      "corporations:bakerguild",
+      "corporations:butcherguild",
+      "corporations:fishmonguild",
+      "corporations:mercerguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -1571,7 +1547,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,5",
     "id": "corporations:grocerguild",
-    "identity": "foundation:grocerguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Grocers Guild",
@@ -1634,7 +1609,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,12",
     "id": "corporations:mallwart",
-    "identity": "foundation:mallwart",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "MallWart",
@@ -1697,7 +1671,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,12",
     "id": "corporations:mapster",
-    "identity": "foundation:mapster",
     "maintenanceHundredths": 50,
     "militaryProductionPercent": 0,
     "name": "Mapster",
@@ -1745,10 +1718,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:blacksmguild",
-      "foundation:carpenterguild",
-      "foundation:glassguild",
-      "foundation:goldsmguild"
+      "corporations:blacksmguild",
+      "corporations:carpenterguild",
+      "corporations:glassguild",
+      "corporations:goldsmguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -1763,7 +1736,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,5",
     "id": "corporations:masonguild",
-    "identity": "foundation:masonguild",
     "maintenanceHundredths": 35,
     "militaryProductionPercent": 0,
     "name": "Masons Guild",
@@ -1809,10 +1781,10 @@
       "research": 0
     },
     "competingCorporations": [
-      "foundation:bakerguild",
-      "foundation:butcherguild",
-      "foundation:fishmonguild",
-      "foundation:grocerguild"
+      "corporations:bakerguild",
+      "corporations:butcherguild",
+      "corporations:fishmonguild",
+      "corporations:grocerguild"
     ],
     "era": null,
     "foundingBuildingClasses": {},
@@ -1827,7 +1799,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,6",
     "id": "corporations:mercerguild",
-    "identity": "foundation:mercerguild",
     "maintenanceHundredths": 55,
     "militaryProductionPercent": 0,
     "name": "Mercers Guild",
@@ -1890,7 +1861,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,12",
     "id": "corporations:milehigh",
-    "identity": "foundation:milehigh",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "MileHigh Travels",
@@ -1954,7 +1924,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,13",
     "id": "corporations:mobby",
-    "identity": "foundation:mobby",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Mobby Meats",
@@ -2017,7 +1986,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,14",
     "id": "corporations:moonbean",
-    "identity": "foundation:moonbean",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "MoonBean Coffee",
@@ -2079,7 +2047,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,14",
     "id": "corporations:red",
-    "identity": "foundation:red",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Red Curtains",
@@ -2140,7 +2107,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,15",
     "id": "corporations:safari",
-    "identity": "foundation:safari",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Safari Hunters",
@@ -2203,7 +2169,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,15",
     "id": "corporations:ultsoldier",
-    "identity": "foundation:ultsoldier",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 15,
     "name": "Ultimate Soldiers",
@@ -2264,7 +2229,6 @@
     "help": "",
     "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,16",
     "id": "corporations:wonka",
-    "identity": "foundation:wonka",
     "maintenanceHundredths": 100,
     "militaryProductionPercent": 0,
     "name": "Wonka Confectioneries",
