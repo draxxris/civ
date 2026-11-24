@@ -42,6 +42,9 @@ internal sealed class GlobalWarmingSystem : ITurnSystem
         int bonusWeight = Raw(sim, "GLOBAL_WARMING_BONUS_WEIGHT", 5);
         int powerWeight = Raw(sim, "GLOBAL_WARMING_POWER_WEIGHT", 5);
         Int128 points = 0;
+        // Nothing is written until every city is weighed, so one read span lets the cities share what they derive:
+        // their owners' ledgers, building grants and resource networks.
+        using var span = sim.OpenReadSpan();
         foreach (var city in sim.State.Cities.OrderBy(c => c.Owner).ThenBy(c => c.Id))
         {
             var health = wellbeing.EnvironmentalUnhealth(sim, city.Id);

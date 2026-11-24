@@ -34,7 +34,9 @@ internal sealed class CityWellbeingService : ICityWellbeingService
         if (CityData.Effect(effects, "no_unhappiness") > 0) unhappy = 0;
         return new(happy, unhappy, Math.Clamp(unhappy - happy, 0, city.Population), healthy, unhealthy, Math.Max(0, unhealthy - healthy), ledger);
     }
-    public CityEnvironmentalUnhealth EnvironmentalUnhealth(Simulation sim, int cityId)
+    public CityEnvironmentalUnhealth EnvironmentalUnhealth(Simulation sim, int cityId) =>
+        CityReadScope.Run(sim, _ => EnvironmentalUnhealthScoped(sim, cityId));
+    private static CityEnvironmentalUnhealth EnvironmentalUnhealthScoped(Simulation sim, int cityId)
     {
         var city = sim.State.CityById(cityId);
         var effects = CityData.Effects(sim, city);
