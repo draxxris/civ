@@ -1431,12 +1431,8 @@ a game without it saves no religion string.
   `religion:gameoption_no_inquisitions`, `religion:gameoption_limited_religions`,
   `religion:gameoption_pick_religion`; `religion:gameoption_multiple_religion_spread` and
   `religion:gameoption_no_natural_spread` are offered by its setup policy alone), the
-  disabled placeholder technology
-  `religion:religion` and the deferred victory `religion:victory_religious`. Nothing names
-  the placeholder technology, but the research timeline counts every shipped technology,
-  disabled ones too, per era (`ResearchTimeline`), so removing it would shift research
-  costs by a few percent, as a game without the mod already does. Open: whether the timeline should skip
-  disabled technologies, and then whether the row can go.
+  deferred victory `religion:victory_religious`. The source's placeholder technology for religions
+  (`TECH_RELIGION`: no prerequisites, no tree position, no effect) is not shipped, and the importer drops it.
   Its civic category `religion:civicoption_religion` (shown as "Religion") and its nine
   civics, `religion:folklore` (the default) to `religion:free_church` (Reformation), are
   its own `CivicOptionDef` and `CivicDef` rows, registered like any mod's civics; so are

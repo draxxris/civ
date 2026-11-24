@@ -46,13 +46,12 @@ public sealed class ReligionMod : IPreparableMod
     /// shared and other faiths.</summary>
     private static readonly ModJsonFile<TraitReligionDef[]> Traits = new("data/trait-religion.json");
     private static readonly ModJsonFile<LeaderReligionDef[]> Leaders = new("data/leader-religion.json");
-    /// <summary>Religion's setup switches, its placeholder technology and its (deferred) victory.</summary>
+    /// <summary>Religion's setup switches and its (deferred) victory.</summary>
     private static readonly ModJsonFile<GameOptionDef[]> Options = new("data/game-option.json");
-    private static readonly ModJsonFile<TechDef[]> Techs = new("data/tech.json");
     private static readonly ModJsonFile<VictoryIdentityDef[]> Victories = new("data/victory-identity.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
         [Religions, Conditions, CivicOptions, OwnCivics, OwnBuildings, OwnUnits, OwnPromotions, FoundingWonders, Memories, Civics, Buildings, Units, Constants, GreatPeople, BuildingGrants,
-         UnitGrants, Civilizations, Traits, Leaders, Options, Techs, Victories];
+         UnitGrants, Civilizations, Traits, Leaders, Options, Victories];
 
     public void Register(IModContext context)
     {
@@ -76,7 +75,6 @@ public sealed class ReligionMod : IPreparableMod
         ContentRegistration.Load(context, Traits);
         ContentRegistration.Load(context, Leaders);
         ContentRegistration.Load(context, Options);
-        ContentRegistration.Load(context, Techs);
         ContentRegistration.Load(context, Victories);
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);

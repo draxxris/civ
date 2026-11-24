@@ -68,9 +68,8 @@ public static class IdMapping
         new("UnitInfo", "religion", (r, _) => Religious(r, "PrereqReligion", "StateReligion", "HolyCity", "bInquisitor")
             || r.Node.Child("ReligionSpreads")?.Children.Any(n => n.Children.Length > 1 && ContentMapper.Integer(n.Children[1].Text) > 0) == true),
         new("PromotionInfo", "religion", (r, _) => Religious(r, "PrereqReligion", "StateReligionPrereq")),
-        // So are religion's setup options, the placeholder religion technology and the religious victory.
+        // So are religion's setup options and the religious victory.
         new("GameOptionInfo", "religion", (r, _) => r.Type.Contains("RELIGION", StringComparison.Ordinal) || r.Type.Contains("INQUISITION", StringComparison.Ordinal)),
-        new("TechInfo", "religion", (r, _) => r.Type == "TECH_RELIGION"),
         new("VictoryInfo", "religion", (r, _) => r.Type == "VICTORY_RELIGIOUS"),
         // And the religion civic category with its civics, Folklore to Reformation, and the buildings that need one of
         // them (the community center, the idol shrine, the propaganda office, the universal church).
@@ -128,6 +127,14 @@ public static class IdMapping
     private static readonly Regex EspionageConstant = new(@"(^|_)(ESPIONAGE|SPY)_", RegexOptions.CultureInvariant);
     private static readonly Regex ReligionConstant = new(@"RELIGION|HOLY_?CITY|INQUISIT|CONVERSION", RegexOptions.CultureInvariant);
     /// <summary>The mod that owns a source define, or null for the base game's.</summary>
+    /// <summary>Mapped records the game does not ship, by the id they would get, with the reason. The source's
+    /// placeholder technology for religions has no prerequisites, no tree position and no effect, and the research
+    /// timeline counts every technology, so a row that does nothing would still shift research pacing.</summary>
+    public static readonly IReadOnlyDictionary<string, string> Unshipped = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["research:religion"] = "A placeholder technology with no effect, which the research timeline would still count",
+    };
+
     public static string? ConstantOwner(string define) =>
         EspionageConstant.IsMatch(define) ? "espionage" : ReligionConstant.IsMatch(define) ? "religion" : null;
     /// <summary>A building that founds a corporation, or that a corporation's branch in the city lets it build.</summary>

@@ -112,15 +112,20 @@ public static class ContentEmission
 
     private static (List<MappedDefinition> Kept, List<DroppedContent> Dropped) Filter(List<MappedDefinition> definitions, string? maximumEra, string[] eraOrder)
     {
-        if (maximumEra is null or "all") return (definitions, []);
-        if (!maximumEra.Contains(':', StringComparison.Ordinal)) maximumEra = "foundation:era_" + maximumEra;
-        // Use the effective source's enum order, not alphabetically sorted definition ids.
-        var ranks = eraOrder.Select((id, rank) => (id, rank)).ToDictionary(e => e.id, e => e.rank, StringComparer.Ordinal);
-        if (!ranks.TryGetValue(maximumEra, out var maximum)) throw new ArgumentException("Unknown maximum era id: " + maximumEra);
         var removed = new SortedDictionary<string, string>(StringComparer.Ordinal);
         foreach (var definition in definitions)
-            if ((definition.Definition as GameContentDef)?.Era is { } era && ranks.TryGetValue(era, out var rank) && rank > maximum)
-                removed[definition.Definition.Id] = "Era " + era + " exceeds " + maximumEra;
+            if (IdMapping.Unshipped.TryGetValue(definition.Definition.Id, out var reason)) removed[definition.Definition.Id] = reason;
+        if (maximumEra is not (null or "all"))
+        {
+            if (!maximumEra.Contains(':', StringComparison.Ordinal)) maximumEra = "foundation:era_" + maximumEra;
+            // Use the effective source's enum order, not alphabetically sorted definition ids.
+            var ranks = eraOrder.Select((id, rank) => (id, rank)).ToDictionary(e => e.id, e => e.rank, StringComparer.Ordinal);
+            if (!ranks.TryGetValue(maximumEra, out var maximum)) throw new ArgumentException("Unknown maximum era id: " + maximumEra);
+            foreach (var definition in definitions)
+                if ((definition.Definition as GameContentDef)?.Era is { } era && ranks.TryGetValue(era, out var rank) && rank > maximum)
+                    removed[definition.Definition.Id] = "Era " + era + " exceeds " + maximumEra;
+        }
+        if (removed.Count == 0) return (definitions, []);
         // By definition, not id: a mod's attachment about a record it owns outright shares the record's id.
         var references = definitions.ToDictionary<MappedDefinition, MappedDefinition, string[]>(d => d,
             d => References(d.Definition).Select(r => r.Id).ToArray(), ReferenceEqualityComparer.Instance);
