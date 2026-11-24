@@ -57,13 +57,14 @@ public static class ResourceAccess
 /// (<see cref="ResourceAccess.Counts"/>) and never for trade.
 /// <para>A rule that counts resources asks every supplier, so the contract bounds what a supplier reads: it answers
 /// from the city's buildings, holdings, techs and resource counts, never from who works the city's plots, what the
-/// city is building or a turn's tallies (<see cref="CityStateDomains.Tallies"/>: food and population, culture points
-/// other than through the culture level, production bookkeeping, the treasury). That is the default declaration
+/// city is building, a turn's tallies (food and population, culture points other than through the culture level,
+/// production bookkeeping, the treasury), units, sight or worker orders (<see cref="CityStateDomains.NeverReadByBuildings"/>).
+/// That is the default declaration
 /// (<see cref="Ariel.Content.IStateReader"/>); a supplier that reads more must declare less, and one that reads less
 /// may say so.</para></summary>
 public interface ICityResourceSupply : Ariel.Content.IStateReader
 {
-    IReadOnlyList<string>? Ariel.Content.IStateReader.UnreadDomains(Ariel.Content.ContentDb content) => CityStateDomains.Tallies;
+    IReadOnlyList<string>? Ariel.Content.IStateReader.UnreadDomains(Ariel.Content.ContentDb content) => CityStateDomains.NeverReadByBuildings;
     /// <summary>The copies supplied to the city, by resource. <paramref name="networkCounts"/> answers the city's network
     /// and deal copies of the resources asked for; a supplier must read resources through it, never through
     /// <see cref="ResourceAccess.Counts"/>, which would ask the suppliers again. Read-only.</summary>

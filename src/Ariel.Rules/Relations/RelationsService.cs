@@ -24,6 +24,8 @@ internal sealed class RelationsService : IRelationsService
     {
         if (teamA == teamB || !PlayerRules.TeamNegotiates(sim, teamA) || !PlayerRules.TeamNegotiates(sim, teamB) || HasMet(sim, teamA, teamB)) return;
         var pair = TeamPair.Of(teamA, teamB);
+        // Contacts are found after moves, whose windows declare only units and sight.
+        sim.WidenWriteWindow();
         Edit(sim).Relations[pair.Key] = new() { First = pair.First, Second = pair.Second, ContactTurn = sim.State.Turn, PeaceStarted = sim.State.Turn };
         sim.Events.Publish(new TeamsMet(pair.First, pair.Second));
     }

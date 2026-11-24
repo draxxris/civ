@@ -90,9 +90,11 @@ internal sealed class CityHurry : ICityHurryService, IModifierSource
         anger = anger * Math.Max(0, 100 + mod) / 100;
         return (int)Math.Max(1, anger);
     }
-    /// <summary>Hurry anger follows the city's anger turns and its running buildings, never a turn's other tallies.</summary>
+    /// <summary>Hurry anger follows the city's anger turns and its running buildings, never a turn's other tallies, units,
+    /// sight or worker orders.</summary>
     public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(Unread, content);
-    private static readonly IReadOnlyList<string> Unread = CityStateDomains.Tallies.Where(d => d != EconomyStateDomains.HurryAnger).ToArray();
+    private static readonly IReadOnlyList<string> Unread =
+        CityStateDomains.NeverReadByBuildings.Where(d => d != EconomyStateDomains.HurryAnger).ToArray();
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         if (context.Scope != ModifierScope.City || context.City is not { } city) return;

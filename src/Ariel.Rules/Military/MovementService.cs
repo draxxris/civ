@@ -222,6 +222,10 @@ internal sealed class MovementService : IMovementService
         int cost = StepCost(sim, unit.Id, from, to);
         int? transport = AutoLoadTransport(sim, unit, MilitaryData.Definition(sim, unit), to);
         var state = MilitaryData.Edit(sim, unit);
+        // A move command declares only units, sight and worker orders (UnitStateDomains.MoveWrites). Readers see units
+        // only through blockades, so moving a blockading unit, which ends its blockade, widens first, and so does
+        // every step below that writes more: a fight, a capture, a goody hut.
+        if (state.Activity == UnitActivity.Blockade) sim.WidenWriteWindow();
         state.Moved = true; state.BreakActivity();
         sim.Rules().WorkerBuilds?.Cancel(sim, unit.Owner, unit.Id);
         bool hostile = HostilePlot(sim, unit, target);
@@ -235,6 +239,7 @@ internal sealed class MovementService : IMovementService
             // defender the planner could not see. Re-ask the movement rules before fighting and stop the path when
             // the attack is illegal, instead of throwing from Resolve.
             if (CanEnter(sim, unit.Id, from, to, attack: true) is not null) return true;
+            sim.WidenWriteWindow();
             var report = combatService.Resolve(sim, unit.Id, defenderUnit);
             if (sim.State.FindUnit(unit.Id) is null) return true;
             if (report.Outcome is not (CombatOutcome.AttackerWon or CombatOutcome.DefenderWithdrawn)) return true;
@@ -244,7 +249,10 @@ internal sealed class MovementService : IMovementService
         CaptureCivilians(sim, unit, target);
         var city = sim.State.CityAt(target);
         if (city is not null && MilitaryData.Enemy(sim, unit.Owner, city.Owner) && !MilitaryData.Definition(sim, unit).NoCapture)
+        {
+            sim.WidenWriteWindow();
             sim.Rules().CityCapture.Capture(sim, city.Id, unit.Owner);
+        }
         MilitaryData.MoveUnit(sim, unit.Id, target);
         CompleteBoarding(sim, unit, from, to, transport);
         GoodyService.Receive(sim, unit);
@@ -386,7 +394,9 @@ internal sealed class MovementService : IMovementService
         .Any(u => MilitaryData.VisibleEnemy(sim, unit.Owner, u) && MilitaryData.Definition(sim, u).Strength > 0);
     private static void CaptureCivilians(Simulation sim, Unit unit, Hex target)
     {
-        foreach (var other in sim.State.UnitsAt(target).Where(u => MilitaryData.VisibleEnemy(sim, unit.Owner, u)).ToArray())
+        var captured = sim.State.UnitsAt(target).Where(u => MilitaryData.VisibleEnemy(sim, unit.Owner, u)).ToArray();
+        if (captured.Length > 0) sim.WidenWriteWindow();
+        foreach (var other in captured)
         {
             var def = MilitaryData.Definition(sim, other);
             MilitaryData.RemoveUnit(sim, other.Id);

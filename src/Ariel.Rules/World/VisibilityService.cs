@@ -193,8 +193,17 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
     public void RevealPlot(Simulation sim, TileId tile, int team)
     {
         var plot = sim.State.Plots[tile.Value];
-        plot.Revealed.Add(team);
+        Reveal(sim, plot, team);
         Remember(sim, plot, tile, team);
+    }
+
+    /// <summary>Mark the plot revealed to the team. A first reveal widens the open window by
+    /// <see cref="UnitStateDomains.Revealed"/>: a move declares sight but not reveals, which the resource network reads.</summary>
+    private static void Reveal(Simulation sim, Plot plot, int team)
+    {
+        if (plot.Revealed.Contains(team)) return;
+        sim.WidenWriteWindow(UnitStateDomains.RevealedOnly);
+        plot.Revealed.Add(team);
     }
 
     /// <summary>Store what the team sees of the plot now. Sight recomputes after every move step, and most plots look
@@ -279,7 +288,7 @@ internal sealed class VisibilityService : IVisibilityService, ITurnSystem
             plot.Visible.Add(team);
             // A plot the team saw before this recompute was captured from this same state when sight was cleared, and
             // capturing it again returns that memory unchanged.
-            if (levels.SawBefore(tile, team)) plot.Revealed.Add(team);
+            if (levels.SawBefore(tile, team)) Reveal(sim, plot, team);
             else RevealPlot(sim, tile, team);
         }
     }

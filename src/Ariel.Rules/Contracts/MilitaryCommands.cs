@@ -4,6 +4,9 @@ public sealed class MoveUnitPathCommand : GameCommand
 {
     public int Unit { get; init; }
     public Hex[] Path { get; init; } = [];
+    /// <summary>A plain move writes only units, sight and worker orders (<see cref="UnitStateDomains.MoveWrites"/>);
+    /// the movement rules widen the window before anything more (<see cref="IMovementService.Move"/>).</summary>
+    public override IReadOnlyList<string>? WriteDomains => UnitStateDomains.MoveWrites;
     public override string? Validate(Simulation sim) => sim.Rules().Movement.ValidatePath(sim, Player, Unit, Path);
     public override void Apply(Simulation sim) => sim.Rules().Movement.Move(sim, Unit, Path);
 }

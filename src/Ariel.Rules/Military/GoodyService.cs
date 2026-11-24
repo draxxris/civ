@@ -10,6 +10,8 @@ internal static class GoodyService
         var plot = sim.State.PlotAt(unit.Position);
         if (plot.Improvement is not { } improvement || !sim.Content.Get<S.ImprovementDef>(improvement).Goody) return;
         if (!PlayerRules.IsNation(sim, unit.Owner)) return;
+        // A goody writes well beyond a move's declared domains (the plot, the treasury, new units, technologies).
+        sim.WidenWriteWindow();
         plot.Improvement = null;
         var goodies = sim.Content.Get<S.HandicapDef>(sim.Settings.Handicap).Goodies.Select(sim.Content.Get<S.GoodyDef>).Where(g => Eligible(sim, unit, g)).ToArray();
         if (goodies.Length == 0) return;

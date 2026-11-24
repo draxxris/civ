@@ -14,13 +14,14 @@ public interface ICapitalWeight
 /// (<see cref="Content.Schema.BuildingDef.FreeBuilding"/>). Each city receives its civilization's building of every
 /// granted category. Every implementation is asked; queries never change state or use the RNG. Every rule that
 /// resolves a city's buildings asks every provider, so the contract bounds what a provider reads: never who works a
-/// city's plots, what a city is building or a turn's tallies (<see cref="CityStateDomains.Tallies"/>: food and
-/// population, culture points other than through the culture level, production bookkeeping, the treasury). That is
+/// city's plots, what a city is building, a turn's tallies (food and population, culture points other than through
+/// the culture level, production bookkeeping, the treasury), units, sight or worker orders
+/// (<see cref="CityStateDomains.NeverReadByBuildings"/>). That is
 /// the default declaration (<see cref="Ariel.Content.IStateReader"/>); a provider that reads more must declare less,
 /// and one that reads less may say so.</summary>
 public interface IFreeBuildingGrants : Ariel.Content.IStateReader
 {
-    IReadOnlyList<string>? Ariel.Content.IStateReader.UnreadDomains(Ariel.Content.ContentDb content) => CityStateDomains.Tallies;
+    IReadOnlyList<string>? Ariel.Content.IStateReader.UnreadDomains(Ariel.Content.ContentDb content) => CityStateDomains.NeverReadByBuildings;
     /// <summary>Granted building categories for every city of this player, in any order.</summary>
     IReadOnlyList<string> Grants(Simulation sim, int player);
 }

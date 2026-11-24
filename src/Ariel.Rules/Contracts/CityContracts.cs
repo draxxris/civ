@@ -267,6 +267,13 @@ public static class CityStateDomains
     public static readonly IReadOnlyList<string> Tallies = [Work, Queue, Growth, Culture, PlotCulture, Production, ConscriptAnger,
         EconomyStateDomains.HurryAnger, EconomyStateDomains.Treasury];
 
+    /// <summary>What a rule that follows a city's buildings never reads: the <see cref="Tallies"/>, and what a plain
+    /// unit move writes (<see cref="UnitStateDomains.MoveWrites"/>: units, which the resource network sees only through
+    /// naval blockades, sight, and worker orders). Which plots a team has revealed is read: the resource network
+    /// follows it. The building seams (<see cref="ICityResourceSupply"/>, <see cref="IFreeBuildingGrants"/>) bind their
+    /// implementations to this by default.</summary>
+    public static readonly IReadOnlyList<string> NeverReadByBuildings = [..Tallies, ..UnitStateDomains.MoveWrites];
+
     /// <summary>What a reader that resolves cities' running buildings or resource counts may declare unread, given its
     /// own list: the part of <paramref name="own"/> that every resource supplier and building grant provider also
     /// declares (<see cref="StateDomainRegistry.UnreadByAll"/>).</summary>

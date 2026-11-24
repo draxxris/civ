@@ -6,8 +6,10 @@ namespace Ariel.Mods.Religion;
 
 internal sealed class ReligionEffects : IModifierSource
 {
-    /// <summary>Religion effects follow faiths, civics, traits and running buildings, never a turn's tallies.</summary>
-    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(CityStateDomains.Tallies, content);
+    /// <summary>Religion effects follow faiths, civics, traits and running buildings, never a turn's tallies, units,
+    /// sight or worker orders in a kept (city, player or team) calculation. A unit's own calculation finds the city it
+    /// stands in, but unit calculations are never kept.</summary>
+    public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.UnreadThroughBuildings(CityStateDomains.NeverReadByBuildings, content);
     public void Contribute(ModifierContext context, ModifierSink sink)
     {
         var sim = context.Sim;
