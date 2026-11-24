@@ -5,14 +5,12 @@
     "freeUnits": 1,
     "globalCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -26,7 +24,6 @@
     "spreadFactor": 50,
     "stateReligionCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -46,14 +43,12 @@
     "freeUnits": 0,
     "globalCityCommerce": {
       "culture": 2,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -67,7 +62,6 @@
     "spreadFactor": 35,
     "stateReligionCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -88,14 +82,12 @@
     "freeUnits": 1,
     "globalCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -109,7 +101,6 @@
     "spreadFactor": 50,
     "stateReligionCommerce": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -130,14 +121,12 @@
     "freeUnits": 1,
     "globalCityCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 3,
       "research": 1
     },
@@ -151,7 +140,6 @@
     "spreadFactor": 50,
     "stateReligionCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
@@ -172,14 +160,12 @@
     "freeUnits": 0,
     "globalCityCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 0,
       "research": 1
     },
@@ -193,7 +179,6 @@
     "spreadFactor": 20,
     "stateReligionCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -213,14 +198,12 @@
     "freeUnits": 1,
     "globalCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 1
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -234,7 +217,6 @@
     "spreadFactor": 40,
     "stateReligionCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -255,14 +237,12 @@
     "freeUnits": 0,
     "globalCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -276,7 +256,6 @@
     "spreadFactor": 30,
     "stateReligionCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -297,14 +276,12 @@
     "freeUnits": 1,
     "globalCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 2,
       "research": 2
     },
@@ -318,7 +295,6 @@
     "spreadFactor": 60,
     "stateReligionCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
@@ -339,14 +315,12 @@
     "freeUnits": 0,
     "globalCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -360,7 +334,6 @@
     "spreadFactor": 30,
     "stateReligionCommerce": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -380,14 +353,12 @@
     "freeUnits": 0,
     "globalCityCommerce": {
       "culture": 2,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -401,7 +372,6 @@
     "spreadFactor": 45,
     "stateReligionCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -421,14 +391,12 @@
     "freeUnits": 1,
     "globalCityCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -442,7 +410,6 @@
     "spreadFactor": 40,
     "stateReligionCommerce": {
       "culture": 2,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -462,14 +429,12 @@
     "freeUnits": 1,
     "globalCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 3,
       "research": 0
     },
@@ -483,7 +448,6 @@
     "spreadFactor": 50,
     "stateReligionCommerce": {
       "culture": 4,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -504,14 +468,12 @@
     "freeUnits": 0,
     "globalCityCommerce": {
       "culture": 0,
-      "espionage": 0,
       "gold": 1,
       "research": 0
     },
     "help": "",
     "holyCityCommerce": {
       "culture": 3,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },
@@ -525,7 +487,6 @@
     "spreadFactor": 25,
     "stateReligionCommerce": {
       "culture": 1,
-      "espionage": 0,
       "gold": 0,
       "research": 0
     },

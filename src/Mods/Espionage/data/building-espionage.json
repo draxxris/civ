@@ -1,0 +1,410 @@
+[
+  {
+    "id": "espionage:ai_surveillance",
+    "name": "",
+    "requirements": null,
+    "target": "cities:ai_surveillance",
+    "commerceChanges": {
+      "espionage": 6
+    }
+  },
+  {
+    "id": "espionage:anglo_saxon_moot_hill",
+    "name": "",
+    "requirements": null,
+    "target": "cities:anglo_saxon_moot_hill",
+    "commerceChanges": {
+      "espionage": 2
+    }
+  },
+  {
+    "id": "espionage:blarney",
+    "name": "",
+    "requirements": null,
+    "target": "cities:blarney",
+    "commerceChanges": {
+      "espionage": 8
+    }
+  },
+  {
+    "id": "espionage:brothel",
+    "name": "",
+    "requirements": null,
+    "target": "cities:brothel",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:castle",
+    "name": "",
+    "requirements": null,
+    "target": "cities:castle",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:cortegiane_oneste",
+    "name": "",
+    "requirements": null,
+    "target": "cities:cortegiane_oneste",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:courthouse",
+    "name": "",
+    "requirements": null,
+    "target": "cities:courthouse",
+    "commerceChanges": {
+      "espionage": 2
+    }
+  },
+  {
+    "id": "espionage:cryogenic_prison",
+    "name": "",
+    "requirements": null,
+    "target": "cities:cryogenic_prison",
+    "commerceChanges": {
+      "espionage": 4
+    },
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:district_courthouse",
+    "name": "",
+    "requirements": null,
+    "target": "cities:district_courthouse",
+    "commerceChanges": {
+      "espionage": 2
+    }
+  },
+  {
+    "id": "espionage:edinburgh_castle",
+    "name": "",
+    "requirements": null,
+    "target": "cities:edinburgh_castle",
+    "commerceChanges": {
+      "espionage": 5
+    }
+  },
+  {
+    "id": "espionage:goths_plunder",
+    "name": "",
+    "requirements": null,
+    "target": "cities:goths_plunder",
+    "commerceChanges": {
+      "espionage": 4
+    },
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:great_firewall",
+    "name": "",
+    "requirements": null,
+    "target": "cities:great_firewall",
+    "globalCommerceModifiers": {
+      "espionage": 50
+    }
+  },
+  {
+    "id": "espionage:hindu_brihadeeswarar",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hindu_brihadeeswarar",
+    "globalBuildingExtraCommerces": {
+      "cities:hindu_cathedral": {
+        "espionage": 1
+      },
+      "cities:hindu_monastery": {
+        "espionage": 1
+      },
+      "cities:hindu_shrine": {
+        "espionage": 1
+      },
+      "cities:hindu_temple": {
+        "espionage": 1
+      }
+    }
+  },
+  {
+    "id": "espionage:holy_roman_rathaus",
+    "name": "",
+    "requirements": null,
+    "target": "cities:holy_roman_rathaus",
+    "commerceChanges": {
+      "espionage": 2
+    }
+  },
+  {
+    "id": "espionage:hung_vegvar",
+    "name": "",
+    "requirements": null,
+    "target": "cities:hung_vegvar",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:intelligence_agency",
+    "name": "",
+    "requirements": null,
+    "target": "cities:intelligence_agency",
+    "commerceChanges": {
+      "espionage": 8
+    },
+    "commerceModifiers": {
+      "espionage": 50
+    }
+  },
+  {
+    "id": "espionage:interrogation_building",
+    "name": "",
+    "requirements": null,
+    "target": "cities:interrogation_building",
+    "commerceChanges": {
+      "espionage": 6
+    }
+  },
+  {
+    "id": "espionage:irish_ringfort",
+    "name": "",
+    "requirements": null,
+    "target": "cities:irish_ringfort",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:iroquois_longhouse",
+    "name": "",
+    "requirements": null,
+    "target": "cities:iroquois_longhouse",
+    "commerceChanges": {
+      "espionage": 2
+    }
+  },
+  {
+    "id": "espionage:jail",
+    "name": "",
+    "requirements": null,
+    "target": "cities:jail",
+    "commerceChanges": {
+      "espionage": 4
+    },
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:lithuanian_piliakalnis",
+    "name": "",
+    "requirements": null,
+    "target": "cities:lithuanian_piliakalnis",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:mesoamerican_monastery",
+    "name": "",
+    "requirements": null,
+    "target": "cities:mesoamerican_monastery",
+    "commerceChanges": {
+      "espionage": 1
+    }
+  },
+  {
+    "id": "espionage:national_security",
+    "name": "",
+    "requirements": null,
+    "target": "cities:national_security",
+    "commerceChanges": {
+      "espionage": 8
+    },
+    "commerceModifiers": {
+      "espionage": 50
+    }
+  },
+  {
+    "id": "espionage:palace",
+    "name": "",
+    "requirements": null,
+    "target": "cities:palace",
+    "commerceChanges": {
+      "espionage": 4
+    }
+  },
+  {
+    "id": "espionage:persian_satrap",
+    "name": "",
+    "requirements": null,
+    "target": "cities:persian_satrap",
+    "commerceChanges": {
+      "espionage": 2
+    }
+  },
+  {
+    "id": "espionage:police_station",
+    "name": "",
+    "requirements": null,
+    "target": "cities:police_station",
+    "commerceChanges": {
+      "espionage": 3
+    },
+    "commerceModifiers": {
+      "espionage": 40
+    }
+  },
+  {
+    "id": "espionage:press_agency",
+    "name": "",
+    "requirements": null,
+    "target": "cities:press_agency",
+    "commerceModifiers": {
+      "espionage": 20
+    }
+  },
+  {
+    "id": "espionage:propaganda_net",
+    "name": "",
+    "requirements": null,
+    "target": "cities:propaganda_net",
+    "globalCommerceModifiers": {
+      "espionage": 10
+    }
+  },
+  {
+    "id": "espionage:school_of_law",
+    "name": "",
+    "requirements": null,
+    "target": "cities:school_of_law",
+    "commerceModifiers": {
+      "espionage": 10
+    }
+  },
+  {
+    "id": "espionage:scotland_yard",
+    "name": "",
+    "requirements": null,
+    "target": "cities:scotland_yard",
+    "commerceModifiers": {
+      "espionage": 100
+    }
+  },
+  {
+    "id": "espionage:scottish_broch",
+    "name": "",
+    "requirements": null,
+    "target": "cities:scottish_broch",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:secret_army_base",
+    "name": "",
+    "requirements": null,
+    "target": "cities:secret_army_base",
+    "commerceModifiers": {
+      "espionage": 100
+    }
+  },
+  {
+    "id": "espionage:security_center",
+    "name": "",
+    "requirements": null,
+    "target": "cities:security_center",
+    "commerceChanges": {
+      "espionage": 15
+    }
+  },
+  {
+    "id": "espionage:spanish_citadel",
+    "name": "",
+    "requirements": null,
+    "target": "cities:spanish_citadel",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:supreme_court",
+    "name": "",
+    "requirements": null,
+    "target": "cities:supreme_court",
+    "commerceChanges": {
+      "espionage": 4
+    }
+  },
+  {
+    "id": "espionage:surveillance_network",
+    "name": "",
+    "requirements": null,
+    "target": "cities:surveillance_network",
+    "commerceChanges": {
+      "espionage": 6
+    }
+  },
+  {
+    "id": "espionage:the_agency",
+    "name": "",
+    "requirements": null,
+    "target": "cities:the_agency",
+    "commerceModifiers": {
+      "espionage": 25
+    },
+    "specialistCommercePercentChanges": {
+      "foundation:specialist_spy": {
+        "espionage": 200
+      }
+    }
+  },
+  {
+    "id": "espionage:townwatch",
+    "name": "",
+    "requirements": null,
+    "target": "cities:townwatch",
+    "commerceChanges": {
+      "espionage": 1
+    },
+    "techCommerceChanges": {
+      "research:divine_right": {
+        "espionage": 1
+      }
+    }
+  },
+  {
+    "id": "espionage:tv_station",
+    "name": "",
+    "requirements": null,
+    "target": "cities:tv_station",
+    "commerceModifiers": {
+      "espionage": 20
+    }
+  },
+  {
+    "id": "espionage:welsh_caer",
+    "name": "",
+    "requirements": null,
+    "target": "cities:welsh_caer",
+    "commerceModifiers": {
+      "espionage": 25
+    }
+  },
+  {
+    "id": "espionage:zurich_orbital_uplink",
+    "name": "",
+    "requirements": null,
+    "target": "cities:zurich_orbital_uplink",
+    "commerceModifiers": {
+      "espionage": 10
+    }
+  }
+]

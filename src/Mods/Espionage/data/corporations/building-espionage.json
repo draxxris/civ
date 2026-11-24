@@ -1,0 +1,11 @@
+[
+  {
+    "id": "espionage:corporation_mapster_hq",
+    "name": "",
+    "requirements": null,
+    "target": "corporations:corporation_mapster_hq",
+    "obsoleteSafeCommerceChanges": {
+      "espionage": 6
+    }
+  }
+]

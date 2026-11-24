@@ -326,6 +326,17 @@ public readonly struct CommerceVector : IEquatable<CommerceVector>
         return this + Of((CommerceLayout.Intern(key), amount));
     }
 
+    /// <summary>The sum of every amount, whatever its type.</summary>
+    public long Total
+    {
+        get
+        {
+            long total = 0;
+            for (int i = 0; i < Count; i++) total += _amounts[i];
+            return total;
+        }
+    }
+
     /// <summary>Whether every amount is zero.</summary>
     public bool IsZero
     {

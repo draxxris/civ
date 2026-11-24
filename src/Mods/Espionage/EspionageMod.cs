@@ -13,7 +13,19 @@ public sealed class EspionageMod : IPreparableMod
     private static readonly ModJsonFile<MemoryKindDef[]> Memories = new("data/memory-kind.json");
     /// <summary>Which units are spies and which defend against them, attached to the base units.</summary>
     private static readonly ModJsonFile<UnitEspionageDef[]> Units = new("data/unit-espionage.json");
-    public IReadOnlyList<ModJsonFile> PreparationFiles => [Rules, Memories, Units];
+    /// <summary>The espionage commerce type, and the process that turns production into it.</summary>
+    private static readonly ModJsonFile<CommerceDef[]> Commerce = new("data/commerce.json");
+    private static readonly ModJsonFile<ProcessDef[]> Processes = new("data/process.json");
+    /// <summary>The espionage the base game's buildings, civics, traits and specialists give, added to their rows.</summary>
+    private static readonly ModJsonFile<BuildingEspionageDef[]> Buildings = new("data/building-espionage.json");
+    private static readonly ModJsonFile<CivicEspionageDef[]> Civics = new("data/civic-espionage.json");
+    private static readonly ModJsonFile<TraitEspionageDef[]> Traits = new("data/trait-espionage.json");
+    private static readonly ModJsonFile<SpecialistEspionageDef[]> Specialists = new("data/specialist-espionage.json");
+    /// <summary>The espionage optional mods' rows give, registered only when that mod is loaded.</summary>
+    private static readonly ModJsonFile<BuildingEspionageDef[]> CorporationBuildings = new("data/corporations/building-espionage.json");
+    private static readonly ModJsonFile<BuildingReligionEspionageDef[]> ReligionBuildings = new("data/religion/building-religion-espionage.json");
+    public IReadOnlyList<ModJsonFile> PreparationFiles =>
+        [Rules, Memories, Units, Commerce, Processes, Buildings, Civics, Traits, Specialists, CorporationBuildings, ReligionBuildings];
 
     public void Register(IModContext context)
     {
@@ -22,6 +34,14 @@ public sealed class EspionageMod : IPreparableMod
         context.Content<EspionageRulesDef>().Register(rules);
         MemoryKinds.Load(context, Memories);
         ContentRegistration.Load(context, Units);
+        ContentRegistration.Load(context, Commerce);
+        ContentRegistration.Load(context, Processes);
+        ContentRegistration.Load(context, Buildings);
+        ContentRegistration.Load(context, Civics);
+        ContentRegistration.Load(context, Traits);
+        ContentRegistration.Load(context, Specialists);
+        if (context.IsLoaded("corporations")) ContentRegistration.Load(context, CorporationBuildings);
+        if (context.IsLoaded("religion")) ContentRegistration.Load(context, ReligionBuildings);
         var service = new EspionageService();
         context.RegisterService<IEspionageService>("espionage", service);
         context.RegisterStateComponent<EspionageTeamState>("team_state");
@@ -76,6 +96,13 @@ public sealed class EspionageMod : IPreparableMod
             throw new InvalidDataException("Invalid espionage success chance");
         if (rules.MaxWeight < 1) throw new InvalidDataException("Espionage weights need a positive range");
     }
+}
+
+/// <summary>The espionage a building gives to the state religion's buildings (<see cref="BuildingReligionDef.StateReligionCommerces"/>),
+/// added to the Religion mod's row about it. Registered only with the Religion mod.</summary>
+public sealed class BuildingReligionEspionageDef : ContentAttachment<Ariel.Mods.Religion.BuildingReligionDef>
+{
+    [AmendsTarget] public CommerceVector StateReligionCommerces { get; init; }
 }
 
 /// <summary>Memory kinds the Espionage mod records (<c>data/memory-kind.json</c>).</summary>

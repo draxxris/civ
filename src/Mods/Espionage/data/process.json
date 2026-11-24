@@ -1,0 +1,24 @@
+[
+  {
+    "era": "foundation:era_medieval",
+    "help": "",
+    "icon": ",Art/Interface/Buttons/TechTree/Corporation.dds,Art/Interface/Buttons/Beyond_the_Sword_Atlas.dds,8,16",
+    "id": "espionage:process_espionage",
+    "name": "Espionage",
+    "pedia": "",
+    "productionToCommerceModifiers": {
+      "espionage": 50
+    },
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:paper"
+          ]
+        }
+      ]
+    },
+    "strategy": "Focusing on espionage converts production into espionage within that particular city.",
+    "unsupported": []
+  }
+]

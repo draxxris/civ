@@ -1,0 +1,86 @@
+[
+  {
+    "id": "espionage:cosmopolitan",
+    "name": "",
+    "requirements": null,
+    "target": "government:cosmopolitan",
+    "effects": [
+      {
+        "amount": -20,
+        "key": "commerce.percent.espionage",
+        "scope": "city",
+        "target": null
+      }
+    ]
+  },
+  {
+    "id": "espionage:marxist",
+    "name": "",
+    "requirements": null,
+    "target": "government:marxist",
+    "effects": [
+      {
+        "amount": 35,
+        "key": "commerce.percent.espionage",
+        "scope": "city",
+        "target": null
+      }
+    ]
+  },
+  {
+    "id": "espionage:mobilization",
+    "name": "",
+    "requirements": null,
+    "target": "government:mobilization",
+    "effects": [
+      {
+        "amount": 20,
+        "key": "commerce.percent.espionage",
+        "scope": "city",
+        "target": null
+      }
+    ]
+  },
+  {
+    "id": "espionage:nationalist",
+    "name": "",
+    "requirements": null,
+    "target": "government:nationalist",
+    "effects": [
+      {
+        "amount": 20,
+        "key": "commerce.percent.espionage",
+        "scope": "city",
+        "target": null
+      }
+    ]
+  },
+  {
+    "id": "espionage:personality_cult",
+    "name": "",
+    "requirements": null,
+    "target": "government:personality_cult",
+    "effects": [
+      {
+        "amount": 20,
+        "key": "commerce.percent.espionage",
+        "scope": "city",
+        "target": null
+      }
+    ]
+  },
+  {
+    "id": "espionage:shadow_war",
+    "name": "",
+    "requirements": null,
+    "target": "government:shadow_war",
+    "effects": [
+      {
+        "amount": 30,
+        "key": "commerce.percent.espionage",
+        "scope": "city",
+        "target": null
+      }
+    ]
+  }
+]

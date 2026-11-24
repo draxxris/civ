@@ -1,0 +1,38 @@
+[
+  {
+    "id": "espionage:specialist_great_diplomat",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_great_diplomat",
+    "commerces": {
+      "espionage": 6
+    }
+  },
+  {
+    "id": "espionage:specialist_great_spy",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_great_spy",
+    "commerces": {
+      "espionage": 12
+    }
+  },
+  {
+    "id": "espionage:specialist_lawyer",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_lawyer",
+    "commerces": {
+      "espionage": 3
+    }
+  },
+  {
+    "id": "espionage:specialist_spy",
+    "name": "",
+    "requirements": null,
+    "target": "foundation:specialist_spy",
+    "commerces": {
+      "espionage": 4
+    }
+  }
+]

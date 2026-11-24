@@ -77,7 +77,7 @@ internal sealed class CityWork(ICityWellbeingService wellbeing) : ICityWorkServi
         foreach (var specialist in sim.Content.Get<S.SpecialistDef>().All)
         {
             int slots = Math.Min(available, Specialists.Slots(sim, city, specialist.Id, effects));
-            long score = Score(sim, specialist.Yields) + 4 * (specialist.Commerces.Gold + specialist.Commerces.Research + specialist.Commerces.Culture + specialist.Commerces.Espionage);
+            long score = Score(sim, specialist.Yields) + 4 * specialist.Commerces.Total;
             for (int i = 0; i < slots; i++) candidates.Add(new(int.MaxValue, specialist.Id, score));
         }
         return (available, candidates);
