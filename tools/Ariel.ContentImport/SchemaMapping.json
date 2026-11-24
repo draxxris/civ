@@ -1870,9 +1870,10 @@
       },
       {
         "source": "FoundsCorporation",
-        "property": "FoundsCorporation",
-        "kind": "ref",
-        "target": "CorporationInfo"
+        "property": "Founds",
+        "kind": "leafRef",
+        "target": "CorporationInfo",
+        "leafKind": "corporation"
       },
       {
         "source": "FreeBonus",
@@ -5177,13 +5178,6 @@
       { "source": "HolyCityCommerces", "property": "HolyCityCommerce", "kind": "commerce" },
       { "source": "GlobalReligionCommerces", "property": "GlobalCityCommerce", "kind": "commerce" }
     ],
-    "requirements": []
-  },
-  {
-    "sourceClass": "CorporationInfo",
-    "definition": "CorporationIdentityDef",
-    "mod": "foundation",
-    "fields": [],
     "requirements": []
   },
   {

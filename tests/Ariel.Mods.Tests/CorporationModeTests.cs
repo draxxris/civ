@@ -143,7 +143,7 @@ public sealed class CorporationModeTests
                 // The founding building stands in the seat, as if it had been built there; nobody built anything.
                 Assert.Contains(GameFactory.Headquarters(sim, Cereal), seat.Buildings);
                 Assert.DoesNotContain(sim.Events.Published.OfType<BuildingCompleted>(), e => e.Building == GameFactory.Headquarters(sim, Cereal));
-                Assert.True(Corps(sim).IsHeadquartersOf(sim, hq, sim.Content.Get<CorporationDef>(Cereal).Identity));
+                Assert.True(Corps(sim).IsHeadquartersOf(sim, hq, Cereal));
                 Assert.Null(Corps(sim).NaturalFoundingCity(sim, 0, Cereal));
                 return (turn, seat.Owner, hq);
             }
@@ -330,7 +330,7 @@ public sealed class CorporationModeTests
             var building = content.Get<BuildingDef>(GameFactory.Headquarters(sim, def.Id));
             Assert.NotEmpty(GameFactory.FoundingTechs(sim, def.Id));
             Assert.True(building.Cost > 0, $"{def.Id}: its founding building cannot be built");
-            Assert.Contains(content.Get<UnitDef>().All, u => (content.Attachment<UnitCorporationsDef>(u.Id)?.CorporationSpreads.GetValueOrDefault(def.Identity) ?? 0) > 0);
+            Assert.Contains(content.Get<UnitDef>().All, u => (content.Attachment<UnitCorporationsDef>(u.Id)?.CorporationSpreads.GetValueOrDefault(def.Id) ?? 0) > 0);
             // Realistic: a spread factor, and something besides the technology to gate founding.
             Assert.True(def.NaturalSpreadPercent > 0, $"{def.Id}: never spreads on its own");
             Assert.True(def.PrereqBonuses.Length > 0 ^ def.FoundingBuildingClasses.Count > 0, $"{def.Id}: founding needs a resource or the buildings of its trade, not both");

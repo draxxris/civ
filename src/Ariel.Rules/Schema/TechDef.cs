@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>Tech content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("tech")]
 public sealed class TechDef : GameContentDef
 {
     [ContentReference(typeof(DomainDef), ReferencePart.Keys)]

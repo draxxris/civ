@@ -399,14 +399,16 @@ Manifest fields and API use:
 - Never make the base game reference a mod API. When base rules need an answer from a
   mod, the base game owns a small seam, named after the question it asks, and the mod
   implements it (below). Without the mod the base game applies its default. Base content
-  names corporations only by `CorporationIdentityDef`, which therefore stays in
-  Foundation, like `VictoryIdentityDef`; `ProjectDef` belongs to the ProjectsVictory API,
+  names religions and victories only by `ReligionIdentityDef` and `VictoryIdentityDef`,
+  which therefore stay in Foundation. No base row names a corporation, so a corporation
+  has no base identity: `CorporationDef` is the Corporations API's, and that type declares
+  the `corporation` leaf kind itself with `[ContentLeafKind]` (see content-schema.md); `ProjectDef` belongs to the ProjectsVictory API,
   while `VictoryDef` is the Victory module's, so a mod adds a victory as base content. The computer player follows the same rule: it knows no feature
   mod, and a feature mod contributes the planner that plays it (`IAiPlanner`), the
   production it wants (`IProductionWishes`) and what its content is worth to the AI
   (`IAiValuer<TSubject>`, all below).
-- A mod's API interface may extend the seam it answers (`ICorporationService :
-  ICityCorporations`, `IEspionageService : IEspionageSpending`, `ITradeRouteService :
+- A mod's API interface may extend the seam it answers (`IEspionageService :
+  IEspionageSpending`, `ITradeRouteService :
   ICityTradeLinks`, `IRevolutionService : ICityUnrest`), and the mod registers its
   service under both. A seam answered by a helper (a capital weight, a free-building
   grant) is registered on its own.
@@ -418,7 +420,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 
 | Seam | `GameRules` | Asked by | Answered by | Without an answer |
 | --- | --- | --- | --- | --- |
-| `ICityCorporations` | `CityCorporations` | the Foundation `corporation` requirement leaf (a branch in the city, or with parameter 2 the city being the corporation's headquarters, where executives are trained), and how it names that seat (`SeatPhrase`: "the headquarters of Cereal Mills", "the Masons Master Guild"); production eligibility, for why a city may not train a unit (`RefuseUnit`: executives with Realistic Guilds/Corporations, and an executive the training civilization's `CivilizationCorporationsDef` replaces or removes) | Corporations | no corporations and no headquarters; the leaf fails and reads "the headquarters of" the corporation; no unit is refused |
+| `IUnitTrainingRule` | `TrainingRules` (list) | production eligibility, for why a city may not train a unit beyond its requirements | Corporations (executives with Realistic Guilds/Corporations, and an executive the training civilization's `CivilizationCorporationsDef` replaces or removes) | no unit is refused |
 | `IAirOperations` | `AirOperations` | production eligibility (aircraft), the intercept activity | AirCombat | aircraft are refused with "Air operations are unavailable"; no unit can stand on intercept |
 | `ICityReligions` | `CityReligions` | the Foundation `religion` leaf and Cities' `any_religion`/`state_religion` conditions, production eligibility (religious buildings, inquisitors), holy-city capture | Religion | no religions: the leaves fail, religious buildings and inquisitors are refused, no city is holy |
 | `IDealAppraiser` | `DealAppraiser` | the Diplomacy screen, to predict a computer leader's answer to a deal | the computer player (`ai`) | no prediction is shown |
@@ -431,7 +433,7 @@ Each seam lives in `Ariel.Rules/Contracts` beside the rules that ask it. A nulla
 | `ICivicRestrictions` | `CivicRestrictions` (list) | Government, when a player changes civics | Votes (forced civics) | only requirements, anarchy and the cooldown limit a change |
 | `ICombatLeaders` | `CombatLeaders` | Military, right after combat earns general points | GreatPeople (Great General births) | general points accumulate |
 | `IMovementBarrier` | `MovementBarriers` (list) | Military movement, before any unit moves without attacking | ScriptedWonders (border wonders, which bar only barbarians) | nothing bars a move |
-| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`FoundsReligion`, `FoundsCorporation`), and every `BuildingCompleted` | Religion (founding wonders), Corporations (its own headquarters and Master Guilds) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
+| `IBuildingFounder` | `Founders` (list) | Cities: production eligibility for a building that names something to found (`BuildingDef.Founds`, a `LeafReference` such as `{"kind": "religion", "id": "foundation:buddhism"}`), and every `BuildingCompleted` | Religion (founding wonders, kind `religion`), Corporations (its own headquarters and Master Guilds, kind `corporation`) | such a building is refused with "Nothing founds what this building would found"; great people never construct one either way |
 | `IContentCheck` | (list, run once by `GameRules.Bind`) | the load, once content freezes, for invariants that read other mods' rows | Corporations (one founding building per corporation, no building or unit naming an undefined corporation, every executive trainable) | nothing is checked |
 | `ICityResourceSupply` | (list, read by `ResourceAccess.Supplied`) | `ResourceAccess.Counts` and Cities' city bonus set, for every city use of a resource (never for trade: `ResourceAccess.TradeCounts`) | Corporations (a branch's produced resource) | a city has only its network and deal copies |
 | `IProductionCompletion` | (registry) | Cities, for a finished order of a kind it does not own | ProjectsVictory (projects) | nothing |
@@ -1352,7 +1354,7 @@ anarchy). Other mods read it through
 What stays in the base game:
 
 - **Identities.** Foundation's `ReligionIdentityDef` (`foundation:buddhism`, ...) is what
-  buildings (`ReligionType`, `FoundsReligion`), the
+  buildings (`ReligionType`, a founding wonder's `Founds`), the
   `religion` requirement leaf and the mod's own building and unit rows
   (`GlobalReligionCommerce`, `ReligionChanges`, `ReligionSpreads`) name. A `ReligionDef` is the mod's rules about one
   identity: its id (`religion:buddhism`, kept in saves) and `Identity`. `ReligionIdentities`
@@ -1407,7 +1409,8 @@ Religion mechanics:
   technology. Completing it founds the religion: the completing city becomes the holy
   city, and its owner gets the religion's free missionaries. Discovering the technology
   founds nothing by itself. Once the religion is founded, no one can build its wonder,
-  and barbarians never can. `BuildingDef.FoundsReligion` marks a founding wonder. The mod
+  and barbarians never can. A founding wonder's `BuildingDef.Founds` names the religion
+  (`{"kind": "religion", "id": "foundation:buddhism"}`). The mod
   is the wonder's `IBuildingFounder` (`ReligionFounder`): Cities refuses barbarians and
   asks it whether the religion is founded already, and hands it the completed wonder.
 - **Foreign trade spread**: International trade routes connect cities across open
@@ -1633,21 +1636,38 @@ specialists and religion yields, and the unhappiness defiance causes.
 The Corporations mod runs the source's 36 corporation records: 21 corporations (the
 seven classic ones and 14 later ones such as MallWart and MoonBean Coffee) and 15 guilds,
 the medieval corporations of one trade each. The importer emits their rules as
-`CorporationDef` rows (`data/corporation.json`), each naming the Foundation identity the
-rest of the content uses; a guild differs only in data, its `Kind`. Before the import
+`CorporationDef` rows (`data/corporation.json`, `corporations:1`,
+`corporations:masonguild`): the one id of each, which saves, the mod's rules and every
+row that names a corporation use alike. The importer gives the source's corporation
+class to the mod, so there is no Foundation identity. A guild differs only in data. Before the import
 only seven hand-written rows existed, so the other 29 identities' headquarters,
 executives and follow-up buildings were inert.
 
-The mod owns the 36 founding buildings (21 headquarters and 15 Master Guilds,
-`data/building.json`) and the 36 executives (`data/unit.json`) outright, with the ids
-`corporations:<source name>`: `corporations:corporation_1`,
-`corporations:corporation_masonguild`, `corporations:executive_1`,
-`corporations:moonbean_executive`. Their icons and models are in the mod's own `art/`
-folder. Without the mod the base game has no building that founds a corporation and no
-unit that spreads one. Base rows cannot name these records, because a base module cannot
+The mod owns the 36 founding buildings (21 headquarters and 15 Master Guilds), the 20
+stores a branch lets a city build (franchises, restaurants, the Cereal Mills factory and
+the like; `data/building.json`), their three building kinds (`data/building-category.json`:
+`corporations:specialbuilding_corporation_hq`, `..._guild_hq`, `..._corporate_store`) and
+the 36 executives (`data/unit.json`) outright, with the ids `corporations:<source name>`:
+`corporations:corporation_1`, `corporations:corporation_masonguild`,
+`corporations:corporation_mallwart_store`, `corporations:cereal_mills_factory`,
+`corporations:executive_1`, `corporations:moonbean_executive`. Their icons and models
+are in the mod's own `art/` folder. The mod registers the `corporation` requirement leaf
+(a branch in the city, or with parameter 2 the city being the corporation's headquarters,
+where executives are trained, named as "the headquarters of Cereal Mills" or "the Masons
+Master Guild") and offers the Realistic Guilds/Corporations option at setup through its own
+`ISetupPolicy`. Without the mod the base game has no building that founds a corporation
+or needs one, no unit that spreads one and no `corporation` leaf, and setup offers no such
+option. Its `GameOptionDef` row (`foundation:gameoption_realistic_corporations`, default
+on) stays in Foundation's data, as Religion's option rows do: an id takes the registering
+mod's namespace and `GameRules.OptionDefault` reads the row, so moving it needs a
+namespace for mod-owned option rows. Base rows cannot name these records, because a base module cannot
 depend on a feature mod. So the source's great merchants, scientists, engineers, artists
 and generals no longer list the headquarters among their `ConstructibleBuildings` (they
-never built them anyway). The rows other vocabularies keep about the mod's records are
+never built them anyway). Sixteen base buildings replace a store in the source (the
+theatre and the Red Curtains Theater, the grocer and the MallWart store): the store's own
+row names them in `BuildingDef.ReplacedBy`, which the city rules read exactly as the
+replacer's `ReplaceBuildings`, so the replacement holds without the base row knowing the
+store. The rows other vocabularies keep about the mod's records are
 the mod's own. `data/building-great-people.json` holds the great person each founding
 building's points count towards. It is the Great People mod's attachment type, which this
 mod carries a copy of. So it loads with or without that mod, and without it the rows are
@@ -1655,10 +1675,7 @@ registered but nothing reads them. `data/unit-corporations.json`
 holds the executives' spreads, and `data/civilization-corporations.json` holds the
 barbarians' class overrides of seven executives (`CivilizationCorporationsDef`). The
 mod's `RefuseUnit` applies those overrides with the city's training civilization
-(`CityTraining.Civilization`), as Cities applies a civilization's own overrides. The
-other buildings that need a corporation (franchises, corporate stores) stay in Cities
-and name it by its Foundation identity, so without the mod their `corporation`
-requirement fails.
+(`CityTraining.Civilization`), as Cities applies a civilization's own overrides. 
 
 Guilds and corporations work in one of two modes, chosen by the game option
 `foundation:gameoption_realistic_corporations`, shown as "Realistic Guilds/Corporations"
@@ -1670,7 +1687,8 @@ era and follows exactly the same rules; only its founding building's name differ
 
 In the manual mode a corporation is founded in two steps. Its founding building becomes
 available, and completing it in a city founds the corporation there. The founding building is the
-mod's building whose `BuildingDef.FoundsCorporation` names the identity: a
+mod's building whose `BuildingDef.Founds` names the corporation (`{"kind": "corporation",
+"id": "corporations:1"}`): a
 headquarters for a corporation, the Master Guild for a guild. "Guild Hall" stays the name
 of the common building that the Guilds civic allows, which has nothing to do with them. What a
 corporation calls its founding building is data: `CorporationDef.Seat`, "headquarters" or
@@ -1689,8 +1707,9 @@ requirement names its corporation's headquarters (the `corporation` leaf with pa
 2), the city that completed the founding building, so executives are trained there; each
 guild has its own executive, trained in its Master Guild. Load checks (`IContentCheck`) refuse
 a corporation without exactly one buildable, technology-gated founding building, a
-building or unit row that names an identity no corporation defines, and an executive no
-city could ever train.
+building or unit row that names a corporation the mod does not define (frozen reference
+validation resolves `Founds`, the leaves and the spreads through the mod's leaf kind), and
+an executive no city could ever train.
 
 Spreading into a foreign city uses an executive's `corporations:spread` mission; an own
 city can also be paid for without one. The computer player trains one executive at a
@@ -1744,7 +1763,7 @@ adds supplied copies for every city use (happiness, health, building and unit
 prerequisites, other corporations, so the Equestrians' horse feeds Adventure Tours), and
 `ResourceAccess.TradeCounts` leaves them out for trade, since they are not on the network.
 Production of an executive is refused through the base seam
-`ICityCorporations.RefuseUnit` in the realistic mode.
+`IUnitTrainingRule` in the realistic mode.
 
 **The realistic mode** (`NaturalCorporations`, the `corporations:natural` turn system in the
 Environment phase) replaces founding buildings, executives and paid spreads
@@ -3194,9 +3213,9 @@ properties fail load.
 `Ariel.Content.Schema` holds immutable definitions. The schema includes costs, grouped
 requirements, vectors, indexed effects, class limits, civilization overrides, and AI
 weights. Definitions retain English text, eras, icon references, and unsupported-field
-paths. Corporation, religion and victory identities have executable definitions in
-Foundation; the Religion mod owns the playable religion definitions and the Corporations
-mod the playable corporation and guild definitions. The schema lives in `src/Ariel.Rules/Schema`. See
+paths. Religion and victory identities have executable definitions in Foundation; the
+Religion mod owns the playable religion definitions. Corporations and guilds have no base
+identity: the Corporations mod's definitions are their only records. The schema lives in `src/Ariel.Rules/Schema`. See
 [content-schema.md](content-schema.md) for definition types, units, scopes, and importer
 decisions.
 

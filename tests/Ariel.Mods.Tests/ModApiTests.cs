@@ -83,7 +83,7 @@ public sealed class ModApiTests
         Assert.Single(LoadedCopies(typeof(ICorporationService).Assembly.GetName().Name!));
         var corporations = content.Services.Find<ICorporationService>();
         Assert.NotNull(corporations);
-        Assert.Same(corporations, content.Rules().CityCorporations);
+        Assert.Contains(corporations, content.Rules().TrainingRules.Cast<object>());
         Assert.Same(corporations, content.Services.Find<ICorporationService>());
     }
 
@@ -132,7 +132,27 @@ public sealed class ModApiTests
         var content = GameContent.Build(Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder), []);
 
         Assert.Null(content.Services.Find<ICorporationService>());
-        Assert.Null(content.Rules().CityCorporations);
+        Assert.Empty(content.Rules().TrainingRules);
         Assert.Throws<InvalidOperationException>(() => content.Services.Find<IModifierSource>());
+    }
+
+    [Fact]
+    public void Without_the_Corporations_mod_the_base_game_names_no_corporation()
+    {
+        // Every corporation, its founding buildings, stores, building kinds, executives, leaf kind and game option are the
+        // mod's: the base rules and the main mods load and run without a trace of them.
+        var content = GameContent.Build(Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder),
+            ModLoader.FromDirectories(Directory.GetDirectories(Path.Combine(AppContext.BaseDirectory, GameContent.ModsFolder))));
+        Assert.DoesNotContain(content.Services.Get<IRequirementEvaluator>(), e => e.Kind == "corporation");
+        Assert.DoesNotContain(content.Get<Ariel.Content.Schema.BuildingDef>().All, b => b.Founds?.Kind == "corporation");
+        Assert.DoesNotContain(SetupPolicies.GameOptions(content), o => o.Id == CorporationMode.Option);
+        var folders = new[] { GameContent.RulesFolder, GameContent.ModsFolder }.Select(f => Path.Combine(AppContext.BaseDirectory, f));
+        foreach (var file in folders.SelectMany(f => Directory.GetFiles(f, "*.json", SearchOption.AllDirectories)))
+        {
+            string text = File.ReadAllText(file);
+            Assert.False(text.Contains("\"corporations:", StringComparison.Ordinal), $"{file} names the Corporations mod's content");
+            Assert.False(text.Contains("\"kind\": \"corporation\"", StringComparison.Ordinal), $"{file} has a corporation requirement");
+        }
+        Assert.Empty(Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, GameContent.RulesFolder), "corporation*.json", SearchOption.AllDirectories));
     }
 }

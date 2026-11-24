@@ -72,7 +72,8 @@ internal static class ProductionEligibility
         if (sim.Rules().CityReligions is { } religions) { if (religions.RefuseUnit(sim, city, unit) is { } refused) Fail(failures, refused); }
         // Without a mod that runs religion an inquisitor has nothing to purge, as a religious building has no faith.
         else if (unit.Inquisitor) Fail(failures, "Religion state is unavailable");
-        if (sim.Rules().CityCorporations?.RefuseUnit(sim, city, unit) is { } corporate) Fail(failures, corporate);
+        foreach (var rule in sim.Rules().TrainingRules)
+            if (rule.RefuseUnit(sim, city, unit) is { } refused) Fail(failures, refused);
         // Without a mod that flies aircraft an aircraft could only sit in its base.
         if (unit.Domain == "military:domain_air" && sim.Rules().AirOperations is null) Fail(failures, "Air operations are unavailable");
         if (unit.Cost < 0) Fail(failures, ProductionFailures.UnitCost);

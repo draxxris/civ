@@ -94,7 +94,7 @@
         {
           "all": [
             {
-              "id": "foundation:1",
+              "id": "corporations:1",
               "kind": "corporation",
               "param": 2
             }
@@ -103,7 +103,7 @@
         {
           "all": [
             {
-              "id": "foundation:1",
+              "id": "corporations:1",
               "kind": "corporation"
             }
           ]
@@ -238,7 +238,7 @@
         {
           "all": [
             {
-              "id": "foundation:2",
+              "id": "corporations:2",
               "kind": "corporation",
               "param": 2
             }
@@ -247,7 +247,7 @@
         {
           "all": [
             {
-              "id": "foundation:2",
+              "id": "corporations:2",
               "kind": "corporation"
             }
           ]
@@ -382,7 +382,7 @@
         {
           "all": [
             {
-              "id": "foundation:3",
+              "id": "corporations:3",
               "kind": "corporation",
               "param": 2
             }
@@ -391,7 +391,7 @@
         {
           "all": [
             {
-              "id": "foundation:3",
+              "id": "corporations:3",
               "kind": "corporation"
             }
           ]
@@ -526,7 +526,7 @@
         {
           "all": [
             {
-              "id": "foundation:4",
+              "id": "corporations:4",
               "kind": "corporation",
               "param": 2
             }
@@ -535,7 +535,7 @@
         {
           "all": [
             {
-              "id": "foundation:4",
+              "id": "corporations:4",
               "kind": "corporation"
             }
           ]
@@ -670,7 +670,7 @@
         {
           "all": [
             {
-              "id": "foundation:5",
+              "id": "corporations:5",
               "kind": "corporation",
               "param": 2
             }
@@ -679,7 +679,7 @@
         {
           "all": [
             {
-              "id": "foundation:5",
+              "id": "corporations:5",
               "kind": "corporation"
             }
           ]
@@ -814,7 +814,7 @@
         {
           "all": [
             {
-              "id": "foundation:6",
+              "id": "corporations:6",
               "kind": "corporation",
               "param": 2
             }
@@ -823,7 +823,7 @@
         {
           "all": [
             {
-              "id": "foundation:6",
+              "id": "corporations:6",
               "kind": "corporation"
             }
           ]
@@ -958,7 +958,7 @@
         {
           "all": [
             {
-              "id": "foundation:7",
+              "id": "corporations:7",
               "kind": "corporation",
               "param": 2
             }
@@ -967,7 +967,7 @@
         {
           "all": [
             {
-              "id": "foundation:7",
+              "id": "corporations:7",
               "kind": "corporation"
             }
           ]
@@ -1102,7 +1102,7 @@
         {
           "all": [
             {
-              "id": "foundation:adventure",
+              "id": "corporations:adventure",
               "kind": "corporation",
               "param": 2
             }
@@ -1111,7 +1111,7 @@
         {
           "all": [
             {
-              "id": "foundation:adventure",
+              "id": "corporations:adventure",
               "kind": "corporation"
             }
           ]
@@ -1246,7 +1246,7 @@
         {
           "all": [
             {
-              "id": "foundation:apotheguild",
+              "id": "corporations:apotheguild",
               "kind": "corporation",
               "param": 2
             }
@@ -1255,7 +1255,7 @@
         {
           "all": [
             {
-              "id": "foundation:apotheguild",
+              "id": "corporations:apotheguild",
               "kind": "corporation"
             }
           ]
@@ -1392,7 +1392,7 @@
         {
           "all": [
             {
-              "id": "foundation:artistguild",
+              "id": "corporations:artistguild",
               "kind": "corporation",
               "param": 2
             }
@@ -1401,7 +1401,7 @@
         {
           "all": [
             {
-              "id": "foundation:artistguild",
+              "id": "corporations:artistguild",
               "kind": "corporation"
             }
           ]
@@ -1538,7 +1538,7 @@
         {
           "all": [
             {
-              "id": "foundation:bakerguild",
+              "id": "corporations:bakerguild",
               "kind": "corporation",
               "param": 2
             }
@@ -1547,7 +1547,7 @@
         {
           "all": [
             {
-              "id": "foundation:bakerguild",
+              "id": "corporations:bakerguild",
               "kind": "corporation"
             }
           ]
@@ -1684,7 +1684,7 @@
         {
           "all": [
             {
-              "id": "foundation:blacksmguild",
+              "id": "corporations:blacksmguild",
               "kind": "corporation",
               "param": 2
             }
@@ -1693,7 +1693,7 @@
         {
           "all": [
             {
-              "id": "foundation:blacksmguild",
+              "id": "corporations:blacksmguild",
               "kind": "corporation"
             }
           ]
@@ -1830,7 +1830,7 @@
         {
           "all": [
             {
-              "id": "foundation:burgerworld",
+              "id": "corporations:burgerworld",
               "kind": "corporation",
               "param": 2
             }
@@ -1839,7 +1839,7 @@
         {
           "all": [
             {
-              "id": "foundation:burgerworld",
+              "id": "corporations:burgerworld",
               "kind": "corporation"
             }
           ]
@@ -1974,7 +1974,7 @@
         {
           "all": [
             {
-              "id": "foundation:butcherguild",
+              "id": "corporations:butcherguild",
               "kind": "corporation",
               "param": 2
             }
@@ -1983,7 +1983,7 @@
         {
           "all": [
             {
-              "id": "foundation:butcherguild",
+              "id": "corporations:butcherguild",
               "kind": "corporation"
             }
           ]
@@ -2120,7 +2120,7 @@
         {
           "all": [
             {
-              "id": "foundation:carpenterguild",
+              "id": "corporations:carpenterguild",
               "kind": "corporation",
               "param": 2
             }
@@ -2129,7 +2129,7 @@
         {
           "all": [
             {
-              "id": "foundation:carpenterguild",
+              "id": "corporations:carpenterguild",
               "kind": "corporation"
             }
           ]
@@ -2266,7 +2266,7 @@
         {
           "all": [
             {
-              "id": "foundation:clerksguild",
+              "id": "corporations:clerksguild",
               "kind": "corporation",
               "param": 2
             }
@@ -2275,7 +2275,7 @@
         {
           "all": [
             {
-              "id": "foundation:clerksguild",
+              "id": "corporations:clerksguild",
               "kind": "corporation"
             }
           ]
@@ -2412,7 +2412,7 @@
         {
           "all": [
             {
-              "id": "foundation:drapersguild",
+              "id": "corporations:drapersguild",
               "kind": "corporation",
               "param": 2
             }
@@ -2421,7 +2421,7 @@
         {
           "all": [
             {
-              "id": "foundation:drapersguild",
+              "id": "corporations:drapersguild",
               "kind": "corporation"
             }
           ]
@@ -2558,7 +2558,7 @@
         {
           "all": [
             {
-              "id": "foundation:empcloth",
+              "id": "corporations:empcloth",
               "kind": "corporation",
               "param": 2
             }
@@ -2567,7 +2567,7 @@
         {
           "all": [
             {
-              "id": "foundation:empcloth",
+              "id": "corporations:empcloth",
               "kind": "corporation"
             }
           ]
@@ -2702,7 +2702,7 @@
         {
           "all": [
             {
-              "id": "foundation:equestguild",
+              "id": "corporations:equestguild",
               "kind": "corporation",
               "param": 2
             }
@@ -2711,7 +2711,7 @@
         {
           "all": [
             {
-              "id": "foundation:equestguild",
+              "id": "corporations:equestguild",
               "kind": "corporation"
             }
           ]
@@ -2848,7 +2848,7 @@
         {
           "all": [
             {
-              "id": "foundation:ewtrade",
+              "id": "corporations:ewtrade",
               "kind": "corporation",
               "param": 2
             }
@@ -2857,7 +2857,7 @@
         {
           "all": [
             {
-              "id": "foundation:ewtrade",
+              "id": "corporations:ewtrade",
               "kind": "corporation"
             }
           ]
@@ -2992,7 +2992,7 @@
         {
           "all": [
             {
-              "id": "foundation:fashion",
+              "id": "corporations:fashion",
               "kind": "corporation",
               "param": 2
             }
@@ -3001,7 +3001,7 @@
         {
           "all": [
             {
-              "id": "foundation:fashion",
+              "id": "corporations:fashion",
               "kind": "corporation"
             }
           ]
@@ -3136,7 +3136,7 @@
         {
           "all": [
             {
-              "id": "foundation:fishmonguild",
+              "id": "corporations:fishmonguild",
               "kind": "corporation",
               "param": 2
             }
@@ -3145,7 +3145,7 @@
         {
           "all": [
             {
-              "id": "foundation:fishmonguild",
+              "id": "corporations:fishmonguild",
               "kind": "corporation"
             }
           ]
@@ -3282,7 +3282,7 @@
         {
           "all": [
             {
-              "id": "foundation:glassguild",
+              "id": "corporations:glassguild",
               "kind": "corporation",
               "param": 2
             }
@@ -3291,7 +3291,7 @@
         {
           "all": [
             {
-              "id": "foundation:glassguild",
+              "id": "corporations:glassguild",
               "kind": "corporation"
             }
           ]
@@ -3428,7 +3428,7 @@
         {
           "all": [
             {
-              "id": "foundation:goldsmguild",
+              "id": "corporations:goldsmguild",
               "kind": "corporation",
               "param": 2
             }
@@ -3437,7 +3437,7 @@
         {
           "all": [
             {
-              "id": "foundation:goldsmguild",
+              "id": "corporations:goldsmguild",
               "kind": "corporation"
             }
           ]
@@ -3574,7 +3574,7 @@
         {
           "all": [
             {
-              "id": "foundation:grocerguild",
+              "id": "corporations:grocerguild",
               "kind": "corporation",
               "param": 2
             }
@@ -3583,7 +3583,7 @@
         {
           "all": [
             {
-              "id": "foundation:grocerguild",
+              "id": "corporations:grocerguild",
               "kind": "corporation"
             }
           ]
@@ -3720,7 +3720,7 @@
         {
           "all": [
             {
-              "id": "foundation:mallwart",
+              "id": "corporations:mallwart",
               "kind": "corporation",
               "param": 2
             }
@@ -3729,7 +3729,7 @@
         {
           "all": [
             {
-              "id": "foundation:mallwart",
+              "id": "corporations:mallwart",
               "kind": "corporation"
             }
           ]
@@ -3864,7 +3864,7 @@
         {
           "all": [
             {
-              "id": "foundation:mapster",
+              "id": "corporations:mapster",
               "kind": "corporation",
               "param": 2
             }
@@ -3873,7 +3873,7 @@
         {
           "all": [
             {
-              "id": "foundation:mapster",
+              "id": "corporations:mapster",
               "kind": "corporation"
             }
           ]
@@ -4008,7 +4008,7 @@
         {
           "all": [
             {
-              "id": "foundation:masonguild",
+              "id": "corporations:masonguild",
               "kind": "corporation",
               "param": 2
             }
@@ -4017,7 +4017,7 @@
         {
           "all": [
             {
-              "id": "foundation:masonguild",
+              "id": "corporations:masonguild",
               "kind": "corporation"
             }
           ]
@@ -4154,7 +4154,7 @@
         {
           "all": [
             {
-              "id": "foundation:mercerguild",
+              "id": "corporations:mercerguild",
               "kind": "corporation",
               "param": 2
             }
@@ -4163,7 +4163,7 @@
         {
           "all": [
             {
-              "id": "foundation:mercerguild",
+              "id": "corporations:mercerguild",
               "kind": "corporation"
             }
           ]
@@ -4300,7 +4300,7 @@
         {
           "all": [
             {
-              "id": "foundation:milehigh",
+              "id": "corporations:milehigh",
               "kind": "corporation",
               "param": 2
             }
@@ -4309,7 +4309,7 @@
         {
           "all": [
             {
-              "id": "foundation:milehigh",
+              "id": "corporations:milehigh",
               "kind": "corporation"
             }
           ]
@@ -4444,7 +4444,7 @@
         {
           "all": [
             {
-              "id": "foundation:mobby",
+              "id": "corporations:mobby",
               "kind": "corporation",
               "param": 2
             }
@@ -4453,7 +4453,7 @@
         {
           "all": [
             {
-              "id": "foundation:mobby",
+              "id": "corporations:mobby",
               "kind": "corporation"
             }
           ]
@@ -4588,7 +4588,7 @@
         {
           "all": [
             {
-              "id": "foundation:red",
+              "id": "corporations:red",
               "kind": "corporation",
               "param": 2
             }
@@ -4597,7 +4597,7 @@
         {
           "all": [
             {
-              "id": "foundation:red",
+              "id": "corporations:red",
               "kind": "corporation"
             }
           ]
@@ -4732,7 +4732,7 @@
         {
           "all": [
             {
-              "id": "foundation:safari",
+              "id": "corporations:safari",
               "kind": "corporation",
               "param": 2
             }
@@ -4741,7 +4741,7 @@
         {
           "all": [
             {
-              "id": "foundation:safari",
+              "id": "corporations:safari",
               "kind": "corporation"
             }
           ]
@@ -4876,7 +4876,7 @@
         {
           "all": [
             {
-              "id": "foundation:ultsoldier",
+              "id": "corporations:ultsoldier",
               "kind": "corporation",
               "param": 2
             }
@@ -4885,7 +4885,7 @@
         {
           "all": [
             {
-              "id": "foundation:ultsoldier",
+              "id": "corporations:ultsoldier",
               "kind": "corporation"
             }
           ]
@@ -5020,7 +5020,7 @@
         {
           "all": [
             {
-              "id": "foundation:wonka",
+              "id": "corporations:wonka",
               "kind": "corporation",
               "param": 2
             }
@@ -5029,7 +5029,7 @@
         {
           "all": [
             {
-              "id": "foundation:wonka",
+              "id": "corporations:wonka",
               "kind": "corporation"
             }
           ]
@@ -5164,7 +5164,7 @@
         {
           "all": [
             {
-              "id": "foundation:moonbean",
+              "id": "corporations:moonbean",
               "kind": "corporation",
               "param": 2
             }
@@ -5173,7 +5173,7 @@
         {
           "all": [
             {
-              "id": "foundation:moonbean",
+              "id": "corporations:moonbean",
               "kind": "corporation"
             }
           ]

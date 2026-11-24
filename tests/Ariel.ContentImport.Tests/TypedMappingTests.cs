@@ -115,8 +115,8 @@ public sealed class TypedMappingTests
             Record("UnitInfo", "UNIT_PLAIN", DataNode.Leaf("Class", "UNITCLASS_PLAIN"), DataNode.Leaf("PrereqBuilding", "BUILDING_PLAIN")));
         var units = mapper.Map().Select(d => d.Definition).OfType<Schema.UnitDef>().ToDictionary(u => u.Id);
         var executive = ContentReferences.Leaves(units["corporations:executive_1"].Requirements!).ToArray();
-        Assert.Contains(new Requirement.Leaf("corporation", "foundation:1", null, 2), executive);
-        Assert.Contains(new Requirement.Leaf("corporation", "foundation:1"), executive);
+        Assert.Contains(new Requirement.Leaf("corporation", "corporations:1", null, 2), executive);
+        Assert.Contains(new Requirement.Leaf("corporation", "corporations:1"), executive);
         Assert.DoesNotContain(executive, l => l.Kind == "building");
         // A building that founds nothing stays a building requirement.
         Assert.Equal([new Requirement.Leaf("building", "cities:plain")], ContentReferences.Leaves(units["military:plain"].Requirements!));
@@ -150,7 +150,7 @@ public sealed class TypedMappingTests
         // The founding building and the executive are Corporations' own records, written to its folder.
         Assert.Equal("corporations", Row<Schema.BuildingDef>("corporations:corporation_1").Mod);
         Assert.Equal("corporations", Row<Schema.UnitDef>("corporations:executive_1").Mod);
-        Assert.Contains(new Requirement.Leaf("corporation", "foundation:1", null, 2),
+        Assert.Contains(new Requirement.Leaf("corporation", "corporations:1", null, 2),
             ContentReferences.Leaves(((Schema.UnitDef)Row<Schema.UnitDef>("corporations:executive_1").Definition).Requirements!));
         // A row another mod keeps about them is Corporations' too; about a base record it stays that mod's.
         var points = Row<Ariel.Mods.GreatPeople.BuildingGreatPeopleDef>("corporations:corporation_1");

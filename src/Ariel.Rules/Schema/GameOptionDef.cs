@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>GameOption content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("game-option")]
 public sealed class GameOptionDef : GameContentDef
 {
     public bool Default { get; init; } = false;

@@ -8,12 +8,15 @@ namespace Ariel.Mods.Corporations;
 
 public sealed class CorporationsMod : IPreparableMod
 {
-    /// <summary>The corporations and guilds, imported. Each is founded by this mod's building whose
-    /// <c>FoundsCorporation</c> names its identity.</summary>
+    /// <summary>The corporations and guilds, imported. Each is founded by this mod's building whose <c>Founds</c> names
+    /// it.</summary>
     private static readonly ModJsonFile<CorporationDef[]> Corporations = new("data/corporation.json");
-    /// <summary>The 21 headquarters and 15 Master Guilds that found them, and the executives that spread them. They
-    /// are this mod's own buildings and units, so without it the base game has none.</summary>
-    private static readonly ModJsonFile<BuildingDef[]> FoundingBuildings = new("data/building.json");
+    /// <summary>The 21 headquarters and 15 Master Guilds that found them, the 20 stores a branch lets a city build, and
+    /// the executives that spread them. They are this mod's own buildings and units, so without it the base game has
+    /// none.</summary>
+    private static readonly ModJsonFile<BuildingDef[]> Buildings = new("data/building.json");
+    /// <summary>The kinds of building that are this mod's alone: corporation headquarters, Master Guilds and stores.</summary>
+    private static readonly ModJsonFile<BuildingCategoryDef[]> BuildingCategories = new("data/building-category.json");
     private static readonly ModJsonFile<UnitDef[]> Executives = new("data/unit.json");
     /// <summary>The great person each founding building's great people points count towards, in the Great People mod's
     /// vocabulary. Read only when that mod is loaded.</summary>
@@ -29,7 +32,7 @@ public sealed class CorporationsMod : IPreparableMod
     /// <summary>The numbers of the Realistic Guilds/Corporations mode the source does not define.</summary>
     private static readonly ModJsonFile<CorporationRulesDef> Rules = new("data/corporation-rules.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
-        [Corporations, FoundingBuildings, Executives, GreatPeople, Civilizations, Civics, ModifierKeys, Units, Handicaps, WorldSizes, Rules];
+        [Corporations, Buildings, BuildingCategories, Executives, GreatPeople, Civilizations, Civics, ModifierKeys, Units, Handicaps, WorldSizes, Rules];
 
     public void Register(IModContext context)
     {
@@ -37,7 +40,8 @@ public sealed class CorporationsMod : IPreparableMod
         if (rules.Problems().ToArray() is { Length: > 0 } problems)
             throw new InvalidDataException("Corporation rules validation failed:\n" + string.Join("\n", problems));
         context.Content<CorporationRulesDef>().Register(rules);
-        Ariel.Rules.ContentRegistration.Load(context, FoundingBuildings);
+        Ariel.Rules.ContentRegistration.Load(context, Buildings);
+        Ariel.Rules.ContentRegistration.Load(context, BuildingCategories);
         Ariel.Rules.ContentRegistration.Load(context, Executives);
         Ariel.Rules.ContentRegistration.Load(context, GreatPeople);
         Ariel.Rules.ContentRegistration.Load(context, Civilizations);
@@ -58,7 +62,9 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterService<ICityPanel>("city", new CorporationsCityPanel());
         context.RegisterService<INotificationSource>("notices", new CorporationNotices());
         context.RegisterService<IPediaSource>("pedia", new CorporationPedia());
-        context.RegisterService<ICityCorporations>("city_corporations", service);
+        context.RegisterService<IUnitTrainingRule>("executives", service);
+        context.RegisterService<ISetupPolicy>("setup", new CorporationSetupPolicy());
+        RegisterLeaf(context, service);
         context.RegisterService<IModifierSource>("effects", new CorporationEffects(service));
         context.RegisterService<ICityResourceSupply>("produced_resources", new CorporationResourceSupply(service));
         context.RegisterStateComponent<CorporationCityState>("city_state");
@@ -85,7 +91,39 @@ public sealed class CorporationsMod : IPreparableMod
         context.Subscribe<CityRazed>("corporations:dissolve", (sim, razed) => service.DissolveHeadquartersOf(sim, razed.City, razed.Player));
         context.Subscribe<TechDiscovered>("corporations:obsolete", (sim, e) => service.Obsolete(sim, e.Team, e.Tech));
     }
+
+    /// <summary>A corporation requirement is a branch in the city (no parameter, CvCity.cpp:4039-4046) or, with parameter
+    /// 2 as for a religion's holy city, the city being the corporation's headquarters, which is what an executive is
+    /// trained in. Only this mod's rows name the kind, so without the mod nothing asks it. The parameter also chooses what
+    /// the leaf is said to ask for, by the corporation's name.</summary>
+    private static void RegisterLeaf(IModContext context, CorporationService service) =>
+        Ariel.Rules.ContentRegistration.Evaluator<CorporationDef>(context, CorporationFounder.Kind, (leaf, subject) =>
+            subject.City is { } city && leaf.Param switch
+            {
+                null or 0 => service.Present(subject.Sim, city.Id).Contains(leaf.Id, StringComparer.Ordinal),
+                2 => service.IsHeadquartersOf(subject.Sim, city.Id, leaf.Id),
+                _ => false,
+            },
+            (leaf, content) => leaf.Param switch
+            {
+                null or 0 => "a branch of " + (content.TryGet<CorporationDef>(leaf.Id, out var def) && def.Name.Length > 0 ? def.Name : leaf.Id),
+                2 => service.SeatPhrase(content, leaf.Id) ?? "the headquarters of " + leaf.Id,
+                _ => null,
+            });
 }
+
+/// <summary>The Realistic Guilds/Corporations switch (<see cref="CorporationMode"/>). The option is base content
+/// (<c>foundation:*</c>, on by default), so the setup screen offers it only while this mod is loaded.</summary>
+internal sealed class CorporationSetupPolicy : ISetupPolicy
+{
+    public string? Default(SetupField field) => null;
+
+    public IEnumerable<SetupGameOption> GameOptions(ContentDb content)
+    {
+        if (content.TryGet<GameOptionDef>(CorporationMode.Option, out var option)) yield return new(option.Id, option.Name, option.Default, option.Help);
+    }
+}
+
 internal sealed class CorporationEffects(CorporationService service) : IModifierSource
 {
     public void Contribute(ModifierContext context, ModifierSink sink)

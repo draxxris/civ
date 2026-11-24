@@ -6,18 +6,15 @@ namespace Ariel.Mods.Corporations;
 
 /// <summary>Corporation rules, imported from the source's corporation records: the industrial and modern
 /// corporations and the medieval guilds, which follow the same rules (see <see cref="Seat"/>).
-/// <para><see cref="Id"/> is the rules id used by services, effects and saves. <see cref="Identity"/> is the
-/// imported corporation id, and it is the id every other content record uses: buildings reference it through
-/// <c>corporation</c> requirement leaves, the founding building through <c>FoundsCorporation</c>, executives through
-/// <see cref="UnitCorporationsDef.CorporationSpreads"/>. Anything outside the corporation rules therefore keys on the identity, never on
-/// <see cref="Id"/>; the rules mod is the only place that reads both.</para>
-/// <para>The corporation is founded by completing the base building whose <c>FoundsCorporation</c> names its
-/// identity: that building's own requirements (its technology, and for a guild the buildings of its trade) say when
-/// it can be founded.</para></summary>
+/// <para><see cref="Id"/> is the one id of the corporation, in services, effects, saves and content alike: the stores it
+/// gates name it in <c>corporation</c> requirement leaves (this type declares that kind), its founding building in
+/// <c>Founds</c>, executives in <see cref="UnitCorporationsDef.CorporationSpreads"/>. All of those rows are this mod's
+/// own, so the base game names no corporation.</para>
+/// <para>The corporation is founded by completing this mod's building whose <c>Founds</c> names it: that building's
+/// own requirements (its technology, and for a guild the buildings of its trade) say when it can be founded.</para></summary>
+[ContentLeafKind("corporation")]
 public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedContent
 {
-    [ContentReference(typeof(CorporationIdentityDef))]
-    public string Identity { get; init; } = "";
     /// <summary>What this corporation's founding building is called as a kind of building, wherever the player reads
     /// about it: "headquarters" for a corporation, "Master Guild" for a guild. The rules are the same; only the words
     /// differ, and the source's special building type of the founding building picks them: a guild is a corporation of
@@ -39,11 +36,11 @@ public sealed class CorporationDef : GameContentDef, Ariel.Game.IDescribedConten
     public CommerceVector CommerceChanges { get; init; }
     /// <summary>Commerce the headquarters city earns for every active branch, whole points.</summary>
     public CommerceVector HeadquartersCommerce { get; init; }
-    /// <summary>Corporations, by identity, that compete with this one although they share no consumed resource (the
+    /// <summary>Corporations that compete with this one although they share no consumed resource (the
     /// guilds of one trade group). Competition is mutual, either list or a shared resource is enough: opening a
     /// branch evicts a competitor's branch from the city, and nobody opens one, or founds one, in a competitor's
     /// headquarters city.</summary>
-    [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
+    [ContentReference(typeof(CorporationDef), ReferencePart.Values)]
     public ImmutableArray<string> CompetingCorporations { get; init; } = [];
     /// <summary>The resource a branch produces for its own city: one copy per consumed copy (one when it consumes none),
     /// once the city's team can trade that resource and while it is not obsolete. The copies serve the city like

@@ -4,7 +4,7 @@ using Ariel.Game;
 
 namespace Ariel.Mods.Corporations;
 
-internal sealed class CorporationService : ICorporationService
+internal sealed class CorporationService : ICorporationService, IUnitTrainingRule
 {
     public CorporationService() => Natural = new NaturalCorporations(this);
     /// <summary>The Realistic Guilds/Corporations rules: founding, spread and decay on their own.</summary>
@@ -33,19 +33,17 @@ internal sealed class CorporationService : ICorporationService
     }
     /// <summary>Corporations with a branch in the city; empty for a stale id, like the sibling queries.</summary>
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
-    public bool HasIdentity(Simulation sim, int city, string identity) =>
-        CorporationIndex.Of(sim.Content).ByIdentity.GetValueOrDefault(identity) is { } def && Present(sim, city).Contains(def.Id);
     /// <summary>The founding record is the headquarters: it names the city that completed the founding building, and
     /// a captured headquarters keeps it, as the headquarters income does.</summary>
-    public bool IsHeadquartersOf(Simulation sim, int city, string identity) =>
-        CorporationIndex.Of(sim.Content).ByIdentity.GetValueOrDefault(identity) is { } def
-        && Read(sim).Founded.TryGetValue(def.Id, out var record) && record.Headquarters == city;
+    public bool IsHeadquartersOf(Simulation sim, int city, string corporation) =>
+        sim.Content.TryGet<CorporationDef>(corporation, out _)
+        && Read(sim).Founded.TryGetValue(corporation, out var record) && record.Headquarters == city;
     /// <summary>The seat as running text: "the headquarters of Cereal Mills", "the Masons Master Guild". A founding
     /// building that already carries the seat's words in its name (the guilds' do) is named as it is, so the phrase does
     /// not read "the Master Guild of Masons Guild"; otherwise the seat is "of" the corporation.</summary>
-    public string? SeatPhrase(ContentDb content, string identity)
+    public string? SeatPhrase(ContentDb content, string corporation)
     {
-        if (CorporationIndex.Of(content).ByIdentity.GetValueOrDefault(identity) is not { } def) return null;
+        if (!content.TryGet<CorporationDef>(corporation, out var def)) return null;
         string? building = CorporationFounder.Headquarters(content, def.Id)?.Name;
         return building is not null && building.Contains(def.Seat, StringComparison.OrdinalIgnoreCase)
             ? "the " + building : $"the {def.Seat} of {def.Name}";
@@ -165,7 +163,7 @@ internal sealed class CorporationService : ICorporationService
     internal static bool Spreads(Simulation sim, Unit unit, CorporationDef def) => Spreads(sim, unit.Type, def);
     /// <summary>Whether units of the type are executives of a corporation.</summary>
     internal static bool Spreads(Simulation sim, string unitType, CorporationDef def) =>
-        (sim.Content.Attachment<UnitCorporationsDef>(unitType) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Identity) > 0;
+        (sim.Content.Attachment<UnitCorporationsDef>(unitType) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Id) > 0;
     /// <summary>Whether units of the type are executives of any corporation.</summary>
     internal static bool IsExecutive(Simulation sim, string unitType) =>
         (sim.Content.Attachment<UnitCorporationsDef>(unitType) ?? UnitCorporationsDef.None).CorporationSpreads.Any(p => p.Value > 0);
@@ -357,7 +355,7 @@ internal sealed class CorporationService : ICorporationService
     /// yet have. Read-only and draws nothing; the mission service rolls it.</summary>
     internal int SpreadChance(Simulation sim, Unit executive, City city, CorporationDef def)
     {
-        int chance = (sim.Content.Attachment<UnitCorporationsDef>(executive.Type) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Identity);
+        int chance = (sim.Content.Attachment<UnitCorporationsDef>(executive.Type) ?? UnitCorporationsDef.None).CorporationSpreads.GetValueOrDefault(def.Id);
         if (sim.TeamOf(executive.Owner).Id != sim.TeamOf(city.Owner).Id) chance /= 2;
         int corporations = Math.Max(1, sim.Content.Get<CorporationDef>().Count);
         chance += (corporations - Present(sim, city.Id).Count) * (100 - chance) / corporations;
@@ -367,7 +365,7 @@ internal sealed class CorporationService : ICorporationService
     /// <summary>Whether two corporations compete, as the source defines it: either names the other in its
     /// <see cref="CorporationDef.CompetingCorporations"/>, or they consume a common resource.</summary>
     internal static bool Competes(CorporationDef a, CorporationDef b) => a.Id != b.Id
-        && (a.CompetingCorporations.Contains(b.Identity, StringComparer.Ordinal) || b.CompetingCorporations.Contains(a.Identity, StringComparer.Ordinal)
+        && (a.CompetingCorporations.Contains(b.Id, StringComparer.Ordinal) || b.CompetingCorporations.Contains(a.Id, StringComparer.Ordinal)
             || a.PrereqBonuses.Intersect(b.PrereqBonuses, StringComparer.Ordinal).Any());
     internal string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
     internal static void Add(Simulation sim, City city, CorporationDef def)

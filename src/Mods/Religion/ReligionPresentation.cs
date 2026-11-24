@@ -60,7 +60,7 @@ internal sealed class ReligionScreen : IGameScreen
     internal static BuildingDef? FoundingWonder(ContentDb content, string religion)
     {
         string identity = ReligionIdentities.Identity(content, religion);
-        return content.Get<BuildingDef>().All.FirstOrDefault(b => b.FoundsReligion == identity);
+        return content.Get<BuildingDef>().All.FirstOrDefault(b => ReligionFounder.Founded(b) == identity);
     }
 }
 

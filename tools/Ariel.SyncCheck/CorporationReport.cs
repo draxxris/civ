@@ -31,7 +31,7 @@ internal static class CorporationReport
             if (args[i] == "--game-option" && args[i + 1].Split('=') is [var id, var value]) options[id] = bool.Parse(value);
         var sim = load is null ? GameFactory.CreateAi(content, seed, players, world, TurnMode.Simultaneous, era, options) : SaveGame.Load(content, File.ReadAllText(load), force: args.Contains("--force"));
         var buildings = content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal)
-            .Select(c => (Corporation: c, Building: content.Get<BuildingDef>().All.FirstOrDefault(b => b.FoundsCorporation == c.Identity)))
+            .Select(c => (Corporation: c, Building: content.Get<BuildingDef>().All.FirstOrDefault(b => b.Founds is { Kind: "corporation" } f && f.Id == c.Id)))
             .Where(x => x.Building is not null).Select(x => (x.Corporation, Building: x.Building!)).ToArray();
         int startTurn = sim.State.Turn;
         Console.WriteLine(load is null ? $"game seed={seed} players={players} era={era} world={world} turns={turns}"

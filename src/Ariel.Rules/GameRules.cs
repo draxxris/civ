@@ -100,8 +100,6 @@ public sealed class GameRules : IRuleset
     // Seams one feature answers. Null when no loaded mod answers them; rules then apply the base game's default.
     /// <summary>How a computer leader would answer a deal, answered by the computer player, or null without one.</summary>
     public IDealAppraiser? DealAppraiser { get; private set; }
-    /// <summary>Corporations in a city, answered by the mod that runs corporations, or null without one.</summary>
-    public ICityCorporations? CityCorporations { get; private set; }
     /// <summary>Religion in cities and what it allows, answered by the mod that runs religion, or null without one.</summary>
     public ICityReligions? CityReligions { get; private set; }
     /// <summary>Interception by the feature that flies aircraft, or null without one: then no aircraft can be trained
@@ -140,6 +138,8 @@ public sealed class GameRules : IRuleset
     /// <summary>Every mod's rules for buildings that found something (a religion's wonder, a corporation's
     /// headquarters), in registration order.</summary>
     public IReadOnlyList<IBuildingFounder> Founders { get; private set; } = [];
+    /// <summary>Every mod's reasons a city may not train a unit, in registration order.</summary>
+    public IReadOnlyList<IUnitTrainingRule> TrainingRules { get; private set; } = [];
     /// <summary>Everything that keeps units off plots they could otherwise enter, in registration order.</summary>
     public IReadOnlyList<IMovementBarrier> MovementBarriers { get; private set; } = [];
     /// <inheritdoc/>
@@ -160,6 +160,7 @@ public sealed class GameRules : IRuleset
         FreeBuildingGrants = services.Get<IFreeBuildingGrants>();
         MovementBarriers = services.Get<IMovementBarrier>();
         Founders = services.Get<IBuildingFounder>();
+        TrainingRules = services.Get<IUnitTrainingRule>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();
@@ -201,7 +202,6 @@ public sealed class GameRules : IRuleset
         Scores = services.Get<IPlayerScores>().Single();
         Victory = services.Get<IVictoryService>().Single();
         DealAppraiser = services.Get<IDealAppraiser>().SingleOrDefault();
-        CityCorporations = services.Get<ICityCorporations>().SingleOrDefault();
         CityReligions = services.Get<ICityReligions>().SingleOrDefault();
         AirOperations = services.Get<IAirOperations>().SingleOrDefault();
         EspionageSpending = services.Get<IEspionageSpending>().SingleOrDefault();

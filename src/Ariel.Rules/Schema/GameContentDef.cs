@@ -54,4 +54,5 @@ public sealed record SpecialistSlotsChange
 }
 
 /// <summary>Non-content predicates, with kind-specific count/parameter units. Evaluators fail closed until supported.</summary>
+[ContentLeafKind("condition")]
 public sealed class ConditionDef : GameContentDef { }

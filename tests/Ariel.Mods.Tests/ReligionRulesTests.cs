@@ -46,7 +46,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Null(content.Rules().CityReligions);
         Assert.False(content.CommandTypes.Contains("religion:set_state_religion"));
         Assert.DoesNotContain(content.Services.Get<Ariel.Ai.IAiPlanner>(), p => p.Id.StartsWith("religion:", StringComparison.Ordinal));
-        Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.FoundsReligion is not null);
+        Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.Founds?.Kind == "religion");
         // The identities stay in the base game, so buildings, units and leaders still name their faith.
         Assert.NotEmpty(content.Get<S.ReligionIdentityDef>().All);
 
@@ -466,7 +466,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var content = mods.Content;
         foreach (var religion in content.Get<ReligionDef>().All)
         {
-            var wonder = Assert.Single(content.Get<S.BuildingDef>().All, b => b.FoundsReligion == religion.Identity);
+            var wonder = Assert.Single(content.Get<S.BuildingDef>().All, b => b.Founds == new LeafReference("religion", religion.Identity));
             Assert.Equal(religion.Name, wonder.Name);
             Assert.True(CityBuildingRules.IsWonder(wonder));
             Assert.Equal(1, wonder.Limits.World);

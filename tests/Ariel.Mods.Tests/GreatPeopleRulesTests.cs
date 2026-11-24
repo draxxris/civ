@@ -301,7 +301,10 @@ public sealed class GreatPeopleRulesTests : IClassFixture<LoadedMods>
         // The headquarters, Master Guilds and executives are the Corporations mod's own content, so without it nothing
         // founds or spreads one, and no great person lists a headquarters it could construct.
         var content = Scenario().Content;
-        Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.FoundsCorporation is not null || b.Id.StartsWith("corporations:", StringComparison.Ordinal));
+        Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.Founds?.Kind == "corporation" || b.Id.StartsWith("corporations:", StringComparison.Ordinal)
+            || b.ReplaceBuildings.Keys.Any(id => id.StartsWith("corporations:", StringComparison.Ordinal))
+            || ContentReferences.Leaves(b.Requirements ?? new Requirement.All([])).Any(l => l.Kind == "corporation"));
+        Assert.DoesNotContain(content.Get<S.BuildingCategoryDef>().All, c => c.Id.StartsWith("corporations:", StringComparison.Ordinal));
         Assert.DoesNotContain(content.Get<S.UnitDef>().All, u => u.Id.StartsWith("corporations:", StringComparison.Ordinal)
             || ContentReferences.Leaves(u.Requirements ?? new Requirement.All([])).Any(l => l.Kind == "corporation"));
         Assert.DoesNotContain(content.Get<S.UnitDef>().All.SelectMany(u => u.ConstructibleBuildings.Keys), id => id.StartsWith("corporations:", StringComparison.Ordinal));

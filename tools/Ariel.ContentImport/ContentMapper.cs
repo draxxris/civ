@@ -46,6 +46,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         this.defines = defines ?? new Dictionary<string, DefineValue>(StringComparer.Ordinal);
         records = effectiveRecords.ToDictionary(r => (r.Class, r.Type));
         var idEntries = IdMapping.Create(effectiveRecords);
+        var all = new IdMapping.SourceRecords(effectiveRecords);
         ids = idEntries.ToDictionary(r => (r.Class, r.SourceType), r => r.Id);
         foreach (var role in NativeUnitAiRoles)
         {
@@ -55,7 +56,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         }
         symbols = idEntries.GroupBy(r => r.SourceType, StringComparer.Ordinal).Where(g => g.Count() == 1)
             .ToDictionary(g => g.Key, g => g.Single(), StringComparer.OrdinalIgnoreCase);
-        claimed = effectiveRecords.Select(r => (Record: r, Owner: IdMapping.Claimant(r))).Where(r => r.Owner is not null)
+        claimed = effectiveRecords.Select(r => (Record: r, Owner: IdMapping.Claimant(r, all))).Where(r => r.Owner is not null)
             .ToDictionary(r => ids[(r.Record.Class, r.Record.Type)], r => r.Owner!, StringComparer.Ordinal);
     }
 
@@ -154,6 +155,7 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
             var node = record.Node.Child(field.Source);
             if (node is null) continue;
             var value = MapValue(record, node, field);
+            if (field.Kind == "leafRef" && value is null) { Mark(node, field.Source, mapped); continue; }
             if (field.Kind.StartsWith("effect", StringComparison.Ordinal)) effects.AddRange((IEnumerable<ModifierEffect>)value!);
             else values[JsonNamingPolicy.CamelCase.ConvertName(field.Property)] = value;
             Mark(node, field.Source, mapped);
@@ -165,12 +167,13 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         var requirements = new PrerequisiteMapper(this).Map(record, mapping.Requirements, mapped);
         if (requirements is not null) values["requirements"] = JsonSerializer.SerializeToElement(requirements, typeof(Requirement), Json);
         NoteAmbiguousReligion(record, requirements);
-        if (record.Class == "BuildingInfo" && values.GetValueOrDefault("foundsCorporation") is string founded && founded.Length > 0
+        if (record.Class == "BuildingInfo" && values.GetValueOrDefault("founds") is LeafReference { Kind: "corporation" }
             && values.GetValueOrDefault("cost") is int cost)
             values["cost"] = FoundingCost(record, values.GetValueOrDefault("era") as string, cost);
         if (mapping.DefinitionType == typeof(Ariel.Mods.Corporations.CorporationDef)) values["seat"] = CorporationSeat(record);
         if ((string)values["id"]! != ids[(record.Class, record.Type)]) values["identity"] = ids[(record.Class, record.Type)];
         FoldClass(record, values, mapped);
+        if (record.Class == "BuildingInfo") values["replacedBy"] = ReplacedBy((string)values["id"]!, (string)values["defaultBuilding"]!);
         if (record.Class == "CivicOptionInfo") values["defaultCivic"] = CivicDefault(record);
         values["unsupported"] = FieldCensus.Flatten(record.Node).Where(f => !mapped.Contains(f.Path) && RecordMerger.IsNonDefault(f.Node))
             .Select(f => f.Path).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
@@ -178,6 +181,37 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         paths.UnionWith(mapped);
         var json = JsonSerializer.Serialize(values, Json);
         return (GameContentDef)JsonSerializer.Deserialize(json, mapping.DefinitionType, Json)!;
+    }
+
+    /// <summary>The buildings that replace this one but cannot say so in their own <c>ReplaceBuildings</c>, because this
+    /// building belongs outright to a mod theirs cannot depend on (a corporation's store, replaced by the base theatre):
+    /// the row names them in <c>ReplacedBy</c> instead, which the city rules read as the same replacement. A replacement
+    /// a base row may name stays in that row.</summary>
+    private string[] ReplacedBy(string id, string defaultBuilding)
+    {
+        replacedBy ??= BuildReplacedBy();
+        return replacedBy.Where(p => p.Key == id || p.Key == defaultBuilding).SelectMany(p => p.Value)
+            .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+    }
+    private Dictionary<string, List<string>>? replacedBy;
+    /// <summary>Each claimed building or class a source replacement names, with the buildings whose rows leave it out.</summary>
+    private Dictionary<string, List<string>> BuildReplacedBy()
+    {
+        var result = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        foreach (var replacer in records.Values.Where(r => r.Class == "BuildingInfo"))
+        {
+            string replacerId = ids[(replacer.Class, replacer.Type)];
+            string writer = claimed.GetValueOrDefault(replacerId) ?? IdMapping.ClassMods["BuildingInfo"];
+            foreach (var entry in replacer.Node.Child("ReplaceBuildings")?.Children ?? [])
+            {
+                if (entry.Children.Length < 2 || !Boolean(entry.Children[1].Text) || !Present(entry.Children[0].Text)) continue;
+                if (Reference("BuildingClassInfo", entry.Children[0].Text, replacer, "ReplaceBuildings") is not { } replaced) continue;
+                if (!claimed.TryGetValue(replaced, out var owner) || owner == writer) continue;
+                if (!result.TryGetValue(replaced, out var list)) result[replaced] = list = [];
+                list.Add(replacerId);
+            }
+        }
+        return result;
     }
 
     /// <summary>The production cost of a building that founds a corporation or guild. Ariel founds every one of them by
@@ -242,6 +276,8 @@ public ContentMapper(IReadOnlyList<EffectiveRecord> effectiveRecords, Func<strin
         "int" => Integer(node.Text, DefaultInt(field)), "bool" => GetterBoolean(node.Text, DefaultBool(field)),
         "text" => Text(node.Text ?? ""), "enum" => NativeKey(node.Text ?? ""),
         "ref" => Reference(field.Target!, node.Text, record, field.Source),
+        "leafRef" => Reference(field.Target!, node.Text, record, field.Source) is { } named
+            ? new LeafReference(field.LeafKind ?? throw new InvalidDataException(field.Source + ": a leafRef needs a leafKind"), named) : null,
         "csvRefs" => (node.Text ?? "").Split(',').Where(Present).Select(v => Reference(field.Target!, v, record, field.Source)).Where(v => v is not null).ToArray(),
         "refs" => node.Children.Select(n => Reference(field.Target!, n.Text, record, field.Source)).Where(v => v is not null).ToArray(),
         "texts" => node.Children.Select(n => Text(n.Text ?? "")).ToArray(),

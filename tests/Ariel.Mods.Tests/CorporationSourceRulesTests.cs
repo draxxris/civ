@@ -20,7 +20,7 @@ public sealed class CorporationSourceRulesTests
         var carpenters = sim.Content.Get<CorporationDef>(Carpenters); var masons = sim.Content.Get<CorporationDef>(Masons);
         // The Carpenters consume nothing, so only the explicit list makes them rivals of the Masons.
         Assert.Empty(carpenters.PrereqBonuses.Intersect(masons.PrereqBonuses));
-        Assert.Contains(masons.Identity, carpenters.CompetingCorporations);
+        Assert.Contains(masons.Id, carpenters.CompetingCorporations);
         GameFactory.SatisfyFounding(sim, carpentersHq, Carpenters);
         GameFactory.FoundCorporation(sim, carpentersHq, Carpenters);
         GameFactory.SatisfyFounding(sim, masonsHq, Masons);
@@ -347,7 +347,7 @@ public sealed class CorporationSourceRulesTests
     }
 
     private static bool CorporationsCompete(CorporationDef a, CorporationDef b) =>
-        a.CompetingCorporations.Contains(b.Identity) || b.CompetingCorporations.Contains(a.Identity) || a.PrereqBonuses.Intersect(b.PrereqBonuses).Any();
+        a.CompetingCorporations.Contains(b.Id) || b.CompetingCorporations.Contains(a.Id) || a.PrereqBonuses.Intersect(b.PrereqBonuses).Any();
 
     private static IReadOnlyList<string> Refusals(Simulation sim, City city, string building) =>
         P6RulesScenario.Service<ICityProductionService>(sim).Validate(sim, city.Id, "cities:building", building).Failures.Select(f => f.Explanation).ToList();

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.ContentImport;
 using Xunit;
@@ -140,19 +141,37 @@ public sealed class ExtractionSmokeTests
     }
 
     [SourceFact]
-    public void Corporation_and_victory_source_records_keep_deferred_identities_without_invented_gameplay_rules()
+    public void Victory_source_records_keep_deferred_identities_and_corporations_are_the_Corporations_mods_own_records()
     {
         var result = ContentEmission.Compile(Registry.Value);
-        var corporations = result.Definitions.Select(d => d.Definition).OfType<Ariel.Content.Schema.CorporationIdentityDef>().ToArray();
+        var corporations = result.Definitions.Where(d => d.Definition is Ariel.Mods.Corporations.CorporationDef).ToArray();
         var victories = result.Definitions.Select(d => d.Definition).OfType<Ariel.Content.Schema.VictoryIdentityDef>().ToArray();
         Assert.NotEmpty(corporations);
         Assert.NotEmpty(victories);
+        // A corporation has no base identity: its one record is the mod's rules, written to the mod's folder.
         Assert.Equal(Registry.Value.Ids.Where(i => i.Class == "CorporationInfo").Select(i => i.Id).Order(StringComparer.Ordinal),
-            corporations.Select(c => c.Id).Order(StringComparer.Ordinal));
+            corporations.Select(c => c.Definition.Id).Order(StringComparer.Ordinal));
+        Assert.All(corporations, c => Assert.Equal("corporations", c.Mod));
         Assert.Equal(Registry.Value.Ids.Where(i => i.Class == "VictoryInfo").Select(i => i.Id).Order(StringComparer.Ordinal),
             victories.Select(v => v.Id).Order(StringComparer.Ordinal));
-        Assert.All(corporations, c => Assert.True(c.Deferred));
         Assert.All(victories, v => Assert.True(v.Deferred));
+    }
+
+    [SourceFact]
+    public void Every_corporation_store_and_its_special_building_type_belong_to_Corporations_and_base_buildings_name_none()
+    {
+        var result = ContentEmission.Compile(Registry.Value);
+        var stores = result.Definitions.Where(d => d.Definition is Ariel.Content.Schema.BuildingDef b
+            && ContentReferences.Leaves(b.Requirements ?? new Requirement.All([])).Any(l => l.Kind == "corporation")).ToArray();
+        Assert.Equal(20, stores.Length);
+        Assert.All(stores, s => Assert.Equal(("corporations", "corporations:"), (s.Mod, s.Definition.Id[..13])));
+        Assert.Equal(["corporations:specialbuilding_corporate_store", "corporations:specialbuilding_corporation_hq", "corporations:specialbuilding_guild_hq"],
+            result.Definitions.Where(d => d.Definition is Ariel.Content.Schema.BuildingCategoryDef && d.Mod == "corporations").Select(d => d.Definition.Id).Order(StringComparer.Ordinal));
+        // The base theatre replaces the Red Curtains Theater from the store's own row, which may name it.
+        var theater = (Ariel.Content.Schema.BuildingDef)stores.Single(s => s.Definition.Id == "corporations:corporation_red_theater").Definition;
+        Assert.Contains("cities:theatre", theater.ReplacedBy);
+        Assert.DoesNotContain(result.Definitions.Where(d => d.Mod != "corporations").Select(d => d.Definition).OfType<Ariel.Content.Schema.BuildingDef>(),
+            b => b.ReplaceBuildings.Keys.Any(k => k.StartsWith("corporations:", StringComparison.Ordinal)) || b.Founds is not null);
     }
 
     [SourceFact]
@@ -161,12 +180,10 @@ public sealed class ExtractionSmokeTests
         var result = ContentEmission.Compile(Registry.Value);
         var definitions = result.Definitions.Select(d => d.Definition).ToArray();
         var corporations = definitions.OfType<Ariel.Mods.Corporations.CorporationDef>().ToArray();
-        // 36 source records: 21 corporations and 15 guilds, each with the rules of its identity.
-        Assert.Equal(definitions.OfType<Ariel.Content.Schema.CorporationIdentityDef>().Select(i => i.Id).Order(StringComparer.Ordinal),
-            corporations.Select(c => c.Identity).Order(StringComparer.Ordinal));
+        // 36 source records: 21 corporations and 15 guilds.
         Assert.Equal(36, corporations.Length);
         Assert.Equal(15, corporations.Count(c => c.Seat == "Master Guild"));
-        Assert.Equal("Sid's Sushi Co", corporations.Single(c => c.Identity == "foundation:2").Name);
+        Assert.Equal("Sid's Sushi Co", corporations.Single(c => c.Id == "corporations:2").Name);
         var cereal = corporations.Single(c => c.Id == "corporations:1");
         Assert.Equal(75, cereal.YieldProducedHundredths.Food);
         Assert.Equal(50, cereal.SpreadCost);
@@ -174,7 +191,7 @@ public sealed class ExtractionSmokeTests
 
         // Every founding building costs 70% of the source's price or of the median national wonder of its era (the source left the
         // headquarters to a great person, and each such price is a data issue).
-        var buildings = definitions.OfType<Ariel.Content.Schema.BuildingDef>().Where(b => b.FoundsCorporation is not null).ToArray();
+        var buildings = definitions.OfType<Ariel.Content.Schema.BuildingDef>().Where(b => b.Founds?.Kind == "corporation").ToArray();
         Assert.Equal(36, buildings.Length);
         Assert.All(buildings, b => Assert.True(b.Cost > 0, b.Id));
         Assert.Equal(210, buildings.Single(b => b.Id == "corporations:corporation_masonguild").Cost);

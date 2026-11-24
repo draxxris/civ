@@ -53,14 +53,13 @@ internal static partial class GreatPersonActions
         {
             var building = sim.Content.Get<S.BuildingDef>(pair.Key);
             if (sim.Content.Attachment<BuildingReligionDef>(building.Id)?.GlobalReligionCommerce is not null || city.Buildings.Contains(building.Id)) continue;
-            // A building that founds a religion or a corporation is founded only by building it in a city; a great
-            // person that lists it (as the source's merchants list headquarters) does not construct it.
-            if (Founds(building)) continue;
+            // A building that founds something (a religion, a corporation) is founded only by building it in a city; a
+            // great person that lists it does not construct it.
+            if (building.Founds is not null) continue;
             if (!pair.Value && !CanConstruct(sim, city, building.Id)) continue;
             actions.Add(new(GreatPersonMissions.Construct, building.Id, 1));
         }
     }
-    private static bool Founds(S.BuildingDef building) => building.FoundsCorporation is not null || building.FoundsReligion is not null;
     private static bool CanConstruct(Simulation sim, City city, string building) =>
         sim.Rules().CityProduction.Validate(sim, city.Id, "cities:building", building)
             .Failures.All(ProductionFailures.IsCostOnly);

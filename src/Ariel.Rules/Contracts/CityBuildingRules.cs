@@ -30,9 +30,13 @@ public static class CityBuildingRules
     public static IReadOnlyList<B> Effective(Simulation sim, City city, IEnumerable<string> buildings) =>
         new Selection(sim, city, buildings).Effective();
 
+    /// <summary>Whether the replacer replaces the building: it names the building or its class in its own
+    /// <c>ReplaceBuildings</c>, or the building names the replacer in <c>ReplacedBy</c>, as a mod's building does about
+    /// the base buildings that replace it.</summary>
     public static bool Replaces(B replacer, B building) => replacer.Id != building.Id
         && (replacer.ReplaceBuildings.GetValueOrDefault(building.DefaultBuilding)
-            || replacer.ReplaceBuildings.GetValueOrDefault(building.Id));
+            || replacer.ReplaceBuildings.GetValueOrDefault(building.Id)
+            || building.ReplacedBy.Contains(replacer.Id, StringComparer.Ordinal));
 
     /// <summary>A wonder is a building the world, a team or a player may hold only so many of. A building that declares
     /// no limit of its own covers its copies with `ClassLimits.NoLimit` (corporation buildings, the palace) and is not a
@@ -43,8 +47,9 @@ public static class CityBuildingRules
     private sealed class Selection(Simulation sim, City city, IEnumerable<string> ids)
     {
         private readonly B[] _buildings = ids.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).Select(sim.Content.Get<B>).ToArray();
-        // Only a building that names replacements can replace another, so the replacement scan, which every building
-        // of the set makes, visits these alone, in the same order.
+        // Only a building that names replacements can replace another, unless the building itself names its replacers
+        // (ReplacedBy), so the replacement scan, which every building of the set makes, visits these alone, in the same
+        // order, and the whole set only for a building that names its own.
         private B[]? _replacers;
         private readonly Dictionary<string, bool> _active = new(StringComparer.Ordinal);
         private readonly HashSet<string> _visiting = new(StringComparer.Ordinal);
@@ -76,7 +81,7 @@ public static class CityBuildingRules
         private bool HasReplacer(B building)
         {
             _replacers ??= Array.FindAll(_buildings, b => !b.ReplaceBuildings.IsEmpty);
-            foreach (var replacer in _replacers)
+            foreach (var replacer in building.ReplacedBy.IsEmpty ? _replacers : _buildings)
                 if (Replaces(replacer, building) && IsActive(replacer)) return true;
             return false;
         }

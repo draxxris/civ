@@ -1,3 +1,4 @@
+using Ariel.Content;
 using Ariel.Game;
 
 namespace Ariel.Mods.Corporations;
@@ -34,12 +35,17 @@ public readonly record struct CorporationSpreadOdds(int Threshold, int Range)
     public int BasisPoints => Range <= 0 ? 0 : (int)Math.Min(10000L, (long)Math.Max(0, Threshold) * 10000 / Range);
 }
 
-/// <summary>Read-only previews and validated corporation mutations. It also answers the base game's questions about
-/// corporations in a city (<see cref="ICityCorporations"/>); <see cref="ICityCorporations.HasIdentity"/> takes the
-/// identity id content references use (see <see cref="CorporationDef.Identity"/>).</summary>
-public interface ICorporationService : ICityCorporations
+/// <summary>Read-only previews and validated corporation mutations.</summary>
+public interface ICorporationService
 {
     IReadOnlyList<string> Present(Simulation sim, int city);
+    /// <summary>Whether the city is the headquarters of the corporation: the city that completed its headquarters and
+    /// founded it, or the one that has since taken that city's place by capture.</summary>
+    bool IsHeadquartersOf(Simulation sim, int city, string corporation);
+    /// <summary>What a requirement calls the building that founds the corporation and is its seat, as running text ("the
+    /// headquarters of Cereal Mills", "the Masons Master Guild"), or null when no corporation has the id. Content alone
+    /// answers it, so requirement descriptions can ask.</summary>
+    string? SeatPhrase(ContentDb content, string corporation);
     /// <summary>The headquarters city while it exists; null once the corporation is unfounded or dissolved.</summary>
     int? Headquarters(Simulation sim, string corporation);
     bool IsFounded(Simulation sim, string corporation);

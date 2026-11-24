@@ -1,0 +1,66 @@
+[
+  {
+    "era": "foundation:era_industrial",
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,16",
+    "id": "corporations:specialbuilding_corporate_store",
+    "name": "Corporation Store",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:corporation"
+          ]
+        }
+      ]
+    },
+    "strategy": "",
+    "unsupported": [
+      "bValid"
+    ]
+  },
+  {
+    "era": "foundation:era_industrial",
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,15",
+    "id": "corporations:specialbuilding_corporation_hq",
+    "name": "Corporation Headquarters",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:corporation"
+          ]
+        }
+      ]
+    },
+    "strategy": "",
+    "unsupported": [
+      "bValid"
+    ]
+  },
+  {
+    "era": "foundation:era_medieval",
+    "help": "",
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,6,6",
+    "id": "corporations:specialbuilding_guild_hq",
+    "name": "Guild Headquarters",
+    "pedia": "",
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            "research:guilds"
+          ]
+        }
+      ]
+    },
+    "strategy": "",
+    "unsupported": [
+      "ObsoleteTech",
+      "bValid"
+    ]
+  }
+]

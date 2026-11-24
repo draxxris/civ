@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>VictoryIdentity content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("victory")]
 public sealed class VictoryIdentityDef : GameContentDef
 {
     /// <summary>Identity only. The future owning rules mod must implement this mechanic.</summary>

@@ -1,5 +1,723 @@
 [
   {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:bauxite": {
+        "commerce": 6,
+        "food": 0,
+        "production": 6
+      },
+      "world:coal": {
+        "commerce": 6,
+        "food": 0,
+        "production": 6
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 15
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:aluminum_co_r_source_d",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 2,
+      "growth": 10,
+      "military": 4,
+      "production": 6,
+      "science": 4
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,8",
+    "id": "corporations:aluminum_co_r_source_d",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Aluminum Co. Research and Development",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tDespite being the most abundant metal on Earth, aluminum in its purest form was exceedingly rare until the nineteenth century, with a price-per-pound comparable to that of pure silver. The development of the Hall-Heroult process in 1886, by which pure aluminum is drawn out of common bauxite ore, made aluminum cheap and readily available. Harnessing his invention, Charles Martin Hall created the Pittsburgh Reduction Company, which would grow into the largest provider of aluminum in the world, with its product included in everything from soda cans to spaceships.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:6",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Increases production and commerce if the resources needed by the Aluminum Co. are present in the city. Increases city\u0027s science output as well.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission",
+      "iPower"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:corn": {
+        "commerce": 0,
+        "food": 6,
+        "production": 0
+      },
+      "world:potato": {
+        "commerce": 0,
+        "food": 6,
+        "production": 0
+      },
+      "world:rice": {
+        "commerce": 0,
+        "food": 6,
+        "production": 0
+      },
+      "world:wheat": {
+        "commerce": 0,
+        "food": 6,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:cereal_mills_factory",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "growth": 10
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,2,10",
+    "id": "corporations:cereal_mills_factory",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Cereal Mills Factory",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tWhile most food processing corporations are less than 150 years old, food processing is an ancient tradition. The miller was the original food processing entrepreneur, turning inedible wheat into versatile flour, all while pulling in a tidy profit. Understandably, many modern food processing companies rose from the milling industry, often picking up a few new subsidiaries along the way. Today\u0027s food processors deal in a diverse range of consumer products, lining the walls of the local supermarket with everything from mayonnaise to deodorant.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:1",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Increases food production in city.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission",
+      "iPower"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:gems": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:gold": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:pearls": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:silver": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:civilized_jewelers_store",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 7,
+      "growth": 10,
+      "military": 4,
+      "production": 6,
+      "science": 4
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,10",
+    "id": "corporations:civilized_jewelers_store",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Civilized Jewelers\u0027 Store",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tHumanity\u0027s fascination with shiny objects has persisted since time immemorial. Gold, silver and jewels have decorated the heads of monarchs and the interiors of palaces for millennia, but it was the nineteenth century that began the true blossoming of the trade in treasures. Gold rushes throughout the world - in the United States, Canada and Australia - not only created new fonts of wealth, but left a lasting impression on the shape of world population, relocating avaricious prospectors to some of the most remote places on earth.[PARAGRAPH:1]The gem trade, with diamonds as its crown, grew up around similar circumstances. Throngs of miners flocked to South Africa in the mid-nineteenth century with the discovery of the \u0022Star of Africa,\u0022 an enormous 83.5 carat diamond. As of the turn of the twentieth century, the age of the traveling prospector bowed before the growth of enormous precious metal and jewel firms. South Africa remains one of the most important sources for gold and diamonds in the world, as well as the birth place to some of the most influential corporations in the business.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [
+      "cities:beadmaker",
+      "cities:jewellery"
+    ],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:7",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Increases commerce if the resources needed by the Civilized Jewelers Inc. are present in the city. Increases income from trade routes as well.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission",
+      "iPower"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
     "advancedStartCost": -1,
     "advancedStartCostIncrease": 0,
     "aiWeight": 0,
@@ -57,7 +775,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:1",
+    "founds": {
+      "id": "corporations:1",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -145,6 +866,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -274,7 +996,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:2",
+    "founds": {
+      "id": "corporations:2",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -362,6 +1087,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -496,7 +1222,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:3",
+    "founds": {
+      "id": "corporations:3",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -584,6 +1313,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -713,7 +1443,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:4",
+    "founds": {
+      "id": "corporations:4",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -801,6 +1534,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -930,7 +1664,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:5",
+    "founds": {
+      "id": "corporations:5",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -1018,6 +1755,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -1147,7 +1885,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:6",
+    "founds": {
+      "id": "corporations:6",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -1235,6 +1976,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -1364,7 +2106,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:7",
+    "founds": {
+      "id": "corporations:7",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -1452,6 +2197,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -1544,6 +2290,252 @@
     "bonusProductionModifiers": {},
     "bonusType": null,
     "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:ancienttemple": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:clam": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:horse": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:ivory": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:whale": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 1,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_adventure_franchise",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 8,
+      "growth": 2,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,8",
+    "id": "corporations:corporation_adventure_franchise",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Adventure Tours Franchise",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Your local adventure franchise to get your adrenaline pumping!",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:adventure",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Build this corporation in order to get adventure bonuses.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
     "bonusYieldModifiers": {},
     "buildingClassProductionModifiers": {},
     "buildingHappinessChanges": {},
@@ -1585,7 +2577,10 @@
       "science": 0
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:adventure",
+    "founds": {
+      "id": "corporations:adventure",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -1673,6 +2668,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -1802,7 +2798,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:apotheguild",
+    "founds": {
+      "id": "corporations:apotheguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -1890,6 +2889,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -2030,7 +3030,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:artistguild",
+    "founds": {
+      "id": "corporations:artistguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -2118,6 +3121,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -2258,7 +3262,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:bakerguild",
+    "founds": {
+      "id": "corporations:bakerguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -2346,6 +3353,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -2486,7 +3494,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:blacksmguild",
+    "founds": {
+      "id": "corporations:blacksmguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -2574,6 +3585,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -2718,7 +3730,10 @@
       "science": 0
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:burgerworld",
+    "founds": {
+      "id": "corporations:burgerworld",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -2806,6 +3821,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -2898,6 +3914,252 @@
     "bonusProductionModifiers": {},
     "bonusType": null,
     "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:coffee": {
+        "commerce": 3,
+        "food": 2,
+        "production": 0
+      },
+      "world:cow": {
+        "commerce": 3,
+        "food": 2,
+        "production": 0
+      },
+      "world:pig": {
+        "commerce": 3,
+        "food": 2,
+        "production": 0
+      },
+      "world:potato": {
+        "commerce": 3,
+        "food": 2,
+        "production": 0
+      },
+      "world:wheat": {
+        "commerce": 3,
+        "food": 2,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_burgerworld_restaurant",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 10,
+      "growth": 6,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": -2,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,8,9",
+    "id": "corporations:corporation_burgerworld_restaurant",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Burgerworld Restaurant",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Your local fast food place to get your hunger on!",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:burgerworld",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "\tBuild the {color:building_text}Burgerworld{/color} Headquarters to create the {color:highlight_text}Burgerworld Corporation{/color} which consumes {color:highlight_text}Cow{/color}, {color:highlight_text}Pig{/color},{color:highlight_text}Potato{/color},{color:highlight_text}Wheat{/color} or {color:highlight_text}Coffee{/color} and adds a culture bonus to every city where the {color:highlight_text}Burgerworld Corporation{/color} is present. The Headquarters provide gold for each city in the world with a Burgerworld franchise.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
     "bonusYieldModifiers": {},
     "buildingClassProductionModifiers": {},
     "buildingHappinessChanges": {},
@@ -2935,7 +4197,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:butcherguild",
+    "founds": {
+      "id": "corporations:butcherguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -3023,6 +4288,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -3163,7 +4429,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:carpenterguild",
+    "founds": {
+      "id": "corporations:carpenterguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -3251,6 +4520,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -3391,7 +4661,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:clerksguild",
+    "founds": {
+      "id": "corporations:clerksguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -3479,6 +4752,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -3619,7 +4893,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:drapersguild",
+    "founds": {
+      "id": "corporations:drapersguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -3707,6 +4984,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -3847,7 +5125,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:empcloth",
+    "founds": {
+      "id": "corporations:empcloth",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -3935,6 +5216,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -4064,7 +5346,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:equestguild",
+    "founds": {
+      "id": "corporations:equestguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -4152,6 +5437,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -4296,7 +5582,10 @@
       "science": 0
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:ewtrade",
+    "founds": {
+      "id": "corporations:ewtrade",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -4384,6 +5673,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -4476,6 +5766,254 @@
     "bonusProductionModifiers": {},
     "bonusType": null,
     "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:coffee": {
+        "commerce": 0,
+        "food": 3,
+        "production": 0
+      },
+      "world:cotton": {
+        "commerce": 0,
+        "food": 3,
+        "production": 0
+      },
+      "world:silk": {
+        "commerce": 0,
+        "food": 3,
+        "production": 0
+      },
+      "world:spices": {
+        "commerce": 0,
+        "food": 3,
+        "production": 0
+      },
+      "world:sugar": {
+        "commerce": 0,
+        "food": 3,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_ewtrade_store",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 2,
+      "growth": 10,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 2,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,10",
+    "id": "corporations:corporation_ewtrade_store",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "East West Traders Store",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Various commodities delivered from all over the world directly to your local store.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:ewtrade",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Build this corporation in order to get bonuses.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "CommerceChangeDoubleTimes",
+      "CommerceChangeDoubleTimes/iCommerce",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
     "bonusYieldModifiers": {},
     "buildingClassProductionModifiers": {},
     "buildingHappinessChanges": {},
@@ -4513,7 +6051,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:fashion",
+    "founds": {
+      "id": "corporations:fashion",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -4601,6 +6142,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -4730,7 +6272,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:fishmonguild",
+    "founds": {
+      "id": "corporations:fishmonguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -4818,6 +6363,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -4958,7 +6504,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:glassguild",
+    "founds": {
+      "id": "corporations:glassguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -5046,6 +6595,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -5186,7 +6736,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:goldsmguild",
+    "founds": {
+      "id": "corporations:goldsmguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -5274,6 +6827,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -5414,7 +6968,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:grocerguild",
+    "founds": {
+      "id": "corporations:grocerguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -5502,6 +7059,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -5646,7 +7204,10 @@
       "science": 0
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:mallwart",
+    "founds": {
+      "id": "corporations:mallwart",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -5734,6 +7295,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -5821,6 +7383,268 @@
     "areaHealth": 0,
     "areaMaintenanceModifier": 0,
     "bombardDefense": 0,
+    "bonusHappinessChanges": {
+      "world:coffee": 1,
+      "world:tea": 1,
+      "world:tobacco": 1
+    },
+    "bonusHealthChanges": {
+      "world:cow": 1,
+      "world:deer": 1,
+      "world:pig": 1,
+      "world:sheep": 1,
+      "world:tobacco": -2
+    },
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:apple": {
+        "commerce": 0,
+        "food": 5,
+        "production": 0
+      },
+      "world:banana": {
+        "commerce": 0,
+        "food": 5,
+        "production": 0
+      },
+      "world:lemon": {
+        "commerce": 0,
+        "food": 5,
+        "production": 0
+      },
+      "world:olives": {
+        "commerce": 0,
+        "food": 5,
+        "production": 0
+      },
+      "world:potato": {
+        "commerce": 0,
+        "food": 5,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_mallwart_store",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 2,
+      "growth": 10,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 2,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,12",
+    "id": "corporations:corporation_mallwart_store",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "MallWart Store",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Fresh groceries and fruits delivered from all over the world directly to your local store.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 10,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [
+      "cities:grocer",
+      "cities:ice_house",
+      "cities:supermarket"
+    ],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:mallwart",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {
+      "foundation:specialist_merchant": 1
+    },
+    "specialistYieldChanges": {},
+    "strategy": "Build this corporation in order to get fruit and groceries bonuses.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 10,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
     "bonusHappinessChanges": {},
     "bonusHealthChanges": {},
     "bonusProductionModifiers": {},
@@ -5863,7 +7687,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:mapster",
+    "founds": {
+      "id": "corporations:mapster",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -5951,6 +7778,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -6080,7 +7908,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:masonguild",
+    "founds": {
+      "id": "corporations:masonguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -6168,6 +7999,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -6308,7 +8140,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:mercerguild",
+    "founds": {
+      "id": "corporations:mercerguild",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -6396,6 +8231,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -6499,6 +8335,253 @@
     "bonusProductionModifiers": {},
     "bonusType": null,
     "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:ancienttemple": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:drama": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:gold": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:movies": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:music": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:silk": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 1,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_milehigh_franchise",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 10
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,2,13",
+    "id": "corporations:corporation_milehigh_franchise",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "MileHigh Travels Franchise",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Corporation Milehigh Franchise Pedia",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:milehigh",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "The best way to see the world is from an airplane",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
     "bonusYieldModifiers": {},
     "buildingClassProductionModifiers": {},
     "buildingHappinessChanges": {},
@@ -6536,7 +8619,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:milehigh",
+    "founds": {
+      "id": "corporations:milehigh",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -6624,6 +8710,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -6757,7 +8844,10 @@
       "science": 0
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:mobby",
+    "founds": {
+      "id": "corporations:mobby",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -6845,6 +8935,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -6937,6 +9028,254 @@
     "bonusProductionModifiers": {},
     "bonusType": null,
     "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:cow": {
+        "commerce": 1,
+        "food": 7,
+        "production": 0
+      },
+      "world:deer": {
+        "commerce": 1,
+        "food": 7,
+        "production": 0
+      },
+      "world:pig": {
+        "commerce": 1,
+        "food": 7,
+        "production": 0
+      },
+      "world:sheep": {
+        "commerce": 1,
+        "food": 7,
+        "production": 0
+      },
+      "world:whale": {
+        "commerce": 1,
+        "food": 7,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_mobby_store",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 10,
+      "growth": 6,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 1,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,13",
+    "id": "corporations:corporation_mobby_store",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Mobby Meats Store",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Your local meat market of the world\u0027s meats, from common to exotic.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [
+      "cities:butchery"
+    ],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:mobby",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Build this corporation to get benefits from all meats bonuses.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
     "bonusYieldModifiers": {},
     "buildingClassProductionModifiers": {},
     "buildingHappinessChanges": {},
@@ -6974,7 +9313,10 @@
       "gold": 3
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:moonbean",
+    "founds": {
+      "id": "corporations:moonbean",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -7062,6 +9404,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -7154,6 +9497,248 @@
     "bonusProductionModifiers": {},
     "bonusType": null,
     "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:coffee": {
+        "commerce": 2,
+        "food": 1,
+        "production": 0
+      },
+      "world:music": {
+        "commerce": 2,
+        "food": 1,
+        "production": 0
+      },
+      "world:sugar": {
+        "commerce": 2,
+        "food": 1,
+        "production": 0
+      },
+      "world:tea": {
+        "commerce": 2,
+        "food": 1,
+        "production": 0
+      },
+      "world:tobacco": {
+        "commerce": 2,
+        "food": 1,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 2,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_moonbean_shop",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 10
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,14",
+    "id": "corporations:corporation_moonbean_shop",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "MoonBean Coffeeshop",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Coffee and other hot caffeinated beverages was always a vital part of societies as humans enjoy tea time with their fellow men. However, the idea of a coffee branch changed the way of the \u0093Coffee Culture\u0094 to fit with the consumerism standards of America. With the founding of Starbucks however, the face of the coffee culture changed forever. In the year 1971, Jerry Baldwin, Zev Siegel and Gordon Bowker had started one of the biggest coffee branches in Seattle as they desired to turn coffee and tea to a sophisticated drink as they bought high quality coffee equipment and coffee beans to follow. The following result is what will be one of the biggest coffee giants in the entire world as they were able to quickly spread not only in America but in other developed nations of the world. The effect of Starbucks wasn\u0092t their coffee but rather the new age culture it has created with special blends of coffee beverages and tea were made to cater to the tastes and whims of everyone to the artist culture that Starbucks supports as well as attempts to influence \u0093Fair Trade\u0094 policies where developing nations can sell coffee and tea competitively with larger companies who in the age of neo-imperialism have impoverished subsistence farmers with their \u0093Banana Republic\u0094 policies.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:moonbean",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "NONE",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
     "bonusYieldModifiers": {},
     "buildingClassProductionModifiers": {},
     "buildingHappinessChanges": {},
@@ -7195,7 +9780,10 @@
       "science": 0
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:red",
+    "founds": {
+      "id": "corporations:red",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -7283,6 +9871,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -7370,6 +9959,501 @@
     "areaHealth": 0,
     "areaMaintenanceModifier": 0,
     "bombardDefense": 0,
+    "bonusHappinessChanges": {
+      "world:movies": 1
+    },
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:drama": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:movies": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:music": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 6,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_red_theater",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 8,
+      "growth": 2,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 10,
+    "happiness": 2,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,14",
+    "id": "corporations:corporation_red_theater",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Red Curtains Theater",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Entertainment always has been prominent in society despite today\u0092s skeptical perception that a doctor earns several times less than a famous celebrity for the amount of time invested. In Rome, gladiators were quite popular with housewives of both the plebian and nobility alike. Actors in the Renaissance Europe enjoyed fame and at times immunity from some crimes and today\u0092s society of entertainment is no exception to the rule. In exchange for their pride and personal space and a very low career security, they could potentially live lavishly in cultural capitals such as Hollywood and New York being worshipped by people as entertainment icons. The Entertainment Moguls often take advantage of that by setting up contracts and hiring agents who get paid relative to the success of their star to be. While the benefits of becoming a celebrity these days can be great, so are the drawbacks. The paparazzi seeks any opportunity to pull a smear job on their target, the reviewers are often insatiable critics who at time hates certain stars on principle and the ever demanding agents puts them through a stressful schedule with little choice in what they do and a less than stable domestic life. Still with money being a source of happiness and entertainment a seemingly inexhaustible well of money, it is no wonder why the entertainment industry is so powerful especially in this time.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [
+      "cities:chinese_pavillion",
+      "cities:firepit",
+      "cities:greek_odeon",
+      "cities:movietheatre",
+      "cities:storyteller_circle",
+      "cities:theatre"
+    ],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:red",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Build this corporation in order to get entertainment bonuses.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:deer": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:fur": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:ivory": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:lead": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      },
+      "world:whale": {
+        "commerce": 5,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_safari_guide",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 8,
+      "growth": 2,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,15",
+    "id": "corporations:corporation_safari_guide",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Safari Hunters Guide",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "The Safari Guides are the branches of Safari Hunters, being responsible for the expeditions carried out by eager hunters and trappers. They do a variety of things related to huntng, being expert guides which make sure the hunters violate wildlife laws (Poaching, hunting during closed seasons), providing information about the hunting area as well as helping inexperienced hunters and trappers on finding good hunting grounds. They also help sell hunting equipments from weapons to bait. Some of the guides are from the nearby villages and rural settlements who may have a greater understanding than the more urbanized guides.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:safari",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Build this corporation in order to get hunting bonuses.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "ImprovementFreeSpecialists",
+      "ImprovementFreeSpecialists/ImprovementFreeSpecialist",
+      "ImprovementFreeSpecialists/ImprovementFreeSpecialist/ImprovementType",
+      "ImprovementFreeSpecialists/ImprovementFreeSpecialist/iFreeSpecialistCount",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
     "bonusHappinessChanges": {},
     "bonusHealthChanges": {},
     "bonusProductionModifiers": {},
@@ -7416,7 +10500,10 @@
       "science": 0
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:safari",
+    "founds": {
+      "id": "corporations:safari",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -7504,6 +10591,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -7637,7 +10725,10 @@
       "science": 0
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:ultsoldier",
+    "founds": {
+      "id": "corporations:ultsoldier",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -7725,6 +10816,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -7815,6 +10907,251 @@
     "bonusProductionModifiers": {},
     "bonusType": null,
     "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:lead": {
+        "commerce": 2,
+        "food": 0,
+        "production": 0
+      },
+      "world:steel": {
+        "commerce": 2,
+        "food": 0,
+        "production": 0
+      },
+      "world:vulcanized_rubber": {
+        "commerce": 2,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_ultsoldier_trainer",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {
+      "military:domain_air": 4,
+      "military:domain_land": 4,
+      "military:domain_sea": 2
+    },
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 8,
+      "growth": 2,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,1,16",
+    "id": "corporations:corporation_ultsoldier_trainer",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Ultimate Soldiers Trainer",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "PMCs do not only provide military services for armies, but they also provide a source of military training for various military institutions. Thanks to the high quality former soldiers and spec-ops, they are used to help out in training men in a variety of military related things such as explosive disarmament, improving combat efficiency as well as other military skills that may improve one\u0092s chance in combat. With the end of the Cold War and the reduction of standing armies, PMCs also offer employment opportunities to discharged soldiers worldwide.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [
+      "cities:combat_simulator",
+      "cities:flight_simulator",
+      "cities:holo_combat_simulator",
+      "cities:holo_flight_simulator"
+    ],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:ultsoldier",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Build this corporation in order to get military bonuses.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
     "bonusYieldModifiers": {},
     "buildingClassProductionModifiers": {},
     "buildingHappinessChanges": {},
@@ -7852,7 +11189,10 @@
       "gold": 10
     },
     "foodKept": 0,
-    "foundsCorporation": "foundation:wonka",
+    "founds": {
+      "id": "corporations:wonka",
+      "kind": "corporation"
+    },
     "freeBonus": null,
     "freeBonusCount": 0,
     "freeBuilding": null,
@@ -7940,6 +11280,7 @@
     "producesPower": false,
     "religionType": null,
     "replaceBuildings": {},
+    "replacedBy": [],
     "requirements": {
       "all": [
         {
@@ -8009,6 +11350,1741 @@
       "commerce": 0,
       "food": 0,
       "production": 0
+    }
+  },
+  {
+    "advancedStartCost": -1,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:coffee": {
+        "commerce": 4,
+        "food": 0,
+        "production": 0
+      },
+      "world:salt": {
+        "commerce": 4,
+        "food": 0,
+        "production": 0
+      },
+      "world:spices": {
+        "commerce": 4,
+        "food": 0,
+        "production": 0
+      },
+      "world:sugar": {
+        "commerce": 4,
+        "food": 0,
+        "production": 0
+      },
+      "world:tea": {
+        "commerce": 4,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 100,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 3,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:corporation_wonka_shop",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 10,
+      "growth": 6,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,16",
+    "id": "corporations:corporation_wonka_shop",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Wonka Confectioneries Shop",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": true,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Since the dawn of civilization, humanity desired treats that cleansed their palates after consuming rich savory meals or plain meals. Early forays to treats mostly resided in cakes and pastries with the notion of just using beet sugar to satisfy the taste buds or sap based taffy. Other means for common people to enjoy sweets often relied on more sweet starchy foods such as yams or azuki beans mashed to a fine paste for sweet snacks and relying on honeyed alcohol for drinks (Roman wine is much sweeter than any wine of today) as sugar based candies were often too expensive to make let alone enjoy by the average person. Although sugar cultivation happened in Southeast Asia and in the Middle East, it wasn\u0092t used in widespread use for commoners whom while may know about spices does not have access to refined sugar treats[PARAGRAPH:1]Thanks to easy access to sugar and cacao in the 1800\u0092s America were able to mass produce candy treats with Whitman\u0092s Chocolate boxes being the first case of mass produced confectionaries in America. However, it is the Swiss who produce most if not all of the most well known candy in the world when Confectionery as a business became truly lucrative with Lindt and Nestle being one of the candy magnates known to man although Mars Bars Inc. managed to wrestle control of the candy market away from Europe in 1911 with the delicious nougat, caramel and chocolate combination.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:wonka",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Build this corporation in order to get Confectioneries bonuses.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:bauxite": {
+        "commerce": 0,
+        "food": 0,
+        "production": 7
+      },
+      "world:copper": {
+        "commerce": 0,
+        "food": 0,
+        "production": 7
+      },
+      "world:iron": {
+        "commerce": 0,
+        "food": 0,
+        "production": 7
+      },
+      "world:marble": {
+        "commerce": 0,
+        "food": 0,
+        "production": 7
+      },
+      "world:stone": {
+        "commerce": 0,
+        "food": 0,
+        "production": 7
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:creative_constructions_office",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 2,
+      "growth": 10,
+      "military": 4,
+      "production": 6,
+      "science": 4
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,4,10",
+    "id": "corporations:creative_constructions_office",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Creative Constructions Contractors",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tThe Great Pyramids, the Hagia Sophia and the Hoover Dam all started their famed existences in the same way - with a pile of stones and an ambitious engineer. In the past, grand projects were taken on by princes or heads of state, but today these works are built by corporations. Often employing both an architect and a construction team, modern construction companies both dream up and execute the shaping of a piece of land into a new edifice. Beyond simply erecting the building, it often falls upon the construction company to reign in the wild designs of upstart architects like Frank Lloyd Wright and Antoni Gaudi to ensure the completion of their works. Perhaps if a construction executive had been present during the designing of Gaudi\u0027s Sagrada Familia, it would already be complete and accepting donations for renovations.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:4",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Increases production if the resources needed by the Creative Constructions corporation are present in the city.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission",
+      "iPower"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:cotton": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:dye": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:fur": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:sheep": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:silk": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:empcloth_store",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 10,
+      "growth": 6,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,3,11",
+    "id": "corporations:empcloth_store",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Emperors Clothing Store",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Your local store to get your clothes.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:empcloth",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "NONE",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission",
+      "iPower"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:cotton": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:cow": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:dye": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:fur": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      },
+      "world:silk": {
+        "commerce": 3,
+        "food": 0,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:fashion_store",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 10,
+      "growth": 6,
+      "military": 0,
+      "production": 0,
+      "science": 0
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,7,11",
+    "id": "corporations:fashion_store",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Fashion House Boutique",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "Your local store to get your clothes.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:fashion",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "NONE",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission",
+      "iPower"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:coal": {
+        "commerce": 0,
+        "food": 0,
+        "production": 5
+      },
+      "world:copper": {
+        "commerce": 0,
+        "food": 0,
+        "production": 5
+      },
+      "world:gold": {
+        "commerce": 5,
+        "food": 0,
+        "production": 5
+      },
+      "world:iron": {
+        "commerce": 0,
+        "food": 0,
+        "production": 5
+      },
+      "world:lead": {
+        "commerce": 0,
+        "food": 0,
+        "production": 5
+      },
+      "world:silver": {
+        "commerce": 5,
+        "food": 0,
+        "production": 5
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:mining_inc_survey_office",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 2,
+      "growth": 10,
+      "military": 4,
+      "production": 6,
+      "science": 4
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,4,13",
+    "id": "corporations:mining_inc_survey_office",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Mining Inc. Survey",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tFor much of human history, victory has gone to those with access to the finest metals. From the Bronze Age onwards, metal tools, weapons and alloys have been an inherent part of the rise of civilization, spurring conquests and construction by the world\u0027s greatest empires. And while metal mining has had an impressive history, it was not until the nineteenth century that industrial mining truly began to take root.[PARAGRAPH:1]Two reasons explain this sudden intensification in mining operations. The first was the almost daily revolutions in the production of tools and consumer items, requiring a continual source of metal to produce them. The second was that the fuel that powered the Industrial Revolution was coal, nestled deep within the earth. In modern times, enormous excavators like the Bagger 288 have it possible to mine a pit three-hundred feet long and one-hundred feet deep in a day, a feat that, in the past, would have required the mobilization of nations.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:5",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Increases production and commerce if the resources needed by the Mining Inc. corporation are present in the city.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission",
+      "iPower"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {
+      "world:clam": 1,
+      "world:crab": 1,
+      "world:fish": 1,
+      "world:rice": 1,
+      "world:shrimp": 1
+    },
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:clam": {
+        "commerce": 0,
+        "food": 4,
+        "production": 0
+      },
+      "world:crab": {
+        "commerce": 0,
+        "food": 4,
+        "production": 0
+      },
+      "world:fish": {
+        "commerce": 0,
+        "food": 4,
+        "production": 0
+      },
+      "world:rice": {
+        "commerce": 0,
+        "food": 4,
+        "production": 0
+      },
+      "world:shrimp": {
+        "commerce": 0,
+        "food": 4,
+        "production": 0
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:sid_sushi_restaurant",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "growth": 10
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,5,15",
+    "id": "corporations:sid_sushi_restaurant",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Sid\u0027s Sushi Restaurant",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tSushi is an ancient form of food preservation that originated in Southeast Asia in the fourth century BC. This technique of wrapping fish in vinegar-soaked rice spread through out Asia, making its way to China in the thirteenth century and later to Japan.[PARAGRAPH:1]In Japan, the dish became extremely popular in the early nineteenth century, when a sushi stall owner in Edo began placing bits of extremely fresh and even raw fish within or atop the classic bed of vinegar rice. It was here that modern sushi was born. Sushi has since become Japan\u0027s signature dish, and from the 1980s onward has become a popular delicacy throughout the world.",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:2",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Increases food production in city and health from fish, rice, clam and crab.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    }
+  },
+  {
+    "advancedStartCost": 100,
+    "advancedStartCostIncrease": 0,
+    "aiWeight": 0,
+    "airModifier": 0,
+    "airUnitCapacity": 0,
+    "allCityDefense": 0,
+    "allowsNuclearStrikes": false,
+    "allowsNukes": false,
+    "anarchyModifier": 0,
+    "areaCleanPower": false,
+    "areaFreeSpecialist": 0,
+    "areaHappiness": 0,
+    "areaHealth": 0,
+    "areaMaintenanceModifier": 0,
+    "bombardDefense": 0,
+    "bonusHappinessChanges": {},
+    "bonusHealthChanges": {},
+    "bonusProductionModifiers": {},
+    "bonusType": null,
+    "bonusYieldChanges": {},
+    "bonusYieldModifiers": {
+      "world:corn": {
+        "commerce": 0,
+        "food": 0,
+        "production": 5
+      },
+      "world:potato": {
+        "commerce": 0,
+        "food": 0,
+        "production": 5
+      },
+      "world:rice": {
+        "commerce": 0,
+        "food": 0,
+        "production": 5
+      },
+      "world:sugar": {
+        "commerce": 0,
+        "food": 0,
+        "production": 5
+      }
+    },
+    "buildingClassProductionModifiers": {},
+    "buildingHappinessChanges": {},
+    "buildingOnlyHealthy": false,
+    "capital": false,
+    "capitalExtraCommerce": 0,
+    "captureSurvivalPercent": 75,
+    "cityCountMaintenancePercent": 0,
+    "coastalDistanceMaintenanceModifier": 0,
+    "coastalLocation": false,
+    "commerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "commerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "cost": 500,
+    "defaultBuilding": "corporations:standard_ethanol_distillery",
+    "defensePercent": 0,
+    "dirtyPower": false,
+    "distanceMaintenanceModifier": 0,
+    "domainFreeExperiences": {},
+    "domainProductionModifiers": {},
+    "era": null,
+    "experience": 0,
+    "extendsBuildingClass": null,
+    "extraFreeBonuses": {},
+    "flavors": {
+      "gold": 2,
+      "growth": 10,
+      "military": 4,
+      "production": 6,
+      "science": 4
+    },
+    "foodKept": 0,
+    "founds": null,
+    "freeBonus": null,
+    "freeBonusCount": 0,
+    "freeBuilding": null,
+    "freePromotion": null,
+    "freeSpecialist": 0,
+    "freeSpecialistCounts": {},
+    "freeTechs": 0,
+    "globalBuildingClassProductionModifiers": {},
+    "globalBuildingExtraCommerces": {},
+    "globalCommerceModifiers": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "globalExperience": 0,
+    "globalFreeSpecialist": 0,
+    "globalGreatPeopleRateModifier": 0,
+    "globalHappiness": 0,
+    "globalHealth": 0,
+    "globalHurryModifier": 0,
+    "globalMaintenanceModifier": 0,
+    "globalSeaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "globalYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "goldenAge": false,
+    "governmentCenter": false,
+    "greatPeopleRateChange": 0,
+    "greatPeopleRateModifier": 0,
+    "happiness": 0,
+    "happinessPercentPerPopulation": 0,
+    "healRateChange": 0,
+    "health": 0,
+    "healthPercentPerPopulation": 0,
+    "help": "",
+    "hurryAngerModifier": 0,
+    "hurryCostModifier": 0,
+    "icon": ",Art/Interface/Buttons/Empty.dds,Art/Interface/Buttons/Atlases/guildatlas.dds,6,15",
+    "id": "corporations:standard_ethanol_distillery",
+    "limits": {
+      "extraPlayer": 0,
+      "noLimit": false,
+      "player": -1,
+      "team": -1,
+      "world": -1
+    },
+    "maintenanceModifier": 0,
+    "maxLatitude": 90,
+    "militaryProductionModifier": 0,
+    "minAreaSize": -1,
+    "minLatitude": 0,
+    "minimumPopulation": 0,
+    "name": "Standard Ethanol Distillery",
+    "neverCapture": false,
+    "noBonus": null,
+    "noPower": false,
+    "noUnhappiness": false,
+    "noUnhealthyPopulation": false,
+    "nukeExplosionRand": 0,
+    "nukeImmune": false,
+    "nukeModifier": 0,
+    "obsoleteSafeCommerceChanges": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "obsoleteTech": null,
+    "occupationTimeModifier": 0,
+    "pedia": "\tAs an energy source, few things can compare to fossil fuels. Yet, like most resources, the limited nature of fossil fuels has made an alternative energy source a necessary compliment to the world\u0027s power supply. Ethanol, which can be created from corn, beets and sweet potatoes, has become one of the leading candidates to wean consumers from their daily gasoline fix. Used as a fuel additive or a fuel itself, ethanol\u0027s renewable nature, as well as the increased availability of ethanol-powered vehicles, has made it the most widely used gasoline alternative in the world. But with an ever-increasing world population the use of fields to produce fuel instead of food has made the full-blown adoption of biofuels a difficult choice for those in positions of power. ",
+    "populationGrowthPercent": 0,
+    "powerBonus": null,
+    "powerYieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 5
+    },
+    "producesPower": false,
+    "religionType": null,
+    "replaceBuildings": {},
+    "replacedBy": [],
+    "requirements": {
+      "all": [
+        {
+          "all": [
+            {
+              "id": "corporations:3",
+              "kind": "corporation"
+            }
+          ]
+        }
+      ]
+    },
+    "requiresActiveCivics": false,
+    "requiresPower": false,
+    "requiresReligion": false,
+    "requiresStateReligion": false,
+    "riverLocation": false,
+    "riverPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "seaPlotYieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "specialistCommercePercentChanges": {},
+    "specialistExtraCommerces": {
+      "culture": 0,
+      "espionage": 0,
+      "gold": 0,
+      "research": 0
+    },
+    "specialistSlots": {},
+    "specialistYieldChanges": {},
+    "strategy": "Increases production if the resources needed by the Standard Ethanol corporation are present in the city.",
+    "teamShare": false,
+    "techCommerceChanges": {},
+    "techSpecialistChanges": {},
+    "techYieldChanges": {},
+    "techYieldModifiers": {},
+    "traitHappinessChanges": {},
+    "traitProductionModifiers": {},
+    "unitClassProductionModifiers": {},
+    "unitCombatExtraStrengths": {},
+    "unitCombatFreeExperiences": {},
+    "unsupported": [
+      "Advisor",
+      "ArtDefineTag",
+      "ConstructSound",
+      "SpecialBuildingType",
+      "fVisibilityPriority",
+      "iAsset",
+      "iDCMAirbombMission",
+      "iPower"
+    ],
+    "vicinityBonusYieldChanges": {},
+    "wonderCapacityIncrement": 0,
+    "workableRadius": 0,
+    "yieldChanges": {
+      "commerce": 0,
+      "food": 0,
+      "production": 0
+    },
+    "yieldModifiers": {
+      "commerce": 0,
+      "food": 0,
+      "production": 5
     }
   }
 ]

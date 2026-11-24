@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>Route content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("route")]
 public sealed class RouteDef : GameContentDef
 {
     public YieldVector Yields { get; init; } = default;

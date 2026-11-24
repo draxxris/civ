@@ -24,6 +24,41 @@ public sealed class ContentReferenceAttribute(Type definitionType, ReferencePart
     public ReferencePart Part { get; } = part;
 }
 
+/// <summary>The requirement leaf kind whose ids name definitions of the attributed type: <c>tech</c> on the technology
+/// definition, <c>corporation</c> on a mod's corporation definition. The type that a mod publishes declares its own
+/// kinds, so tooling that validates content without running any mod (the importer) learns every kind from the schema
+/// assemblies it reads (<see cref="ContentLeafKinds.In"/>). At run time the evaluator a mod registers for the kind
+/// (<see cref="IContentRequirementEvaluator.DefinitionType"/>) is what resolves its leaves.</summary>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
+public sealed class ContentLeafKindAttribute(string kind) : Attribute
+{
+    /// <summary>The leaf kind, compared ordinally.</summary>
+    public string Kind { get; } = kind;
+}
+
+/// <summary>Leaf kinds declared by definition types (<see cref="ContentLeafKindAttribute"/>).</summary>
+public static class ContentLeafKinds
+{
+    /// <summary>Every leaf kind the definition types of these assemblies declare, with the type it names. A kind declared
+    /// twice is a schema error.</summary>
+    public static IReadOnlyDictionary<string, Type> In(IEnumerable<Assembly> assemblies)
+    {
+        var kinds = new SortedDictionary<string, Type>(StringComparer.Ordinal);
+        foreach (var type in assemblies.Distinct().SelectMany(a => a.GetExportedTypes()).OrderBy(t => t.FullName, StringComparer.Ordinal))
+            foreach (var attribute in type.GetCustomAttributes<ContentLeafKindAttribute>(false))
+                if (!kinds.TryAdd(attribute.Kind, type))
+                    throw new InvalidDataException($"Leaf kind '{attribute.Kind}' is declared by both {kinds[attribute.Kind].Name} and {type.Name}");
+        return kinds;
+    }
+}
+
+/// <summary>A reference by requirement leaf kind and id, such as what a building founds (<c>{"kind": "&lt;kind&gt;", "id":
+/// "&lt;mod&gt;:&lt;name&gt;"}</c>): the kind says which definition type the id names, as it does for a leaf, so a field can
+/// name content of a mod the declaring schema does not know. It resolves like a leaf, through the evaluator registered
+/// for its kind; a kind no loaded mod registers is not resolved, and the rules reading the field treat it as naming
+/// nothing that is loaded.</summary>
+public sealed record LeafReference(string Kind, string Id);
+
 /// <summary>A requirement evaluator whose leaves refer to a particular definition type.</summary>
 public interface IContentRequirementEvaluator : IRequirementEvaluator
 {
@@ -68,6 +103,11 @@ public static class ContentReferences
         }
         if (value is null || value.GetType().IsPrimitive || value.GetType().IsEnum || !seen.Add(value)) yield break;
         if (value is ContentAttachment attachment) yield return new(attachment.Target, attachment.TargetType(), path + ".Target");
+        if (value is LeafReference named)
+        {
+            if (kinds.TryGetValue(named.Kind, out var referenced)) yield return new(named.Id, referenced, path);
+            yield break;
+        }
         if (value is Requirement requirement)
         {
             foreach (var leaf in Leaves(requirement))

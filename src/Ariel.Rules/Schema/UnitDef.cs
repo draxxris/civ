@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>Unit content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("unit"), ContentLeafKind("unit-class")]
 public sealed class UnitDef : GameContentDef
 {
     [ContentReference(typeof(BonusDef), ReferencePart.Keys)]

@@ -22,7 +22,7 @@
     "CommerceInfo": "foundation",
     "ConceptInfo": "foundation",
     "ControlInfo": "foundation",
-    "CorporationInfo": "foundation",
+    "CorporationInfo": "corporations",
     "CultureLevelInfo": "foundation",
     "CursorInfo": "foundation",
     "DenialInfo": "diplomacy",
@@ -10978,8 +10978,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_ALUMINUM_CO_R_Source_D",
-      "mod": "cities",
-      "id": "cities:aluminum_co_r_source_d",
+      "mod": "corporations",
+      "id": "corporations:aluminum_co_r_source_d",
       "era": null
     },
     {
@@ -11566,8 +11566,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CEREAL_MILLS_FACTORY",
-      "mod": "cities",
-      "id": "cities:cereal_mills_factory",
+      "mod": "corporations",
+      "id": "corporations:cereal_mills_factory",
       "era": null
     },
     {
@@ -11664,8 +11664,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CIVILIZED_JEWELERS_STORE",
-      "mod": "cities",
-      "id": "cities:civilized_jewelers_store",
+      "mod": "corporations",
+      "id": "corporations:civilized_jewelers_store",
       "era": null
     },
     {
@@ -11874,8 +11874,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_ADVENTURE_FRANCHISE",
-      "mod": "cities",
-      "id": "cities:corporation_adventure_franchise",
+      "mod": "corporations",
+      "id": "corporations:corporation_adventure_franchise",
       "era": null
     },
     {
@@ -11923,8 +11923,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_BURGERWORLD_RESTAURANT",
-      "mod": "cities",
-      "id": "cities:corporation_burgerworld_restaurant",
+      "mod": "corporations",
+      "id": "corporations:corporation_burgerworld_restaurant",
       "era": null
     },
     {
@@ -11979,8 +11979,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_EWTRADE_STORE",
-      "mod": "cities",
-      "id": "cities:corporation_ewtrade_store",
+      "mod": "corporations",
+      "id": "corporations:corporation_ewtrade_store",
       "era": null
     },
     {
@@ -12028,8 +12028,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MALLWART_STORE",
-      "mod": "cities",
-      "id": "cities:corporation_mallwart_store",
+      "mod": "corporations",
+      "id": "corporations:corporation_mallwart_store",
       "era": null
     },
     {
@@ -12056,8 +12056,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MILEHIGH_FRANCHISE",
-      "mod": "cities",
-      "id": "cities:corporation_milehigh_franchise",
+      "mod": "corporations",
+      "id": "corporations:corporation_milehigh_franchise",
       "era": null
     },
     {
@@ -12077,8 +12077,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MOBBY_STORE",
-      "mod": "cities",
-      "id": "cities:corporation_mobby_store",
+      "mod": "corporations",
+      "id": "corporations:corporation_mobby_store",
       "era": null
     },
     {
@@ -12091,8 +12091,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_MOONBEAN_SHOP",
-      "mod": "cities",
-      "id": "cities:corporation_moonbean_shop",
+      "mod": "corporations",
+      "id": "corporations:corporation_moonbean_shop",
       "era": null
     },
     {
@@ -12105,15 +12105,15 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_RED_THEATER",
-      "mod": "cities",
-      "id": "cities:corporation_red_theater",
+      "mod": "corporations",
+      "id": "corporations:corporation_red_theater",
       "era": null
     },
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_SAFARI_GUIDE",
-      "mod": "cities",
-      "id": "cities:corporation_safari_guide",
+      "mod": "corporations",
+      "id": "corporations:corporation_safari_guide",
       "era": null
     },
     {
@@ -12133,8 +12133,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_ULTSOLDIER_TRAINER",
-      "mod": "cities",
-      "id": "cities:corporation_ultsoldier_trainer",
+      "mod": "corporations",
+      "id": "corporations:corporation_ultsoldier_trainer",
       "era": null
     },
     {
@@ -12147,8 +12147,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CORPORATION_WONKA_SHOP",
-      "mod": "cities",
-      "id": "cities:corporation_wonka_shop",
+      "mod": "corporations",
+      "id": "corporations:corporation_wonka_shop",
       "era": null
     },
     {
@@ -12182,8 +12182,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_CREATIVE_CONSTRUCTIONS_OFFICE",
-      "mod": "cities",
-      "id": "cities:creative_constructions_office",
+      "mod": "corporations",
+      "id": "corporations:creative_constructions_office",
       "era": null
     },
     {
@@ -12406,8 +12406,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_EMPCLOTH_STORE",
-      "mod": "cities",
-      "id": "cities:empcloth_store",
+      "mod": "corporations",
+      "id": "corporations:empcloth_store",
       "era": null
     },
     {
@@ -12462,8 +12462,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_FASHION_STORE",
-      "mod": "cities",
-      "id": "cities:fashion_store",
+      "mod": "corporations",
+      "id": "corporations:fashion_store",
       "era": null
     },
     {
@@ -13659,8 +13659,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_MINING_INC_SURVEY_OFFICE",
-      "mod": "cities",
-      "id": "cities:mining_inc_survey_office",
+      "mod": "corporations",
+      "id": "corporations:mining_inc_survey_office",
       "era": null
     },
     {
@@ -14632,8 +14632,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_SID_SUSHI_RESTAURANT",
-      "mod": "cities",
-      "id": "cities:sid_sushi_restaurant",
+      "mod": "corporations",
+      "id": "corporations:sid_sushi_restaurant",
       "era": null
     },
     {
@@ -14758,8 +14758,8 @@
     {
       "class": "BuildingInfo",
       "sourceType": "BUILDING_STANDARD_ETHANOL_DISTILLERY",
-      "mod": "cities",
-      "id": "cities:standard_ethanol_distillery",
+      "mod": "corporations",
+      "id": "corporations:standard_ethanol_distillery",
       "era": null
     },
     {
@@ -17915,253 +17915,253 @@
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_1",
-      "mod": "foundation",
-      "id": "foundation:1",
+      "mod": "corporations",
+      "id": "corporations:1",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_2",
-      "mod": "foundation",
-      "id": "foundation:2",
+      "mod": "corporations",
+      "id": "corporations:2",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_3",
-      "mod": "foundation",
-      "id": "foundation:3",
+      "mod": "corporations",
+      "id": "corporations:3",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_4",
-      "mod": "foundation",
-      "id": "foundation:4",
+      "mod": "corporations",
+      "id": "corporations:4",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_5",
-      "mod": "foundation",
-      "id": "foundation:5",
+      "mod": "corporations",
+      "id": "corporations:5",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_6",
-      "mod": "foundation",
-      "id": "foundation:6",
+      "mod": "corporations",
+      "id": "corporations:6",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_7",
-      "mod": "foundation",
-      "id": "foundation:7",
+      "mod": "corporations",
+      "id": "corporations:7",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_ADVENTURE",
-      "mod": "foundation",
-      "id": "foundation:adventure",
+      "mod": "corporations",
+      "id": "corporations:adventure",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_APOTHEGUILD",
-      "mod": "foundation",
-      "id": "foundation:apotheguild",
+      "mod": "corporations",
+      "id": "corporations:apotheguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_ARTISTGUILD",
-      "mod": "foundation",
-      "id": "foundation:artistguild",
+      "mod": "corporations",
+      "id": "corporations:artistguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_BAKERGUILD",
-      "mod": "foundation",
-      "id": "foundation:bakerguild",
+      "mod": "corporations",
+      "id": "corporations:bakerguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_BLACKSMGUILD",
-      "mod": "foundation",
-      "id": "foundation:blacksmguild",
+      "mod": "corporations",
+      "id": "corporations:blacksmguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_BURGERWORLD",
-      "mod": "foundation",
-      "id": "foundation:burgerworld",
+      "mod": "corporations",
+      "id": "corporations:burgerworld",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_BUTCHERGUILD",
-      "mod": "foundation",
-      "id": "foundation:butcherguild",
+      "mod": "corporations",
+      "id": "corporations:butcherguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_CARPENTERGUILD",
-      "mod": "foundation",
-      "id": "foundation:carpenterguild",
+      "mod": "corporations",
+      "id": "corporations:carpenterguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_CLERKSGUILD",
-      "mod": "foundation",
-      "id": "foundation:clerksguild",
+      "mod": "corporations",
+      "id": "corporations:clerksguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_DRAPERSGUILD",
-      "mod": "foundation",
-      "id": "foundation:drapersguild",
+      "mod": "corporations",
+      "id": "corporations:drapersguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_EMPCLOTH",
-      "mod": "foundation",
-      "id": "foundation:empcloth",
+      "mod": "corporations",
+      "id": "corporations:empcloth",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_EQUESTGUILD",
-      "mod": "foundation",
-      "id": "foundation:equestguild",
+      "mod": "corporations",
+      "id": "corporations:equestguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_EWTRADE",
-      "mod": "foundation",
-      "id": "foundation:ewtrade",
+      "mod": "corporations",
+      "id": "corporations:ewtrade",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_FASHION",
-      "mod": "foundation",
-      "id": "foundation:fashion",
+      "mod": "corporations",
+      "id": "corporations:fashion",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_FISHMONGUILD",
-      "mod": "foundation",
-      "id": "foundation:fishmonguild",
+      "mod": "corporations",
+      "id": "corporations:fishmonguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_GLASSGUILD",
-      "mod": "foundation",
-      "id": "foundation:glassguild",
+      "mod": "corporations",
+      "id": "corporations:glassguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_GOLDSMGUILD",
-      "mod": "foundation",
-      "id": "foundation:goldsmguild",
+      "mod": "corporations",
+      "id": "corporations:goldsmguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_GROCERGUILD",
-      "mod": "foundation",
-      "id": "foundation:grocerguild",
+      "mod": "corporations",
+      "id": "corporations:grocerguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MALLWART",
-      "mod": "foundation",
-      "id": "foundation:mallwart",
+      "mod": "corporations",
+      "id": "corporations:mallwart",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MAPSTER",
-      "mod": "foundation",
-      "id": "foundation:mapster",
+      "mod": "corporations",
+      "id": "corporations:mapster",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MASONGUILD",
-      "mod": "foundation",
-      "id": "foundation:masonguild",
+      "mod": "corporations",
+      "id": "corporations:masonguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MERCERGUILD",
-      "mod": "foundation",
-      "id": "foundation:mercerguild",
+      "mod": "corporations",
+      "id": "corporations:mercerguild",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MILEHIGH",
-      "mod": "foundation",
-      "id": "foundation:milehigh",
+      "mod": "corporations",
+      "id": "corporations:milehigh",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MOBBY",
-      "mod": "foundation",
-      "id": "foundation:mobby",
+      "mod": "corporations",
+      "id": "corporations:mobby",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_MOONBEAN",
-      "mod": "foundation",
-      "id": "foundation:moonbean",
+      "mod": "corporations",
+      "id": "corporations:moonbean",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_RED",
-      "mod": "foundation",
-      "id": "foundation:red",
+      "mod": "corporations",
+      "id": "corporations:red",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_SAFARI",
-      "mod": "foundation",
-      "id": "foundation:safari",
+      "mod": "corporations",
+      "id": "corporations:safari",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_ULTSOLDIER",
-      "mod": "foundation",
-      "id": "foundation:ultsoldier",
+      "mod": "corporations",
+      "id": "corporations:ultsoldier",
       "era": null
     },
     {
       "class": "CorporationInfo",
       "sourceType": "CORPORATION_WONKA",
-      "mod": "foundation",
-      "id": "foundation:wonka",
+      "mod": "corporations",
+      "id": "corporations:wonka",
       "era": null
     },
     {
@@ -41904,15 +41904,15 @@
     {
       "class": "SpecialBuildingInfo",
       "sourceType": "SPECIALBUILDING_CORPORATE_STORE",
-      "mod": "cities",
-      "id": "cities:specialbuilding_corporate_store",
+      "mod": "corporations",
+      "id": "corporations:specialbuilding_corporate_store",
       "era": "ERA_INDUSTRIAL"
     },
     {
       "class": "SpecialBuildingInfo",
       "sourceType": "SPECIALBUILDING_CORPORATION_HQ",
-      "mod": "cities",
-      "id": "cities:specialbuilding_corporation_hq",
+      "mod": "corporations",
+      "id": "corporations:specialbuilding_corporation_hq",
       "era": "ERA_INDUSTRIAL"
     },
     {
@@ -41939,8 +41939,8 @@
     {
       "class": "SpecialBuildingInfo",
       "sourceType": "SPECIALBUILDING_GUILD_HQ",
-      "mod": "cities",
-      "id": "cities:specialbuilding_guild_hq",
+      "mod": "corporations",
+      "id": "corporations:specialbuilding_guild_hq",
       "era": "ERA_MEDIEVAL"
     },
     {

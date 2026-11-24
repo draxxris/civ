@@ -1,7 +1,7 @@
 [
   {
     "corporationSpreads": {
-      "foundation:1": 40
+      "corporations:1": 40
     },
     "id": "corporations:executive_1",
     "name": "",
@@ -10,7 +10,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:2": 40
+      "corporations:2": 40
     },
     "id": "corporations:executive_2",
     "name": "",
@@ -19,7 +19,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:3": 40
+      "corporations:3": 40
     },
     "id": "corporations:executive_3",
     "name": "",
@@ -28,7 +28,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:4": 40
+      "corporations:4": 40
     },
     "id": "corporations:executive_4",
     "name": "",
@@ -37,7 +37,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:5": 40
+      "corporations:5": 40
     },
     "id": "corporations:executive_5",
     "name": "",
@@ -46,7 +46,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:6": 40
+      "corporations:6": 40
     },
     "id": "corporations:executive_6",
     "name": "",
@@ -55,7 +55,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:7": 40
+      "corporations:7": 40
     },
     "id": "corporations:executive_7",
     "name": "",
@@ -64,7 +64,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:adventure": 40
+      "corporations:adventure": 40
     },
     "id": "corporations:executive_adventure",
     "name": "",
@@ -73,7 +73,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:apotheguild": 40
+      "corporations:apotheguild": 40
     },
     "id": "corporations:executive_apotheguild",
     "name": "",
@@ -82,7 +82,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:artistguild": 40
+      "corporations:artistguild": 40
     },
     "id": "corporations:executive_artistguild",
     "name": "",
@@ -91,7 +91,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:bakerguild": 40
+      "corporations:bakerguild": 40
     },
     "id": "corporations:executive_bakerguild",
     "name": "",
@@ -100,7 +100,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:blacksmguild": 40
+      "corporations:blacksmguild": 40
     },
     "id": "corporations:executive_blacksmguild",
     "name": "",
@@ -109,7 +109,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:burgerworld": 40
+      "corporations:burgerworld": 40
     },
     "id": "corporations:executive_burgerworld",
     "name": "",
@@ -118,7 +118,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:butcherguild": 40
+      "corporations:butcherguild": 40
     },
     "id": "corporations:executive_butcherguild",
     "name": "",
@@ -127,7 +127,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:carpenterguild": 40
+      "corporations:carpenterguild": 40
     },
     "id": "corporations:executive_carpenterguild",
     "name": "",
@@ -136,7 +136,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:clerksguild": 40
+      "corporations:clerksguild": 40
     },
     "id": "corporations:executive_clerksguild",
     "name": "",
@@ -145,7 +145,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:drapersguild": 40
+      "corporations:drapersguild": 40
     },
     "id": "corporations:executive_drapersguild",
     "name": "",
@@ -154,7 +154,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:empcloth": 40
+      "corporations:empcloth": 40
     },
     "id": "corporations:executive_empcloth",
     "name": "",
@@ -163,7 +163,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:equestguild": 40
+      "corporations:equestguild": 40
     },
     "id": "corporations:executive_equestguild",
     "name": "",
@@ -172,7 +172,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:ewtrade": 40
+      "corporations:ewtrade": 40
     },
     "id": "corporations:executive_ewtrade",
     "name": "",
@@ -181,7 +181,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:fashion": 40
+      "corporations:fashion": 40
     },
     "id": "corporations:executive_fashion",
     "name": "",
@@ -190,7 +190,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:fishmonguild": 40
+      "corporations:fishmonguild": 40
     },
     "id": "corporations:executive_fishmonguild",
     "name": "",
@@ -199,7 +199,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:glassguild": 40
+      "corporations:glassguild": 40
     },
     "id": "corporations:executive_glassguild",
     "name": "",
@@ -208,7 +208,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:goldsmguild": 40
+      "corporations:goldsmguild": 40
     },
     "id": "corporations:executive_goldsmguild",
     "name": "",
@@ -217,7 +217,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:grocerguild": 40
+      "corporations:grocerguild": 40
     },
     "id": "corporations:executive_grocerguild",
     "name": "",
@@ -226,7 +226,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:mallwart": 40
+      "corporations:mallwart": 40
     },
     "id": "corporations:executive_mallwart",
     "name": "",
@@ -235,7 +235,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:mapster": 40
+      "corporations:mapster": 40
     },
     "id": "corporations:executive_mapster",
     "name": "",
@@ -244,7 +244,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:masonguild": 40
+      "corporations:masonguild": 40
     },
     "id": "corporations:executive_masonguild",
     "name": "",
@@ -253,7 +253,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:mercerguild": 40
+      "corporations:mercerguild": 40
     },
     "id": "corporations:executive_mercerguild",
     "name": "",
@@ -262,7 +262,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:milehigh": 40
+      "corporations:milehigh": 40
     },
     "id": "corporations:executive_milehigh",
     "name": "",
@@ -271,7 +271,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:mobby": 40
+      "corporations:mobby": 40
     },
     "id": "corporations:executive_mobby",
     "name": "",
@@ -280,7 +280,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:red": 40
+      "corporations:red": 40
     },
     "id": "corporations:executive_red",
     "name": "",
@@ -289,7 +289,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:safari": 40
+      "corporations:safari": 40
     },
     "id": "corporations:executive_safari",
     "name": "",
@@ -298,7 +298,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:ultsoldier": 40
+      "corporations:ultsoldier": 40
     },
     "id": "corporations:executive_ultsoldier",
     "name": "",
@@ -307,7 +307,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:wonka": 40
+      "corporations:wonka": 40
     },
     "id": "corporations:executive_wonka",
     "name": "",
@@ -316,7 +316,7 @@
   },
   {
     "corporationSpreads": {
-      "foundation:moonbean": 40
+      "corporations:moonbean": 40
     },
     "id": "corporations:moonbean_executive",
     "name": "",

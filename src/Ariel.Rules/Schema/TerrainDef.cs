@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>Terrain content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("terrain")]
 public sealed class TerrainDef : GameContentDef
 {
     public YieldVector RiverYieldChange { get; init; } = default;

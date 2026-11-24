@@ -132,7 +132,7 @@ public static class ContentEmission
     }
 
     public static IReadOnlyList<ContentRef> References(ContentDef definition) => ContentReferences.Enumerate(definition,
-        ContentLeafKinds.Types.Select(k => new IdentityEvaluator(k.Key, k.Value))).ToArray();
+        SchemaCatalog.LeafKinds.Select(k => new IdentityEvaluator(k.Key, k.Value))).ToArray();
 
     /// <summary>Every reference resolves to an emitted definition of its type, and a record a mod owns outright is named
     /// only by that mod's own rows: no other mod could load without it.</summary>

@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>Building content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("building"), ContentLeafKind("building-class")]
 public sealed class BuildingDef : GameContentDef
 {
     [ContentReference(typeof(BonusDef), ReferencePart.Keys)]
@@ -30,11 +31,11 @@ public sealed class BuildingDef : GameContentDef
     [ContentReference(typeof(BonusDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, int> ExtraFreeBonuses { get; init; } = ImmutableDictionary<string, int>.Empty;
     public ImmutableDictionary<string, int> Flavors { get; init; } = ImmutableDictionary<string, int>.Empty;
-    [ContentReference(typeof(CorporationIdentityDef), ReferencePart.Values)]
-    public string? FoundsCorporation { get; init; } = null;
-    /// <summary>The religion this building founds when it is completed, with the completing city as its holy city.</summary>
-    [ContentReference(typeof(ReligionIdentityDef), ReferencePart.Values)]
-    public string? FoundsReligion { get; init; } = null;
+    /// <summary>What completing this building founds in the completing city, by leaf kind and id: a religion's founding
+    /// wonder names <c>{"kind": "religion"}</c>, a corporation's headquarters the Corporations mod's
+    /// <c>{"kind": "corporation"}</c>. The mod that runs the kind founds it (<see cref="Ariel.Game.IBuildingFounder"/>)
+    /// and is the one that knows the kind; without it the building founds nothing and cannot be built.</summary>
+    public LeafReference? Founds { get; init; } = null;
     [ContentReference(typeof(BonusDef), ReferencePart.Values)]
     public string? FreeBonus { get; init; } = null;
     [ContentReference(typeof(BuildingDef), ReferencePart.Values)]
@@ -64,6 +65,12 @@ public sealed class BuildingDef : GameContentDef
     public string? ReligionType { get; init; } = null;
     [ContentReference(typeof(BuildingDef), ReferencePart.Keys)]
     public ImmutableDictionary<string, bool> ReplaceBuildings { get; init; } = ImmutableDictionary<string, bool>.Empty;
+    /// <summary>The other side of <see cref="ReplaceBuildings"/>: each building listed here (by id) relates to this one
+    /// exactly as if it listed this building in its own <see cref="ReplaceBuildings"/>. A mod's building takes
+    /// part in a base building's replacement this way, so the base row never names content of a mod it cannot depend
+    /// on (a corporation's store and the base buildings that replace it).</summary>
+    [ContentReference(typeof(BuildingDef), ReferencePart.Values)]
+    public ImmutableArray<string> ReplacedBy { get; init; } = [];
     public YieldVector RiverPlotYieldChanges { get; init; } = default;
     public YieldVector SeaPlotYieldChanges { get; init; } = default;
     [ContentReference(typeof(SpecialistDef), ReferencePart.Keys)]

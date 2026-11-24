@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 namespace Ariel.Content.Schema;
 
 /// <summary>Promotion content. All authoritative numbers are integers.</summary>
+[ContentLeafKind("promotion")]
 public sealed class PromotionDef : GameContentDef
 {
     [ContentReference(typeof(DomainDef), ReferencePart.Keys)]
