@@ -66,20 +66,6 @@
     "era": null,
     "help": "",
     "icon": "",
-    "id": "foundation:victory_religious",
-    "name": "Religious",
-    "pedia": "Victory Religios Pedia",
-    "requirements": null,
-    "strategy": "",
-    "unsupported": [
-      "iReligionPercent"
-    ]
-  },
-  {
-    "deferred": true,
-    "era": null,
-    "help": "",
-    "icon": "",
     "id": "foundation:victory_scientific",
     "name": "Scientific",
     "pedia": " ",

@@ -90,10 +90,9 @@ internal static class ReligionData
     internal static ImmutableDictionary<string, int> Spreads(ContentDb content, string unit) => Unit(content, unit).ReligionSpreads;
     /// <summary>Whether the unit performs inquisitions.</summary>
     internal static bool IsInquisitor(ContentDb content, string unit) => Unit(content, unit).Inquisitor;
-    /// <summary>The religion rule constants.</summary>
+    /// <summary>The religion rule constants, each at its default when the row leaves it out.</summary>
     internal static RuleConstantsReligionDef Rules(Simulation sim) =>
         sim.Content.Attachment<RuleConstantsReligionDef>(sim.Content.Get<RuleConstantsDef>().All.Single().Id) ?? RuleConstantsReligionDef.None;
-    internal static int Raw(Simulation sim, string key, int fallback) => sim.Content.Get<RuleConstantsDef>().All.Single().Raw.TryGetValue(key, out var text) && int.TryParse(text, out var value) ? value : fallback;
     internal static bool BlocksSpread(Simulation sim, City city, string religion) => religion != StateReligion(sim, city.Owner) && Civics(sim, city.Owner).Any(c => c.Rules.NoNonStateReligionSpread);
 }
 

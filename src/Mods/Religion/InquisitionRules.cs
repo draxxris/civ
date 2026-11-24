@@ -55,13 +55,13 @@ internal sealed partial class ReligionService
         foreach (var building in ReligionData.InvalidatedBuildings(sim, city, religions))
         {
             city.Buildings.Remove(building.Id);
-            gold += (long)Math.Max(0, building.Cost) * speed / Math.Max(1, ReligionData.Raw(sim, "INQUISITION_BUILDING_GOLD_DIVISOR", 4));
+            gold += (long)Math.Max(0, building.Cost) * speed / Math.Max(1, ReligionData.Rules(sim).InquisitionBuildingGoldDivisor);
         }
         foreach (string religion in religions)
         {
             bool holy = HolyCity(sim, religion) == city.Id;
             ReligionData.Remove(sim, city, religion, "inquisition");
-            gold += holy ? ReligionData.Raw(sim, "HOLYCITY_REMOVAL_GOLD", 500) : ReligionData.Raw(sim, "RELIGION_REMOVAL_GOLD", 50);
+            gold += holy ? ReligionData.Rules(sim).HolyCityRemovalGold : ReligionData.Rules(sim).RemovalGold;
             if (holy) RelocateHolyCity(sim, religion);
         }
         return gold;

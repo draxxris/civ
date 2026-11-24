@@ -29,7 +29,7 @@ internal sealed class ReligionEffects : IModifierSource
         var presence = ReligionData.Present(sim, city);
         if (presence.Count == 0 && city.Buildings.Count == 0) return;
         var civics = ReligionData.Civics(sim, city.Owner).ToArray();
-        bool allCommerce = sim.Rules().Peoples?.Traits(sim, city.Owner).Any(t => t.NonStateReligionCommerce) == true;
+        bool allCommerce = sim.Rules().Peoples?.Traits(sim, city.Owner).Any(t => sim.Content.Attachment<TraitReligionDef>(t.Id)?.NonStateReligionCommerce == true) == true;
         foreach (var religion in presence)
         {
             var def = sim.Content.Get<ReligionDef>(religion);
@@ -45,9 +45,9 @@ internal sealed class ReligionEffects : IModifierSource
     private static void Happiness(Simulation sim, string religion, string? state, HeldCivic[] civics, ModifierSink sink)
     {
         bool active = religion == state;
-        int initial = active ? ReligionData.Raw(sim, "INITIAL_STATE_RELIGION_HAPPINESS", 1) : ReligionData.Raw(sim, "INITIAL_NON_STATE_RELIGION_HAPPINESS", 0);
+        int initial = active ? ReligionData.Rules(sim).StateReligionHappiness : ReligionData.Rules(sim).NonStateReligionHappiness;
         sink.Add(religion, "cities:happiness", initial);
-        if (active) sink.Add(religion, "cities:health", ReligionData.Raw(sim, "INITIAL_STATE_RELIGION_HEALTH", 0));
+        if (active) sink.Add(religion, "cities:health", ReligionData.Rules(sim).StateReligionHealth);
         foreach (var civic in civics)
         {
             sink.Add(civic.Id, "cities:happiness", active ? civic.Rules.StateReligionHappiness : civic.Rules.NonStateReligionHappiness);

@@ -35,9 +35,6 @@ public sealed class LeaderDef : GameContentDef
     public int DefensivePactAttitudeChangeLimit { get; init; } = 0;
     public int DefensivePactAttitudeDivisor { get; init; } = 0;
     public int DemandRebukedWarProbability { get; init; } = 0;
-    public int DifferentReligionAttitudeChange { get; init; } = 0;
-    public int DifferentReligionAttitudeChangeLimit { get; init; } = 0;
-    public int DifferentReligionAttitudeDivisor { get; init; } = 0;
     public int FavoriteCivicAttitudeChange { get; init; } = 0;
     public int FavoriteCivicAttitudeChangeLimit { get; init; } = 0;
     public int FavoriteCivicAttitudeDivisor { get; init; } = 0;
@@ -45,9 +42,6 @@ public sealed class LeaderDef : GameContentDef
     public int OpenBordersAttitudeChangeLimit { get; init; } = 0;
     public int OpenBordersAttitudeDivisor { get; init; } = 0;
     public int RazeCityProbability { get; init; } = 0;
-    public int SameReligionAttitudeChange { get; init; } = 0;
-    public int SameReligionAttitudeChangeLimit { get; init; } = 0;
-    public int SameReligionAttitudeDivisor { get; init; } = 0;
     public int WarmongerRespect { get; init; } = 0;
     public int WonderConstructRand { get; init; } = 0;
     [ContentReference(typeof(CivicDef))]

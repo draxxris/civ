@@ -185,11 +185,12 @@ public sealed class EspionageSplitTests
         defines["SOMETHING_ELSE"] = new("2", "iDefineIntVal", "fixture");
         var raw = Assert.Single(ContentEmission.Constants(defines).Select(d => d.Definition).OfType<Schema.RuleConstantsDef>()).Raw;
         Assert.Equal(["SOMETHING_ELSE"], raw.Keys);
-        // No define the base game reads, and no constant it keeps, belongs to the mod.
+        // No define the base game reads, and no constant it keeps, belongs to a mod; a mod's typed constant is its own.
         var committed = JsonNode.Parse(File.ReadAllText(Committed("src/Ariel.Rules/Foundation/data/rule-constants.json")))!.AsArray()[0]!["raw"]!.AsObject();
         Assert.All(committed.Select(p => p.Key), key => Assert.Null(IdMapping.ConstantOwner(key)));
-        Assert.All(SchemaCatalog.Constants.Values.Keys.Concat(SchemaCatalog.Constants.Attachments.SelectMany(a => a.Constants.Keys)),
-            key => Assert.Null(IdMapping.ConstantOwner(key)));
+        Assert.All(SchemaCatalog.Constants.Values.Keys, key => Assert.Null(IdMapping.ConstantOwner(key)));
+        Assert.All(SchemaCatalog.Constants.Attachments.SelectMany(a => a.Constants.Keys.Select(key => (a.Mod, Key: key))),
+            constant => Assert.True(IdMapping.ConstantOwner(constant.Key) is null || IdMapping.ConstantOwner(constant.Key) == constant.Mod, constant.Key));
     }
 
     [Fact]

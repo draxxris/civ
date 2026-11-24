@@ -102,8 +102,10 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void Foreign_spread_requires_contact_and_peace_and_scales_with_existing_faiths(bool multiple)
     {
         var foundation = mods.Sources.Single(s => s.Manifest.Id == "foundation");
-        var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance, multiple) };
+        var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance) };
         var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Where(s => s != foundation).Append(configured)));
+        // The catalog declares no row for this opt-in option: the setup screen offers it, so set it as setup would.
+        sim.Settings.GameOptions["religion:gameoption_multiple_religion_spread"] = multiple;
         GameFactory.NeutralPolitics(sim);
         var holy = City(sim, 0); var foreign = City(sim, 1, 1);
         foreach (var plot in sim.State.Plots) { plot.Revealed.Add(0); plot.Revealed.Add(1); plot.Route = "world:route_route_road"; }
@@ -146,7 +148,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     public void A_trade_route_carries_natural_spread_to_a_city_that_cannot_see_its_way_back()
     {
         var foundation = mods.Sources.Single(s => s.Manifest.Id == "foundation");
-        var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance, false) };
+        var configured = new ModSource { Manifest = foundation.Manifest, Root = foundation.Root, Instance = new SpreadOptions(foundation.Instance) };
         var sim = GameFactory.Scenario(ModLoader.Build(mods.Sources.Where(s => s != foundation).Append(configured)));
         GameFactory.NeutralPolitics(sim);
         var holy = City(sim, 0); var foreign = City(sim, 1, 1);
@@ -170,13 +172,11 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(0, religion.NaturalSpreadOdds(sim, foreign.Id, Buddhism).Threshold);
     }
 
-    private sealed class SpreadOptions(IMod foundation, bool multiple) : IMod
+    private sealed class SpreadOptions(IMod foundation) : IMod
     {
         public void Register(IModContext context)
         {
             foundation.Register(context);
-            // The default catalog does not declare this opt-in option. Exercise a configured ruleset.
-            context.Content<S.GameOptionDef>().Register(new() { Id = "foundation:gameoption_multiple_religion_spread", Default = multiple });
             var rules = context.Content<S.RuleConstantsDef>().All.Single();
             context.Content<S.RuleConstantsDef>().Override(new() { Id = rules.Id, Values = rules.Values, Raw = rules.Raw.SetItem("INITIAL_TRADE_ROUTES", "1").SetItem("MAX_TRADE_ROUTES", "2") });
         }
@@ -233,12 +233,12 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         StateFaith(sim, 0);
         var founded = new ReligionGameState(); founded.Founded[minority] = new(holy.Id, 0);
         sim.State.Extensions.Set(sim.Content, founded);
-        sim.Settings.GameOptions["foundation:gameoption_religion_decay"] = false;
+        sim.Settings.GameOptions["religion:gameoption_religion_decay"] = false;
         var religion = Service<IReligionService>(sim);
         Assert.Equal(0, religion.DecayChancePermille(sim, city.Id, minority));
         for (int i = 0; i < 500; i++) sim.Content.TurnSystems.All.Single(s => s.Id == "religion:city_turns").Run(sim);
         Assert.Contains(minority, religion.Present(sim, city.Id));
-        sim.Settings.GameOptions["foundation:gameoption_religion_decay"] = true;
+        sim.Settings.GameOptions["religion:gameoption_religion_decay"] = true;
         Assert.True(religion.DecayChancePermille(sim, city.Id, minority) > 0);
     }
 

@@ -1,0 +1,16 @@
+[
+  {
+    "deferred": true,
+    "era": null,
+    "help": "",
+    "icon": "",
+    "id": "religion:victory_religious",
+    "name": "Religious",
+    "pedia": "Victory Religios Pedia",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [
+      "iReligionPercent"
+    ]
+  }
+]

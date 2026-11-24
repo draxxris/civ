@@ -39,8 +39,17 @@ public sealed class ReligionMod : IPreparableMod
     private static readonly ModJsonFile<BuildingReligionDef[]> Buildings = new("data/building-religion.json");
     private static readonly ModJsonFile<UnitReligionDef[]> Units = new("data/unit-religion.json");
     private static readonly ModJsonFile<RuleConstantsReligionDef[]> Constants = new("data/rule-constants-religion.json");
+    /// <summary>What traits and leaders mean to religion: the commerce of non-state faiths, each leader's regard for
+    /// shared and other faiths.</summary>
+    private static readonly ModJsonFile<TraitReligionDef[]> Traits = new("data/trait-religion.json");
+    private static readonly ModJsonFile<LeaderReligionDef[]> Leaders = new("data/leader-religion.json");
+    /// <summary>Religion's setup switches, its placeholder technology and its (deferred) victory.</summary>
+    private static readonly ModJsonFile<GameOptionDef[]> Options = new("data/game-option.json");
+    private static readonly ModJsonFile<TechDef[]> Techs = new("data/tech.json");
+    private static readonly ModJsonFile<VictoryIdentityDef[]> Victories = new("data/victory-identity.json");
     public IReadOnlyList<ModJsonFile> PreparationFiles =>
-        [Religions, Conditions, OwnBuildings, OwnUnits, OwnPromotions, FoundingWonders, Memories, Civics, Buildings, Units, Constants, GreatPeople, BuildingGrants, UnitGrants, Civilizations];
+        [Religions, Conditions, OwnBuildings, OwnUnits, OwnPromotions, FoundingWonders, Memories, Civics, Buildings, Units, Constants, GreatPeople, BuildingGrants,
+         UnitGrants, Civilizations, Traits, Leaders, Options, Techs, Victories];
 
     public void Register(IModContext context)
     {
@@ -59,6 +68,11 @@ public sealed class ReligionMod : IPreparableMod
         ContentRegistration.Load(context, BuildingGrants);
         ContentRegistration.Load(context, UnitGrants);
         ContentRegistration.Load(context, Civilizations);
+        ContentRegistration.Load(context, Traits);
+        ContentRegistration.Load(context, Leaders);
+        ContentRegistration.Load(context, Options);
+        ContentRegistration.Load(context, Techs);
+        ContentRegistration.Load(context, Victories);
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);
         ReligionRequirements.Register(context, service);
@@ -99,17 +113,17 @@ public sealed class ReligionMod : IPreparableMod
     }
 }
 
-/// <summary>The setup switches religion honours. The options themselves are base content (<c>foundation:*</c>), so
-/// the setup screen offers them only while this mod is loaded.</summary>
+/// <summary>The setup switches religion honours, this mod's own options (<c>religion:*</c>), which the setup screen
+/// offers only while it is loaded. Multiple religion spread has no source row, so it is offered here alone.</summary>
 internal sealed class ReligionSetupPolicy : ISetupPolicy
 {
     public string? Default(SetupField field) => null;
 
     public IEnumerable<SetupGameOption> GameOptions(ContentDb content)
     {
-        foreach (string id in (string[])["foundation:gameoption_religion_decay", "foundation:gameoption_no_inquisitions"])
+        foreach (string id in (string[])["religion:gameoption_religion_decay", "religion:gameoption_no_inquisitions"])
             if (content.TryGet<GameOptionDef>(id, out var option)) yield return new(option.Id, option.Name, option.Default, option.Help);
-        yield return new("foundation:gameoption_multiple_religion_spread", "Multiple Religion Spread", false,
+        yield return new("religion:gameoption_multiple_religion_spread", "Multiple Religion Spread", false,
             "Cities with an existing religion can still receive additional religions via natural spread.");
     }
 }

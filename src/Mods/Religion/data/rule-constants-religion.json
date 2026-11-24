@@ -1,9 +1,31 @@
 [
   {
     "baseReligionAnarchyTurns": 1,
+    "decayDomesticNumerator": 9,
+    "decayDomesticOffset": 10,
+    "decayOldDenominator": 3,
+    "decayOldNumerator": 4,
+    "decayYoungDivisor": 10,
+    "holyCityInfluence": 1,
+    "holyCityRemovalGold": 500,
     "id": "religion:rule_constants",
+    "inquisitionBuildingGoldDivisor": 4,
+    "minimumConversionTurns": 5,
     "name": "",
+    "newSpreadBoostPercent": 250,
+    "newSpreadTurns": 50,
+    "nonStateReligionHappiness": 0,
+    "oldSpreadTurns": 250,
+    "removalGold": 50,
     "requirements": null,
+    "spreadCountOffset": 1,
+    "spreadDistanceDivisor": 100,
+    "spreadDistanceFloor": 5,
+    "spreadRange": 1000,
+    "spreadThresholdBump": 1,
+    "spreadThresholdUnit": 4,
+    "stateReligionHappiness": 1,
+    "stateReligionHealth": 0,
     "target": "foundation:rule_constants"
   }
 ]

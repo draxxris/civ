@@ -31,12 +31,13 @@ internal sealed class FaithAttitude : IAttitudeSource
         string? mine = ReligionData.StateReligion(sim, fromPlayer), theirs = ReligionData.StateReligion(sim, towardPlayer);
         if (mine is null || theirs is null) return;
         var regard = sim.State.Extensions.Get<ReligionRegardState>(sim.Content)?.Pairs.GetValueOrDefault(PlayerDirection.Of(fromPlayer, towardPlayer).Key);
+        var faith = sim.Content.Attachment<LeaderReligionDef>(leader.Id) ?? LeaderReligionDef.None;
         if (mine == theirs)
-            add(Same, leader.SameReligionAttitudeChange
-                + AttitudeGrowth.Of(regard?.SameTurns ?? 0, leader.SameReligionAttitudeDivisor, leader.SameReligionAttitudeChangeLimit));
+            add(Same, faith.SameReligionAttitudeChange
+                + AttitudeGrowth.Of(regard?.SameTurns ?? 0, faith.SameReligionAttitudeDivisor, faith.SameReligionAttitudeChangeLimit));
         else
-            add(Different, leader.DifferentReligionAttitudeChange
-                + AttitudeGrowth.Of(regard?.DifferentTurns ?? 0, leader.DifferentReligionAttitudeDivisor, leader.DifferentReligionAttitudeChangeLimit));
+            add(Different, faith.DifferentReligionAttitudeChange
+                + AttitudeGrowth.Of(regard?.DifferentTurns ?? 0, faith.DifferentReligionAttitudeDivisor, faith.DifferentReligionAttitudeChangeLimit));
     }
 
     /// <summary>Grows every met pair's counters once a turn, after the turn's contacts are made

@@ -79,7 +79,29 @@
       "mod": "religion",
       "definition": "RuleConstantsReligionDef",
       "constants": {
-        "BASE_RELIGION_ANARCHY_LENGTH": "BaseReligionAnarchyTurns"
+        "BASE_RELIGION_ANARCHY_LENGTH": "BaseReligionAnarchyTurns",
+        "BOOST_NEW_RELIGION_SPREAD_PERCENT": "NewSpreadBoostPercent",
+        "HOLYCITY_REMOVAL_GOLD": "HolyCityRemovalGold",
+        "HOLY_CITY_INFLUENCE": "HolyCityInfluence",
+        "INITIAL_NON_STATE_RELIGION_HAPPINESS": "NonStateReligionHappiness",
+        "INITIAL_STATE_RELIGION_HAPPINESS": "StateReligionHappiness",
+        "INITIAL_STATE_RELIGION_HEALTH": "StateReligionHealth",
+        "INQUISITION_BUILDING_GOLD_DIVISOR": "InquisitionBuildingGoldDivisor",
+        "MIN_CONVERSION_TURNS": "MinimumConversionTurns",
+        "NEW_RELIGION_SPREAD_TURN_THRESHOLD": "NewSpreadTurns",
+        "OLD_RELIGION_SPREAD_TURN_THRESHOLD": "OldSpreadTurns",
+        "RELIGION_DECAY_DOMESTIC_NUMERATOR": "DecayDomesticNumerator",
+        "RELIGION_DECAY_DOMESTIC_OFFSET": "DecayDomesticOffset",
+        "RELIGION_DECAY_OLD_DENOMINATOR": "DecayOldDenominator",
+        "RELIGION_DECAY_OLD_NUMERATOR": "DecayOldNumerator",
+        "RELIGION_DECAY_YOUNG_DIVISOR": "DecayYoungDivisor",
+        "RELIGION_REMOVAL_GOLD": "RemovalGold",
+        "RELIGION_SPREAD_COUNT_OFFSET": "SpreadCountOffset",
+        "RELIGION_SPREAD_DISTANCE_DIVISOR": "SpreadDistanceDivisor",
+        "RELIGION_SPREAD_DISTANCE_FLOOR": "SpreadDistanceFloor",
+        "RELIGION_SPREAD_RAND": "SpreadRange",
+        "RELIGION_SPREAD_THRESHOLD_BUMP": "SpreadThresholdBump",
+        "RELIGION_SPREAD_THRESHOLD_UNIT": "SpreadThresholdUnit"
       }
     },
     {

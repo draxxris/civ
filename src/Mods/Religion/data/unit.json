@@ -1093,7 +1093,7 @@
           "all": [
             {
               "not": {
-                "id": "foundation:gameoption_no_inquisitions",
+                "id": "religion:gameoption_no_inquisitions",
                 "kind": "game-option"
               }
             }

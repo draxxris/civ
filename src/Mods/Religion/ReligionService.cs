@@ -33,7 +33,7 @@ internal sealed partial class ReligionService : IReligionService
             .Select(l => rules.MaximumAnarchyTurns + (int)l.Amount).Append(rules.MaximumAnarchyTurns).Min();
         int percent = (int)Math.Max(0, 100 + ledger.Total("government:anarchy_percent"));
         int turns = ConversionAnarchy(sim, player, cap, percent, ReligionData.Rules(sim).BaseReligionAnarchyTurns);
-        int cooldown = Math.Max(1, ReligionData.Raw(sim, "MIN_CONVERSION_TURNS", 5) * percent / 100) + turns;
+        int cooldown = Math.Max(1, ReligionData.Rules(sim).MinimumConversionTurns * percent / 100) + turns;
         var lines = ledger.Lines.Where(l => l.Key.StartsWith("government:", StringComparison.Ordinal)).ToList();
         lines.Add(new("religion:conversion", "religion:anarchy_turns", turns));
         lines.Add(new("religion:conversion", "religion:cooldown_turns", cooldown));

@@ -77,7 +77,6 @@ public static class LeaderBriefing
         if (trait.ExtraCultureLevel) lines.Add("one extra culture level in every city");
         if (trait.ExperienceThresholdPercent != 0)
             lines.Add($"{Labels.Signed(trait.ExperienceThresholdPercent)}% experience needed for promotions");
-        if (trait.NonStateReligionCommerce) lines.Add("non-state religion buildings keep their commerce");
         foreach (var change in trait.BonusHappinessChanges.OrderBy(pair => pair.Key, StringComparer.Ordinal))
             if (change.Value != 0)
                 lines.Add($"{Labels.Signed(change.Value)} happiness from {Name<S.BonusDef>(content, change.Key)}");
@@ -97,6 +96,8 @@ public static class LeaderBriefing
             lines.Add($"{Labels.Signed(percent)}% production of {Names(what)}");
         foreach (var (happy, what) in Linked(content, trait.Id, def => def.TraitHappinessChanges))
             lines.Add($"{Labels.Signed(happy)} happiness from {Names(what)}");
+        // A mod's row about the trait says what it adds, in the mod's own words.
+        foreach (var attachment in content.AttachmentsOf(trait.Id).OfType<IDescribedContent>()) lines.AddRange(attachment.Describe(content));
         return lines;
     }
 

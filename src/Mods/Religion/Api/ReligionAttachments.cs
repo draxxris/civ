@@ -78,4 +78,77 @@ public sealed class RuleConstantsReligionDef : ContentAttachment<RuleConstantsDe
     public static readonly RuleConstantsReligionDef None = new();
     /// <summary>Anarchy turns of a state religion change, before the player's anarchy modifiers.</summary>
     public int BaseReligionAnarchyTurns { get; init; }
+    /// <summary>Divides a purged building's cost into the gold an inquisition pays for it.</summary>
+    public int InquisitionBuildingGoldDivisor { get; init; } = 4;
+    /// <summary>Gold an inquisition pays for purging a holy city's faith.</summary>
+    public int HolyCityRemovalGold { get; init; } = 500;
+    /// <summary>Gold an inquisition pays for purging any other faith.</summary>
+    public int RemovalGold { get; init; } = 50;
+    /// <summary>The roll natural spread and decay draw from, before the game speed's growth percent.</summary>
+    public int SpreadRange { get; init; } = 1000;
+    /// <summary>Scales the distance to a faith's source against the map's largest distance.</summary>
+    public int SpreadDistanceDivisor { get; init; } = 100;
+    /// <summary>Subtracted from the scaled distance before it divides the spread.</summary>
+    public int SpreadDistanceFloor { get; init; } = 5;
+    /// <summary>Added to the number of faiths already present before it divides the spread.</summary>
+    public int SpreadCountOffset { get; init; } = 1;
+    /// <summary>The least a reachable source adds to the spread threshold.</summary>
+    public int SpreadThresholdBump { get; init; } = 1;
+    /// <summary>Divides the spread threshold into the chance a city rolls against.</summary>
+    public int SpreadThresholdUnit { get; init; } = 4;
+    /// <summary>Spread influence of a faith's holy city.</summary>
+    public int HolyCityInfluence { get; init; } = 1;
+    /// <summary>Turns, at normal speed, a faith counts as young: it spreads faster and decays slower.</summary>
+    public int NewSpreadTurns { get; init; } = 50;
+    /// <summary>Spread threshold of a young faith, in percent.</summary>
+    public int NewSpreadBoostPercent { get; init; } = 250;
+    /// <summary>Turns, at normal speed, after which a faith counts as old and decays faster.</summary>
+    public int OldSpreadTurns { get; init; } = 250;
+    /// <summary>Weighs the faiths of the city's own empire in its decay roll.</summary>
+    public int DecayDomesticNumerator { get; init; } = 9;
+    /// <summary>Added to that weighing.</summary>
+    public int DecayDomesticOffset { get; init; } = 10;
+    /// <summary>Divides the decay of a young faith.</summary>
+    public int DecayYoungDivisor { get; init; } = 10;
+    /// <summary>Multiplies the decay of an old faith, with the denominator below.</summary>
+    public int DecayOldNumerator { get; init; } = 4;
+    /// <summary>Divides the decay of an old faith.</summary>
+    public int DecayOldDenominator { get; init; } = 3;
+    /// <summary>Happiness of a city where its owner's state religion is present.</summary>
+    public int StateReligionHappiness { get; init; } = 1;
+    /// <summary>Happiness of a city per other faith present.</summary>
+    public int NonStateReligionHappiness { get; init; } = 0;
+    /// <summary>Health of a city where its owner's state religion is present.</summary>
+    public int StateReligionHealth { get; init; } = 0;
+    /// <summary>Turns, at normal speed, before a player may change state religion again.</summary>
+    public int MinimumConversionTurns { get; init; } = 5;
+}
+
+/// <summary>What a trait means to religion: whether a non-state faith's buildings keep their commerce.</summary>
+public sealed class TraitReligionDef : ContentAttachment<TraitDef>, Ariel.Game.IDescribedContent
+{
+    /// <summary>The trait's player keeps the commerce of every faith's buildings, not only the state religion's.</summary>
+    public bool NonStateReligionCommerce { get; init; }
+
+    public IEnumerable<string> Describe(ContentDb content)
+    {
+        if (NonStateReligionCommerce) yield return "non-state religion buildings keep their commerce";
+    }
+}
+
+/// <summary>How a leader regards a player of its own state religion and one of another (each attitude, its growth
+/// divisor and its limit), and its weights for the memories of accepting or refusing a faith, added to the leader's
+/// memory tables (<see cref="LeaderDef.MemoryAttitudePercents"/>, <see cref="LeaderDef.MemoryDecays"/>).</summary>
+public sealed class LeaderReligionDef : ContentAttachment<LeaderDef>
+{
+    /// <summary>The row of a leader nothing attached to.</summary>
+    public static readonly LeaderReligionDef None = new();
+    public int SameReligionAttitudeChange { get; init; }
+    public int SameReligionAttitudeChangeLimit { get; init; }
+    public int SameReligionAttitudeDivisor { get; init; }
+    public int DifferentReligionAttitudeChange { get; init; }
+    public int DifferentReligionAttitudeChangeLimit { get; init; }
+    public int DifferentReligionAttitudeDivisor { get; init; }
+    [AmendsTarget] public ImmutableDictionary<string, int> MemoryAttitudePercents { get; init; } = ImmutableDictionary<string, int>.Empty;
+    [AmendsTarget] public ImmutableDictionary<string, int> MemoryDecays { get; init; } = ImmutableDictionary<string, int>.Empty;
 }

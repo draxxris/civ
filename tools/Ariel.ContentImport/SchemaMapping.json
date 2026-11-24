@@ -4546,14 +4546,15 @@
         "kind": "mapInt",
         "key": "MemoryType",
         "value": "iMemoryAttitudePercent",
-        "exceptKeys": [ "spy_caught" ]
+        "exceptKeys": [ "spy_caught", "accepted_religion", "denied_religion" ]
       },
       {
         "source": "MemoryDecays",
         "property": "MemoryDecays",
         "kind": "mapInt",
         "key": "MemoryType",
-        "value": "iMemoryRand"
+        "value": "iMemoryRand",
+        "exceptKeys": [ "accepted_religion", "denied_religion" ]
       },
       {
         "source": "NoGiveHelpAttitudeThreshold",
@@ -4681,24 +4682,6 @@
         "default": 0
       },
       {
-        "source": "iDifferentReligionAttitudeChange",
-        "property": "DifferentReligionAttitudeChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDifferentReligionAttitudeChangeLimit",
-        "property": "DifferentReligionAttitudeChangeLimit",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iDifferentReligionAttitudeDivisor",
-        "property": "DifferentReligionAttitudeDivisor",
-        "kind": "int",
-        "default": 0
-      },
-      {
         "source": "iFavoriteCivicAttitudeChange",
         "property": "FavoriteCivicAttitudeChange",
         "kind": "int",
@@ -4737,24 +4720,6 @@
       {
         "source": "iRazeCityProb",
         "property": "RazeCityProbability",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iSameReligionAttitudeChange",
-        "property": "SameReligionAttitudeChange",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iSameReligionAttitudeChangeLimit",
-        "property": "SameReligionAttitudeChangeLimit",
-        "kind": "int",
-        "default": 0
-      },
-      {
-        "source": "iSameReligionAttitudeDivisor",
-        "property": "SameReligionAttitudeDivisor",
         "kind": "int",
         "default": 0
       },
@@ -4827,12 +4792,6 @@
       {
         "source": "bExtraCultureLevel",
         "property": "ExtraCultureLevel",
-        "kind": "bool",
-        "default": 0
-      },
-      {
-        "source": "bNonStateReligionCommerce",
-        "property": "NonStateReligionCommerce",
         "kind": "bool",
         "default": 0
       },
@@ -5860,6 +5819,31 @@
     "mod": "espionage",
     "fields": [
       { "source": "MemoryAttitudePercents", "property": "MemoryAttitudePercents", "kind": "mapInt", "key": "MemoryType", "value": "iMemoryAttitudePercent", "onlyKeys": [ "spy_caught" ] }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "TraitInfo",
+    "definition": "TraitReligionDef",
+    "mod": "religion",
+    "fields": [
+      { "source": "bNonStateReligionCommerce", "property": "NonStateReligionCommerce", "kind": "bool", "default": 0 }
+    ],
+    "requirements": []
+  },
+  {
+    "sourceClass": "LeaderHeadInfo",
+    "definition": "LeaderReligionDef",
+    "mod": "religion",
+    "fields": [
+      { "source": "iSameReligionAttitudeChange", "property": "SameReligionAttitudeChange", "kind": "int", "default": 0 },
+      { "source": "iSameReligionAttitudeChangeLimit", "property": "SameReligionAttitudeChangeLimit", "kind": "int", "default": 0 },
+      { "source": "iSameReligionAttitudeDivisor", "property": "SameReligionAttitudeDivisor", "kind": "int", "default": 0 },
+      { "source": "iDifferentReligionAttitudeChange", "property": "DifferentReligionAttitudeChange", "kind": "int", "default": 0 },
+      { "source": "iDifferentReligionAttitudeChangeLimit", "property": "DifferentReligionAttitudeChangeLimit", "kind": "int", "default": 0 },
+      { "source": "iDifferentReligionAttitudeDivisor", "property": "DifferentReligionAttitudeDivisor", "kind": "int", "default": 0 },
+      { "source": "MemoryAttitudePercents", "property": "MemoryAttitudePercents", "kind": "mapInt", "key": "MemoryType", "value": "iMemoryAttitudePercent", "onlyKeys": [ "accepted_religion", "denied_religion" ] },
+      { "source": "MemoryDecays", "property": "MemoryDecays", "kind": "mapInt", "key": "MemoryType", "value": "iMemoryRand", "onlyKeys": [ "accepted_religion", "denied_religion" ] }
     ],
     "requirements": []
   }

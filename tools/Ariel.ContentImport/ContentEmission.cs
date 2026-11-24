@@ -78,12 +78,12 @@ public static class ContentEmission
         var raw = new SortedDictionary<string, string>(StringComparer.Ordinal);
         foreach (var (key, define) in defines.OrderBy(d => d.Key, StringComparer.Ordinal))
         {
-            // A mod's own, unread constant is not the base game's to carry (the Espionage mod keeps none of its 25).
-            if (IdMapping.ConstantOwner(key) is not null) continue;
             if (mapping.Values.TryGetValue(key, out var property)) values[JsonNamingPolicy.CamelCase.ConvertName(property)] = Integer(key, property, define);
             else if (mapping.Attachments.FirstOrDefault(a => a.Constants.ContainsKey(key)) is { } owner)
                 attached[owner][JsonNamingPolicy.CamelCase.ConvertName(owner.Constants[key])] = Integer(key, owner.Constants[key], define);
-            else raw[Branding.Identifier(key)] = Branding.Output(define.Value);
+            // A mod's own constant that it does not read typed is not the base game's to carry (the Espionage mod keeps
+            // none of its 25, the Religion mod none of its unread ones).
+            else if (IdMapping.ConstantOwner(key) is null) raw[Branding.Identifier(key)] = Branding.Output(define.Value);
         }
         var typed = JsonSerializer.Deserialize<RuleConstants>(JsonSerializer.Serialize(values, ContentMapper.Json), ContentMapper.Json)!;
         var result = new List<MappedDefinition>

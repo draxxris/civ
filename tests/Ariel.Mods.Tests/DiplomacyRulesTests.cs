@@ -695,9 +695,11 @@ public sealed class DiplomacyRulesTests
             context.Content<S.BonusDef>().Register(new() { Id = "diplomacy_probe:grain" });
             context.Content<S.BuildingDef>().Register(new() { Id = "diplomacy_probe:granary", DefaultBuilding = "diplomacy_probe:granary", BonusType = Grain });
             context.TurnSystems.Register(new IncomeProbe());
-            context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_a", BaseAttitude = 1, BasePeaceWeight = 3, WarmongerRespect = 2, SameReligionAttitudeChange = 2, SameReligionAttitudeDivisor = 2, SameReligionAttitudeChangeLimit = 3, DifferentReligionAttitudeChange = -3, FavoriteCivic = civic.Id, FavoriteCivicAttitudeChange = 2, FavoriteCivicAttitudeDivisor = 2, FavoriteCivicAttitudeChangeLimit = 2, CloseBordersAttitudeChange = -2, AtPeaceAttitudeDivisor = 2, AtPeaceAttitudeChangeLimit = 2,
+            context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_a", BaseAttitude = 1, BasePeaceWeight = 3, WarmongerRespect = 2, FavoriteCivic = civic.Id, FavoriteCivicAttitudeChange = 2, FavoriteCivicAttitudeDivisor = 2, FavoriteCivicAttitudeChangeLimit = 2, CloseBordersAttitudeChange = -2, AtPeaceAttitudeDivisor = 2, AtPeaceAttitudeChangeLimit = 2,
                 MemoryAttitudePercents = Weights.SetItem("inquisition", -100),
                 MemoryDecays = ImmutableDictionary<string, int>.Empty.Add("inquisition", 1) });
+            context.Content<Ariel.Mods.Religion.LeaderReligionDef>().Register(new() { Id = "diplomacy_probe:leader_a_faith", Target = "diplomacy_probe:leader_a",
+                SameReligionAttitudeChange = 2, SameReligionAttitudeDivisor = 2, SameReligionAttitudeChangeLimit = 3, DifferentReligionAttitudeChange = -3 });
             context.Content<S.LeaderDef>().Register(new() { Id = "diplomacy_probe:leader_b", BasePeaceWeight = 5, WarmongerRespect = 1, MemoryAttitudePercents = Weights });
         }
     }

@@ -301,19 +301,6 @@
   {
     "default": false,
     "era": null,
-    "help": "Civilizations can not found a new religion when controlling a Holy City.",
-    "icon": "",
-    "id": "foundation:gameoption_limited_religions",
-    "name": "Limited Religions",
-    "pedia": "",
-    "requirements": null,
-    "strategy": "",
-    "unsupported": [],
-    "visible": true
-  },
-  {
-    "default": false,
-    "era": null,
     "help": "Sets a random admin password so that debug tools cannot be used, and the game assets cannot be modified. Only for single-player games.",
     "icon": "",
     "id": "foundation:gameoption_lock_mods",
@@ -535,19 +522,6 @@
   {
     "default": false,
     "era": null,
-    "help": "Disables Inquisitions.  Inquisitors may not be trained and non-state religions may not be purged in order to reduce the threat of rebellion.",
-    "icon": "",
-    "id": "foundation:gameoption_no_inquisitions",
-    "name": "No Inquisitions",
-    "pedia": "",
-    "requirements": null,
-    "strategy": "",
-    "unsupported": [],
-    "visible": true
-  },
-  {
-    "default": false,
-    "era": null,
     "help": "Disables ALL Nuclear Weaponry.",
     "icon": "",
     "id": "foundation:gameoption_no_nukes",
@@ -665,19 +639,6 @@
   {
     "default": false,
     "era": null,
-    "help": "Players are prompted to pick a religion when they are about to found one.",
-    "icon": "",
-    "id": "foundation:gameoption_pick_religion",
-    "name": "Choose Religions",
-    "pedia": "",
-    "requirements": null,
-    "strategy": "",
-    "unsupported": [],
-    "visible": false
-  },
-  {
-    "default": false,
-    "era": null,
     "help": "Increased Barbarian activity and aggressiveness",
     "icon": "",
     "id": "foundation:gameoption_raging_barbarians",
@@ -704,7 +665,7 @@
   {
     "default": true,
     "era": null,
-    "help": "Guilds and corporations are founded and spread by themselves. A nation that knows a guild's or corporation's technology and has its resource connected may see it founded in its best city, which becomes the headquarters or Master Guild; branches then open on their own in nearby cities that have the resource, more often where the nation holds more of it, and close when the resource is lost. A headquarters whose nation loses the resource everywhere for long enough closes, and the guild or corporation can be founded anew. Founding buildings and executives are not used. When off, a nation founds a guild or corporation by building its Master Guild or headquarters and spreads it with executives and gold.",
+    "help": "Guilds and corporations are founded and spread by themselves. A nation that knows a guild\u0027s or corporation\u0027s technology and has its resource connected may see it founded in its best city, which becomes the headquarters or Master Guild; branches then open on their own in nearby cities that have the resource, more often where the nation holds more of it, and close when the resource is lost. A headquarters whose nation loses the resource everywhere for long enough closes, and the guild or corporation can be founded anew. Founding buildings and executives are not used. When off, a nation founds a guild or corporation by building its Master Guild or headquarters and spreads it with executives and gold.",
     "icon": "",
     "id": "foundation:gameoption_realistic_corporations",
     "name": "Realistic Guilds/Corporations",
@@ -721,19 +682,6 @@
     "icon": "",
     "id": "foundation:gameoption_realistic_culture_spread",
     "name": "Realistic Culture Spread",
-    "pedia": "",
-    "requirements": null,
-    "strategy": "",
-    "unsupported": [],
-    "visible": true
-  },
-  {
-    "default": true,
-    "era": null,
-    "help": "Cities with many religions may have less popular ones slowly decay.",
-    "icon": "",
-    "id": "foundation:gameoption_religion_decay",
-    "name": "Religion Decay",
     "pedia": "",
     "requirements": null,
     "strategy": "",

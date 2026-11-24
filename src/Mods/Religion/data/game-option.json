@@ -1,0 +1,54 @@
+[
+  {
+    "default": false,
+    "era": null,
+    "help": "Civilizations can not found a new religion when controlling a Holy City.",
+    "icon": "",
+    "id": "religion:gameoption_limited_religions",
+    "name": "Limited Religions",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "visible": true
+  },
+  {
+    "default": false,
+    "era": null,
+    "help": "Disables Inquisitions.  Inquisitors may not be trained and non-state religions may not be purged in order to reduce the threat of rebellion.",
+    "icon": "",
+    "id": "religion:gameoption_no_inquisitions",
+    "name": "No Inquisitions",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "visible": true
+  },
+  {
+    "default": false,
+    "era": null,
+    "help": "Players are prompted to pick a religion when they are about to found one.",
+    "icon": "",
+    "id": "religion:gameoption_pick_religion",
+    "name": "Choose Religions",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "visible": false
+  },
+  {
+    "default": true,
+    "era": null,
+    "help": "Cities with many religions may have less popular ones slowly decay.",
+    "icon": "",
+    "id": "religion:gameoption_religion_decay",
+    "name": "Religion Decay",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "visible": true
+  }
+]

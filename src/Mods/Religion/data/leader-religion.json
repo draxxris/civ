@@ -1,0 +1,2681 @@
+[
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_abubakr",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_abubakr"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_afonso",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -50
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_afonso"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_alaric",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_alaric"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_alboin",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_alboin"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_alexander",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_alexander"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_alfred",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_alfred"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_andrea_gritti",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_andrea_gritti"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_arpad",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_arpad"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_ashur",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_ashur"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_asoka",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 7,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_asoka"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_atotoztli",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_atotoztli"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_attila",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_attila"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_augustus",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_augustus"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_barbarossa",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_barbarossa"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_basil",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_basil"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_bismarck",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_bismarck"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_boru",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_boru"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_boudica",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_boudica"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_brennus",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_brennus"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_bridei",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_bridei"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_cakste",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_cakste"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_calgacus",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_calgacus"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_canute",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_canute"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_casimir",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_casimir"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_catherine",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_catherine"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_cetshwayo",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -50
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_cetshwayo"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_charlemagne",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_charlemagne"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_charles_martel",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_charles_martel"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_charles_v",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_charles_v"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_chinese_leader",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_chinese_leader"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_christian_iv",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_christian_iv"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_churchill",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_churchill"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_cleopatra",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_cleopatra"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_clovis",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_clovis"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_collins",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_collins"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_cyrus",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_cyrus"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_darius",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_darius"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_de_gaulle",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_de_gaulle"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_deganawida",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_deganawida"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_dido",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_dido"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_dufour",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_dufour"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_elizabeth",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_elizabeth"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_enrico_dandolo",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_enrico_dandolo"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_franco",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_franco"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_franklin_roosevelt",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_franklin_roosevelt"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_frederick",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_frederick"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_fsforza",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_fsforza"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_gandhi",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_gandhi"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_genghis_khan",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_genghis_khan"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_genseric",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_genseric"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_gilgamesh",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_gilgamesh"
+  },
+  {
+    "differentReligionAttitudeChange": -3,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_gjergj_kastrioti",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 3,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_gjergj_kastrioti"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_godwinson",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_godwinson"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_haakon",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_haakon"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_haakonson",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_haakonson"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_hammurabi",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_hammurabi"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_hannibal",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_hannibal"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_haraldiii",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_haraldiii"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_hatshepsut",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_hatshepsut"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_henry_viii",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_henry_viii"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_hirohito",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_hirohito"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_huayna_capac",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_huayna_capac"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_hus",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_hus"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_isabella",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_isabella"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_ivan",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_ivan"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_jayavarman",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_jayavarman"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_joanofarc",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_joanofarc"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_joao",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_joao"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_jogaila",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_jogaila"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_julius_caesar",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_julius_caesar"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_justinian",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_justinian"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_kangxi",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_kangxi"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_kossuth",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_kossuth"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_kublai_khan",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_kublai_khan"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_lenin",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_lenin"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_leonidas",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_leonidas"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_lincoln",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_lincoln"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_llywelyn",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_llywelyn"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_louis_xiv",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_louis_xiv"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_magnus",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_magnus"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_mansa_musa",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_mansa_musa"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_marcus",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_marcus"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_margrete",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_margrete"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_mary_stuart",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_mary_stuart"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_masaryk",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_masaryk"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_masinissa",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_masinissa"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_matthias",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_matthias"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_mehmed",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_mehmed"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_menelik",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_menelik"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_mindaugas",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_mindaugas"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_mongkut",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_mongkut"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_montezuma",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_montezuma"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_napoleon",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_napoleon"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_nebuchadrezzar",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_nebuchadrezzar"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_nefertiti",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_nefertiti"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_niall",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_niall"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_owain_glyndwr",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_owain_glyndwr"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_pacal",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_pacal"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_pericles",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_pericles"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_peter",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_peter"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_qin_shi_huang",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_qin_shi_huang"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_ragnar",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_ragnar"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_ramesses",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_ramesses"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_ramkham",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 1,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_ramkham"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_richelieu",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_richelieu"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_robert_i",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_robert_i"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_ruga",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_ruga"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_saladin",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_saladin"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_sejong",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_sejong"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_selassie",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -20
+    },
+    "memoryDecays": {
+      "accepted_religion": 80,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_selassie"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_shaka",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_shaka"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_simeon_i",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_simeon_i"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_sitting_bull",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_sitting_bull"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_sobieski",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_sobieski"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_stalin",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_stalin"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_stambolov",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_stambolov"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_stephen",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_stephen"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_suleiman",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_suleiman"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_suppi",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_suppi"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_suryavarman",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_suryavarman"
+  },
+  {
+    "differentReligionAttitudeChange": -3,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_teuta",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 3,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_teuta"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_theodora",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_theodora"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_theodoric",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 7,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_theodoric"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_thrasamund",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 6,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_thrasamund"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_tokugawa",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -200
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_tokugawa"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_victoria",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 4,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_victoria"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_wangkon",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 3,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_wangkon"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_washington",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 5,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_washington"
+  },
+  {
+    "differentReligionAttitudeChange": -1,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_wenceslaus",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_wenceslaus"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_wettstein",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_wettstein"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_wilhelmina",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -90
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 1,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_wilhelmina"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_willem_van_oranje",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 1,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_willem_van_oranje"
+  },
+  {
+    "differentReligionAttitudeChange": 0,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_wu",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 2,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_wu"
+  },
+  {
+    "differentReligionAttitudeChange": -2,
+    "differentReligionAttitudeChangeLimit": -1,
+    "differentReligionAttitudeDivisor": -5,
+    "id": "religion:leader_zara_yaqob",
+    "memoryAttitudePercents": {
+      "accepted_religion": 100,
+      "denied_religion": -100
+    },
+    "memoryDecays": {
+      "accepted_religion": 100,
+      "denied_religion": 50
+    },
+    "name": "",
+    "requirements": null,
+    "sameReligionAttitudeChange": 1,
+    "sameReligionAttitudeChangeLimit": 7,
+    "sameReligionAttitudeDivisor": 10,
+    "target": "peoples:leader_zara_yaqob"
+  }
+]

@@ -1,7 +1,7 @@
 {
   "id": "religion",
   "name": "Religion",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "assembly": "Ariel.Mods.Religion.dll",
   "api": "Ariel.Mods.Religion.Api.dll",
   "dependencies": ["cities"],

@@ -25,15 +25,15 @@ internal sealed partial class ReligionService
     private bool CanDecay(Simulation sim, City city, string religion, int count)
     {
         // AND gates all decay on the game option (CvCity.cpp:20651): with it off no religion decays at all.
-        if (!sim.IsOptionEnabled("foundation:gameoption_religion_decay")) return false;
+        if (!sim.IsOptionEnabled("religion:gameoption_religion_decay")) return false;
         string? state = StateReligion(sim, city.Owner);
         if (!ReligionData.Has(sim, city, religion) || religion == state || HolyCity(sim, religion) == city.Id) return false;
         return DecayConditions(sim, city, count, state);
     }
     private int DomesticDecay(Simulation sim, City city, string religion, int decay, SpreadTurn? turn = null)
     {
-        int numerator = ReligionData.Raw(sim, "RELIGION_DECAY_DOMESTIC_NUMERATOR", 9);
-        int offset = ReligionData.Raw(sim, "RELIGION_DECAY_DOMESTIC_OFFSET", 10);
+        int numerator = ReligionData.Rules(sim).DecayDomesticNumerator;
+        int offset = ReligionData.Rules(sim).DecayDomesticOffset;
         foreach (var other in sim.State.Cities.Where(c => c.Owner == city.Owner).OrderBy(c => c.Id))
             if (ReligionData.Has(sim, other, religion) && TradeConnected(sim, city, other))
                 decay = decay * numerator / (offset + Math.Max(0, Influence(sim, other, religion, turn)));
@@ -53,11 +53,11 @@ internal sealed partial class ReligionService
         if (founding is null) return decay;
         int age = Math.Max(0, sim.State.Turn - founding.Turn);
         int growth = sim.Content.Get<GameSpeedDef>(sim.Settings.GameSpeed).GrowthPercent;
-        if (age < ReligionData.Raw(sim, "NEW_RELIGION_SPREAD_TURN_THRESHOLD", 50) * growth / 100)
-            decay /= Math.Max(1, ReligionData.Raw(sim, "RELIGION_DECAY_YOUNG_DIVISOR", 10));
-        if (age > ReligionData.Raw(sim, "OLD_RELIGION_SPREAD_TURN_THRESHOLD", 250) * growth / 100)
-            decay = decay * ReligionData.Raw(sim, "RELIGION_DECAY_OLD_NUMERATOR", 4)
-                / Math.Max(1, ReligionData.Raw(sim, "RELIGION_DECAY_OLD_DENOMINATOR", 3));
+        if (age < ReligionData.Rules(sim).NewSpreadTurns * growth / 100)
+            decay /= Math.Max(1, ReligionData.Rules(sim).DecayYoungDivisor);
+        if (age > ReligionData.Rules(sim).OldSpreadTurns * growth / 100)
+            decay = decay * ReligionData.Rules(sim).DecayOldNumerator
+                / Math.Max(1, ReligionData.Rules(sim).DecayOldDenominator);
         return decay;
     }
     private int HolyCityDecay(Simulation sim, City city, string religion, int decay)
@@ -66,7 +66,7 @@ internal sealed partial class ReligionService
         if (holy.Owner == city.Owner) return decay / 2;
         return sim.TeamOf(city.Owner).Wars.Contains(sim.TeamOf(holy.Owner).Id) ? decay * 4 / 3 : decay;
     }
-    private static int DecayRange(Simulation sim) => Math.Max(1, ReligionData.Raw(sim, "RELIGION_SPREAD_RAND", 1000)
+    private static int DecayRange(Simulation sim) => Math.Max(1, ReligionData.Rules(sim).SpreadRange
         * sim.Content.Get<GameSpeedDef>(sim.Settings.GameSpeed).GrowthPercent / 50);
     private void Decay(Simulation sim, City city, SpreadTurn? turn = null)
     {

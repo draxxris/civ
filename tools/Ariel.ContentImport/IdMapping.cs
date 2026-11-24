@@ -68,6 +68,10 @@ public static class IdMapping
         new("UnitInfo", "religion", (r, _) => Religious(r, "PrereqReligion", "StateReligion", "HolyCity", "bInquisitor")
             || r.Node.Child("ReligionSpreads")?.Children.Any(n => n.Children.Length > 1 && ContentMapper.Integer(n.Children[1].Text) > 0) == true),
         new("PromotionInfo", "religion", (r, _) => Religious(r, "PrereqReligion", "StateReligionPrereq")),
+        // So are religion's setup options, the placeholder religion technology and the religious victory.
+        new("GameOptionInfo", "religion", (r, _) => r.Type.Contains("RELIGION", StringComparison.Ordinal) || r.Type.Contains("INQUISITION", StringComparison.Ordinal)),
+        new("TechInfo", "religion", (r, _) => r.Type == "TECH_RELIGION"),
+        new("VictoryInfo", "religion", (r, _) => r.Type == "VICTORY_RELIGIOUS"),
     ];
     /// <summary>A record that names a religion, or sets a religion flag, in one of these fields.</summary>
     private static bool Religious(EffectiveRecord record, params string[] fields) => fields.Any(field =>
@@ -94,11 +98,15 @@ public static class IdMapping
     public static string? Subfolder(string emitter, string provider) =>
         emitter != provider && OptionalProviders.TryGetValue(emitter, out var optional) && optional.Contains(provider) ? provider : null;
 
-    /// <summary>Defines a feature mod owns, read by no rule: the importer keeps them out of Foundation's raw constants. Espionage's
-    /// mission costs, intercept chances and multipliers, none of which the mod reads yet.</summary>
+    /// <summary>Defines a feature mod owns: the importer keeps them out of Foundation's raw constants. Espionage's
+    /// mission costs, intercept chances and multipliers, none of which the mod reads yet, and religion's spread, decay,
+    /// inquisition and conversion numbers, which the Religion mod reads as typed constants (RuleConstantMapping.json)
+    /// or not at all.</summary>
     private static readonly Regex EspionageConstant = new(@"(^|_)(ESPIONAGE|SPY)_", RegexOptions.CultureInvariant);
+    private static readonly Regex ReligionConstant = new(@"RELIGION|HOLY_?CITY|INQUISIT|CONVERSION", RegexOptions.CultureInvariant);
     /// <summary>The mod that owns a source define, or null for the base game's.</summary>
-    public static string? ConstantOwner(string define) => EspionageConstant.IsMatch(define) ? "espionage" : null;
+    public static string? ConstantOwner(string define) =>
+        EspionageConstant.IsMatch(define) ? "espionage" : ReligionConstant.IsMatch(define) ? "religion" : null;
     /// <summary>A building that founds a corporation, or that a corporation's branch in the city lets it build.</summary>
     private static bool CorporateBuilding(EffectiveRecord building) =>
         ContentMapper.Present(building.Node.Value("FoundsCorporation")) || ContentMapper.Present(building.Node.Value("PrereqCorporation"));
