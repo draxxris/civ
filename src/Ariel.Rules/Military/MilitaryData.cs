@@ -60,9 +60,16 @@ internal static class MilitaryData
     }
     internal static bool CrossesCliff(Simulation sim, TileId from, TileId to) => sim.State.HasCliff(from, to);
     internal static bool CrossesRiver(Simulation sim, TileId from, TileId to) => sim.State.HasRiver(from, to);
-    internal static IEnumerable<S.BuildingDef> Buildings(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
+    /// <summary>The city's buildings that still work for combat, healing and cargo: not obsolete, and with their civics
+    /// active where they need them, in ordinal order. Combat previews ask it of the same cities again and again, so a
+    /// read epoch keeps one answer per city.</summary>
+    internal static IReadOnlyList<S.BuildingDef> Buildings(Simulation sim, City city) =>
+        WorkingBuildings.GetOrAdd(sim, city.Id, city, static (sim, _, city) => BuildingsUncached(sim, city));
+    private static readonly ReadEpochMemo<int, S.BuildingDef[]> WorkingBuildings = new();
+    private static S.BuildingDef[] BuildingsUncached(Simulation sim, City city) => city.Buildings.Order(StringComparer.Ordinal)
         .Select(sim.Content.Get<S.BuildingDef>).Where(b => b.ObsoleteTech is null || !sim.KnowsTech(city.Owner, b.ObsoleteTech))
-        .Where(b => !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city, sim.State.Grid.TileAt(city.Position)), "civic").Success);
+        .Where(b => !b.RequiresActiveCivics || sim.Content.Requirements.EvaluateKind(b.Requirements, new(sim, city.Owner, city, sim.State.Grid.TileAt(city.Position)), "civic").Success)
+        .ToArray();
 }
 
 /// <summary>Promotions remain data, never permanently baked into the unit's base definition.</summary>

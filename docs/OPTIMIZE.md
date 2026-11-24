@@ -231,6 +231,10 @@ ______________________________________________________________________
        ▼
 [Pass 18: Nov 23, 2026] The Per-Player Turn Chain Declared
                         (Commits: bbdb6759 .. e3f3b182)
+       │
+       ▼
+[Pass 19: Nov 23, 2026] AI Military Planning
+                        (Commits: 2674fe14 .. 3055c377)
 ```
 
 ______________________________________________________________________
@@ -2492,6 +2496,175 @@ From the final tree at 552, per turn:
 `mise run benchmark` was not run in this pass. The alternating `ai:play` pairs above
 are the measurement.
 
+### Pass 19: AI Military Planning
+
+- **Date**: 2026-11-23
+- **Commits**: `2674fe14`, `6ba93dd8`, `56e90f17`, `6aed4c36`, `3055c377`, then the
+  documentation
+
+This pass takes item 1 of the Pass 18 "Still Slow" list: `ai:military`, 315 to 370 ms
+per turn at 552 and the largest AI planner. Most of its time was path searches, and
+most of a search was judging the same plot again from each neighbour. Campaign tile
+choice also searched every candidate tile when it needed only the first that the force
+reaches. Every final state is byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- Base: local main `2c1cc8cd`, extracted with `git archive`. Final: `3055c377`. Both
+  ran through `mise run ai:play`, with the 451 and 552 saves re-headed for each tree's
+  mod versions.
+- Reference hashes, taken on `2c1cc8cd` before any change. They equal the Pass 18
+  table, plus two new subjects:
+
+  | Run | Hash |
+  | :-- | :-- |
+  | 451 + 4 / + 8 / + 20 | `cdbaae3fdd3dcf9f` / `76141f26f69a16bb` / `d5550242b8b66104` |
+  | 552 + 2 / + 4 / + 8 | `f99c86a9e8c56860` / `1c63057a8c1acaae` / `b6c0b5d1882915c7` |
+  | Corporations save + 4 | `ff5dd4ff155114ef` |
+  | New game (seed 3, 6 players, 100 turns) | `9bf38cf7bc3e5245` |
+  | New4 (seed 3, 4 players, 100 turns) | `37d0476f6aa2778c` |
+  | New8 (seed 3, 8 players, standard world, 150 turns) | `a9ba4f3b5780707a` |
+  | Corporation-heavy game (seed 3, 4 players, industrial era, 160 turns) | `8018d1530a207f69` |
+
+- The profile is `--profile` plus temporary `ProfileKind.AiSeam` probes around each
+  phase of `MilitaryPlanner.Plan`, inside `AttackPlanner`, the pathfinder and the
+  segment's `Issue`. No probe is committed.
+- Base and final ran alternately (base, final, final, base) per subject, at load 0.8
+  to 4.7. Per-turn figures are means over the later turns of each run.
+
+#### Where the Time Went
+
+At 552 + 8 on the base tree:
+
+- **Path searches**: 5,095 searches over 1.5 million edges, 7.0 s of processor time
+  (summed over threads). `MovementService.CanEnter` was 5.2 s of it, and its
+  zone-of-control scans 3.3 s: each edge rebuilt the unit's movement facts and scanned
+  the units on both tiles, though `HasControl` itself was only 0.2 s.
+- **Campaign tile choice**: `AttackPlanner.FirstReachable` searched all 380 to 400
+  candidate tiles for every unit of the force and then took the first tile they all
+  reached, about 4,600 searches in all.
+- **Failed naval searches**: 113 searches that flooded a unit's whole reach and failed,
+  231 ms; the same unit then searched again for other goals outside that reach.
+- **Campaign dependencies**: the review's validation digests the campaign
+  dependencies, which include a whole player economy calculation, and the first
+  theater digested them again on the same state, about 484 ms.
+- **Best defender**: 8,188 defense previews, 206 ms, mostly `TotalCityDefense` (every
+  building of every city of the owner) and the city's working buildings, resolved
+  twice more per preview.
+- Smaller items: promotions (`ExperienceNeeded` builds a unit ledger, 10,227 calls,
+  about 230 ms), and the issue cost inside the planner (1.1 to 1.4 s per 8 turns,
+  mostly `MoveUnitPathCommand`'s sight recompute and the review validation).
+
+#### What Was Built
+
+1. **One movement query per search** (`2674fe14`). `MovementService.MovementQuery`
+   takes `(Simulation, Unit)` and keeps, per plot, its entry error, whether the unit
+   is in control there, whether the plot is controlled, and its regular step cost. The
+   search calls only `CanStep(from, neighbour, attack)`; the checks run in the same
+   order as before, so the same plot always gives the same answer. `ValidatePath` uses
+   one query for the whole path. `InControl` is a loop with no LINQ. Military mod 1.32.0
+   to 1.33.0.
+2. **First reachable tile in order** (`6ba93dd8`). `FirstReachable` tries the tiles in
+   their ranked order and returns the first that every unit reaches.
+   `ParallelScoring.All` tests the units in parallel and stops at the first failure,
+   or runs sequentially in a parallel AI turn. Searches per 8 turns fell from about
+   4,600 to 523. Ai mod 1.17.3 to 1.18.0.
+3. **A unit's known reach** (`56e90f17`). An exhausted non-attack search returns the
+   tiles it reached through a new `IPathfindingService.FindPath` overload with an
+   `out` reach. `AiContext.Segment` keeps it per unit and answers a later non-attack
+   query outside it with no path. The segment is replaced after every command, so the
+   reach never outlives the state it was found on. `mil:navy` at 552 + 8 fell from 323
+   to 177 ms.
+4. **The review's dependencies reused** (`6aed4c36`). After a successful
+   `ReviewCampaignGoalsCommand`, `CampaignTargets.Reviewed` takes the digest the review
+   stored in the first theater's goal. The review writes only the private `ai:intent`
+   domain, which the digest does not read. A temporary assertion recomputed the digest
+   after all 425 reviews on seven subjects, and every one was equal. `mil:attack`
+   allocation at 552 + 8 fell from 643 to 480 MiB.
+5. **City defense and working buildings per read epoch** (`3055c377`).
+   `CombatCalculator.TotalCityDefense` is kept per (city, buildings ignored) and
+   `MilitaryData.Buildings` per city, each in a `ReadEpochMemo`. Outside an epoch both
+   compute afresh. Best-defender allocation fell from 175 to 106 MiB over 8 turns.
+
+#### Rejected and Deferred
+
+- **Skipping the defender's ledger in `BestDefender`**: a defense call that returns only
+  the current strength. Allocation went from 167 to only 158 MiB, and the time change
+  was noise. Reverted.
+- **Pre-validating upgrades**: 680 to 1,367 `UpgradeUnitCommand`s are rejected per 8
+  turns (47 to 106 ms). Skipping them would drop the rejected commands' tiles that the
+  speculative waves record for conflict detection, so it was not attempted.
+- **Declaring `MoveUnitPathCommand`'s domains**: it would keep the economy across unit
+  moves, worth at most about 200 ms per 8 turns of the economy recomputed outside an
+  epoch. It needs `Revealed` separated from the resource flood and an audit of the
+  city sources (the Pass 18 item). Deferred.
+- **A read-epoch memo of `PlayerEconomy.Calculate`**: the economy is rarely asked twice
+  inside one epoch; the repeats are in validations, which run outside it. Not built.
+- **Shortcuts in `ExperienceNeeded`**: no exact bound lets a promotion check skip the
+  unit ledger. Not built.
+
+#### Results
+
+Final code `3055c377`. Base and final ran alternately; each cell gives the base's two
+runs, then the final's two:
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| 552 + 8, `ai:military` per turn | 359.5 / 366.1 ms | 187.9 / 188.7 ms | −48% |
+| 552 + 8, AI per turn | 810 / 811 ms | 618 / 625 ms | −23% |
+| 552 + 8, wall per turn | 1,434 / 1,434 ms | 1,244 / 1,283 ms | −11 to −13% |
+| 552 + 8, allocation per turn | 1,120 MiB | 953 MiB | −15% |
+| 451 + 8, `ai:military` per turn | 131.4 / 132.5 ms | 102.2 / 107.7 ms | −19 to −22% |
+| 451 + 8, AI per turn | 499 to 502 ms | 477 to 478 ms | −4% |
+| 451 + 8, wall per turn | 989 / 1,007 ms | 973 / 983 ms | within noise |
+| 451 + 8, allocation per turn | 727 MiB | 697 to 699 MiB | −4% |
+| New4 (100 turns), `ai:military` per turn | 13.7 / 16.4 ms | 11.2 / 12.1 ms | −20 to −25% |
+| New4, wall total | 10.2 / 10.8 s | 10.2 / 10.7 s | within noise |
+| New8 (150 turns), `ai:military` per turn | 24.9 / 26.6 ms | 15.7 / 17.9 ms | −33 to −37% |
+| New8, AI per turn | 78 to 82 ms | 66 to 69 ms | −16% |
+| New8, wall total | 22.6 / 23.4 s | 22.1 / 23.3 s | within noise |
+| New8, allocation per turn | 82 MiB | 75 MiB | −9% |
+
+The late game gains the most: at 552 the forces are large, the candidate tiles many,
+and the zone-of-control scans long. The early game spends little time in military
+planning, so its wall time does not move.
+
+#### Verification
+
+All on the final code:
+
+- The nine reference hashes match the base tree, and so do 552 + 2 and new4.
+- 552 + 8 gives `b6c0b5d1882915c7` with `--waves max` and with
+  `DOTNET_PROCESSOR_COUNT=1`.
+- `--verify-read-epochs` prints the base hash for 552 + 2, `--verify-modifier-cache`
+  for 552 + 2, and both together for 552 + 4. New4 also printed its base hash under
+  `--verify-read-epochs` on the tree before `3055c377`.
+- `mise run test`, `mise run test:e2e`, `mise run test:worldgen` and
+  `mise run check:sync` pass.
+
+#### Still Slow, Ranked
+
+At 552 + 8, from the probes taken during the pass (after the change each figure
+belongs to), summed over the 8 turns:
+
+1. **Unit moves.** `MoveUnitPathCommand` recomputes sight on every move, and it is
+   undeclared, so each move drops every kept ledger. Most of the planner's issue cost
+   (1.1 to 1.4 s per 8 turns) is here.
+2. **The economy outside epochs.** The campaign review's validation digests the
+   dependencies, with a player economy, outside any epoch. Declaring the unit moves
+   would let the economy stay kept across them.
+3. **Promotions.** `ExperienceNeeded` builds a unit ledger per check, about 230 ms per
+   8 turns.
+4. **Rejected upgrades.** 47 to 106 ms per 8 turns, held by the speculative waves'
+   conflict tracking.
+5. **The attacker's ledgers in `BestDefender`**, about 85 ms per 8 turns.
+6. **Campaign moves**: the moves themselves, after the tile choice, are now most of
+   `mil:attack`.
+7. The Pass 18 items 2 to 6 are unchanged.
+
+`mise run benchmark` was not run in this pass. The alternating `ai:play` pairs above
+are the measurement.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -2566,3 +2739,7 @@ passes:
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | `modifiers:collect` CPU  |        558–613 ms |        410–429 ms |                             **-27 to -30%** |
 |                                         |                      | Same, per turn at turns 555-560 (saved game)               | Managed bytes per turn   |          1,204 MiB |         1,119 MiB |                                 **-7.1%** |
 |                                         |                      | Same, per turn at turns 454-459 (saved game)               | Managed bytes per turn   |            795 MiB |           727 MiB |                                 **-8.6%** |
+| **Pass 19: AI Military Planning**       | `2674fe14`..`3055c377` | Six-player AI game, per turn at turns 555-560 (saved game) | `ai:military` time       |       360–366 ms |       188–189 ms |                                  **-48%** |
+|                                         |                      | Same, per turn at turns 555-560 (saved game)               | Wall time (profiled)     |          1,434 ms |    1,244–1,283 ms |                              **-11 to -13%** |
+|                                         |                      | Same, per turn at turns 555-560 (saved game)               | Managed bytes per turn   |          1,120 MiB |           953 MiB |                                **-14.9%** |
+|                                         |                      | Same, per turn at turns 454-459 (saved game)               | `ai:military` time       |       131–133 ms |       102–108 ms |                              **-19 to -22%** |

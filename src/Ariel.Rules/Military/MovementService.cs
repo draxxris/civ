@@ -6,22 +6,34 @@ namespace Ariel.Rules.Military;
 internal sealed class MovementService : IMovementService
 {
     public string? CanEnter(Simulation sim, int unitId, TileId from, TileId to, bool attack = false) => Query(sim, unitId).CanEnter(from, to, attack);
-    internal MovementQuery Query(Simulation sim, int unit) => new(this, sim, sim.State.UnitById(unit));
+    internal MovementQuery Query(Simulation sim, int unit) => new(sim, sim.State.UnitById(unit));
 
-    private string? CanEnter(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects,
-        TileId from, TileId to, bool attack, Func<Unit, bool> hasControl)
+    private static string? CanEnter(MovementQuery q, TileId from, TileId to, bool attack)
     {
-        var edgeError = EdgeEntry(sim, def, from, to);
+        var edgeError = EdgeEntry(q.Sim, q.Def, from, to);
         if (edgeError is not null) return edgeError;
+        return Entry(q, from, to, attack);
+    }
+    /// <summary>Everything <see cref="CanEnter(MovementQuery, TileId, TileId, bool)"/> checks after the edge itself, in
+    /// the same order: the plot's own entry (<see cref="PlotEntry"/>), then the zone of control.</summary>
+    private static string? Entry(MovementQuery q, TileId from, TileId to, bool attack)
+    {
+        var plotError = attack ? PlotEntry(q, to, attack: true) : q.PlotEntry(to);
+        if (plotError is not null) return plotError;
+        return ControlledTransition(q, from, to, attack) ? "Enemy zone of control" : null;
+    }
+    /// <summary>The checks that read only the plot entered, never the plot left: terrain (or a transport to board),
+    /// borders, movement barriers and whoever stands there.</summary>
+    private static string? PlotEntry(MovementQuery q, TileId to, bool attack)
+    {
+        var (sim, unit, def) = (q.Sim, q.Unit, q.Def);
         var plot = sim.State.Plots[to.Value];
-        var error = TerrainEntry(sim, unit, def, plot, effects);
+        var error = TerrainEntry(sim, unit, def, plot, q.Effects);
         if (error is not null && AutoLoadTransport(sim, unit, def, to) is null) return error;
         if (!TerritoryEntry(sim, unit, def, plot.Owner)) return "Closed borders";
         var target = sim.State.Grid.HexOf(to);
         if (!attack && Barred(sim, unit.Id, target)) return "Movement barred";
-        var targetError = TargetEntry(sim, unit, def, effects, target, attack);
-        if (targetError is not null) return targetError;
-        return ControlledTransition(sim, unit, from, to, attack, hasControl) ? "Enemy zone of control" : null;
+        return TargetEntry(sim, unit, def, q.Effects, target, attack);
     }
     /// <summary>Whether any registered <see cref="IMovementBarrier"/> keeps this unit off the plot.</summary>
     private static bool Barred(Simulation sim, int unit, Hex target)
@@ -104,25 +116,36 @@ internal sealed class MovementService : IMovementService
         || sim.State.CityAt(target) is { } city && MilitaryData.Enemy(sim, unit.Owner, city.Owner);
     private static bool CanAttack(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects) =>
         def.Strength > 0 && !def.OnlyDefensive && (!MilitaryData.Read(sim, unit).Attacked || MilitaryData.Effect(effects, "blitz") > 0);
-    private static bool ControlledTransition(Simulation sim, Unit unit, TileId from, TileId to, bool attack, Func<Unit, bool> hasControl)
+    private static bool ControlledTransition(MovementQuery q, TileId from, TileId to, bool attack)
     {
-        var def = MilitaryData.Definition(sim, unit);
-        if (def.HiddenNationality || def.AlwaysHostile) return false;
-        var city = sim.State.CityAt(sim.State.Grid.HexOf(to));
-        if (city is not null && MilitaryData.Friendly(sim, unit.Owner, city.Owner)) return false;
-        if (attack && sim.State.UnitsAt(sim.State.Grid.HexOf(to)).Any(hasControl)) return false;
-        return InControl(sim, from, hasControl) && InControl(sim, to, hasControl);
+        if (q.Def.HiddenNationality || q.Def.AlwaysHostile || !q.Controlled(to)) return false;
+        if (attack && q.Sim.State.UnitsAt(q.Sim.State.Grid.HexOf(to)).Any(q.Controls)) return false;
+        return q.InControl(from);
     }
-    private static bool InControl(Simulation sim, TileId tile, Func<Unit, bool> hasControl) => sim.State.Grid.Neighbors(tile)
-        .SelectMany(n => sim.State.UnitsAt(sim.State.Grid.HexOf(n))).Any(hasControl);
+    /// <summary>Whether entering <paramref name="to"/> can count as a move within an enemy zone of control: no friendly
+    /// city stands there, and a controlling unit stands next to it.</summary>
+    private static bool Controlled(MovementQuery q, TileId to)
+    {
+        var city = q.Sim.State.CityAt(q.Sim.State.Grid.HexOf(to));
+        if (city is not null && MilitaryData.Friendly(q.Sim, q.Unit.Owner, city.Owner)) return false;
+        return q.InControl(to);
+    }
+    /// <summary>Whether a unit that exerts a zone of control over the query's unit stands next to the tile.</summary>
+    private static bool InControl(MovementQuery q, TileId tile)
+    {
+        var grid = q.Sim.State.Grid;
+        foreach (var n in grid.Neighbors(tile))
+            foreach (var other in q.Sim.State.UnitsAt(grid.HexOf(n)))
+                if (q.Controls(other)) return true;
+        return false;
+    }
     private static bool HasControl(Simulation sim, Unit unit, Unit other) => MilitaryData.VisibleEnemy(sim, unit.Owner, other)
         && MilitaryData.Effect(MilitaryData.Effects(sim, other), "zone_control") > 0;
     public int StepCost(Simulation sim, int unitId, TileId from, TileId to) => Query(sim, unitId).StepCost(from, to);
     private static int StepCost(MovementQuery q, TileId from, TileId to)
     {
         if (q.Def.FlatMovementCost || q.Def.Domain == "military:domain_air") return q.Denominator;
-        int regular = RegularCost(q, q.Sim.State.Plots[to.Value]);
-        return Math.Max(1, Math.Min(regular, RouteCost(q, from, to)));
+        return Math.Max(1, Math.Min(q.RegularCost(to), RouteCost(q, from, to)));
     }
     private static int RegularCost(MovementQuery q, Plot plot)
     {
@@ -165,10 +188,12 @@ internal sealed class MovementService : IMovementService
         if (unit.MovesLeft <= 0) return "No moves left";
         if (path.Count == 0) return "Empty path";
         var from = sim.State.Grid.TileAt(unit.Position);
+        // Validation writes nothing, so one query (one ledger of the unit) answers every step.
+        var query = Query(sim, unitId);
         for (int i = 0; i < path.Count; i++)
         {
             if (!sim.State.Grid.TryTile(path[i], out var to)) return "Off map";
-            var error = CanEnter(sim, unitId, from, to, i == path.Count - 1);
+            var error = query.CanEnter(from, to, i == path.Count - 1);
             if (error is not null) return error;
             from = to;
         }
@@ -242,25 +267,94 @@ internal sealed class MovementService : IMovementService
             && MilitaryData.Effect(MilitaryData.Effects(sim, unit), "amphibious") == 0) unit.MovesLeft = 0;
     }
     /// <summary>Read-only context scoped to one path query. The unit's ledger, the per-unit step-cost inputs derived
-    /// from it, its technologies and promotions, and control checks are reused across edges, never cached across
-    /// commands or games.</summary>
+    /// from it, its technologies and promotions, control checks, each plot's own entry (for a move that does not
+    /// attack) and whether a plot lies in an enemy zone of control are reused across edges, never cached across
+    /// commands or games: the state cannot change while one query runs.</summary>
     internal sealed class MovementQuery
     {
-        private readonly MovementService movement;
         internal readonly Simulation Sim;
         internal readonly Unit Unit;
         internal readonly S.UnitDef Def;
-        private readonly Ariel.Content.ModifierSink effects;
+        internal readonly Ariel.Content.ModifierSink Effects;
+        /// <summary>Whether another unit exerts a zone of control over this one, asked once per unit.</summary>
+        internal readonly Func<Unit, bool> Controls;
         private readonly Dictionary<int, bool> control = new();
+        private Dictionary<int, PlotFacts>? _plots;
         private StepInputs? _step;
-        internal MovementQuery(MovementService movement, Simulation sim, Unit unit)
+        internal MovementQuery(Simulation sim, Unit unit)
         {
-            this.movement = movement; Sim = sim; Unit = unit;
-            Def = MilitaryData.Definition(sim, unit); effects = MilitaryData.Effects(sim, unit);
+            Sim = sim; Unit = unit;
+            Def = MilitaryData.Definition(sim, unit); Effects = MilitaryData.Effects(sim, unit);
+            Controls = HasControlOver;
         }
-        internal string? CanEnter(TileId from, TileId to, bool attack) => movement.CanEnter(Sim, Unit, Def, effects, from, to, attack, Controls);
+        internal string? CanEnter(TileId from, TileId to, bool attack) => MovementService.CanEnter(this, from, to, attack);
+        /// <summary>Whether <see cref="CanEnter"/> is null for <paramref name="neighbor"/>, which must be one of
+        /// <paramref name="from"/>'s <see cref="HexGrid.Neighbors(TileId)"/>: the step's tiles are then on the map and
+        /// adjacent, so only the cliff remains of the edge checks.</summary>
+        internal bool CanStep(TileId from, TileId neighbor, bool attack)
+        {
+            if (!Def.CanMoveAllTerrain && Def.Domain is "military:domain_land" or "military:domain_sea"
+                && MilitaryData.CrossesCliff(Sim, from, neighbor)) return false;
+            return Entry(this, from, neighbor, attack) is null;
+        }
         internal int StepCost(TileId from, TileId to) => MovementService.StepCost(this, from, to);
-        private StepInputs Step => _step ??= new(Sim, Unit, Def, effects);
+        /// <summary>What one plot answers for this unit, each part worked out on first use.</summary>
+        private struct PlotFacts
+        {
+            public Known Known;
+            public string? Entry;
+            public bool InControl, Controlled;
+            public int RegularCost;
+        }
+        [Flags]
+        private enum Known : byte { Entry = 1, InControl = 2, Controlled = 4, RegularCost = 8 }
+        private PlotFacts Facts(TileId tile) => _plots is not null && _plots.TryGetValue(tile.Value, out var facts) ? facts : default;
+        private void Store(TileId tile, PlotFacts facts) => (_plots ??= new())[tile.Value] = facts;
+        /// <summary>The plot's own entry for a move that does not attack (<see cref="MovementService.PlotEntry"/>).</summary>
+        internal string? PlotEntry(TileId to)
+        {
+            var facts = Facts(to);
+            if ((facts.Known & Known.Entry) != 0) return facts.Entry;
+            facts.Entry = MovementService.PlotEntry(this, to, attack: false);
+            facts.Known |= Known.Entry;
+            Store(to, facts);
+            return facts.Entry;
+        }
+        /// <summary>Whether a unit that controls this one stands next to the tile.</summary>
+        internal bool InControl(TileId tile)
+        {
+            var facts = Facts(tile);
+            if ((facts.Known & Known.InControl) != 0) return facts.InControl;
+            bool value = MovementService.InControl(this, tile);
+            facts = Facts(tile);
+            facts.InControl = value;
+            facts.Known |= Known.InControl;
+            Store(tile, facts);
+            return value;
+        }
+        /// <summary><see cref="MovementService.Controlled"/>, once per plot.</summary>
+        internal bool Controlled(TileId to)
+        {
+            var facts = Facts(to);
+            if ((facts.Known & Known.Controlled) != 0) return facts.Controlled;
+            bool value = MovementService.Controlled(this, to);
+            facts = Facts(to);
+            facts.Controlled = value;
+            facts.Known |= Known.Controlled;
+            Store(to, facts);
+            return value;
+        }
+        /// <summary>The cost of entering the plot off any route (<see cref="MovementService.RegularCost"/>).</summary>
+        internal int RegularCost(TileId to)
+        {
+            var facts = Facts(to);
+            if ((facts.Known & Known.RegularCost) != 0) return facts.RegularCost;
+            facts.RegularCost = MovementService.RegularCost(this, Sim.State.Plots[to.Value]);
+            facts.Known |= Known.RegularCost;
+            Store(to, facts);
+            return facts.RegularCost;
+        }
+        private StepInputs Step => _step ??= new(Sim, Unit, Def, Effects);
         internal int Denominator => Step.Denominator;
         internal int BaseMoves => Step.BaseMoves;
         internal int MoveDiscount => Step.MoveDiscount;
@@ -269,7 +363,7 @@ internal sealed class MovementService : IMovementService
         internal bool EnemyRoute => Step.EnemyRoute;
         internal bool BridgeBuilding => Step.BridgeBuilding;
         internal S.PromotionDef[] Promotions => Step.Promotions;
-        private bool Controls(Unit other)
+        private bool HasControlOver(Unit other)
         {
             if (!control.TryGetValue(other.Id, out var value)) control[other.Id] = value = HasControl(Sim, Unit, other);
             return value;

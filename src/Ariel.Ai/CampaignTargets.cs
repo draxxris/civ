@@ -46,6 +46,16 @@ internal sealed class CampaignTargets(AiContext ctx)
     private City? ChoosePrimary(int area) => Enemies.Where(c => Area(c.Position) == area)
         .OrderBy(c => DistanceFromHome(c)).ThenBy(c => c.Id).FirstOrDefault();
 
+    /// <summary>A campaign review (<see cref="ReviewCampaignGoalsCommand"/>) for <paramref name="area"/> just succeeded:
+    /// its validation evaluated the dependencies on the state as it stands now, since the review wrote only the AI's
+    /// intent, which they do not read, and stored them in the area's goal. Reuse them until the next command.</summary>
+    internal void Reviewed(int area)
+    {
+        if (AiIntent.Read(ctx).Campaigns.GetValueOrDefault(area) is not { } goal) return;
+        string digest = goal.Dependencies;
+        lock (_gate) { _dependencies = digest; _revision = ctx.Revision; }
+    }
+
     private string Dependencies()
     {
         lock (_gate)

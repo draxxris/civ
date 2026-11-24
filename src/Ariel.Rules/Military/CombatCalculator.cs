@@ -92,7 +92,13 @@ internal static class CombatCalculator
         int damage = city.Extensions.Get<CityRuleState>(sim.Content)?.DefenseDamage ?? 0;
         return TotalCityDefense(sim, city, ignoreBuilding) * Math.Clamp(maxDamage - damage, 0, maxDamage) / maxDamage;
     }
-    internal static int TotalCityDefense(Simulation sim, City city, bool ignoreBuilding)
+    /// <summary>The city's defense before damage: its culture level's or its buildings' (unless the attacker ignores
+    /// buildings), plus what every city of its owner adds to all of them. Each combat preview against a unit in the
+    /// city asks it, so a read epoch keeps one answer per city.</summary>
+    internal static int TotalCityDefense(Simulation sim, City city, bool ignoreBuilding) =>
+        TotalDefenses.GetOrAdd(sim, (city.Id, ignoreBuilding), city, static (sim, key, city) => TotalCityDefenseUncached(sim, city, key.IgnoreBuilding));
+    private static readonly ReadEpochMemo<(int City, bool IgnoreBuilding), int> TotalDefenses = new();
+    private static int TotalCityDefenseUncached(Simulation sim, City city, bool ignoreBuilding)
     {
         int culture = sim.Rules().CityCulture?.Level(sim, city.Id).CityDefenseModifier
             ?? sim.Content.Get<S.CultureLevelDef>().All.Where(l => l.SpeedThresholds.TryGetValue(sim.Settings.GameSpeed, out var threshold) && city.Culture >= threshold)
