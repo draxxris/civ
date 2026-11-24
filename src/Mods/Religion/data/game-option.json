@@ -13,6 +13,19 @@
     "visible": true
   },
   {
+    "default": true,
+    "era": null,
+    "help": "Cities with an existing religion can still receive additional religions via natural spread.",
+    "icon": "",
+    "id": "religion:gameoption_multiple_religion_spread",
+    "name": "Multiple Religion Spread",
+    "pedia": "",
+    "requirements": null,
+    "strategy": "",
+    "unsupported": [],
+    "visible": true
+  },
+  {
     "default": false,
     "era": null,
     "help": "Disables Inquisitions.  Inquisitors may not be trained and non-state religions may not be purged in order to reduce the threat of rebellion.",

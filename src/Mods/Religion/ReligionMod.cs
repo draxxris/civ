@@ -120,18 +120,16 @@ public sealed class ReligionMod : IPreparableMod
 }
 
 /// <summary>The setup switches religion honours, this mod's own options (<c>religion:*</c>), which the setup screen
-/// offers only while it is loaded. Multiple religion spread and no natural spread have no source row, so they are
-/// offered here alone.</summary>
+/// offers only while it is loaded. Multiple religion spread has a row of its own here; no natural spread has none, so
+/// it is offered here alone.</summary>
 internal sealed class ReligionSetupPolicy : ISetupPolicy
 {
     public string? Default(SetupField field) => null;
 
     public IEnumerable<SetupGameOption> GameOptions(ContentDb content)
     {
-        foreach (string id in (string[])["religion:gameoption_religion_decay", "religion:gameoption_no_inquisitions"])
+        foreach (string id in (string[])["religion:gameoption_religion_decay", "religion:gameoption_no_inquisitions", ReligionService.MultipleSpreadOption])
             if (content.TryGet<GameOptionDef>(id, out var option)) yield return new(option.Id, option.Name, option.Default, option.Help);
-        yield return new(ReligionService.MultipleSpreadOption, "Multiple Religion Spread", false,
-            "Cities with an existing religion can still receive additional religions via natural spread.");
         yield return new(ReligionService.NoNaturalSpreadOption, "No Natural Religion Spread", false,
             "Religions never spread on their own along trade connections; only missionaries carry them.");
     }

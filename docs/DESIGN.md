@@ -1526,7 +1526,7 @@ Religion mechanics:
   spread is on (the setup-only `religion:gameoption_no_natural_spread` is off), the city
   lacks the faith, its owner's civics let the faith in (`NoNonStateReligionSpread` bars
   every faith but the state religion), it holds no faith at all unless
-  `religion:gameoption_multiple_religion_spread` is on, and a city that had the faith
+  `religion:gameoption_multiple_religion_spread` is on (it is on by default), and a city that had the faith
   when the owner's pass began is trade-connected to it: same team or met and at peace,
   and joined by the city connection network or a trade route, foreign routes across open
   borders included. Each turn each eligible pair spreads when a draw in
