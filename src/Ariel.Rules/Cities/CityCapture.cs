@@ -114,9 +114,15 @@ internal sealed class CityCapture : ICityCaptureService
     /// ever razed by a human's explicit conquest choice. A corporation headquarters is deliberately absent: razing one
     /// now dissolves the corporation cleanly, so the AI may destroy it like any other city.</summary>
     private static bool HasRazeProtection(Simulation sim, City city, bool wasCapital, bool hadWorldWonder) =>
-        wasCapital || hadWorldWonder || IsHolyCity(sim, city) || HasStrategicBonus(sim, city);
+        wasCapital || hadWorldWonder || FeatureProtects(sim, city) || HasStrategicBonus(sim, city);
 
-    private static bool IsHolyCity(Simulation sim, City city) => sim.Rules().CityReligions?.IsHolyCity(sim, city.Id) == true;
+    /// <summary>Whether a feature protects the city (<see cref="IRazeProtection"/>), such as a holy city.</summary>
+    private static bool FeatureProtects(Simulation sim, City city)
+    {
+        foreach (var protection in sim.Rules().RazeProtections)
+            if (protection.Protects(sim, city)) return true;
+        return false;
+    }
 
     private static bool HasStrategicBonus(Simulation sim, City city)
     {

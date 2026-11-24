@@ -132,10 +132,10 @@ public sealed class DiplomacyRulesTests
         ulong hash = sim.ComputeHash(); var result = Service(sim).GetAttitude(sim, 0, 1);
         long Source(string id) => result.Ledger.Lines.Where(l => l.Source == "diplomacy:" + id).Sum(l => l.Amount);
         Assert.Equal(1, Source("base")); Assert.Equal(2, Source("peace_weight")); Assert.Equal(1, Source("warmonger_respect"));
-        Assert.Equal(2, Source("same_religion")); Assert.Equal(2, Source("favorite_civic")); Assert.Equal(-2, Source("close_borders"));
+        Assert.Equal(2, result.Ledger.Lines.Where(l => l.Source == "religion:same_religion").Sum(l => l.Amount)); Assert.Equal(2, Source("favorite_civic")); Assert.Equal(-2, Source("close_borders"));
         Assert.Equal(Disposition.Pleased, result.Tier); Assert.Equal(hash, sim.ComputeHash());
         sim.State.PlayerById(1).Extensions.Get<ReligionPlayerState>(sim.Content)!.LastStateReligion = "religion:hinduism";
-        Assert.Contains(Service(sim).GetAttitude(sim, 0, 1).Ledger.Lines, l => l.Source == "diplomacy:different_religion" && l.Amount == -3);
+        Assert.Contains(Service(sim).GetAttitude(sim, 0, 1).Ledger.Lines, l => l.Source == "religion:different_religion" && l.Amount == -3);
         Apply(sim, new DeclareWarCommand { Player = 1, Target = 0 });
         var war = Service(sim).GetAttitude(sim, 0, 1); Assert.Contains(war.Ledger.Lines, l => l.Source == "diplomacy:war_history" && l.Amount == -3);
         Assert.Contains(war.Ledger.Lines, l => l.Source == "diplomacy:war" && l.Amount == -3);

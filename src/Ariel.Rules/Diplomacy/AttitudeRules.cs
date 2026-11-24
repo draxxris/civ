@@ -7,9 +7,7 @@ namespace Ariel.Rules.Diplomacy;
 internal sealed partial class DiplomacyService
 {
     private static S.LeaderDef? Leader(Simulation sim, int player) => sim.Content.TryGet<S.LeaderDef>(sim.State.PlayerById(player).Leader, out var leader) ? leader : null;
-    /// <summary>The identity of the player's state religion, or null without one or without a mod that runs religion.</summary>
-    private static string? Religion(Simulation sim, int player) => sim.Rules().CityReligions?.StateReligion(sim, player);
-    private static int Growth(int turns, int divisor, int limit) => divisor <= 0 ? 0 : Math.Sign(limit) * Math.Min(Math.Abs(limit), Math.Max(0, turns) / divisor);
+    private static int Growth(int turns, int divisor, int limit) => AttitudeGrowth.Of(turns, divisor, limit);
     private static bool FavoriteCivic(Simulation sim, int from, int toward, S.LeaderDef leader) => leader.FavoriteCivic is { } civic &&
         sim.State.PlayerById(from).Civics.Values.Contains(civic) && sim.State.PlayerById(toward).Civics.Values.Contains(civic);
     private static PlayerDirection Direction(int from, int toward) => PlayerDirection.Of(from, toward);
@@ -27,7 +25,8 @@ internal sealed partial class DiplomacyService
         void Add(string reason, long amount) => sink.Add("diplomacy:" + reason, "diplomacy:attitude", amount);
         Add("base", leader.BaseAttitude);
         AddPersonality(leader, Leader(sim, towardPlayer), Add);
-        AddReligion(sim, fromPlayer, towardPlayer, leader, history, Add);
+        foreach (var source in sim.Rules().AttitudeSources)
+            source.Add(sim, fromPlayer, towardPlayer, leader, (reason, amount) => sink.Add(reason, "diplomacy:attitude", amount));
         if (FavoriteCivic(sim, fromPlayer, towardPlayer, leader))
             Add("favorite_civic", leader.FavoriteCivicAttitudeChange + Growth(history.FavoriteCivicTurns, leader.FavoriteCivicAttitudeDivisor, leader.FavoriteCivicAttitudeChangeLimit));
         if (a != b && CloseBorders(sim, a, b)) Add("close_borders", leader.CloseBordersAttitudeChange);
@@ -70,13 +69,6 @@ internal sealed partial class DiplomacyService
         if (HasOpenBorders(sim, a, b)) add("open_borders", Growth(sim.State.Turn - agreement!.OpenBordersStarted!.Value, leader.OpenBordersAttitudeDivisor, leader.OpenBordersAttitudeChangeLimit));
         if (HasDefensivePact(sim, a, b)) add("defensive_pact", Growth(sim.State.Turn - agreement!.DefensivePactStarted!.Value, leader.DefensivePactAttitudeDivisor, leader.DefensivePactAttitudeChangeLimit));
     }
-    private static void AddReligion(Simulation sim, int from, int toward, S.LeaderDef leader, AttitudeHistory history, Action<string, long> add)
-    {
-        string? mine = Religion(sim, from), theirs = Religion(sim, toward);
-        if (mine is null || theirs is null) return;
-        if (mine == theirs) add("same_religion", leader.SameReligionAttitudeChange + Growth(history.SameReligionTurns, leader.SameReligionAttitudeDivisor, leader.SameReligionAttitudeChangeLimit));
-        else add("different_religion", leader.DifferentReligionAttitudeChange + Growth(history.DifferentReligionTurns, leader.DifferentReligionAttitudeDivisor, leader.DifferentReligionAttitudeChangeLimit));
-    }
     private static void AddCivics(Simulation sim, int from, int toward, Action<string, long> add)
     {
         var theirs = sim.State.PlayerById(toward).Civics.Values.ToHashSet(StringComparer.Ordinal);
@@ -97,9 +89,6 @@ internal sealed partial class DiplomacyService
             {
                 if (!HasMet(sim, from.TeamId, toward.TeamId)) continue;
                 var history = state.GetOrCreateHistory(from.Id, toward.Id);
-                string? mine = Religion(sim, from.Id), theirs = Religion(sim, toward.Id);
-                history.SameReligionTurns = mine is not null && mine == theirs ? history.SameReligionTurns + 1 : 0;
-                history.DifferentReligionTurns = mine is not null && theirs is not null && mine != theirs ? history.DifferentReligionTurns + 1 : 0;
                 var leader = Leader(sim, from.Id);
                 history.FavoriteCivicTurns = leader is not null && FavoriteCivic(sim, from.Id, toward.Id, leader) ? history.FavoriteCivicTurns + 1 : 0;
             }

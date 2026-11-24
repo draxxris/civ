@@ -5,14 +5,14 @@ using Ariel.Game;
 namespace Ariel.Mods.Corporations;
 
 /// <summary>The computer player's spreading of corporations, run inside the standard AI's turn after religion and
-/// before the great people planner (<c>great_people:planner</c>, at <see cref="AiPlannerOrder.Religion"/> + 200).
+/// before the great people planner (<c>great_people:planner</c>, at <see cref="AiPlannerOrder.Missions"/> + 200).
 /// Founding is production: the city planner builds a headquarters or Master Guild, valued by <see cref="HeadquartersValuer"/>, and
 /// trains executives for foreign spread, wished for by <see cref="ExecutiveWishes"/>. With Realistic Guilds/Corporations
 /// guilds and corporations found and spread by themselves, so none of these plan anything there.</summary>
 internal sealed class CorporationAiPlanner(CorporationService service) : IAiPlanner
 {
     public string Id => "corporations:planner";
-    public int Order => AiPlannerOrder.Religion + 100;
+    public int Order => AiPlannerOrder.Missions + 100;
     public void Plan(AiContext ctx) => new CorporationPlanner(ctx, service).Plan();
 }
 

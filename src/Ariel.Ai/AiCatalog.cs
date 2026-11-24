@@ -54,7 +54,12 @@ internal sealed class AiCatalog
         TechValuers = ById(content.Services.Get<IAiValuer<TechSubject>>());
         CivicValuers = ById(content.Services.Get<IAiValuer<CivicSubject>>());
         CityValuers = ById(content.Services.Get<IAiValuer<CitySubject>>());
+        var exclusions = content.Services.Get<IAiBuildingExclusion>();
+        Excluded = Buildings.Where(b => exclusions.Any(e => e.Excludes(content, b))).Select(b => b.Id).ToHashSet(StringComparer.Ordinal);
     }
+
+    /// <summary>The buildings a mod leaves out of the city planner's choices (<see cref="IAiBuildingExclusion"/>).</summary>
+    public IReadOnlySet<string> Excluded { get; }
 
     private static T[] ById<T>(IEnumerable<T> services) where T : IHasId =>
         services.OrderBy(s => s.Id, StringComparer.Ordinal).ToArray();

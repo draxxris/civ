@@ -8,8 +8,8 @@ namespace Ariel.TestMods.AiPlanner;
 /// notes the turn and the planner slot it ran in on the player.</summary>
 public sealed class AiPlannerProbeMod : IMod
 {
-    /// <summary>Between religion and the city planner, where feature planners that spend units run.</summary>
-    public const int Order = AiPlannerOrder.Religion + 150;
+    /// <summary>Between the mission slot and the city planner, where feature planners that spend units run.</summary>
+    public const int Order = AiPlannerOrder.Missions + 150;
 
     public void Register(IModContext context)
     {

@@ -9,12 +9,12 @@ using SpecialistDef = Ariel.Content.Schema.SpecialistDef;
 namespace Ariel.Mods.GreatPeople;
 
 /// <summary>The computer player's use of great people, run inside the standard AI's turn after religion and after
-/// any planner that spends a great person on something of its own (<see cref="AiPlannerOrder.Religion"/> + 100), and
+/// any planner that spends a great person on something of its own (<see cref="AiPlannerOrder.Missions"/> + 100), and
 /// before cities choose production.</summary>
 internal sealed class GreatPersonAiPlanner : IAiPlanner
 {
     public string Id => "great_people:planner";
-    public int Order => AiPlannerOrder.Religion + 200;
+    public int Order => AiPlannerOrder.Missions + 200;
     public void Plan(AiContext ctx) => new GreatPersonPlanner(ctx).Plan();
 }
 

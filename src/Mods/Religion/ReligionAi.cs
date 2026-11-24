@@ -4,13 +4,13 @@ using Ariel.Game;
 
 namespace Ariel.Mods.Religion;
 
-/// <summary>The computer player's use of religion, in the slot the standard AI keeps for it
-/// (<see cref="AiPlannerOrder.Religion"/>): adopt the best state religion, spread the faith with missionaries and purge
+/// <summary>The computer player's use of religion, in the standard AI's mission slot
+/// (<see cref="AiPlannerOrder.Missions"/>): adopt the best state religion, spread the faith with missionaries and purge
 /// minorities with inquisitors.</summary>
 internal sealed class ReligionAiPlanner : IAiPlanner
 {
     public string Id => "religion:planner";
-    public int Order => AiPlannerOrder.Religion;
+    public int Order => AiPlannerOrder.Missions;
     public void Plan(AiContext ctx) => new ReligionPlanner(ctx).Plan();
 }
 

@@ -36,6 +36,14 @@ public sealed class ReligionMod : IPreparableMod
         var service = new ReligionService();
         context.RegisterService<IReligionService>("religion", service);
         context.RegisterService<ICityReligions>("city_religions", new CityReligions(service));
+        var production = new ReligionProductionRules(service);
+        context.RegisterService<IBuildingRule>("building_rule", production);
+        context.RegisterService<IUnitTrainingRule>("training_rule", production);
+        context.RegisterService<IRazeProtection>("holy_city_protection", new HolyCityProtection(service));
+        context.RegisterService<IAttitudeSource>("attitude", new FaithAttitude());
+        context.RegisterService<ILedgerSourceLabel>("attitude_labels", new FaithAttitudeLabels());
+        context.RegisterStateComponent<ReligionRegardState>("attitudes");
+        context.TurnSystems.Register(new FaithAttitudeTurns());
         context.RegisterService<IModifierSource>("effects", new ReligionEffects());
         context.RegisterStateComponent<ReligionCityState>("city_state");
         context.RegisterStateComponent<ReligionPlayerState>("player_state");
@@ -53,6 +61,7 @@ public sealed class ReligionMod : IPreparableMod
         context.RegisterService<ISetupPolicy>("setup", new ReligionSetupPolicy());
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new ReligionAiPlanner());
         context.RegisterService<Ariel.Ai.IProductionWishes>("inquisitors", new InquisitorWishes());
+        context.RegisterService<Ariel.Ai.IAiBuildingExclusion>("ai_buildings", new ReligiousBuildingExclusion());
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>("founding_valuer", new FoundingWonderValuer());
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CivicSubject>>("civic_valuer", new StateReligionCivicValuer());
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.CitySubject>>("holy_city_valuer", new HolyCityValuer());

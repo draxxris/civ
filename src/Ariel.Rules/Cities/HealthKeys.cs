@@ -6,7 +6,7 @@ namespace Ariel.Rules.Cities;
 /// counts the penalties under <see cref="Building"/> and <see cref="Bonus"/>.</summary>
 internal static class HealthKeys
 {
-    /// <summary>Health from anything that is neither a building nor a bonus: civics, traits, religion, events.</summary>
+    /// <summary>Health from anything that is neither a building nor a bonus: civics, traits, events and other features.</summary>
     public const string General = "cities:health";
     /// <summary>Health a building gives, wherever its effect reaches, and a civic's change to a kind of building.</summary>
     public const string Building = "cities:building_health";

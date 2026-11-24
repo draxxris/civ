@@ -78,8 +78,8 @@ internal sealed class ReligionEffects : IModifierSource
     }
     private static void StateCivic(HeldCivic civic, ModifierSink sink)
     {
-        sink.Add(civic.Id, "cities:religion_unit_production_percent", civic.Rules.StateReligionUnitProductionModifier);
-        sink.Add(civic.Id, "cities:religion_building_production_percent", civic.Rules.StateReligionBuildingProductionModifier);
+        sink.Add(civic.Id, "cities:unit_production_percent", civic.Rules.StateReligionUnitProductionModifier);
+        sink.Add(civic.Id, "cities:building_production_percent", civic.Rules.StateReligionBuildingProductionModifier);
         sink.Add(civic.Id, "cities:great_people_percent", civic.Rules.StateReligionGreatPeopleRateModifier);
     }
 }

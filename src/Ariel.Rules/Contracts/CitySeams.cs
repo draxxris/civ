@@ -83,3 +83,22 @@ public interface IUnitTrainingRule
     /// <summary>Why the city may not train the unit, or null.</summary>
     string? RefuseUnit(Simulation sim, City city, Content.Schema.UnitDef unit);
 }
+
+/// <summary>A feature's reason a city may not construct a building, beyond what the building's own requirements say (a
+/// temple of a faith other than its owner's state religion). Production eligibility asks every registered rule
+/// (<see cref="GameRules.BuildingRules"/>) for every building. Queries never change state or use the RNG.</summary>
+public interface IBuildingRule
+{
+    /// <summary>Why the city may not construct the building, or null.</summary>
+    string? RefuseBuilding(Simulation sim, City city, Content.Schema.BuildingDef building);
+}
+
+/// <summary>A feature's reason the computer player should never raze a city it conquers (a holy city). Conquest asks
+/// every registered protection (<see cref="GameRules.RazeProtections"/>) alongside its own (a former capital, a
+/// world wonder, a strategic resource) before the raze roll; a human's explicit choice is not asked. Queries never
+/// change state or use the RNG.</summary>
+public interface IRazeProtection
+{
+    /// <summary>Whether the feature protects the city from an automatic razing.</summary>
+    bool Protects(Simulation sim, City city);
+}

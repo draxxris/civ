@@ -316,8 +316,6 @@ internal sealed class AttitudeLabels : ILedgerSourceLabel
             "war_history" => "Past wars against us",
             "open_borders" => "Open borders",
             "defensive_pact" => "Defensive pact",
-            "same_religion" => "Shared religion",
-            "different_religion" => "Different religion",
             _ => null,
         };
     }

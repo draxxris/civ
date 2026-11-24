@@ -39,15 +39,13 @@ internal sealed class AiOptions
 
     private bool PlausibleBuilding(BuildingDef b, CivilizationDef civ, RequirementContext rc, HashSet<string> limited)
     {
-        if (UnavailableMechanic(b)) return false;
+        // The capital rules place a palace, and a mod's excluded buildings need rules this planner does not know.
+        if (b.Capital || _ctx.Catalog.Excluded.Contains(b.Id)) return false;
         if (civ.BuildingOverrides.GetValueOrDefault(b.DefaultBuilding, b.DefaultBuilding) != b.Id) return false;
         if (b.ObsoleteTech is { } o && _ctx.Sim.KnowsTech(_ctx.PlayerId, o)) return false;
         if ((CityBuildingRules.IsWonder(b) || b.Limits.Player >= 0) && limited.Contains(b.DefaultBuilding)) return false;
         return TechOk(b, rc);
     }
-
-    private static bool UnavailableMechanic(BuildingDef b) => b.Capital || b.RequiresReligion
-        || b.RequiresStateReligion || b.ReligionType is not null;
 
     /// <summary>Limited classes that already exist elsewhere (world/team) or in this empire.</summary>
     private HashSet<string> LimitedClasses()

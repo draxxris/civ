@@ -137,6 +137,12 @@ public sealed class GameRules : IRuleset
     public IReadOnlyList<IBuildingFounder> Founders { get; private set; } = [];
     /// <summary>Every mod's reasons a city may not train a unit, in registration order.</summary>
     public IReadOnlyList<IUnitTrainingRule> TrainingRules { get; private set; } = [];
+    /// <summary>Every mod's reasons a city may not construct a building, in registration order.</summary>
+    public IReadOnlyList<IBuildingRule> BuildingRules { get; private set; } = [];
+    /// <summary>Every mod's reasons the computer player keeps a conquered city, in registration order.</summary>
+    public IReadOnlyList<IRazeProtection> RazeProtections { get; private set; } = [];
+    /// <summary>Every mod's further reasons for one leader's attitude toward another player, in registration order.</summary>
+    public IReadOnlyList<IAttitudeSource> AttitudeSources { get; private set; } = [];
     /// <summary>Everything that keeps units off plots they could otherwise enter, in registration order.</summary>
     public IReadOnlyList<IMovementBarrier> MovementBarriers { get; private set; } = [];
     /// <inheritdoc/>
@@ -158,6 +164,9 @@ public sealed class GameRules : IRuleset
         MovementBarriers = services.Get<IMovementBarrier>();
         Founders = services.Get<IBuildingFounder>();
         TrainingRules = services.Get<IUnitTrainingRule>();
+        BuildingRules = services.Get<IBuildingRule>();
+        RazeProtections = services.Get<IRazeProtection>();
+        AttitudeSources = services.Get<IAttitudeSource>();
         Calendar = services.Get<IGameCalendar>().Single();
         MapGeometry = services.Get<IMapGeometry>().Single();
         StartingPositions = services.Get<IStartingPositionService>().Single();

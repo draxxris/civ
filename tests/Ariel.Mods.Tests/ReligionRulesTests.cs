@@ -59,9 +59,9 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         var city = sim.State.Cities.First();
         var production = sim.Content.Services.Get<ICityProductionService>().Single();
         var temple = content.Get<S.BuildingDef>().All.First(b => b.ReligionType is not null);
-        Assert.Contains(production.Validate(sim, city.Id, "cities:building", temple.Id).Failures, f => f.Explanation == "Religion state is unavailable");
+        Assert.False(production.Validate(sim, city.Id, "cities:building", temple.Id).Success);
         var inquisitor = content.Get<S.UnitDef>().All.First(u => u.Inquisitor);
-        Assert.Contains(production.Validate(sim, city.Id, "cities:unit", inquisitor.Id).Failures, f => f.Explanation == "Religion state is unavailable");
+        Assert.False(production.Validate(sim, city.Id, "cities:unit", inquisitor.Id).Success);
         var session = new Ariel.Client.GameSession(sim, city.Owner);
         Assert.DoesNotContain(session.Screens.Entries(), e => e.Id == "religion:screen");
         Assert.Equal("", session.CityTags(city));
@@ -538,7 +538,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         Assert.Equal(2, effects.Lines.Single(l => l.Source == "cities:buddhist_shrine:shrine" && l.Key == "commerce.flat.gold").Amount);
         Assert.Equal(4, effects.Lines.Single(l => l.Source == "cities:buddhist_shrine:shrine" && l.Key == "commerce.flat.culture").Amount);
         Assert.Equal(5, effects.Lines.Single(l => l.Source == "cities:buddhist_temple:state_religion" && l.Key == "commerce.flat.culture").Amount);
-        Assert.Equal(15, effects.Total("cities:religion_building_production_percent"));
+        Assert.Equal(15, effects.Total("cities:building_production_percent"));
         Assert.Equal(15, Service<ICityProductionService>(sim).Calculate(sim, holy.Id, "cities:building", "cities:granary").ModifierPercent - 100);
         Assert.False(sim.TryApply(new SetStateReligionCommand { Player = 0 }, out error)); Assert.Contains("cooldown", error);
         // The rule owns the guard, so a direct service call cannot skip it either.
@@ -602,7 +602,7 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     {
         var sim = Scenario(); Found(sim, City(sim, 0));
         var city = City(sim, 5); Spread(sim, city);
-        var religion = sim.Rules().CityReligions!;
+        var religion = Assert.Single(sim.Rules().BuildingRules);
         var palace = sim.Content.Get<S.BuildingDef>("cities:apostolic_palace");
         Assert.NotNull(religion.RefuseBuilding(sim, city, palace));
         Assert.Null(religion.RefuseBuilding(sim, city, sim.Content.Get<S.BuildingDef>("cities:buddhist_temple"))); // Temple exemption.

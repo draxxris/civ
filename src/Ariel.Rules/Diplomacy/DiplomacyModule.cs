@@ -43,7 +43,7 @@ internal sealed class DiplomacyDeals(DiplomacyService service) : ITurnSystem
     public int Order => TurnPhase.Map + 1;
     public void Run(Simulation sim) => service.SettleDeals(sim);
 }
-/// <summary>Grows the religion and favourite-civic counters attitudes read. The base game has already met this
+/// <summary>Grows the favourite-civic counter attitudes read. The base game has already met this
 /// turn's contacts (<c>relations:turn</c>, before <see cref="TurnPhase.GameEnd"/>).</summary>
 internal sealed class DiplomacyHistory(DiplomacyService service) : ITurnSystem
 {

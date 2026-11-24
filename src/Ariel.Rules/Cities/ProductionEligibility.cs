@@ -33,7 +33,8 @@ internal static class ProductionEligibility
         Limits(sim, city, b.DefaultBuilding, b.Limits, false, failures);
         Location(sim, city, b, failures);
         WonderCapacity(sim, city, b, failures);
-        Religion(sim, city, b, failures);
+        foreach (var rule in sim.Rules().BuildingRules)
+            if (rule.RefuseBuilding(sim, city, b) is { } refused) Fail(failures, refused);
         if (BuildingFounding.Refuse(sim, city, b) is { } founding) Fail(failures, founding);
         Upgrade(sim, city, b, failures);
         if (b.BonusType is { } bonus && Available(sim, city, bonus) <= 0)
@@ -56,22 +57,10 @@ internal static class ProductionEligibility
     /// <summary>Connected copies after exchanges with other players. Imports count here; exports reduce the count.</summary>
     private static long Available(Simulation sim, City city, string bonus) =>
         ResourceAccess.Count(sim, city.Owner, city.Id, bonus);
-    private static void Religion(Simulation sim, City city, S.BuildingDef b, List<RequirementFailure> failures)
-    {
-        if (sim.Rules().CityReligions is { } religions)
-        {
-            if (religions.RefuseBuilding(sim, city, b) is { } error) Fail(failures, error);
-            return;
-        }
-        if (b.RequiresReligion || b.RequiresStateReligion || b.ReligionType is not null) Fail(failures, "Religion state is unavailable");
-    }
     private static void Unit(Simulation sim, City city, string id, List<RequirementFailure> failures)
     {
         if (!sim.Content.TryGet<S.UnitDef>(id, out var unit)) { Fail(failures, "Unknown unit"); return; }
         Requirements(sim, city, unit, failures);
-        if (sim.Rules().CityReligions is { } religions) { if (religions.RefuseUnit(sim, city, unit) is { } refused) Fail(failures, refused); }
-        // Without a mod that runs religion an inquisitor has nothing to purge, as a religious building has no faith.
-        else if (unit.Inquisitor) Fail(failures, "Religion state is unavailable");
         foreach (var rule in sim.Rules().TrainingRules)
             if (rule.RefuseUnit(sim, city, unit) is { } refused) Fail(failures, refused);
         // Without a mod that flies aircraft an aircraft could only sit in its base.

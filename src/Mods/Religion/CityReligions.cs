@@ -16,20 +16,21 @@ internal sealed class CityReligions(ReligionService service) : ICityReligions
     public bool IsStateReligion(Simulation sim, int player, string identity) =>
         service.StateReligion(sim, player) is { } state && ReligionIdentities.Identity(sim.Content, state) == identity;
 
-    public string? StateReligion(Simulation sim, int player) =>
-        service.StateReligion(sim, player) is { } state ? ReligionIdentities.Identity(sim.Content, state) : null;
-
     public bool IsHolyCityOf(Simulation sim, int city, string identity) =>
         ReligionIdentities.Religion(sim.Content, identity) is { } religion && service.HolyCity(sim, religion) == city;
-
-    public bool IsHolyCity(Simulation sim, int city) =>
-        sim.Content.Get<ReligionDef>().All.Any(religion => service.HolyCity(sim, religion.Id) == city);
 
     public bool HasAnyReligion(Simulation sim, int city) => service.Present(sim, city).Count > 0;
 
     public bool HasStateReligion(Simulation sim, int player, int city) =>
         service.StateReligion(sim, player) is { } state && sim.State.FindCity(city) is { } target && ReligionData.Has(sim, target, state);
+}
 
+/// <summary>What the state religion allows a city to produce: a religious building only of the state religion (unless
+/// it is free from it, or a civic frees every faith's buildings), a building that needs a state religion only with one,
+/// and an inquisitor only where civics and the state religion allow inquisitions. A founding wonder is
+/// <see cref="ReligionFounder"/>'s to refuse.</summary>
+internal sealed class ReligionProductionRules(ReligionService service) : IBuildingRule, IUnitTrainingRule
+{
     public string? RefuseBuilding(Simulation sim, City city, BuildingDef building)
     {
         if (ReligionData.Building(sim.Content, building.Id).FreeFromStateReligion) return null;
@@ -45,6 +46,21 @@ internal sealed class CityReligions(ReligionService service) : ICityReligions
 
     public string? RefuseUnit(Simulation sim, City city, UnitDef unit) =>
         unit.Inquisitor && !service.IsInquisitionEnabled(sim, city.Owner) ? "Civics and state religion do not allow inquisitions" : null;
+}
+
+/// <summary>The computer player keeps a holy city it conquers rather than razing it.</summary>
+internal sealed class HolyCityProtection(ReligionService service) : IRazeProtection
+{
+    public bool Protects(Simulation sim, City city) =>
+        sim.Content.Get<ReligionDef>().All.Any(religion => service.HolyCity(sim, religion.Id) == city.Id);
+}
+
+/// <summary>The standard city planner leaves religious buildings to the religion rules: a building of a faith, or one
+/// that needs a state religion, is never one of its general choices.</summary>
+internal sealed class ReligiousBuildingExclusion : Ariel.Ai.IAiBuildingExclusion
+{
+    public bool Excludes(ContentDb content, BuildingDef building) =>
+        building.RequiresReligion || building.RequiresStateReligion || building.ReligionType is not null;
 }
 
 /// <summary>Followers of a religion remember who razed its holy city. The founding record keeps the holy city's id after

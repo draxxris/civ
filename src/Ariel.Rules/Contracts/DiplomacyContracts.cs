@@ -232,10 +232,29 @@ public sealed class TeamAgreement
     }
 }
 
-/// <summary>How long one player has shared a religion or a favourite civic with another.</summary>
+/// <summary>How long one player has shared a favourite civic with another.</summary>
 public sealed class AttitudeHistory
 {
-    public int SameReligionTurns { get; set; }
-    public int DifferentReligionTurns { get; set; }
     public int FavoriteCivicTurns { get; set; }
+}
+
+/// <summary>A feature's further reasons for one leader's attitude toward another player (a shared or a different state
+/// religion), beside the base game's personality, borders, wars, agreements, deals, civics and memories. The attitude
+/// asks every registered source (<see cref="GameRules.AttitudeSources"/>) for every pair, so a source reads saved state
+/// only, keeps any counter it grows in its own state, never changes state and never uses the RNG.</summary>
+public interface IAttitudeSource
+{
+    /// <summary>Add each reason <paramref name="fromPlayer"/>'s leader has to regard <paramref name="towardPlayer"/>
+    /// better (positive) or worse, with its amount. A reason is a namespaced ledger source (<c>religion:same_religion</c>)
+    /// that the feature labels with an <see cref="ILedgerSourceLabel"/>; adding nothing says nothing.</summary>
+    void Add(Simulation sim, int fromPlayer, int towardPlayer, Content.Schema.LeaderDef leader, Action<string, long> add);
+}
+
+/// <summary>Shared attitude arithmetic.</summary>
+public static class AttitudeGrowth
+{
+    /// <summary>What a counter of <paramref name="turns"/> adds to an attitude: one point per <paramref name="divisor"/>
+    /// turns, up to <paramref name="limit"/> (whose sign is the direction), nothing for a divisor of zero or less.</summary>
+    public static int Of(int turns, int divisor, int limit) =>
+        divisor <= 0 ? 0 : Math.Sign(limit) * Math.Min(Math.Abs(limit), Math.Max(0, turns) / divisor);
 }
