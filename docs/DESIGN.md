@@ -3139,6 +3139,19 @@ declare both sides.
   invalidates it. Memory is bounded at 32,768 entries: a full table is emptied and
   refills. It is also emptied on state replacement and at the end of the outermost
   kernel span.
+- **Stamps are global, not per owner.** A write by one player invalidates every player's
+  kept entries that read its domains, even when the entries never read that player's
+  state. Write stamps per owner (team) were designed and measured in docs/OPTIMIZE.md,
+  Pass 28, and not built:
+  - Only 23% of stale misses follow other players' writes alone.
+  - The costly sources read other players' state: civic anger reads every nation's
+    civics and city count, available resources read trade partners' networks, and
+    shrines and headquarters walk every city.
+  - Proving a reader's owner set would need a read recorder in every mutable entity
+    getter, owner masks on every memo, and per-owner entity indexes.
+
+  A reader that reads another player's state therefore needs no declaration today. Any
+  per-owner design must start with that recorder.
 - **Thread model.** Writes, windows and stamps happen only on the thread that runs the
   kernel. AI scoring threads (`ParallelScoring`) read one simulation inside a read epoch,
   when no window opens or closes. They share the cache, which is a

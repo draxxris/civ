@@ -4138,6 +4138,226 @@ All on the final code:
 
 ______________________________________________________________________
 
+### Pass 28: Write Stamps per Owner (Measured, Not Built)
+
+- **Date**: 2026-11-26
+- **Commits**: this section only. No code changed, so every hash is the base tree's.
+
+This pass took item 1 of the Pass 27 list: make write stamps per owner instead of
+global. A write by one player would then stop invalidating another player's kept
+contributions and kept answers. The plan was to start from an inventory and a design,
+then build the cleanest increment. The inventory showed that owner stamps cannot reach
+most of the stale misses, and that their read sets cannot be proven in this codebase
+without hooks across the whole state access model. Under the architecture rule in
+AGENTS.md, the pass therefore stops at the design and records its data.
+
+#### Method, Saves and Hashes
+
+- **Base**: `3f03abbc`. The saves are `s450-f` and `s550-f` from Pass 27, which carry
+  this tree's content hash. s550 + 4 gives `a58adbc1e9f6647d`, as in Pass 25.
+- **Probes**: the Pass 27 probe, plus owner attribution. It was never committed; it is
+  kept in the scratch directory as `p28/probe28.patch`.
+  - Each write window carries an owner: a command's `Player`, the player of a
+    per-player chain step, or global for everything else (the systems before the
+    chain, the map systems, the rollover, the kernel's own stamps and event windows).
+  - Each stale miss records its context's player and team, and the owner of every
+    writer stamped since the kept entry.
+  - Each top-level window with an owner records a footprint: the state serialized
+    before and after. Every changed path is classed as the actor's own entity, another
+    owner's entity, or shared state. Players, cities, units and teams are matched by
+    id, and other owners' relative order is compared as well.
+- **Runs**: s550 + 4 for the miss classes (3 probed turns), and s550 + 3 for the
+  footprints and the same-or-different split (2 probed turns). Probe timings run about
+  three times the profiler's, so the inventory is judged by counts.
+
+#### The Inventory
+
+The stale misses are classed by who wrote since the kept entry. The figures are per
+turn at s550.
+
+| Class | Meaning | Misses | Probed ms |
+| :-- | :-- | --: | --: |
+| F | every writer is another player | 1,102 (23%) | 53.5 |
+| O | some writer is the context's own player | 2,164 (46%) | 132.5 |
+| G | some writer is global: the rollover or a map system | 1,465 (31%) | 101.8 |
+
+- **By scope**:
+  - City contexts: F 665, O 1,900, G 1,120.
+  - Player contexts: F 276, O 254, G 288.
+  - Team contexts: F 161, O 10, G 57.
+- **The ceiling**: owner stamps with perfect read sets could save only the F class.
+  Even if every rollover and map-system stamp were also made harmless, it would grow
+  only to 43%: 1,865 F misses, plus 189 with no writer left.
+- **Same or different lines**: every F miss recomputed the same lines, 1,168 a turn over
+  the footprint run. Different lines came only from O (16.5 a turn) and G (11).
+- **Kept queries**: about 390 a turn of their stale misses are F. The largest are
+  connected counts (69), active branches (58), active buildings (57), available
+  resources (53), effective buildings (53) and connected tiles (40).
+
+The writers behind the F class:
+
+| Source | Foreign writer | Misses | Probed ms |
+| :-- | :-- | --: | --: |
+| `BuildingEffects` | `UpgradeUnitCommand` (the only writer in every one) | 66 | 20.1 |
+| `BuildingEffects` | a move's first reveal (`world:revealed`) | 16 | 11.9 |
+| `BuildingEffects` | `MakePeaceCommand` | 33 | 6.7 |
+| `BuildingEffects` | `ProposeDealCommand` and `ExecuteDealCommand` | 10 | 7.8 |
+| `BuildingEffects` | `PerformMissionCommand`, bombard and ranged strike | about 33 | 5.7 |
+| `CivicEffects` | declared unit and sight writes: moves, promotions, activities | about 150 | 4.5 |
+| `CorporationEffects` | declared unit and sight writes, commerce rates | about 105 | 4.0 |
+
+Upgrades alone account for 398 stale misses a turn (24.3 ms probed) across all owners.
+Of `BuildingEffects`' 72 of them, 66 are foreign.
+
+#### What the Writers Touch
+
+The footprints show which windows write only their actor's state:
+
+- **Only the actor's entities**: every per-player chain step but borders, workers and a
+  completion that widens, and most of the AI's commands. The commands include assignments, production, promotions, activities,
+  commerce rates, research, builds, planning and the upgrade. The upgrade removes the
+  unit and adds it again at the end of the list, but other owners' units keep their
+  relative order.
+- **Shared state**:
+  - Borders write plot culture (`Plots/*/Culture`).
+  - Workers write plot build progress.
+  - Moves write plot visibility, reveals and revealed snapshots, all of them inside
+    `Plots`.
+  - A completion that widens writes `NextUnitId` and revealed snapshots.
+- **Two owners**:
+  - Deals write Diplomacy's and Relations' global state, and the partner's treasury.
+  - Peace, missions, bombards and ranged strikes write their target by nature.
+
+So stamps can be attributed: by the actor, by the chain's player, or by a writer that
+widens to another owner or to global before it touches them.
+
+#### What the Readers Read
+
+Every costly source reads other players' state, and nothing reads it through one place:
+
+- **`CivicEffects`**: civic anger (`CivicAnger`) reads every other nation's civics and
+  city count, for every city. Its read set is always every player.
+- **`BuildingEffects`**: the available resources ask Diplomacy's
+  `AvailableResourceCounts`, which reads each trade partner's resource network. Any
+  player that trades resources reads its partners.
+- **`ReligionEffects`**: shrine income counts every city in the world that holds the
+  religion.
+- **Corporations**: headquarters and branch rules walk every city.
+- **The resource network**: reads the city on a plot, of any owner, and plot reveals by
+  team.
+- **How the state is reached**:
+  - `State.Cities` is enumerated at 116 sites, `State.Units` at 44, and entity
+    `Extensions` at 199.
+  - Owner filters are written as `State.Cities.Where(c => c.Owner == p)`, so even a
+    reader of its own cities walks every owner's membership.
+- **What would hide reads from a recorder**: `ReadEpochMemo` (modifier sums, connected
+  counts), `CityReadScope.Memo`, `[ThreadStatic]` search buffers, and nested
+  `KeptQuery` answers. All of them return answers whose reads happened under another
+  computation.
+
+#### The Design, as Drafted
+
+This is what owner stamps would take, written down so that a later pass can start from
+it.
+
+- **The owner unit is the team.** Team state (techs, research) belongs to every member,
+  and teams usually hold one player. A window carries a team mask, where 0 means global:
+  - a command gets its actor's team;
+  - a per-player chain step gets its player's team;
+  - everything else is global.
+
+  A writer that touches another team calls `WidenWriteOwners(team)` first, as
+  `WidenWriteWindow` works today. That covers a deal partner, a war target and a
+  captured city. A handled event widens the window to global.
+- **The stamps**:
+  - Today's global `_restStamp` and `_domainStamps[64]` stay.
+  - Two flat arrays are added, allocated at load: `_teamRestStamps[teams]` and
+    `_teamDomainStamps[teams * 64]`. Eight teams take 4 KiB.
+  - Domains are classed by their paths. A domain under `Players`, `Cities`, `Units` or
+    `Teams` is owner-partitioned. Any other domain is shared and always stamps globally:
+    plots, global extension state and counters.
+- **The readers**:
+  - `IStateReader` gains `ReadTeams(context)`, a team mask that defaults to every team.
+  - A kept entry stores its mask.
+  - `WrittenSince(unread, stamp, teams)` keeps today's global test, then tests each team
+    column in the mask. The cost is the popcount times the read domains, with no
+    allocation.
+- **Proving the write side**: like today's window check.
+  - Serialize before and after.
+  - Remove the window's teams' entities, matched by id, and compare the other owners'
+    relative order.
+  - Strip the declared shared domains, then compare.
+- **Proving the read side**: a thread-static recorder, active only under verification,
+  notes the team of each entity read.
+  - Every mutable getter of `City`, `Unit`, `Player`, `Team` and `ExtensionState`
+    reports to it, gated by a `static readonly` flag that the JIT folds away.
+  - The getters of the entity lists report every team.
+  - Memos and kept answers store their recorded masks and add them to the outer
+    recorder.
+  - A computation whose recorded teams fall outside its declared mask throws.
+- **Migration**:
+  1. Add the stamps, with every reader declaring every team, so nothing changes.
+  2. Add the recorder and per-owner entity indexes (`CitiesOf`, `UnitsOf`).
+  3. Move the costly sources' own-owner reads onto those indexes.
+  4. Declare the narrower masks one source at a time, each passing both verify modes.
+
+#### Why It Was Not Built
+
+1. **The ceiling is small.**
+   - The F class is 23% of the stale misses and about 53 ms a turn probed. Probes run
+     about three times high, so that is about 15 to 20 ms real, or 3% of an s550 turn.
+2. **True read sets shrink it further.**
+   - Civic anger makes `CivicEffects` read every player.
+   - Trades make `BuildingEffects` read every partner.
+   - Shrine and headquarters cities read every city.
+   - What reliably survives is the upgrade's share, about 24 ms of the 53 probed. A
+     narrower change captures that share without read sets (below).
+3. **The proof needs hooks across the state access model.**
+   - There is no read choke point. Recording means hooks in every mutable getter of the
+     four entity types and of `ExtensionState`.
+   - It also means owner masks threaded through every memo and kept answer.
+   - Owner filters would have to move to per-owner indexes, so that an own-only reader
+     stops walking every owner's membership.
+   - That touches about 360 sites and changes how the state is accessed. It is a
+     refactor of its own, not a pass on the write model.
+4. **Most stale misses are not foreign.**
+   - **46% follow the player's own writes.** A completion, a faith spread, a worker's
+     build or a discovery widens the whole chain step for all of that player's cities.
+     For `BuildingEffects` these cost 39, 27, 20 and 13 ms probed.
+   - Owners at city grain would need each chain step's window split per city.
+   - **31% follow the rollover and map systems**, the Pass 27 structural item.
+
+#### Recommendations, Ranked
+
+1. **Give the unit list's order a domain of its own** (Pass 27 item 2).
+   - The upgrade would declare `military:units`, `economy:treasury`, `world:sight` and
+     the new order domain.
+   - Verification would compare `Units` matched by id, with the order as that domain's
+     one field.
+   - `BuildingEffects`, `TraitEffects`, `ReligionEffects`, `TimerModifiers` and
+     `ScriptedWonderService` never read units, the treasury or sight, so they keep their
+     entries across upgrades by any owner.
+   - That covers the 398 upgrade-only misses a turn (24.3 ms probed, 20.9 ms of it in
+     `BuildingEffects`): about half of what owner stamps could reach, for a small kernel
+     change and no read sets.
+2. **Narrow the chain's widenings to what they change.** This is the O class. One
+   example is a completed building with no reach beyond its city and no resource, power
+   or wonder effect. Such a widening could declare its city's domains and leave other
+   cities' entries standing. That needs a per-city declaration contract on the completion
+   and faith-spread writers. It is not a per-reader one.
+3. **Owner stamps later, after their prerequisite.** First comes owner-indexed entity
+   access, with a read recorder at the `GameState` boundary, as a pass of its own. The
+   design above then applies unchanged.
+
+#### Verification
+
+- No code changed, so every reference hash is the base tree's. s550 + 4 was confirmed
+  on the base: `a58adbc1e9f6647d`.
+- The probe ran only in the working tree, and that tree was restored before this
+  section was committed.
+
+______________________________________________________________________
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization
