@@ -161,8 +161,7 @@ internal sealed class CorporationEffects(CorporationService service) : IModifier
             sink.Add(def.Id, "cities:military_production_percent", def.MilitaryProductionPercent);
             if (service.Headquarters(sim, corporation) == city.Id)
             {
-                int branches = sim.State.Cities.Count(c => service.IsActive(sim, c.Id, corporation));
-                sink.AddCommerce(def.Id + ":headquarters", def.HeadquartersCommerce * branches);
+                sink.AddCommerce(def.Id + ":headquarters", def.HeadquartersCommerce * service.ActiveBranchCount(sim, corporation));
             }
         }
         // One key: the city maintenance service folds flat costs into its own total. A second corporate key
