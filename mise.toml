@@ -196,3 +196,13 @@ git-lfs = "latest"
 TMPDIR = "/var/tmp"
 __NV_PRIME_RENDER_OFFLOAD = "1"
 __GLX_VENDOR_LIBRARY_NAME = "nvidia"
+
+[tasks."test:mutation"]
+description = "Mutation-test chosen source files with Stryker.NET on a scratch copy under /var/tmp/ariel (per-test kill matrix in the JSON report): mise run test:mutation -- tests/Ariel.Mods.Tests Ariel.Rules.csproj 'Research/**/*.cs' [-- stryker options]"
+depends = ["assets", "cool"]
+run = "tools/mutation-test.sh"
+
+[tasks."test:coverage"]
+description = "Coverage of the default tests as Cobertura XML under /var/tmp/ariel/coverage (Microsoft.CodeCoverage, offline): mise run test:coverage -- [--filter 'FullyQualifiedName~Ariel.Mods.Tests.ResearchRulesTests.']"
+depends = ["assets", "cool"]
+run = "tools/coverage.sh"

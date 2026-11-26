@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="Code Coverage">
+        <Configuration>
+          <Format>Cobertura</Format>
+          <CodeCoverage>
+            <ModulePaths>
+              <Include><ModulePath>.*Ariel\..*\.dll$</ModulePath></Include>
+              <Exclude><ModulePath>.*Tests\.dll$</ModulePath><ModulePath>.*TestMods\..*</ModulePath><ModulePath>.*TestMetricsLogger.*</ModulePath><ModulePath>.*Benchmarks.*</ModulePath></Exclude>
+            </ModulePaths>
+            <UseVerifiableInstrumentation>False</UseVerifiableInstrumentation>
+          </CodeCoverage>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
