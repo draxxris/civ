@@ -76,8 +76,7 @@ internal static class AiTurnSpeculator
     private static void RunDirect(Simulation sim, int player)
     {
         sim.RunAiPlayer(player);
-        sim.State.PlayerById(player).EndedTurn = true;
-        sim.NoteKernelWrite();
+        sim.MarkTurnEnded(player);
     }
 
     private static void Report(Simulation sim, int wave, int player, SpeculationOutcome outcome, string? reason = null) =>
@@ -94,8 +93,7 @@ internal static class AiTurnSpeculator
         using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:fork")) plans = PreparePlans(sim, players, baseline);
         PlayerTrace first;
         using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:wave_plan")) first = ExecutePlayers(sim, players, plans, baseline);
-        sim.State.PlayerById(players[0]).EndedTurn = true;
-        sim.NoteKernelWrite();
+        sim.MarkTurnEnded(players[0]);
         Report(sim, wave, players[0], SpeculationOutcome.Direct);
         using (sim.Profiler.Measure(ProfileKind.Kernel, "kernel:commit"))
             return CommitPlans(sim, players, plans, baseline, first, wave);
@@ -148,8 +146,7 @@ internal static class AiTurnSpeculator
                 Report(sim, wave, players[i], SpeculationOutcome.Conflict, conflict);
                 return i;
             }
-            sim.State.PlayerById(players[i]).EndedTurn = true;
-            sim.NoteKernelWrite();
+            sim.MarkTurnEnded(players[i]);
             acted.Add(players[i]);
             Report(sim, wave, players[i], plans[i] is null ? SpeculationOutcome.Direct : SpeculationOutcome.Committed);
             if (plans[i] is { } done) mutations.Absorb(done.Trace!);
@@ -414,8 +411,7 @@ internal static class AiTurnSpeculator
             {
                 if (plan is null) sim.RunAiPlayer(player);
                 else if (plan.Replay(sim) is { } error) throw new InvalidOperationException($"Speculative replay is not repeatable: {error}");
-                sim.State.PlayerById(player).EndedTurn = true;
-                sim.NoteKernelWrite();
+                sim.MarkTurnEnded(player);
             }
         }
     }

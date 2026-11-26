@@ -29,6 +29,22 @@ public interface IStateReader
     IReadOnlyList<string>? UnreadDomains(ContentDb content) => null;
 }
 
+/// <summary>The state domains the kernel itself owns and writes, outside any module: what its own bookkeeping
+/// windows declare (<see cref="Game.Simulation"/>, "Write windows"). Every registry holds them.</summary>
+public static class KernelStateDomains
+{
+    /// <summary>The owner prefix of the kernel's domain ids.</summary>
+    public const string Owner = "kernel";
+    /// <summary>Where the turn stands: which players have ended it (<c>Players/*/EndedTurn</c>) and the turn order's
+    /// segments and active segment (<c>TurnOrder</c>). Private: no modifier source or kept query reads it, only the
+    /// kernel, command validation and planners do, so ending a player's turn or passing a segment leaves every kept
+    /// answer standing.</summary>
+    public const string TurnProgress = "kernel:turn_progress";
+    internal static readonly IReadOnlyList<string> TurnProgressPaths = ["Players/*/EndedTurn", "TurnOrder"];
+    /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
+    public static readonly IReadOnlyList<string> TurnProgressOnly = [TurnProgress];
+}
+
 /// <summary>The registered state domains, at most <see cref="Capacity"/>, each with a bit in a <see cref="ulong"/>
 /// mask. A declaration names domains by id; the registry resolves a list to its mask once per list instance.</summary>
 public sealed class StateDomainRegistry
@@ -41,6 +57,13 @@ public sealed class StateDomainRegistry
     private bool _frozen;
 
     private sealed class StrongBox(ulong value, bool unknown) { public readonly ulong Value = value; public readonly bool Unknown = unknown; }
+
+    /// <summary>A registry that holds the kernel's own domains (<see cref="KernelStateDomains"/>) before any module
+    /// registers its own.</summary>
+    public StateDomainRegistry()
+    {
+        Register(new(KernelStateDomains.TurnProgress, KernelStateDomains.TurnProgressPaths, Private: true), KernelStateDomains.Owner);
+    }
 
     /// <summary>Registered domains in registration order; a domain's bit is its index.</summary>
     public IReadOnlyList<StateDomain> All => _domains;

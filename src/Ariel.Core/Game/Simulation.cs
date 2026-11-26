@@ -142,7 +142,7 @@ public sealed partial class Simulation
     /// <summary>Plan the new turn's segments and start the first.</summary>
     private void BeginTurnOrder()
     {
-        using (OpenWriteWindow(null, "kernel:turn_order"))
+        using (OpenWriteWindow(KernelStateDomains.TurnProgressOnly, "kernel:turn_order"))
             State.TurnOrder = new TurnOrder { Segments = TurnOrder.Plan(State, Settings.TurnMode) };
         Proceed(mayAdvance: false, defer: false);
     }
@@ -165,9 +165,9 @@ public sealed partial class Simulation
                 if (defer) return;
                 RunAi(ai);
             }
-            int active = order.Active;
-            while (!order.Finished && order.Segments[order.Active].All(id => State.PlayerById(id).EndedTurn)) order.Active++;
-            if (order.Active != active) NoteKernelWrite();
+            if (SegmentEnded(order))
+                using (OpenWriteWindow(KernelStateDomains.TurnProgressOnly, "kernel:turn_order"))
+                    while (SegmentEnded(order)) order.Active++;
             if (!order.Finished && order.Active <= last) return; // Humans of this segment still have to move.
         }
         if (mayAdvance && !defer && State.Players.All(p => p.EndedTurn)) AdvanceTurn();
@@ -181,6 +181,14 @@ public sealed partial class Simulation
         while (last + 1 < order.Segments.Count && OnlyAi(order.Segments[last])) last++;
         return order.Segments.Skip(order.Active).Take(last - order.Active + 1)
             .SelectMany(s => s.Where(id => State.PlayerById(id) is { Ai: not null, EndedTurn: false })).ToArray();
+    }
+    private bool SegmentEnded(TurnOrder order) =>
+        !order.Finished && order.Segments[order.Active].All(id => State.PlayerById(id).EndedTurn);
+    /// <summary>The AI has played a player's turn: mark it ended, in a window that declares only the turn's progress,
+    /// so that kept answers survive it.</summary>
+    internal void MarkTurnEnded(int player)
+    {
+        using (OpenWriteWindow(KernelStateDomains.TurnProgressOnly, "kernel:end_turn")) State.PlayerById(player).EndedTurn = true;
     }
     private bool OnlyAi(int[] segment) => segment.All(id => State.PlayerById(id).Ai != null);
     /// <summary>Whether a player may issue commands now. A human acts only in its own segment; AI players are run by

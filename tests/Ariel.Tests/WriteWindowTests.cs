@@ -357,6 +357,8 @@ public sealed class WriteWindowTests
         }));
         var domains = content.StateDomains;
         ulong plans = domains.Mask(["a:plans"], out _), work = domains.Mask(["a:work"], out _);
+        // The kernel's turn progress is private in every registry, beside the module's own.
+        plans |= domains.Mask(KernelStateDomains.TurnProgressOnly, out _);
         Assert.Equal(plans, domains.PrivateMask);
         Assert.Equal(plans, domains.UnreadMask(new CultureSource(), content)); // declares nothing, still never reads it
         Assert.Equal(plans | work, domains.UnreadMask(new TreasurySource { Unread = ["a:work"] }, content));
@@ -470,6 +472,26 @@ public sealed class WriteWindowTests
         long stamp = sim.WriteStamp;
         sim.Events.Publish(new Poked(0));
         Assert.True(sim.WrittenSince(both, stamp)); // the subscriber may have written anything
+    }
+
+    [Fact]
+    public void Ending_a_turn_or_passing_a_segment_writes_only_the_kernels_private_turn_progress()
+    {
+        var (sim, _, _) = Game();
+        sim.VerifyWrites = true;
+        var domains = sim.Content.StateDomains;
+        ulong progress = domains.Mask(KernelStateDomains.TurnProgressOnly, out bool unknown);
+        Assert.False(unknown);
+        Assert.Equal(progress, domains.PrivateMask & progress);
+        Assert.True(sim.TryApply(new Script(s =>
+        {
+            long stamp = s.WriteStamp;
+            s.MarkTurnEnded(0);
+            Assert.True(s.State.PlayerById(0).EndedTurn);
+            // Every reader counts the private domain unread, so nothing it may read was written.
+            Assert.False(s.WrittenSince(domains.PrivateMask, stamp));
+            Assert.True(s.WrittenSince(0, stamp));
+        }) { Player = 0 }, out _));
     }
 
     [Fact]
