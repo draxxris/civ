@@ -1931,6 +1931,16 @@ order (corporations by id, players and cities by id):
    gets 64 / 5 x 150% = 18 in 2500, about 0.7% a turn at normal pace, and one within six
    hundredths of it (divisor 1) 96, about 3.8%.
 
+The three steps read one turn's memo (`NaturalCorporations.Pass`): each city's usable
+copies of every consumed resource, gathered when the city is first asked about and kept
+for the rest of the pass, each player's cities and the holders as spread began. Decay and
+founding share it, and spread shares it too unless something was founded that turn: decay
+only starts and ends timers, which no resource count reads, while a founding adds a
+building and a branch, so spread then gathers its own. Each step reads in read spans
+(`Simulation.OpenReadSpan`) that close before every write (holding the timers, a
+founding, a new branch), so the cities' resource queries share their owners' connectivity
+floods and city group layouts.
+
 A guild that consumes no resource (Apothecaries', Artists', Carpenters' and Clerks')
 cannot be gated by a resource, so its `FoundingBuildingClasses` names the buildings of its
 trade its Master Guild asks for (four apothecaries, theatres, siege workshops or
@@ -2416,7 +2426,10 @@ Several query paths avoid redundant traversal:
   hands out copies, which callers may add to; modifier sources only read the state, so
   the same context sums the same. `ResourceNetwork.ConnectedCounts` keeps each
   (player, city) flood's counts in one, which every city view and every exporter's city
-  group asks again. Military keeps `CombatCalculator.TotalCityDefense` per (city,
+  group asks again. Diplomacy keeps each player's city group layout (the groups, the
+  capital's last, and their members' counts), which every resource query of a city whose
+  owner exports a wanted resource asks, so the groups are flooded once per epoch or span
+  instead of once per query. Military keeps `CombatCalculator.TotalCityDefense` per (city,
   buildings ignored) and `MilitaryData.Buildings` (a city's working buildings, in
   ordinal order) per city in one each, because every combat preview against a unit in a
   city asks both. `Simulation.VerifyReadEpochs` hashes the state at an
@@ -3034,6 +3047,16 @@ declare both sides.
   contract exposes the legality parts separately for this:
   `IWorkerBuildService.ValidateAt` (the worker's legality) and `ValidatePlot` (the
   player, tile and build alone, which `ValidateAt` always includes).
+  resources. Corporations keeps each city's active branches and their resource counts
+  (`CorporationService.ActiveIn`, `corporations:active_branches`) under the same
+  declaration, since they follow branches, foundings, civics, techs and resources but
+  never population or the treasury, which only the branches' maintenance reads; a city's
+  effects recomputed after growth, and a headquarters counting its active branches, ask
+  no resource query again. It also keeps each player's maintenance modifier
+  (`corporations:maintenance_modifier`) under what every player-ledger source declares.
+  Religion keeps each player's state-religion building commerce
+  (`religion:state_religion_commerce`), which every city with a state-religion building
+  adds, under `ReligionEffects`' own declaration.
 - **Widening before a rare broad write.** A declared writer whose usual work stays in
   its domains, but which now and then writes more, calls `Simulation.WidenWriteWindow()`
   just before the broad write. From then on the window counts as writing everything,

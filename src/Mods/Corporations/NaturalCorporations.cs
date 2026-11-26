@@ -49,8 +49,8 @@ internal sealed class NaturalCorporations(CorporationService service)
         if (!KnowsFoundingTechs(sim, player, def) || CorporationService.Obsolete(sim, player, def)) return null;
         if (!ignoreCivics && CorporationService.BansCorporations(sim, player)) return null;
         if (sim.Rules().Timers.IsActive(sim, CooldownKind, TimerHolder.OfPlayer(player), def.Id)) return null;
-        var cities = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id).ToArray();
-        if (cities.Length == 0) return null;
+        var cities = OwnedCities(sim, player, pass);
+        if (cities.Count == 0) return null;
         if (def.PrereqBonuses.Length == 0 && !HoldsFoundingBuildings(sim, cities[0], def)) return null;
         City? best = null;
         long bestCopies = -1;
@@ -81,11 +81,17 @@ internal sealed class NaturalCorporations(CorporationService service)
     /// consumes, or the buildings of a guild that consumes none. Its civics do not matter.</summary>
     internal static bool HasAccess(Simulation sim, int player, CorporationDef def, Pass? pass = null)
     {
-        var cities = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id).ToArray();
-        if (cities.Length == 0) return false;
+        var cities = OwnedCities(sim, player, pass);
+        if (cities.Count == 0) return false;
         if (def.PrereqBonuses.Length == 0) return HoldsFoundingBuildings(sim, cities[0], def);
-        return cities.Any(c => CorporationService.Consumed(def, Counts(sim, c, pass)) > 0);
+        foreach (var city in cities)
+            if (CorporationService.Consumed(def, Counts(sim, city, pass)) > 0) return true;
+        return false;
     }
+
+    /// <summary>The player's cities in id order, from the pass when there is one.</summary>
+    private static IReadOnlyList<City> OwnedCities(Simulation sim, int player, Pass? pass) =>
+        pass?.OwnedCities(player) ?? sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id).ToArray();
 
     // ---------------------------------------------------------------- spread
 
@@ -127,14 +133,14 @@ internal sealed class NaturalCorporations(CorporationService service)
         }
         long copies = Math.Min(rules.SupplyCopiesCap, CorporationService.Consumed(def, pass.Counts(city)));
         threshold = threshold * (100 + rules.SupplyPercentPerCopy * copies) / 100;
-        threshold /= 1 + service.Present(sim, city.Id).Count / rules.CrowdingDivisor;
+        threshold /= 1 + service.BranchCount(sim, city.Id) / rules.CrowdingDivisor;
         return new((int)Math.Min(int.MaxValue, threshold), range);
     }
 
     private bool CanReceive(Simulation sim, City city, CorporationDef def, Pass pass)
     {
         if (!PlayerRules.IsNation(sim, city.Owner) || CorporationService.Founding(sim, def.Id) is not { } record) return false;
-        if (service.Present(sim, city.Id).Contains(def.Id) || CorporationService.Obsolete(sim, city.Owner, def)) return false;
+        if (service.HasBranch(sim, city.Id, def.Id) || CorporationService.Obsolete(sim, city.Owner, def)) return false;
         if (CorporationService.Blocked(sim, city, CorporationService.HeadquartersTeam(sim, record))) return false;
         if (def.PrereqBonuses.Length > 0 && CorporationService.Consumed(def, pass.Counts(city)) <= 0) return false;
         return service.HeadquartersConflict(sim, city.Id, def) is null;
@@ -146,14 +152,28 @@ internal sealed class NaturalCorporations(CorporationService service)
     private static IReadOnlyDictionary<string, long> Counts(Simulation sim, City city, Pass? pass) =>
         pass?.Counts(city) ?? CorporationService.ConsumedCounts(sim, city, sim.Content.Get<CorporationDef>().All.ToArray());
 
-    /// <summary>One turn's memo: each city's usable copies of every consumed resource (one resource query per city), the
-    /// cities holding an active branch of each corporation as the pass began, and each holder's influence.</summary>
+    /// <summary>One turn's memo: each city's usable copies of every consumed resource (one resource query per city, made
+    /// when the city is first asked about and kept from then on), the cities in id order and each player's, the cities
+    /// holding an active branch of each corporation as the pass began, and each holder's influence. Nothing the pass
+    /// serves changes who owns a city.</summary>
     internal sealed class Pass(Simulation sim, CorporationService service)
     {
         private readonly CorporationDef[] _all = sim.Content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal).ToArray();
         private readonly Dictionary<int, IReadOnlyDictionary<string, long>> _counts = [];
         private readonly Dictionary<string, City[]> _holders = new(StringComparer.Ordinal);
         private readonly Dictionary<(int, string), int> _influence = [];
+        private readonly Dictionary<int, City[]> _owned = [];
+        private City[]? _cities;
+
+        /// <summary>Every city, in id order.</summary>
+        public IReadOnlyList<City> Cities => _cities ??= sim.State.Cities.OrderBy(c => c.Id).ToArray();
+
+        /// <summary>The player's cities, in id order.</summary>
+        public IReadOnlyList<City> OwnedCities(int player)
+        {
+            if (!_owned.TryGetValue(player, out var cities)) _owned[player] = cities = Cities.Where(c => c.Owner == player).ToArray();
+            return cities;
+        }
 
         /// <summary>The mode's numbers and the source constants the spread reads, read once per pass.</summary>
         public CorporationRulesDef Rules { get; } = NaturalCorporations.Rules(sim.Content);
@@ -175,8 +195,7 @@ internal sealed class NaturalCorporations(CorporationService service)
         public IReadOnlyList<City> Holders(CorporationDef def)
         {
             if (!_holders.TryGetValue(def.Id, out var holders))
-                _holders[def.Id] = holders = sim.State.Cities.Where(c => service.Present(sim, c.Id).Contains(def.Id)).OrderBy(c => c.Id)
-                    .Where(c => Active(c, def)).ToArray();
+                _holders[def.Id] = holders = Cities.Where(c => service.HasBranch(sim, c.Id, def.Id) && Active(c, def)).ToArray();
             return holders;
         }
 
@@ -196,7 +215,7 @@ internal sealed class NaturalCorporations(CorporationService service)
                     int share = _baseInfluence / consumed;
                     influence += share * def.PrereqBonuses.Count(b => counts.GetValueOrDefault(b) > 0);
                 }
-                foreach (var other in service.Present(sim, city.Id).Order(StringComparer.Ordinal))
+                foreach (var other in service.Branches(sim, city.Id))
                 {
                     var rival = sim.Content.Get<CorporationDef>(other);
                     if (!CorporationService.Competes(def, rival) || !Active(city, rival)) continue;
@@ -213,34 +232,48 @@ internal sealed class NaturalCorporations(CorporationService service)
     // ---------------------------------------------------------------- the turn
 
     /// <summary>One turn of the realistic mode: decay timers first, then founding, then spread, each in a stable order;
-    /// nothing in the manual mode.</summary>
+    /// nothing in the manual mode.
+    /// <para>Decay and founding share one pass, and spread shares it too unless a corporation was founded. Decay only
+    /// starts and ends timers, which no resource count reads, so the counts it gathered are still the ones spread would
+    /// gather; a founding adds a building and a branch, so spread then gathers its own, as before. Each stage reads in
+    /// read spans (<see cref="Simulation.OpenReadSpan"/>) that close before every write, so the cities' resource queries
+    /// share the connectivity floods of their owner's cities.</para></summary>
     internal void Run(Simulation sim)
     {
         if (!CorporationMode.Realistic(sim)) return;
         var pass = new Pass(sim, service);
         var all = sim.Content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal).ToArray();
         Decay(sim, all, pass);
-        Found(sim, all, pass);
-        Spread(sim, all, new Pass(sim, service));
+        bool founded = Found(sim, all, pass);
+        Spread(sim, all, founded ? new Pass(sim, service) : pass);
     }
 
     /// <summary>Starts a decay timer where a branch or a headquarters is without access, and ends it where access came
-    /// back. What happens when one runs out is the timer kind's (<see cref="BranchDecay"/>, <see cref="HeadquartersDecay"/>).</summary>
+    /// back. What happens when one runs out is the timer kind's (<see cref="BranchDecay"/>, <see cref="HeadquartersDecay"/>).
+    /// Every condition is read first, in one read span, then the timers are held in the same order: a condition reads
+    /// branches, headquarters and resource counts, never the timers.</summary>
     private void Decay(Simulation sim, IReadOnlyList<CorporationDef> all, Pass pass)
     {
         var timers = sim.Rules().Timers;
         var rules = Rules(sim.Content);
-        foreach (var def in all)
+        var holds = new List<(string Kind, int City, string Corporation, bool Running, int Turns)>();
+        using (sim.OpenReadSpan())
         {
-            if (service.Headquarters(sim, def.Id) is not { } hq) continue;
-            foreach (var city in sim.State.Cities.Where(c => c.Id != hq && service.Present(sim, c.Id).Contains(def.Id)).OrderBy(c => c.Id))
+            foreach (var def in all)
             {
-                bool without = def.PrereqBonuses.Length > 0 && CorporationService.Consumed(def, pass.Counts(city)) <= 0;
-                Hold(sim, timers, BranchDecayKind, TimerHolder.OfCity(city.Id), def.Id, without, rules.BranchDecayTurns);
+                if (service.Headquarters(sim, def.Id) is not { } hq) continue;
+                foreach (var city in pass.Cities)
+                {
+                    if (city.Id == hq || !service.HasBranch(sim, city.Id, def.Id)) continue;
+                    bool without = def.PrereqBonuses.Length > 0 && CorporationService.Consumed(def, pass.Counts(city)) <= 0;
+                    holds.Add((BranchDecayKind, city.Id, def.Id, without, rules.BranchDecayTurns));
+                }
+                var seat = sim.State.CityById(hq);
+                holds.Add((HeadquartersDecayKind, hq, def.Id, !HasAccess(sim, seat.Owner, def, pass), rules.HeadquartersDecayTurns));
             }
-            var seat = sim.State.CityById(hq);
-            Hold(sim, timers, HeadquartersDecayKind, TimerHolder.OfCity(hq), def.Id, !HasAccess(sim, seat.Owner, def, pass), rules.HeadquartersDecayTurns);
         }
+        foreach (var (kind, city, corporation, running, turns) in holds)
+            Hold(sim, timers, kind, TimerHolder.OfCity(city), corporation, running, turns);
     }
 
     private static void Hold(Simulation sim, ITimers timers, string kind, TimerHolder holder, string key, bool running, int turns)
@@ -250,41 +283,60 @@ internal sealed class NaturalCorporations(CorporationService service)
         else if (!running && timer is not null) timers.Cancel(sim, timer.Id);
     }
 
-    private void Found(Simulation sim, IReadOnlyList<CorporationDef> all, Pass pass)
+    /// <summary>Whether anything was founded. The founding sites are read in a read span, which closes for each
+    /// founding; a draw is not a write.</summary>
+    private bool Found(Simulation sim, IReadOnlyList<CorporationDef> all, Pass pass)
     {
         int mean = GamePace.Scale(sim, Rules(sim.Content).FoundingMeanTurns);
         var players = sim.State.Players.Where(p => PlayerRules.IsNation(sim, p.Id)).Select(p => p.Id).Order().ToArray();
-        foreach (var def in all)
+        bool founded = false;
+        var span = sim.OpenReadSpan();
+        try
         {
-            if (service.IsFounded(sim, def.Id)) continue;
-            foreach (int player in players)
+            foreach (var def in all)
             {
-                if (FoundingSite(sim, player, def, pass: pass) is not { } site) continue;
-                if (sim.Rng.Next(mean) != 0) continue;
-                service.FoundWithoutBuilding(sim, site, def);
-                break;
+                if (service.IsFounded(sim, def.Id)) continue;
+                foreach (int player in players)
+                {
+                    if (FoundingSite(sim, player, def, pass: pass) is not { } site) continue;
+                    if (sim.Rng.Next(mean) != 0) continue;
+                    span.Dispose();
+                    service.FoundWithoutBuilding(sim, site, def);
+                    founded = true;
+                    span = sim.OpenReadSpan();
+                    break;
+                }
             }
         }
+        finally { span.Dispose(); }
+        return founded;
     }
 
     /// <summary>At most one new branch per city a turn, as in the source: cities in id order, corporations in id order,
-    /// holders as they were when the pass began.</summary>
+    /// holders as they were when the pass began. The odds are read in a read span, which closes for each new branch.</summary>
     private void Spread(Simulation sim, IReadOnlyList<CorporationDef> all, Pass pass)
     {
         var founded = all.Where(d => service.IsFounded(sim, d.Id)).ToArray();
         if (founded.Length == 0) return;
-        foreach (var def in founded) pass.Holders(def);
-        foreach (var city in sim.State.Cities.OrderBy(c => c.Id).ToArray())
+        var span = sim.OpenReadSpan();
+        try
         {
-            foreach (var def in founded)
+            foreach (var def in founded) pass.Holders(def);
+            foreach (var city in pass.Cities)
             {
-                var odds = SpreadOdds(sim, city, def, pass);
-                if (odds.Threshold <= 0 || sim.Rng.Next(odds.Range) >= odds.Threshold) continue;
-                CorporationService.Add(sim, city, def);
-                sim.Events.Publish(new CorporationSpread(def.Id, city.Id, city.Owner));
-                break;
+                foreach (var def in founded)
+                {
+                    var odds = SpreadOdds(sim, city, def, pass);
+                    if (odds.Threshold <= 0 || sim.Rng.Next(odds.Range) >= odds.Threshold) continue;
+                    span.Dispose();
+                    CorporationService.Add(sim, city, def);
+                    sim.Events.Publish(new CorporationSpread(def.Id, city.Id, city.Owner));
+                    span = sim.OpenReadSpan();
+                    break;
+                }
             }
         }
+        finally { span.Dispose(); }
     }
 
     // ---------------------------------------------------------------- what a timer does when it runs out

@@ -34,8 +34,9 @@ internal sealed partial class ReligionService
     {
         int numerator = ReligionData.Rules(sim).DecayDomesticNumerator;
         int offset = ReligionData.Rules(sim).DecayDomesticOffset;
+        // A spread pass floods from the city once and answers every other city from it.
         foreach (var other in sim.State.Cities.Where(c => c.Owner == city.Owner).OrderBy(c => c.Id))
-            if (ReligionData.Has(sim, other, religion) && TradeConnected(sim, city, other))
+            if (ReligionData.Has(sim, other, religion) && (turn?.TradeConnected(city, other) ?? TradeConnected(sim, city, other)))
                 decay = decay * numerator / (offset + Math.Max(0, Influence(sim, other, religion, turn)));
         return decay;
     }

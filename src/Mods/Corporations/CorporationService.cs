@@ -33,6 +33,16 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
     }
     /// <summary>Corporations with a branch in the city; empty for a stale id, like the sibling queries.</summary>
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
+    /// <summary><see cref="Present"/> without the copy, in id order, for a rule that reads it and writes nothing
+    /// while it enumerates.</summary>
+    internal IReadOnlyCollection<string> Branches(Simulation sim, int city) =>
+        (IReadOnlyCollection<string>?)sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations ?? [];
+    /// <summary>Whether the corporation has a branch in the city.</summary>
+    internal bool HasBranch(Simulation sim, int city, string corporation) =>
+        sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.Contains(corporation) == true;
+    /// <summary>How many corporations have a branch in the city.</summary>
+    internal int BranchCount(Simulation sim, int city) =>
+        sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.Count ?? 0;
     /// <summary>The founding record is the headquarters: it names the city that completed the founding building, and
     /// a captured headquarters keeps it, as the headquarters income does.</summary>
     public bool IsHeadquartersOf(Simulation sim, int city, string corporation) =>
@@ -69,7 +79,7 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
     /// (<see cref="CorporationResourceSupply"/>), which counts its copies from the city's network itself and is asked
     /// from inside the resource count, so it must not count resources again.</summary>
     internal bool IsOperating(Simulation sim, int city, string corporation) => sim.State.FindCity(city) is { } target
-        && Founding(sim, corporation) is { } record && Present(sim, city).Contains(corporation)
+        && Founding(sim, corporation) is { } record && HasBranch(sim, city, corporation)
         && !Blocked(sim, target, HeadquartersTeam(sim, record)) && !Obsolete(sim, target.Owner, sim.Content.Get<CorporationDef>(corporation));
     /// <summary>Whether the player's team knows the corporation's <see cref="CorporationDef.ObsoleteTech"/>.</summary>
     internal static bool Obsolete(Simulation sim, int player, CorporationDef def) => def.ObsoleteTech is { } tech && sim.KnowsTech(player, tech);
@@ -93,15 +103,63 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
     internal static long Consumed(CorporationDef def, IReadOnlyDictionary<string, long> counts) => def.PrereqBonuses.Length == 0 ? 0
         : def.PrereqBonuses.Distinct(StringComparer.Ordinal).Sum(b => Math.Max(0, counts.GetValueOrDefault(b)));
     /// <summary>The corporations with an active branch in the city (<see cref="IsActive"/>), in id order, and the copies
-    /// of their consumed resources the city can use, gathered in one resource query for all of them.</summary>
+    /// of their consumed resources the city can use, gathered in one resource query for all of them.
+    /// <para>Kept across writes (<see cref="KeptQuery{TKey,TValue}"/>): the answer follows the branches, foundings,
+    /// civics, techs and resource counts, which is what building effects read, never population or the treasury,
+    /// which the branches' maintenance reads. So a city's effects recomputed after its growth, and a headquarters
+    /// counting its active branches (<see cref="ActiveBranchCount"/>), ask no resource query again.</para></summary>
     internal (IReadOnlyList<CorporationDef> Active, IReadOnlyDictionary<string, long> Counts) ActiveIn(Simulation sim, City city)
     {
-        var present = Present(sim, city.Id);
-        if (present.Count == 0) return ([], NoCounts);
-        var operating = present.Where(c => IsOperating(sim, city.Id, c)).Select(sim.Content.Get<CorporationDef>).ToArray();
-        if (operating.Length == 0) return ([], NoCounts);
+        if (BranchCount(sim, city.Id) == 0) return ([], NoCounts);
+        var kept = ActiveKept.Get(sim, city.Id, () => ActiveInUncached(sim, city.Id));
+        return (kept.Active, kept.Counts);
+    }
+    private ActiveBranches ActiveInUncached(Simulation sim, int cityId)
+    {
+        var city = sim.State.CityById(cityId);
+        var operating = Branches(sim, cityId).Where(c => IsOperating(sim, cityId, c)).Select(sim.Content.Get<CorporationDef>).ToArray();
+        if (operating.Length == 0) return ActiveBranches.None;
         var counts = ConsumedCounts(sim, city, operating);
-        return (operating.Where(d => d.PrereqBonuses.Length == 0 || Consumed(d, counts) > 0).ToArray(), counts);
+        return new(operating.Where(d => d.PrereqBonuses.Length == 0 || Consumed(d, counts) > 0).ToArray(), counts);
+    }
+    /// <summary>How many cities have an active branch of the corporation (<see cref="IsActive"/>): an active branch is
+    /// one <see cref="ActiveIn"/> its city, whose resource counts do not depend on which corporations are asked.</summary>
+    internal int ActiveBranchCount(Simulation sim, string corporation)
+    {
+        int count = 0;
+        foreach (var city in sim.State.Cities)
+        {
+            if (!HasBranch(sim, city.Id, corporation)) continue;
+            foreach (var def in ActiveIn(sim, city).Active)
+                if (def.Id == corporation) { count++; break; }
+        }
+        return count;
+    }
+    /// <summary>The player's percent change to corporation maintenance (<see cref="MaintenanceKey"/>), kept across
+    /// writes: every city with an active branch asks it, and a kept player ledger still sums every source again.</summary>
+    private static readonly KeptQuery<int, long> MaintenanceModifier = new("corporations:maintenance_modifier", new PlayerLedgerReader());
+    /// <summary>The player ledger reads what every source of a player calculation reads.</summary>
+    private sealed class PlayerLedgerReader : IStateReader
+    {
+        public IReadOnlyList<string>? UnreadDomains(ContentDb content) =>
+            ModifierSources.UnreadThroughCalculation(CityStateDomains.NeverReadByBuildings, content, ModifierScope.Player);
+    }
+    private static readonly KeptQuery<int, ActiveBranches> ActiveKept = new("corporations:active_branches", new ActiveReader(), ActiveBranches.Equality);
+    /// <summary>The kept <see cref="ActiveIn"/> reads what building effects read.</summary>
+    private sealed class ActiveReader : IStateReader
+    {
+        public IReadOnlyList<string>? UnreadDomains(ContentDb content) =>
+            CityStateDomains.UnreadThroughBuildings(CityStateDomains.NeverReadByBuildings, content);
+    }
+    /// <summary>One city's <see cref="ActiveIn"/>, immutable: shared by every caller and thread while it is kept.</summary>
+    private sealed record ActiveBranches(CorporationDef[] Active, IReadOnlyDictionary<string, long> Counts)
+    {
+        public static readonly ActiveBranches None = new([], NoCounts);
+        /// <summary>Equal corporations in the same order and equal counts, for verification.</summary>
+        public static readonly IEqualityComparer<ActiveBranches> Equality = EqualityComparer<ActiveBranches>.Create(
+            (a, b) => a is not null && b is not null && a.Active.Select(d => d.Id).SequenceEqual(b.Active.Select(d => d.Id))
+                && a.Counts.Count == b.Counts.Count && a.Counts.All(p => b.Counts.TryGetValue(p.Key, out long v) && v == p.Value),
+            a => a.Active.Length);
     }
     public long MaintenanceHundredths(Simulation sim, int city)
     {
@@ -121,7 +179,8 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
         // Every city calculation asks this, and the player's maintenance modifier is a whole player calculation, so it
         // is gathered only for a city with an active branch to pay for.
         if (active.Count == 0) return 0;
-        long modifier = ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total(MaintenanceKey);
+        long modifier = MaintenanceModifier.Get(sim, cityObj.Owner,
+            () => ModifierSink.Collect(new(sim, ModifierScope.Player, cityObj.Owner)).Ledger.Total(MaintenanceKey));
         int inflation = InflationPercent(sim, cityObj.Owner) + 100;
         bool realistic = CorporationMode.Realistic(sim);
         long total = 0;
@@ -367,7 +426,7 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
     internal static bool Competes(CorporationDef a, CorporationDef b) => a.Id != b.Id
         && (a.CompetingCorporations.Contains(b.Id, StringComparer.Ordinal) || b.CompetingCorporations.Contains(a.Id, StringComparer.Ordinal)
             || a.PrereqBonuses.Intersect(b.PrereqBonuses, StringComparer.Ordinal).Any());
-    internal string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
+    internal string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Branches(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
     internal static void Add(Simulation sim, City city, CorporationDef def)
     {
         var state = city.Extensions.Get<CorporationCityState>(sim.Content) ?? new();

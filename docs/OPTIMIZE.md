@@ -3181,24 +3181,6 @@ worker. Every final state is byte-identical to the base tree.
   base tree, with corporations and religion active. Each has about 40 cities and 420
   units at 551. They were re-headed for the final tree's mod versions (World 1.22.0,
   Cities 1.49.0, AI 1.22.0); only the header changes.
-- Reference hashes, taken on `ee4c39ea` before any change. All match on the final tree:
-
-  | Run | Hash |
-  | :-- | :-- |
-  | s450 + 4 / + 8 | `4313ee853653eacd` / `d5fb48fb74d90628` |
-  | s550 + 2 / + 4 / + 8 | `8a7c12e45e220159` / `a58adbc1e9f6647d` / `23bb41d03ee121d7` |
-  | Seed 3, 4 players, 160 turns | `e49124006d830b87` |
-  | Seed 1, 4 players, 100 turns | `348b462d1ec219fa` |
-  | Seed 5, 8 players, 150 turns | `7d049d95e0352b35` |
-
-- The profile is `--profile` plus temporary `AiSeam` and `Rule` probes, none committed:
-  around each phase of `CityPlanner.Plan`, `Choose`, `Rate` and `BuildingWorth`, each
-  check of `ProductionEligibility.Building`, each requirement leaf kind, the resource
-  network flood, `ResourceAccess`, vicinity resources, the worker planner's phases and
-  the preview's validation, yields and work. Another agent shared the machine (load 2
-  to 9 during probes), so the probes compare summed calls, time and allocation within
-  one run more than across runs.
-
 #### Where the Time Went
 
 At s550 + 4 on the base tree, summed over threads, for the four turns:
@@ -3343,6 +3325,187 @@ At s550 + 8 on the final tree, per turn:
 
 `mise run benchmark` was not run in this pass. The alternating `ai:play` runs above
 are the measurement.
+
+### Pass 24: Corporations and Religion in the Late Game
+
+- **Date**: 2026-11-25
+- **Commits**: `b61b26ca` (natural turn), `d4fa811c` (kept branches), `54124fa8`
+  (religion), `e2d05801` (city group layouts), then mod versions and documentation
+
+A measurement-only report on local main `ee4c39ea` found `corporations:natural` the only
+new turn system above 10 ms in the late game (about 40 ms and 25 MiB a turn at turn 551,
+13 of 36 corporations founded), a corporation share of modifier collection, and two
+religion reads that grow with the square of a player's cities. Every final state is
+byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- Base: `ee4c39ea`, its `Ariel.SyncCheck` build copied aside before any change; final:
+  the tree after `e2d05801`, built through `mise run ai:play`.
+- Saves: s450 (turn 451) and s550 (turn 551) of seed 3, 4 players, 40 cities at s550;
+  big300, made on the base tree for scaling (seed 5, 8 players, large world, industrial
+  start, 300 turns: 87 cities, 101 branches, 14 faith placements).
+- Probes: temporary profiler scopes (not committed) around the resource query and its
+  parts (`TradeCounts`, `Supplied`, `ConnectedCounts`, `CityGroups`, `Remaining`), the
+  natural turn's stages, `ActiveIn`, the headquarters count, the maintenance collect and
+  the religion pieces.
+- Reference hashes, taken on `ee4c39ea` before any change. All match on the final tree:
+
+  | Run | Hash |
+  | :-- | :-- |
+  | s450 + 4 / + 8 | `4313ee853653eacd` / `d5fb48fb74d90628` |
+  | s550 + 2 / + 4 / + 8 | `8a7c12e45e220159` / `a58adbc1e9f6647d` / `23bb41d03ee121d7` |
+  | Seed 3, 4 players, 160 turns | `e49124006d830b87` |
+  | Seed 1, 4 players, 100 turns | `348b462d1ec219fa` |
+  | Seed 5, 8 players, 150 turns | `7d049d95e0352b35` |
+
+- The profile is `--profile` plus temporary `AiSeam` and `Rule` probes, none committed:
+  around each phase of `CityPlanner.Plan`, `Choose`, `Rate` and `BuildingWorth`, each
+  check of `ProductionEligibility.Building`, each requirement leaf kind, the resource
+  network flood, `ResourceAccess`, vicinity resources, the worker planner's phases and
+  the preview's validation, yields and work. Another agent shared the machine (load 2
+  to 9 during probes), so the probes compare summed calls, time and allocation within
+  one run more than across runs.
+
+  | s550 + 4 / + 8 | `a58adbc1e9f6647d` / `23bb41d03ee121d7` |
+  | Seed 3, 4 players, 160 turns | `e49124006d830b87` |
+  | Seed 1, 4 players, 100 turns | `348b462d1ec219fa` |
+  | Seed 5, 8 players, 150 turns | `7d049d95e0352b35` |
+  | Seed 7, 6 players, 120 turns, medieval start (10 faith placements) | `d2445a6884cfe867` |
+  | Seed 5, 4 players, 120 turns, industrial start (8 guilds founded) | `dcb5af4daedc2c1e` |
+  | The same with Realistic Guilds/Corporations off (2 founded by hand) | `19d7c4b0a8d1d51e` |
+
+  `--game-option` has no effect on `--load` (the save carries its settings), so only the
+  fresh industrial game covers the manual mode.
+
+#### Where the Time Went
+
+At s550, per warm turn, with the probes:
+
+- **The resource query** cost about 0.4 ms and 0.2 MiB a city. Most of it is not the
+  corporations: when the owner exports any wanted resource, the query builds the owner's
+  city group layout (one flood per group) and floods every member city for its copies,
+  all outside any read span. The natural turn made 113 such queries a turn
+  (45 ms): every city was asked twice, once for decay and founding and once by spread's
+  fresh pass.
+- **`CorporationEffects` on a miss**: the headquarters' `Count(IsActive)` 26 ms
+  (207 headquarters recomputes a turn, each a resource query per branch city),
+  `ActiveIn` 24 ms (444 city recomputes) and the nested player collect for the
+  maintenance modifier 10 ms, summed over threads.
+- **Religion**: the whole turn system was 7 to 8 ms; the state-religion building sum
+  5.4 ms (9 recomputes, 0.6 ms each), the spread flood 3.7 ms (40 floods),
+  `DomesticDecay`'s per-pair tests 2.3 ms (6 calls). `Eligible` already tests held and
+  blocked faiths before it floods, so skipping the flood for such cities was already the
+  case.
+- **Outside the brief**: the same layout and member floods cost about 200 ms a turn
+  inside the AI's epochs, through `BuildingEffects`' resource counts (see "Still Slow").
+
+#### What Was Built
+
+1. **The natural turn** (`b61b26ca`). Decay, founding and spread share one pass unless
+   something was founded (decay only holds timers, which no resource count reads; a
+   founding adds a building and a branch, so spread then starts its own pass, as
+   before). Each stage reads in read spans that close before every write: decay reads
+   every condition first and then holds the timers in the same order, founding and
+   spread close the span around each founding or new branch. The pass keeps the cities
+   in id order and per player, and the branch reads no longer copy the branch set.
+   Every lazily gathered count still reflects the state at its first ask, and the draws
+   are the same. Corporations 8.4.0.
+2. **Kept branches** (`d4fa811c`). `ActiveIn` is a `KeptQuery` per city under the
+   building effects' declaration (it never reads population or the treasury, which only
+   maintenance reads), so a city's effects recomputed after growth reuse it, and the
+   headquarters counts its active branches from those kept answers: a resource's count
+   does not depend on which others are asked, so this equals counting `IsActive`. The
+   player's maintenance modifier is a `KeptQuery` per player under what every
+   player-ledger source declares.
+3. **Religion** (`54124fa8`). `DomesticDecay` asks the spread pass's memoised flood
+   instead of one flood per pair of the owner's cities, and `Forget` drops a decayed
+   city's flood so it is asked again as before. The owner's state-religion building
+   commerce is a `KeptQuery` per player under `ReligionEffects`' declaration. Religion
+   2.18.0.
+4. **City group layouts per epoch** (`e2d05801`). Diplomacy keeps each player's
+   `CityGroups` in a `ReadEpochMemo`, so inside an epoch or span the groups are flooded
+   once. The memo's tables are per thread, so the layout's lazily gathered member counts
+   need no lock. Diplomacy 3.5.0.
+
+#### Results
+
+Base and final ran alternately (base, final, final, base) at load 1.5 to 1.6, s550 for 8
+turns and big300 for 6, leaving out the first two turns; summed-thread profiler figures,
+each cell giving the two runs:
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| s550, `corporations:natural` | 39.7 / 42.0 ms, 25.9 MiB | 10.2 / 12.6 ms, 6.6 MiB | −72%, −75% alloc |
+| s550, `religion:city_turns` | 6.9 / 7.6 ms, 5.5 / 5.8 MiB | 6.8 / 6.7 ms, 5.2 / 5.4 MiB | −5% |
+| s550, `modifiers:collect` | 324 / 342 ms, 251 MiB | 320 / 321 ms, 237 MiB | −3%, −6% alloc |
+| s550, `corporations:civic_valuer` | 5.0 / 4.8 ms, 3.0 MiB | 3.3 / 3.7 ms, 2.0 MiB | −30% |
+| s550, turn systems | 473 / 516 ms | 451 / 455 ms | −5 to −12% |
+| s550, wall per turn | 1,117 / 1,132 ms | 1,077 / 1,094 ms | −3% |
+| s550, allocation per turn | 1,025 / 1,021 MiB | 985 / 986 MiB | −4% |
+| big300, `corporations:natural` | 124.5 / 119.9 ms, 61.2 MiB | 34.6 / 34.2 ms, 12.6 MiB | −72%, −79% alloc |
+| big300, `modifiers:collect` | 1,301 / 1,307 ms, 997 MiB | 1,189 / 1,196 ms, 945 MiB | −9%, −5% alloc |
+| big300, `corporations:civic_valuer` | 18.7 / 19.1 ms, 11.4 MiB | 9.4 / 8.8 ms, 5.8 MiB | −51% |
+| big300, `religion:city_turns` | 2.0 / 2.3 ms, 2.50 MiB | 2.2 / 2.5 ms, 2.66 MiB | within noise |
+| big300, turn systems | 1,426 / 1,435 ms | 1,289 / 1,277 ms | −10% |
+| big300, wall per turn | 2,933 / 2,957 ms | 2,776 / 2,747 ms | −6% |
+| big300, allocation per turn | 2,741 / 2,747 MiB | 2,639 / 2,629 MiB | −4% |
+
+The natural turn scales with the city count both before and after, but at about a
+quarter of the cost. At big300 religion is light (14 faith placements in 87 cities), so
+its quadratic shapes did not show there either way: the two religion fixes rest on the
+s550 probes, with no after-measurement that isolates them. The religion turn's allocation rises
+slightly at big300: a pass flood allocates its answer, where the per-pair test reused one
+search; it is one flood per city instead of one per pair.
+
+#### Rejected and Not Built
+
+- **Asking only the resources a stage needs** instead of all 36 corporations'. Measured
+  on the final tree with the first four corporations' resources only: the pass's
+  queries fell from 10.1 to 4.3 ms a turn. The real subsets are much larger (founding
+  asks every unfounded corporation's, spread and decay every founded one's), so the gain
+  is estimated at 2 to 3 ms, and a shared pass would need per-resource merging of
+  partial answers. Not built.
+- **An invalidation-based memo across turns** (counts kept until a corporation is
+  founded or a branch opens or closes): resource counts also change with routes, deals,
+  techs, wars and blockades, so it would not be sound. The kept `ActiveIn` is the sound
+  form of it for the city calculations.
+- **One religion flood per connected component** (reuse a city's flood for every
+  same-owner city it reaches): sound only if the network's edges are symmetric, which
+  rests on rivers' edges being stored on both plots. Not proven; the flood is 3.7 ms at
+  s550. Not built.
+- **Skipping the flood for cities whose faiths are all held or blocked**: already so
+  (`Eligible` tests those first).
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash above matches the base tree. s550 + 8 also gives
+  `23bb41d03ee121d7` with `--waves max` and with `DOTNET_PROCESSOR_COUNT=1`, and seed 1
+  (4 players, 100 turns) with `--waves max` gives `348b462d1ec219fa`.
+- `--verify-modifier-cache` and `--verify-read-epochs` together pass on s550 + 4 (23
+  minutes at load 7 to 70). `--verify-read-epochs` alone passes on s550 + 8 (branches
+  40 to 43, so spreads closed and reopened their spans) and on the seed 5 industrial game
+  from turn 80 to 95 (5 guilds founded). `--verify-modifier-cache` passes on the seed 5
+  industrial game with Realistic Guilds/Corporations on and off.
+- After the version bumps the old saves no longer load (the content hash changes). A
+  save is re-headed by replacing its `ContentHash` with the one `hash-trace` prints and
+  the three `Mods` versions; re-headed s550 + 4 still gives `a58adbc1e9f6647d`.
+- `mise run test`, `mise run test:e2e`, `mise run test:worldgen`, `mise run check:sync`
+  and `mise run build:game` pass.
+
+#### Still Slow, Ranked
+
+1. **City group layouts and member floods inside AI epochs**: about 200 ms a turn at
+   s550 on the base tree (not probed again after step 4), summed over threads, through
+   `BuildingEffects.Available`'s resource counts. Step 4 shares the layout within an
+   epoch, but each AI epoch still floods every city once for its counts. A kept per-city count under the network's declaration would remove
+   most of it; that is base resource-network work, not this pass's.
+2. **Modifier collection** in general (about 320 ms at s550, 1.2 s at big300).
+3. **`corporations:natural`**, now 10 to 13 ms at s550 and 34 ms at big300: one resource
+   query per city a turn, linear in cities.
+4. **Religion** stays under 8 ms; its flood is one per city per player turn.
 
 ______________________________________________________________________
 

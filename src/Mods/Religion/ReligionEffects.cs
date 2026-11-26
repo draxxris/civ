@@ -59,8 +59,7 @@ internal sealed class ReligionEffects : IModifierSource
         var buildings = ReligionData.Active(sim, city).ToArray();
         var global = default(CommerceVector);
         if (state is not null && buildings.Any(b => ReligionData.Building(sim.Content, b.Id).Religion == state))
-            global = sim.State.Cities.Where(c => c.Owner == city.Owner).SelectMany(c => ReligionData.Active(sim, c))
-                .Aggregate(default(CommerceVector), (total, b) => total + ReligionData.Building(sim.Content, b.Id).StateReligionCommerces);
+            global = StateReligionCommerce.Get(sim, city.Owner, () => OwnedBuildingCommerce(sim, city.Owner));
         foreach (var building in buildings)
         {
             var rules = ReligionData.Building(sim.Content, building.Id);
@@ -74,6 +73,20 @@ internal sealed class ReligionEffects : IModifierSource
             int cities = sim.State.Cities.Count(c => ReligionData.Has(sim, c, shrine.Id));
             sink.AddCommerce(building.Id + ":shrine", shrine.GlobalCityCommerce * cities);
         }
+    }
+    /// <summary>The state religion commerce of every running building in the player's cities. Each city with a
+    /// state-religion building asks it, so it is kept across writes (<see cref="KeptQuery{TKey,TValue}"/>) under
+    /// this source's own declaration: it reads running buildings, as the rest of the source does.</summary>
+    private static readonly KeptQuery<int, CommerceVector> StateReligionCommerce = new("religion:state_religion_commerce", new ReligionEffects());
+    private static CommerceVector OwnedBuildingCommerce(Simulation sim, int player)
+    {
+        var total = default(CommerceVector);
+        foreach (var city in sim.State.Cities)
+        {
+            if (city.Owner != player) continue;
+            foreach (var building in ReligionData.Active(sim, city)) total += ReligionData.Building(sim.Content, building.Id).StateReligionCommerces;
+        }
+        return total;
     }
     private static void StateCivic(HeldCivic civic, ModifierSink sink)
     {
