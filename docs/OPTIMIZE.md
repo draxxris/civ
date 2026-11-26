@@ -3941,6 +3941,207 @@ All on the final code:
 
 ______________________________________________________________________
 
+### Pass 27: An Honest Write Model
+
+- **Date**: 2026-11-26
+- **Commits**: `d513901b` (kernel turn progress), `33664110` (the AI's everyday commands),
+  `53fbccab` (workers, improvements, warming), `33dc3298` (the rest of the turn chain),
+  `193e0f4c` (mod versions), then the documentation
+
+This pass takes the structural finding of Pass 26: writers that declare nothing stamp
+the state's remainder, and every such stamp invalidates every kept contribution and kept
+answer. It makes those writers declare what they write, in the existing places
+(`GameCommand.WriteDomains`, `ITurnSystem.WriteDomains`, `Simulation.WidenWriteWindow`),
+with five new domains where a writer's footprint fell outside every domain. The
+undeclared ("remainder") stamps fell from about 170 to 43 a turn at s550. Every final
+state is byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- **Builds**: base `b9dc7bf7`; final `193e0f4c`. Each `Ariel.SyncCheck` build was copied
+  aside and run through `mise run ai:play -- --bin DIR`.
+- **Saves**: s450 (turn 451) and s550 (turn 551), fresh from seed 3 with 4 players on the
+  base tree. Copies re-headed for the final content hash and versions give the same
+  hashes. The versions are Cities 1.51.0, Economy 1.10.0, Military 1.39.0, Research
+  1.14.0, World 1.24.0, Foundation 1.30.0, Espionage 5.5.0, Global Warming 1.3.0 and Great
+  People 3.14.0.
+- **Reference hashes**: unchanged from Pass 25 (s450 + 4 / + 8 `4313ee853653eacd` /
+  `d5fb48fb74d90628`, s550 + 4 / + 8 `a58adbc1e9f6647d` / `23bb41d03ee121d7`, and the five
+  whole games). All match on the final tree.
+- **Probes**: temporary, never committed. They recorded:
+  - every write stamp, by writer, and whether it stamped domains or the remainder;
+  - a footprint of every undeclared window: the state serialized before and after, and
+    each changed field path mapped to its domain or the remainder;
+  - each source's and kept query's hits and misses, and for a stale miss the set of
+    writers stamped since the kept entry, with the domains each stamped that the reader
+    reads;
+  - explicit widenings by call site, and widenings by a handled event.
+- **Counterfactual**: a script replayed each stale miss's writer set against a candidate
+  set of declarations and the readers' declared unread domains, to rank batches before
+  building them.
+
+#### The Inventory
+
+Remainder stamps a turn at s550, over the 3 probed turns of s550 + 4.
+
+| Writer | Before | After | Declares now |
+| :-- | --: | --: | :-- |
+| Ending an AI player's turn (`AiTurnSpeculator`) | 18.7 | 0 | `kernel:turn_progress` (new, private) |
+| Turn order: planning, passing a segment | 2.7 | 0 | `kernel:turn_progress` |
+| `cities:defense_recovery` | 15 | 0 | `cities:defense` (new, private) |
+| `cities:puppet_work` | 15 | 0 | `cities:work` |
+| `cities:reset_drafts` | 15 | 0 | `cities:drafts` (new, private) |
+| `foundation:timers_turn_end` | 15 | 0 | nothing; widens when a timer ends |
+| `great_people:golden_age_timers` | 15 | 0 | nothing; widens while a golden age counts down |
+| `world:workers` | 15 | 2.3 | `world:plot_work` (new, private), `military:units`, `world:worker_orders`; widens when a build completes |
+| `SetCommerceRatesCommand` | 5.0 | 0 | `economy:treasury` |
+| `SetTeamResearchCommand` | 3.3 | 0 | `research:progress` |
+| `PromoteMilitaryUnitCommand` | 3.3 | 0 | `military:units` (now holding promotions), `world:sight` |
+| `SetUnitActivityCommand` | 3.3 | 0 | `military:units`; widens when a blockade starts or ends |
+| `StartBuildCommand` | 2.0 | 0 | `economy:treasury`, `world:worker_orders` |
+| `SetEspionageWeightCommand` | about 0.3 | 0 | `espionage:points` |
+| `global_warming:warming` | 1 | 0 | nothing; widens before a plot degrades |
+| `world:improvements` | 1 | 1 | `world:plot_work`; widens before a feature, resource or improvement changes, which happens every late turn |
+| `foundation:timers` | 1 | 1 | nothing; widens when a timer ends, which happens every late turn |
+| Widening declared writers: completion, research, religion, births | 11 | 11 | unchanged |
+| Still undeclared commands: ranged strike, bombard, upgrade, mission, deals, peace | 8.7 | 8.7 | none |
+| Still undeclared systems: barbarians (2), culture decay, faction breakaway, natural corporations, diplomacy (2), gold reconciliation, events, relations, religious attitudes, rebellions, victory, councils, visibility | 15 | 15 | none |
+| Kernel: rollover, entering and leaving the outermost span | 3.6 | 3.6 | none (structural) |
+| **Total** | **about 170** | **43** | |
+
+Before this pass, every row invalidated every kept reader. After it, a declared row
+invalidates only the readers that read its domains: the new private domains and the
+research and espionage domains invalidate none, the unit and sight domains only
+`CivicEffects`, Corporations' effects and the undeclared sources (trade, great people,
+revolution, conscription), and the treasury only Corporations' effects and the
+undeclared sources.
+
+What the footprints showed of the undeclared writers:
+
+- The five chain steps wrote nothing at all on the probed turns, apart from clearing
+  flags already clear.
+- The rates live in the Economy player state, inside `economy:treasury`. The economy step
+  already writes them under that domain when a player runs out of gold, so the readers
+  that declare the treasury unread were already verified against rate changes.
+- A promotion writes `Units/*/Promotions`, which was in the remainder. It now belongs to
+  `military:units`. No reader that counts that domain unread reads promotions; unit
+  calculations, which do, are never kept.
+- `UpgradeUnitCommand` removes the unit and adds it again at the end of the unit list.
+  Every later unit moves up one place, so the whole list differs field by field.
+
+#### What Changed in the Caches
+
+Per turn at s550, under the probes (whose timings run high).
+
+| Subject | Base | Final |
+| :-- | --: | --: |
+| Remainder stamps | 170 | 43 |
+| Kept contribution hits | 8,967 | 9,588 |
+| Misses, cold | 1,448 | 1,448 |
+| Misses, inside an open window | 2,642 | 2,050 |
+| Misses, stale, same lines | 4,717 | 4,695 |
+| Misses, stale, different lines | 26 | 26 |
+| `BuildingEffects` misses (cold / window / stale) | 188 / 94 / 402 | 188 / 36 / 356 |
+| Kept-query hits | 7,453 | 7,744 |
+| Kept-query misses, stale / window | 1,650 / 890 | 1,492 / 535 |
+
+- Batch 1 (end of turn and the six commands) cut `BuildingEffects` stale misses from
+  395 to 298, as the counterfactual predicted (about 65 ms of probed recomputes).
+- Batch 2 removed global warming's misses inside its own window (about 50 ms probed).
+  Its reads now keep their answers, but many of those answers had already gone stale in
+  the chain before it, so part of the gain moved into the stale column.
+- Batch 3 (the rest of the chain) gained no hit, as Pass 26 found and the counterfactual
+  predicted. It is there because the model should be honest, and it costs nothing.
+
+#### Results
+
+How the runs were made: 8 turns per run, with `DOTNET_TC_CallCountingDelayMs=0`. Figures
+are per turn over the last 6 turns, summed over threads. The quiet round ran at load 1.0
+to 1.3 with the final code before its version bump, which plays identically. The two
+alternating rounds ran at load 4.3 to 5.4, from other work on the machine, so their
+times are high and are given only as ranges.
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| s550, `modifiers:collect` (quiet round) | 168.4 ms | 147.8 ms | −12% |
+| s550, `modifiers:collect` (loaded rounds) | 190.6–196.1 ms | 148.0–155.0 ms | −21 to −22% |
+| s550, `modifiers:collect` allocation | 132.7 MiB | 116.8 MiB | −12% |
+| s550, `global_warming:warming` (loaded rounds) | 22.0–22.1 ms, 13.5 MiB | 17.4–18.4 ms, 12.0 MiB | −17 to −21% |
+| s550, wall per turn (quiet round) | 582 ms | 558 ms | −4% |
+| s550, allocation per turn | 528 MiB | 508 MiB | −4% |
+| s450, `modifiers:collect` (quiet round) | 121.7 ms | 96.8 ms | −20% |
+| s450, `modifiers:collect` (loaded rounds) | 123.7–144.2 ms | 98.0–99.1 ms | −20 to −31% |
+| s450, `modifiers:collect` allocation | 85.7 MiB | 68.3 MiB | −20% |
+| s450, wall per turn (quiet round) | 432 ms | 414 ms | −4% |
+| s450, allocation per turn | 377 MiB | 358 MiB | −5% |
+
+The number of collects is unchanged (3,482 a turn at s550): the work saved is
+contributions reused instead of recomputed.
+
+#### Rejected and Not Built
+
+- **Declaring `UpgradeUnitCommand`**: about 72 `BuildingEffects` misses a turn at s550
+  have it as their only cause, the largest single cause left. But the upgrade moves the
+  unit to the end of the list, and a field-path domain cannot name a collection's order
+  or membership. A path over `Units` would overlap every unit domain. Upgrading in place
+  would change the unit order, and so the hash.
+- **The map and rollover systems**: declaring all of them, even the rollover window
+  itself, gains about 15 ms of probed recomputes in the counterfactual. An entry kept in
+  the chain is nearly always invalidated already by a completion, a faith spread or a
+  discovery, which widen on purpose. The rollover window ends one turn and starts the
+  next, changes the turn number and dispatches their events, so it writes everything a
+  turn-based reader sees.
+- **Narrowing `world:improvements`**: it widens on the first feature that changes, every
+  late turn, and its later reads of player ledgers then compute fresh (about 20 ms
+  probed). Reading the ledgers once before the tile loop would change when they are read
+  relative to its writes, which cannot be shown identical without more work than the
+  gain.
+- **Deals, peace and great person missions**: they write what kept readers read
+  (resource trades, wars, buildings and techs), so a truthful declaration of them is the
+  remainder anyway.
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash matches the base. s550 + 8 gives `23bb41d03ee121d7` with
+  `--waves max` and with `DOTNET_PROCESSOR_COUNT=1`. Seed 1 with `--waves max` gives
+  `348b462d1ec219fa`.
+- Each run alone, under a 10 GiB memory cap:
+  - `--verify-modifier-cache` on s550 + 2, s450 + 4, s450 + 4 with `--waves max` and s550
+    + 2 with `--waves max`;
+  - `--verify-read-epochs` on s550 + 2 and s450 + 4;
+  - `--verify-modifier-cache` over whole games: the industrial start (seed 5, 4 players,
+    120 turns, 10 minutes), the medieval start (seed 7, 6 players, 150 turns, 20 minutes)
+    and seed 5 with 8 players over 150 turns (24 minutes).
+- New tests:
+  - ending a turn writes only the kernel's private turn progress;
+  - a promotion writes only units and sight, an activity only units, and ending a
+    blockade widens to everything.
+- `mise run test`, `mise run check:sync`, `mise run test:e2e`, `mise run test:worldgen`
+  and `mise run build:game` pass.
+- **Resting on inspection**, because no AI game exercises them:
+  - Starting a blockade through `SetUnitActivityCommand`: it is the same widening as
+    ending one, which a test covers.
+  - The rarely written private fields: draft flags, defense damage, and the Cities player
+    state created on its first reset (which widens).
+
+#### Still Slow, Ranked
+
+1. **Stamps are global, entries are per city**: a completion, a faith spread, a
+   discovery or a great person in one city or team invalidates every city's entries,
+   and 99% of the recomputes return the same lines. Closing this needs write stamps per
+   owner (a window declaring its domains for one player or team) and readers that declare
+   which owners a context reads. That is the next refactor of the write model; it needs
+   a per-reader contract for cross-player reads (wonders, corporations, trades), and so is
+   not built here.
+2. **Unit list order**: upgrades, and every unit created or removed, change the units'
+   membership or order. They need a membership domain that a field path cannot express.
+3. **Unit calculations are never kept** (Pass 26 item 2): 2,035 a turn.
+4. **Cold city ledgers** at the start of each span: about 50 ms under the probes.
+
+______________________________________________________________________
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization
@@ -4034,3 +4235,6 @@ passes:
 | **Pass 26: Modifier Collection** | `9854783c`..`74c455b8` | Four-player AI game, last 6 of 8 turns from turn 551, tier-up pinned | `modifiers:collect` CPU | 214–216 ms | 172–173 ms | **-20%** |
 |                                         |                      | Same                                                       | Wall time (profiled)     |         623–626 ms |         585–589 ms |                                   **-6%** |
 |                                         |                      | Same                                                       | Managed bytes per turn   |            575 MiB |            527 MiB |                                   **-8%** |
+| **Pass 27: Honest Write Model** | `d513901b`..`33dc3298` | Four-player AI game, last 6 of 8 turns from turn 551, JIT pinned | `modifiers:collect` CPU | 168 ms | 148 ms | **-12%** |
+|                                         |                      | Same, from turn 451                                        | `modifiers:collect` CPU  |             122 ms |              97 ms |                                  **-20%** |
+|                                         |                      | Same, from turn 551                                        | Remainder stamps per turn |               170 |                43 |                                  **-75%** |

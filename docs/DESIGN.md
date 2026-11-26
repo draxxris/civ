@@ -3067,6 +3067,12 @@ declare both sides.
   Religion keeps each player's state-religion building commerce
   (`religion:state_religion_commerce`), which every city with a state-religion building
   adds, under `ReligionEffects`' own declaration.
+- **A step that usually writes nothing** declares an empty list and widens before the
+  write it sometimes makes: global warming weighs every city and rolls, and widens only
+  before it degrades a plot; the timer expiry steps widen only when a timer ends; the
+  golden-age step only when a golden age counts down. Its own reads, and every reader
+  after it, then keep their answers on the turns it writes nothing. Rolls draw on the
+  random stream, which is not state any reader sees.
 - **Widening before a rare broad write.** A declared writer whose usual work stays in
   its domains, but which now and then writes more, calls `Simulation.WidenWriteWindow()`
   just before the broad write. From then on the window counts as writing everything,
@@ -3093,8 +3099,9 @@ declare both sides.
     whose activity is `Blockade`: their position, activity, transport, owner and whether
     their health is above zero). A declared writer widens before it changes what a
     blockade reads of such a unit: moving one ends its blockade, and a unit that falls to
-    zero health stops blockading. The domain holds positions, moves left, hit points and
-    the Military unit state. A reader that counts units in a city, as `CivicEffects` does
+    zero health stops blockading, and setting an activity widens when a blockade starts or
+    ends. The domain holds positions, moves left, hit points, promotions and the Military
+    unit state. A reader that counts units in a city, as `CivicEffects` does
     for military happiness, reads the domain.
   - `government:timers`: readers see whether anarchy lasts, and the timer system widens
     on its last turn. `cities:occupation`: readers see whether the city is in occupation
@@ -3106,8 +3113,12 @@ declare both sides.
   declares is computed fresh and not kept. An event that any subscriber handles widens
   the open window to everything, because a subscriber may write anything. An event
   published outside any window dispatches inside an undeclared window of its own.
-  Ended turns, turn-order moves and wholesale state replacement (`CompleteTurnWork`, a
-  speculative restore) count as writing everything. A nested window adds what it wrote
+  The kernel's own bookkeeping declares too: marking a player's turn ended
+  (`Simulation.MarkTurnEnded`), planning the turn order and passing a segment write only
+  `kernel:turn_progress` (`KernelStateDomains`: `Players/*/EndedTurn` and `TurnOrder`), a
+  private domain every registry holds before any module registers. The rollover's own
+  window (turn ended and started, the turn number) and wholesale state replacement
+  (`CompleteTurnWork`, a speculative restore) count as writing everything. A nested window adds what it wrote
   to the outer window. `AdvanceTurn` or `RunAi` inside a command sets the open windows
   aside and counts as writing everything on both sides.
 - **Kernel spans.** Contributions are kept only inside kernel work: `TryApply`,
@@ -3144,14 +3155,34 @@ declare both sides.
 - **Declared today.**
   - Writers (commands): `SetCityAssignmentsCommand` (`cities:work`),
     `SetCityProductionCommand` and `MoveCityQueueCommand` (`cities:queue`), and the AI's
-    planning, forget, prune and war-preparation commands (`ai:intent`).
+    planning, forget, prune and war-preparation commands (`ai:intent`). The commands the
+    computer players issue every turn:
+    - `SetCommerceRatesCommand` writes `economy:treasury`, where the rates live.
+    - `SetTeamResearchCommand` writes `research:progress`; a free technology is a
+      discovery, which widens.
+    - `PromoteMilitaryUnitCommand` writes `military:units` and `world:sight`
+      (`UnitStateDomains.UnitsAndSight`): promotions, level and health, and the sight it
+      recomputes, whose first reveals and contacts widen as after a move.
+    - `SetUnitActivityCommand` writes `military:units`, and widens to everything when a
+      blockade starts or ends.
+    - `StartBuildCommand` writes `economy:treasury` and `world:worker_orders`.
+    - `SetEspionageWeightCommand` writes `espionage:points`.
   - Unit moves: `MoveUnitPathCommand` writes `UnitStateDomains.MoveWrites`:
-    `military:units` (positions, moves left, the Military unit state), `world:sight`
+    `military:units` (positions, moves left, health, promotions, the Military unit state), `world:sight`
     (visible teams and plot memories) and `world:worker_orders`. `MovementService.MoveStep`
     widens to everything before it moves a blockading unit, fights, or captures a city or
     civilians. A goody hut and a first contact widen before they write. A first reveal
     widens by `world:revealed` (`Plots/*/Revealed`).
-  - Writers (the per-player turn chain):
+  - Writers (the per-player turn chain): every step declares.
+    - `cities:puppet_work` writes `cities:work`, `cities:reset_drafts` the private
+      `cities:drafts` (whether each city drafted, the player's draft count) and
+      `cities:defense_recovery` the private `cities:defense` (defense damage, bombarded this
+      turn). Only draft validation and combat, a unit calculation, read those.
+    - `world:workers` writes the private `world:plot_work` (build progress and
+      improvement upgrade turns), `military:units` (the workers' moves) and
+      `world:worker_orders`. A build that completes widens first.
+    - `foundation:timers_turn_end` and `great_people:golden_age_timers` write nothing
+      unless a timer ends or a golden age counts down, and widen then.
     - `military:units` (the unit refresh) writes `military:units`: moves, healing and
       the Military unit state. It moves no unit, heals but never kills, and changes only a
       sentry's or a fortified unit's activity, so a blockade sees nothing of it.
@@ -3187,11 +3218,25 @@ declare both sides.
       sources. With today's sources that is work, queue, culture, plot culture and
       production. Inflation and player timers with effects rest on inspection;
       `--verify-modifier-cache` covers them where a run exercises them.
+  - Writers (the map phase): `global_warming:warming` and `foundation:timers` write
+    nothing unless a plot degrades or a timer ends. `world:improvements` writes
+    `world:plot_work`, and widens before a feature grows or disappears, a resource is found
+    or exhausted, or an upgrade completes.
   - Undeclared:
     - Readers: Trade's `TradeEffects`, and the city-only and unit-only sources that
       declare only their scopes (revolution, conscription, great people, promotions).
-    - Writers: `global_warming:warming` and the other global systems, and every command
-      not listed, including the other unit commands (load, unload, promote, upgrade).
+    - Writers: the other global systems, and every command not listed. Three kinds of
+      write keep them undeclared, and each needs more than a declaration (docs/OPTIMIZE.md,
+      Pass 27):
+      - Entity membership and order: `UpgradeUnitCommand` removes and re-adds the unit,
+        which moves it to the end of the unit list. A field path cannot name a
+        collection's membership or order, and a path over `Units` would overlap every unit
+        domain.
+      - Broad writes by nature: deals, peace, great person missions, ranged attacks, and
+        the systems that resolve barbarians, corporations, councils, events, diplomacy and
+        victory once a turn.
+      - The rollover window: the turn ends and starts and the turn number changes, which
+        every turn-based reader sees.
   - An undeclared source still counts private domains as unread, so it survives their
     writes. The Corporations resource supplier (`CorporationResourceSupply`) declares
     nothing itself, but the `ICityResourceSupply` seam's default binds it. It meets that
