@@ -168,8 +168,7 @@ internal sealed class ResearchPhase(IResearchService research) : IPlayerTurnSyst
 {
     public string Id => "research:progress";
     public int Order => TurnPhase.Research;
-    public IReadOnlyList<string>? WriteDomains => Progress;
-    private static readonly IReadOnlyList<string> Progress = ["research:progress"];
+    public IReadOnlyList<string>? WriteDomains => ResearchStateDomains.ProgressOnly;
     public void Run(Simulation sim, int player)
     {
         if (GovernmentStatus.IsAnarchy(sim, player)) return;

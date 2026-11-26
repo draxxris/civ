@@ -71,6 +71,8 @@ public sealed class EconomyCityState
 public sealed class SetCommerceRatesCommand : GameCommand
 {
     public CommerceVector Rates { get; init; }
+    /// <summary>The rates live in the Economy player state, inside the treasury domain.</summary>
+    public override IReadOnlyList<string>? WriteDomains => EconomyStateDomains.TreasuryOnly;
     public override string? Validate(Simulation sim) => sim.Rules().Economy.ValidateRates(sim, Player, Rates);
     public override void Apply(Simulation sim) => sim.Rules().Economy.SetRates(sim, Player, Rates);
 }

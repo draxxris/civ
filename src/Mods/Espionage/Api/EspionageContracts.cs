@@ -104,6 +104,9 @@ public sealed class SetEspionageWeightCommand : GameCommand
 {
     public int TargetTeam { get; init; }
     public int Weight { get; init; } = 1;
+    /// <summary>Weights are the Espionage player state, in its private points domain.</summary>
+    public override IReadOnlyList<string>? WriteDomains => Points;
+    private static readonly IReadOnlyList<string> Points = ["espionage:points"];
     public override string? Validate(Simulation sim) => Espionage.Service(sim).ValidateWeight(sim, Player, TargetTeam, Weight);
     public override void Apply(Simulation sim) => Espionage.Service(sim).SetWeight(sim, Player, TargetTeam, Weight);
 }

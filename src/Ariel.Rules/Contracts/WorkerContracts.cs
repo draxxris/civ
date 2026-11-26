@@ -36,6 +36,9 @@ public sealed class StartBuildCommand : GameCommand
     public int Unit { get; init; }
     /// <summary>Build definition id.</summary>
     public string Build { get; init; } = "";
+    /// <summary>Starting a build pays its cost and gives the worker its order: the treasury and worker orders.</summary>
+    public override IReadOnlyList<string>? WriteDomains => Writes;
+    private static readonly IReadOnlyList<string> Writes = [EconomyStateDomains.Treasury, UnitStateDomains.WorkerOrders];
     /// <inheritdoc/>
     public override string? Validate(Simulation sim) => sim.Rules().WorkerBuilds.Validate(sim, Player, Unit, Build);
     /// <inheritdoc/>

@@ -5,7 +5,9 @@ namespace Ariel.Mods.Tests;
 
 /// <summary>What a unit move declares it writes (<see cref="UnitStateDomains.MoveWrites"/>), and when it writes more:
 /// a first reveal widens it by <see cref="UnitStateDomains.Revealed"/> only, and moving a blockading unit widens it to
-/// everything, because readers of city ledgers see units through blockades.</summary>
+/// everything, because readers of city ledgers see units through blockades. The unit commands the computer players
+/// issue every turn keep the same contract: a promotion writes units and sight, and an activity writes units, widening
+/// fully when a blockade starts or ends.</summary>
 public sealed class MoveWriteWindowTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     /// <summary>Kernel work around the moves, so that write stamps persist between them; it edits plots directly, so it
@@ -62,5 +64,39 @@ public sealed class MoveWriteWindowTests(LoadedMods mods) : IClassFixture<Loaded
             Assert.True(Move(s, unit, 42, out stamp));
             Assert.True(s.WrittenSince(domains.AllMask, stamp));
         }) { Player = 0 }, out var error), error);
+    }
+
+    [Fact]
+    public void A_promotion_writes_units_and_sight_and_an_activity_widens_fully_only_for_a_blockade()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        sim.VerifyWrites = true;
+        var unit = Add(sim, 39);
+        var domains = sim.Content.StateDomains;
+        ulong unitsAndSight = domains.Mask(UnitStateDomains.UnitsAndSight, out bool unknown);
+        Assert.False(unknown);
+        ulong units = domains.Mask(UnitStateDomains.UnitsOnly, out _);
+        int team = sim.TeamOf(0).Id;
+        Assert.True(sim.TryApply(new Script(s =>
+        {
+            // Every plot already revealed, so the promotion's sight finds nothing new: it writes only its domains, as
+            // verification also checks, promotions included.
+            foreach (var plot in s.State.Plots) plot.Revealed.Add(team);
+            unit.Experience = 2;
+            long stamp = s.WriteStamp;
+            Assert.True(s.TryApply(new PromoteMilitaryUnitCommand { Player = 0, Unit = unit.Id, Promotion = "military:combat1" }, out var error), error);
+            Assert.Contains("military:combat1", unit.Promotions);
+            Assert.False(s.WrittenSince(unitsAndSight, stamp));
+
+            stamp = s.WriteStamp;
+            Assert.True(s.TryApply(new SetUnitActivityCommand { Player = 0, Unit = unit.Id, Activity = UnitActivity.Sleep }, out error), error);
+            Assert.False(s.WrittenSince(units, stamp));
+
+            // Ending a blockade changes what the resource network reads: everything counts as written.
+            unit.Extensions.Get<MilitaryUnitState>(s.Content)!.Activity = UnitActivity.Blockade;
+            stamp = s.WriteStamp;
+            Assert.True(s.TryApply(new SetUnitActivityCommand { Player = 0, Unit = unit.Id, Activity = UnitActivity.Sleep }, out error), error);
+            Assert.True(s.WrittenSince(domains.AllMask, stamp));
+        }) { Player = 0 }, out var failure), failure);
     }
 }

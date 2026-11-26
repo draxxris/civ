@@ -66,8 +66,20 @@ public sealed class ResearchTeamState
     private static List<string> SanitizeQueue(IEnumerable<string> items) =>
         items.Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
 }
+/// <summary>The Research module's state domains (<see cref="Ariel.Content.StateDomain"/>).</summary>
+public static class ResearchStateDomains
+{
+    /// <summary>A team's research: progress by technology, the technology under research and the Research team state
+    /// (queue, overflow, free technologies). Private: only research rules and planners read it. A discovery widens.</summary>
+    public const string Progress = "research:progress";
+    /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
+    public static readonly IReadOnlyList<string> ProgressOnly = [Progress];
+}
 public sealed class SetTeamResearchCommand : GameCommand
 {
+    /// <summary>Choosing research writes the team's queue and current technology; a free technology is a discovery,
+    /// which widens first.</summary>
+    public override IReadOnlyList<string>? WriteDomains => ResearchStateDomains.ProgressOnly;
     public string Tech { get; init; } = "";
     public string[] Queue { get; init; } = [];
     public bool FreeTech { get; init; }

@@ -36,12 +36,18 @@ public abstract class MilitaryUnitCommand : GameCommand
 public sealed class PromoteMilitaryUnitCommand : MilitaryUnitCommand
 {
     public string Promotion { get; init; } = "";
+    /// <summary>A promotion writes the unit (its promotions, level and health) and sight, which it recomputes; a first
+    /// reveal or contact that sight finds widens as after a move.</summary>
+    public override IReadOnlyList<string>? WriteDomains => UnitStateDomains.UnitsAndSight;
     protected override UnitAction Action => UnitAction.Promote;
     protected override string Argument => Promotion;
 }
 public sealed class SetUnitActivityCommand : MilitaryUnitCommand
 {
     public UnitActivity Activity { get; init; }
+    /// <summary>An activity is Military unit state. Starting or ending a blockade widens first (the blockade contract on
+    /// <see cref="UnitStateDomains.Units"/>).</summary>
+    public override IReadOnlyList<string>? WriteDomains => UnitStateDomains.UnitsOnly;
     protected override UnitAction Action => UnitAction.Activity;
     protected override string Argument => Activity.ToString();
 }

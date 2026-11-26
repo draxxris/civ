@@ -128,6 +128,8 @@ internal sealed partial class UnitService(MovementService movement) : IUnitServi
     private static void SetActivity(Simulation sim, Unit unit, UnitActivity activity)
     {
         var state = MilitaryData.Edit(sim, unit);
+        // A blockade's start or end changes what kept readers see of units (UnitStateDomains.Units).
+        if (activity == UnitActivity.Blockade || state.Activity == UnitActivity.Blockade) sim.WidenWriteWindow();
         state.Activity = activity;
         if (activity == UnitActivity.Blockade) { unit.MovesLeft = 0; state.Moved = true; }
     }
@@ -177,7 +179,7 @@ internal sealed partial class UnitService(MovementService movement) : IUnitServi
     {
         var unit = sim.State.UnitById(unitId);
         if (unit.Extensions.Get<MilitaryUnitState>(sim.Content) is not null) return;
-        // Free promotions and initial experience are outside the unit domain a refresh declares.
+        // Initial experience is outside the unit domain a refresh declares.
         sim.WidenWriteWindow();
         var state = MilitaryData.Edit(sim, unit); state.CreatedTurn = sim.State.Turn;
         foreach (var promotion in MilitaryData.Definition(sim, unit).FreePromotions.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal)) unit.Promotions.Add(promotion.Key);

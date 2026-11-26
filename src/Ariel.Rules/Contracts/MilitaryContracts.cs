@@ -85,8 +85,8 @@ public interface ICombatService
 public static class UnitStateDomains
 {
     /// <summary>Where units stand, how far they may still move and how healthy they are: every unit's position, moves
-    /// left, hit points and Military unit state (activity, transport, whether it moved or attacked, experience
-    /// bookkeeping). A reader of a city, player or
+    /// left, hit points, promotions and Military unit state (activity, transport, whether it moved or attacked, level,
+    /// experience bookkeeping). A reader of a city, player or
     /// team calculation that sees units only through naval blockades (<see cref="INavalBlockadeService"/>) may count
     /// this domain as unread, because every writer that declares it widens its window
     /// (<see cref="Simulation.WidenWriteWindow()"/>) before it changes what a blockade reads of a unit whose activity is
@@ -104,6 +104,8 @@ public static class UnitStateDomains
     /// unit, opens a goody hut, makes a contact or moves a blockading unit widens to everything first, and one that
     /// reveals a plot widens by <see cref="RevealedOnly"/>.</summary>
     public static readonly IReadOnlyList<string> MoveWrites = [Units, Sight, WorkerOrders];
+    /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
+    public static readonly IReadOnlyList<string> UnitsOnly = [Units], UnitsAndSight = [Units, Sight];
     public static readonly IReadOnlyList<string> RevealedOnly = [Revealed];
 }
 
