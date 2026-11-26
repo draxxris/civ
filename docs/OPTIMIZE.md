@@ -3275,18 +3275,19 @@ each cell giving the two runs:
 
 The natural turn scales with the city count both before and after, but at about a
 quarter of the cost. At big300 religion is light (14 faith placements in 87 cities), so
-its quadratic shapes did not show there either way. The religion turn's allocation rises
+its quadratic shapes did not show there either way: the two religion fixes rest on the
+s550 probes, with no after-measurement that isolates them. The religion turn's allocation rises
 slightly at big300: a pass flood allocates its answer, where the per-pair test reused one
 search; it is one flood per city instead of one per pair.
 
 #### Rejected and Not Built
 
 - **Asking only the resources a stage needs** instead of all 36 corporations'. Measured
-  after step 1 with the first four corporations' resources only: the pass's queries
-  fell from 10.1 to 4.3 ms a turn. The real subsets are much larger (founding asks every
-  unfounded corporation's, spread and decay every founded one's), so the gain would be
-  2 to 3 ms, and a shared pass would need per-resource merging of partial answers. Not
-  built.
+  on the final tree with the first four corporations' resources only: the pass's
+  queries fell from 10.1 to 4.3 ms a turn. The real subsets are much larger (founding
+  asks every unfounded corporation's, spread and decay every founded one's), so the gain
+  is estimated at 2 to 3 ms, and a shared pass would need per-resource merging of
+  partial answers. Not built.
 - **An invalidation-based memo across turns** (counts kept until a corporation is
   founded or a branch opens or closes): resource counts also change with routes, deals,
   techs, wars and blockades, so it would not be sound. The kept `ActiveIn` is the sound
@@ -3306,17 +3307,22 @@ All on the final code:
   `23bb41d03ee121d7` with `--waves max` and with `DOTNET_PROCESSOR_COUNT=1`, and seed 1
   (4 players, 100 turns) with `--waves max` gives `348b462d1ec219fa`.
 - `--verify-modifier-cache` and `--verify-read-epochs` together pass on s550 + 4 (23
-  minutes at load 7 to 70). `--verify-modifier-cache` passes on the seed 5 industrial
-  game with Realistic Guilds/Corporations on and off.
+  minutes at load 7 to 70). `--verify-read-epochs` alone passes on s550 + 8 (branches
+  40 to 43, so spreads closed and reopened their spans) and on the seed 5 industrial game
+  from turn 80 to 95 (5 guilds founded). `--verify-modifier-cache` passes on the seed 5
+  industrial game with Realistic Guilds/Corporations on and off.
+- After the version bumps the old saves no longer load (the content hash changes). A
+  save is re-headed by replacing its `ContentHash` with the one `hash-trace` prints and
+  the three `Mods` versions; re-headed s550 + 4 still gives `a58adbc1e9f6647d`.
 - `mise run test`, `mise run test:e2e`, `mise run test:worldgen`, `mise run check:sync`
   and `mise run build:game` pass.
 
 #### Still Slow, Ranked
 
 1. **City group layouts and member floods inside AI epochs**: about 200 ms a turn at
-   s550, summed over threads, through `BuildingEffects.Available`'s resource counts. Step
-   4 shares the layout within an epoch, but each AI epoch still floods every city once
-   for its counts. A kept per-city count under the network's declaration would remove
+   s550 on the base tree (not probed again after step 4), summed over threads, through
+   `BuildingEffects.Available`'s resource counts. Step 4 shares the layout within an
+   epoch, but each AI epoch still floods every city once for its counts. A kept per-city count under the network's declaration would remove
    most of it; that is base resource-network work, not this pass's.
 2. **Modifier collection** in general (about 320 ms at s550, 1.2 s at big300).
 3. **`corporations:natural`**, now 10 to 13 ms at s550 and 34 ms at big300: one resource
