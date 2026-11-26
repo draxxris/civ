@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Ariel.Content;
 using Ariel.Content.Schema;
 using Ariel.Game;
@@ -15,6 +16,12 @@ internal sealed class WorkerPlanner(AiContext ctx)
     private HashSet<TileId>? _roads;
     private readonly Dictionary<string, BuildDef[]> _builds = new(StringComparer.Ordinal);
     private int _buildRevision = -1;
+    // Mission evaluation (EvaluateMissions) runs on one unchanging state, inside the command's validation, and whether a
+    // tile allows a build, a legal build's preview and a tile's present yields do not depend on which worker asks: every
+    // worker shares them. Tiles of one batch are previewed on several threads.
+    private readonly ConcurrentDictionary<(TileId Tile, string Build), bool> _plotLegal = new();
+    private readonly ConcurrentDictionary<(TileId Tile, string Build), WorkerBuildPreview> _previews = new();
+    private readonly ConcurrentDictionary<TileId, YieldVector> _before = new();
     private sealed record WorkTile(TileId Tile, int Priority);
     private sealed record Job(TileId Tile, string Build, long Value);
 
@@ -187,9 +194,12 @@ internal sealed class WorkerPlanner(AiContext ctx)
         foreach (var build in builds)
         {
             if (!CanPreview(build, tile, roads)) continue;
-            var preview = world.Preview(ctx.Sim, ctx.PlayerId, worker.Id, tile, build.Id);
-            if (preview.Error is not null) continue;
-            before ??= ctx.Service<IPlotYieldService>().Calculate(ctx.Sim, ctx.PlayerId, tile).Yields;
+            if (!_plotLegal.GetOrAdd((tile, build.Id), static (key, arg) =>
+                    arg.World.ValidatePlot(arg.Ctx.Sim, arg.Ctx.PlayerId, key.Tile, key.Build) is null, (World: world, Ctx: ctx))) continue;
+            if (world.ValidateAt(ctx.Sim, ctx.PlayerId, worker.Id, tile, build.Id) is not null) continue;
+            var preview = _previews.GetOrAdd((tile, build.Id), static (key, arg) =>
+                arg.World.Preview(arg.Ctx.Sim, arg.Ctx.PlayerId, arg.Worker, key.Tile, key.Build), (World: world, Ctx: ctx, Worker: worker.Id));
+            before ??= _before.GetOrAdd(tile, static (key, ctx) => ctx.Service<IPlotYieldService>().Calculate(ctx.Sim, ctx.PlayerId, key).Yields, ctx);
             long value = Gain(build, tile, before.Value, preview.Yields);
             if (value <= 0) continue;
             value = value * 1000 / Math.Max(100, preview.RequiredWork);

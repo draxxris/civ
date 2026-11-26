@@ -9,6 +9,14 @@ public interface IWorkerBuildService
     string? ValidateCancel(Simulation sim, int player, int unit);
     /// <summary>Read-only build preview at a proposed tile. Includes legality, resulting yields and required work.</summary>
     WorkerBuildPreview Preview(Simulation sim, int player, int unit, TileId tile, string build);
+    /// <summary>The legality part of <see cref="Preview"/> alone: why this worker cannot make the build at the tile, or
+    /// null. A legal preview's yields and work depend only on the player, tile and build, not on which worker asks, so
+    /// a planner weighing many workers against one unchanging state may preview each tile and build once.</summary>
+    string? ValidateAt(Simulation sim, int player, int unit, TileId tile, string build);
+    /// <summary>The part of <see cref="ValidateAt"/> that depends on the player, tile and build alone: why no worker of
+    /// the player could make the build there, or null. <see cref="ValidateAt"/> rejects whatever this rejects, so a
+    /// planner may ask it once per tile and build and skip the per-worker checks where it fails.</summary>
+    string? ValidatePlot(Simulation sim, int player, TileId tile, string build);
     /// <summary>Whether a worker has a legal unfinished order on its current plot. Continuation needs no new payment.</summary>
     bool IsWorking(Simulation sim, int unit);
     /// <summary>Start a validated build and charge its initial gold cost.</summary>

@@ -21,6 +21,13 @@ internal sealed class BuildEligibility(IWaterService water)
         return Worker(sim, unit, build, continuing) ?? Prerequisites(sim, unit, tile, build)
             ?? Location(sim, player, tile, build);
     }
+    /// <summary>The checks of <see cref="ValidateAt"/> that depend on the plot and the player alone, not the worker.</summary>
+    internal string? ValidatePlot(Simulation sim, int player, TileId tile, string buildId)
+    {
+        if (tile.Value < 0 || tile.Value >= sim.State.Plots.Length) return "Off map";
+        if (!sim.Content.TryGet<S.BuildDef>(buildId, out var build)) return "Unknown build";
+        return Location(sim, player, tile, build);
+    }
     private static string? Worker(Simulation sim, Unit unit, S.BuildDef build, bool continuing)
     {
         var player = sim.State.PlayerById(unit.Owner);

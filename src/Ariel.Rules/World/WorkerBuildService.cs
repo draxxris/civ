@@ -23,6 +23,10 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
         if (!IsWorking(sim, unitId)) return "Worker is not building";
         return null;
     }
+    public string? ValidateAt(Simulation sim, int player, int unit, TileId tile, string build) =>
+        _eligibility.ValidateAt(sim, player, unit, tile, build);
+    public string? ValidatePlot(Simulation sim, int player, TileId tile, string build) =>
+        _eligibility.ValidatePlot(sim, player, tile, build);
     public WorkerBuildPreview Preview(Simulation sim, int player, int unit, TileId tile, string build)
     {
         var error = _eligibility.ValidateAt(sim, player, unit, tile, build);
