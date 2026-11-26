@@ -687,4 +687,11 @@ public class ContractTests
         Assert.Equal(command.GetType(), decoded.GetType());
         Assert.Equal(text, codec.Encode(decoded));
     }
+
+    [Fact]
+    public void SameSeedSameMapAndHash()
+    {
+        Assert.Equal(TestGame.Sim(5).ComputeHash(), TestGame.Sim(5).ComputeHash());
+        Assert.NotEqual(TestGame.Sim(5).ComputeHash(), TestGame.Sim(6).ComputeHash());
+    }
 }
