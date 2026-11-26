@@ -1013,15 +1013,24 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     [Fact]
     public void Defender_winning_on_its_own_plot_gets_domestic_experience_even_if_attacker_is_outside()
     {
-        var sim = GameFactory.Scenario(mods.Content);
-        var a = Add(sim, 0, 39); var d = Add(sim, 1, 40);
-        sim.State.SetWar(0, 1, true);
-        sim.State.PlotAt(a.Position).Owner = null; sim.State.PlotAt(d.Position).Owner = 1;
-        a.Health = 1;
-        var baseline = d.Experience;
-        var report = Service<ICombatService>(sim).Resolve(sim, a.Id, d.Id);
-        Assert.Equal(CombatOutcome.DefenderWon, report.Outcome);
-        Assert.True(d.Experience > baseline);
+        // The defender's owner holds Nationalism, which adds 100 % experience to wins inside its borders, so the win on
+        // its own plot earns twice what the same win earns on unowned ground. The attacker stands outside both times.
+        int Gain(int? defenderPlotOwner)
+        {
+            var sim = GameFactory.Scenario(mods.Content);
+            sim.State.PlayerById(1).Civics["government:civicoption_society"] = "government:nationalist";
+            var a = Add(sim, 0, 39); var d = Add(sim, 1, 40);
+            sim.State.SetWar(0, 1, true);
+            sim.State.PlotAt(a.Position).Owner = null; sim.State.PlotAt(d.Position).Owner = defenderPlotOwner;
+            a.Health = 1;
+            var baseline = d.Experience;
+            var report = Service<ICombatService>(sim).Resolve(sim, a.Id, d.Id);
+            Assert.Equal(CombatOutcome.DefenderWon, report.Outcome);
+            return d.Experience - baseline;
+        }
+        int abroad = Gain(null);
+        Assert.True(abroad > 0);
+        Assert.Equal(2 * abroad, Gain(1));
     }
     [Fact]
     public void Fortify_turns_only_accumulate_while_fortified()
