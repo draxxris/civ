@@ -48,9 +48,8 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         var first = sim.State.CityById(firstCity);
         var second = sim.State.CityById(secondCity);
         if (sim.TeamOf(first.Owner).Wars.Contains(sim.TeamOf(second.Owner).Id)) return false;
-        using var search = Reach(sim, first.Owner, first, peacefulForeign: true);
-        // Seen marks only queued tiles, and the flood has drained its queue, so it is exactly the reached set.
-        return search.Seen[sim.State.Grid.TileAt(second.Position).Value];
+        // The kept flood from the first city is exactly the set such a flood reaches.
+        return ConnectedTiles(sim, first.Owner, first.Id).Contains(sim.State.Grid.TileAt(second.Position));
     }
     /// <summary>One flood from <paramref name="city"/> answers every other city, exactly as <see cref="Connected"/>
     /// from it would: the flood depends only on the first city.</summary>
