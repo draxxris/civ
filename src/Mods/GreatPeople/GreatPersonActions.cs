@@ -13,14 +13,20 @@ internal static partial class GreatPersonActions
         var actions = new List<GreatPersonAction>();
         var position = destination ?? unit.Position;
         var city = sim.State.CityAt(position);
-        if (city is not null && city.Owner == player && !GovernmentStatus.IsDisorder(sim, city))
-            CityActions(sim, city, def, actions);
+        if (city is not null) OwnCityActions(sim, unit, def, city, actions);
         AddLeadActions(sim, unit, def, position, actions);
-        if (Trade(sim, unit, def, position) is { } trade) actions.Add(trade);
+        if (Trade(sim, unit, def, city, new TradeTerms(sim, unit.Owner)) is { } trade) actions.Add(trade);
         if (Discovery(sim, player, def) is { } discovery) actions.Add(discovery);
         if (def.GoldenAge && GoldenAgeUnits(sim, player, unit, []).Length == Required(sim, player))
             actions.Add(new(GreatPersonMissions.GoldenAge, "", GoldenAges.Length(sim, player)));
         return actions.AsReadOnly();
+    }
+    /// <summary>The part of <see cref="Available"/> at <paramref name="city"/> that its owner's own city offers: joining,
+    /// building, hurrying and a great work, added to <paramref name="actions"/>. Nothing for another player's city or one
+    /// in disorder.</summary>
+    internal static void OwnCityActions(Simulation sim, Unit unit, S.UnitDef def, City city, List<GreatPersonAction> actions)
+    {
+        if (city.Owner == unit.Owner && !GovernmentStatus.IsDisorder(sim, city)) CityActions(sim, city, def, actions);
     }
     private static void CityActions(Simulation sim, City city, S.UnitDef def, List<GreatPersonAction> actions)
     {

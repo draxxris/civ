@@ -14,7 +14,8 @@ internal static partial class GreatPersonActions
         .Where(u => sim.Content.Get<S.UnitDef>(u.Type).Strength > 0 && !GreatPeopleData.Unit(sim.Content, u.Type).GreatGeneral)
         .Where(u => !u.Promotions.Contains(GreatPeopleData.Unit(sim.Content, def.Id).LeaderPromotion ?? "") && u.Extensions.Get<MilitaryUnitState>(sim.Content)?.AttachedLeaderUnitType is null)
         .OrderBy(u => u.Id).ToArray();
-    private static void AddLeadActions(Simulation sim, Unit unit, S.UnitDef def, Hex position, List<GreatPersonAction> actions)
+    /// <summary>The part of <see cref="Available"/> at <paramref name="position"/> that leading a unit there offers.</summary>
+    internal static void AddLeadActions(Simulation sim, Unit unit, S.UnitDef def, Hex position, List<GreatPersonAction> actions)
     {
         var gp = GreatPeopleData.Unit(sim.Content, def.Id);
         if (gp.LeaderPromotion is null && gp.LeaderExperience <= 0) return;
@@ -64,23 +65,39 @@ internal static partial class GreatPersonActions
         sim.Rules().CityProduction.Validate(sim, city.Id, "cities:building", building)
             .Failures.All(ProductionFailures.IsCostOnly);
 
-    private static GreatPersonAction? Trade(Simulation sim, Unit unit, S.UnitDef def, Hex position)
+    /// <summary>The part of <see cref="Available"/> at <paramref name="city"/> that a trade mission offers, or null.
+    /// <paramref name="terms"/> holds what the gold depends on besides the city.</summary>
+    internal static GreatPersonAction? Trade(Simulation sim, Unit unit, S.UnitDef def, City? city, TradeTerms terms)
     {
         if (def.BaseTrade <= 0 && def.TradeMultiplier <= 0) return null;
-        var city = sim.State.CityAt(position);
         if (city is null || sim.TeamOf(city.Owner).Id == sim.TeamOf(unit.Owner).Id) return null;
         if (sim.TeamOf(unit.Owner).Wars.Contains(sim.TeamOf(city.Owner).Id)) return null;
-        long profit = CalculateCapitalTradeProfit(sim, unit.Owner, city);
+        // The route's profit counts only through the multiplier, so without one the route is not weighed.
+        long profit = def.TradeMultiplier == 0 || terms.Capital is not { } capital ? 0
+            : (sim.Service<ITradeRouteService>()?.CalculateProfit(sim, city.Id, capital.Id).ProfitHundredths ?? 0) / 100;
         long gold = ((long)def.BaseTrade + def.TradeMultiplier * profit) * GreatPeopleData.SpeedRules(sim).UnitTradePercent / 100;
-        gold = gold * Math.Max(0, 100 + TeamTradeMissionModifier(sim, unit.Owner)) / 100;
+        gold = gold * Math.Max(0, 100 + terms.Modifier) / 100;
         return gold > 0 ? new(GreatPersonMissions.Trade, city.Id.ToString(CultureInfo.InvariantCulture), gold) : null;
     }
-    private static long CalculateCapitalTradeProfit(Simulation sim, int player, City city)
+
+    /// <summary>What a trade mission's gold depends on besides the destination city: the owner's capital and the
+    /// team's trade mission modifier, read on first use. One instance serves a person's offers at many cities while
+    /// nothing writes.</summary>
+    internal sealed class TradeTerms(Simulation sim, int player)
     {
-        var capital = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)
-            .FirstOrDefault(c => GreatPeopleData.Active(sim, c).Any(b => b.Capital));
-        if (capital is null) return 0;
-        return (sim.Service<ITradeRouteService>()?.CalculateProfit(sim, city.Id, capital.Id).ProfitHundredths ?? 0) / 100;
+        private bool _read;
+        private City? _capital;
+        private long _modifier;
+        public City? Capital { get { Read(); return _capital; } }
+        public long Modifier { get { Read(); return _modifier; } }
+        private void Read()
+        {
+            if (_read) return;
+            _capital = sim.State.Cities.Where(c => c.Owner == player).OrderBy(c => c.Id)
+                .FirstOrDefault(c => GreatPeopleData.Active(sim, c).Any(b => b.Capital));
+            _modifier = TeamTradeMissionModifier(sim, player);
+            _read = true;
+        }
     }
     private static long TeamTradeMissionModifier(Simulation sim, int player)
     {

@@ -23,7 +23,12 @@ internal sealed class GreatPersonAiPlanner : IAiPlanner
 internal sealed class GreatPersonPlanner(AiContext ctx)
 {
     private sealed record Choice(Hex Destination, GameCommand Command, long Score, string Key);
+    // A trade mission scores TradeScore plus at most 500 for its gold and 100 for a capital. Every choice above
+    // TradeCeiling comes before every trade mission, so trade missions, which weigh a route to every foreign city, are
+    // weighed only once none of those choices could be taken.
+    private const long TradeScore = 6000, TradeCeiling = TradeScore + 500 + 100;
     private readonly Dictionary<int, YieldVector> _yields = new();
+    private readonly List<GreatPersonAction> _actions = new();
 
     public void Plan()
     {
@@ -43,7 +48,9 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
     private void PlanUnit(Unit unit, IGreatPeopleService service)
     {
         long goldenAgeValue = GoldenAgeValue() / Math.Max(1, service.GoldenAgeUnitsRequired(ctx.Sim, ctx.PlayerId));
-        var choices = CityChoices(unit, service, goldenAgeValue).Concat(LeadChoices(unit, service)).ToList();
+        var choices = new List<Choice>();
+        CityChoices(unit, goldenAgeValue, choices);
+        LeadChoices(unit, choices);
         var actions = service.AvailableActions(ctx.Sim, ctx.PlayerId, unit.Id);
         var discover = actions.FirstOrDefault(a => a.Mission == GreatPersonMissions.Discover);
         long amount = discover?.Amount ?? 0;
@@ -53,32 +60,60 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
             choices.Add(new(unit.Position, Command(unit, goldenAge), 5000, "golden-age"));
         if (discover is not null && (ctx.Turn > 80 || amount >= goldenAgeValue))
             choices.Add(new(unit.Position, Command(unit, discover), 4000, discover.Mission));
-        foreach (var choice in choices.OrderByDescending(c => c.Score)
-            .ThenBy(c => ctx.Grid.Distance(unit.Position, c.Destination)).ThenBy(c => c.Key, StringComparer.Ordinal))
-        {
-            bool moved = ctx.MoveToward(unit, choice.Destination);
-            bool used = unit.Position == choice.Destination && ctx.Issue(choice.Command);
-            if (!moved && !used) continue;
-            ctx.MarkActed(unit);
-            return;
-        }
+        // The choices above every trade mission are tried first, in the order the whole list sorts them; one that could
+        // not be taken changed nothing, so the trade missions weighed after them are the same and sort after them.
+        var ordered = Ordered(unit, choices);
+        int next = 0;
+        for (; next < ordered.Count && ordered[next].Score > TradeCeiling; next++)
+            if (Take(unit, ordered[next])) return;
+        if (TradeChoices(unit, goldenAgeValue, choices)) ordered = Ordered(unit, choices);
+        for (; next < ordered.Count; next++)
+            if (Take(unit, ordered[next])) return;
     }
 
-    private IEnumerable<Choice> CityChoices(Unit unit, IGreatPeopleService service, long goldenAgeValue)
+    private List<Choice> Ordered(Unit unit, List<Choice> choices) => choices.OrderByDescending(c => c.Score)
+        .ThenBy(c => ctx.Grid.Distance(unit.Position, c.Destination)).ThenBy(c => c.Key, StringComparer.Ordinal).ToList();
+
+    private bool Take(Unit unit, Choice choice)
     {
+        bool moved = ctx.MoveToward(unit, choice.Destination);
+        bool used = unit.Position == choice.Destination && ctx.Issue(choice.Command);
+        if (!moved && !used) return false;
+        ctx.MarkActed(unit);
+        return true;
+    }
+
+    private void CityChoices(Unit unit, long goldenAgeValue, List<Choice> choices)
+    {
+        var def = ctx.Def(unit);
         foreach (var city in ctx.Sim.State.Cities.OrderBy(c => c.Id))
         {
-            if (city.Owner == ctx.PlayerId)
-                foreach (var shrine in Shrines(unit, city)) yield return shrine;
-            foreach (var action in service.AvailableActions(ctx.Sim, ctx.PlayerId, unit.Id, city.Position))
-            {
-                long score = CityActionScore(unit, city, action, goldenAgeValue);
-                if (score > 0)
-                    yield return new(city.Position, Command(unit, action), score, city.Id.ToString("D10", CultureInfo.InvariantCulture) + action.Mission + action.Subject);
-            }
+            if (city.Owner != ctx.PlayerId) continue;
+            foreach (var shrine in Shrines(unit, city)) choices.Add(shrine);
+            _actions.Clear();
+            GreatPersonActions.OwnCityActions(ctx.Sim, unit, def, city, _actions);
+            foreach (var action in _actions) Add(unit, city, action, goldenAgeValue, choices);
         }
     }
 
+    /// <summary>Trade missions to every city that offers one; whether any was added.</summary>
+    private bool TradeChoices(Unit unit, long goldenAgeValue, List<Choice> choices)
+    {
+        var def = ctx.Def(unit);
+        if (def.BaseTrade <= 0 && def.TradeMultiplier <= 0) return false;
+        int count = choices.Count;
+        var terms = new GreatPersonActions.TradeTerms(ctx.Sim, ctx.PlayerId);
+        foreach (var city in ctx.Sim.State.Cities.OrderBy(c => c.Id))
+            if (GreatPersonActions.Trade(ctx.Sim, unit, def, city, terms) is { } trade) Add(unit, city, trade, goldenAgeValue, choices);
+        return choices.Count > count;
+    }
+
+    private void Add(Unit unit, City city, GreatPersonAction action, long goldenAgeValue, List<Choice> choices)
+    {
+        long score = CityActionScore(unit, city, action, goldenAgeValue);
+        if (score > 0)
+            choices.Add(new(city.Position, Command(unit, action), score, city.Id.ToString("D10", CultureInfo.InvariantCulture) + action.Mission + action.Subject));
+    }
     private IEnumerable<Choice> Shrines(Unit unit, City city)
     {
         var religion = ctx.Sim.Service<IReligionService>();
@@ -99,7 +134,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
     {
         GreatPersonMissions.Construct => 8000 + ConstructionValue(city, action.Subject),
         GreatPersonMissions.Hurry => HurryScore(city, action),
-        GreatPersonMissions.Trade => action.Amount >= goldenAgeValue ? 6000 + Math.Min(500, action.Amount / 10) + (IsCapital(city) ? 100 : 0) : 0,
+        GreatPersonMissions.Trade => action.Amount >= goldenAgeValue ? TradeScore + Math.Min(500, action.Amount / 10) + (IsCapital(city) ? 100 : 0) : 0,
         GreatPersonMissions.Join => 1000 + SettlementValue(unit, city, action.Subject),
         GreatPersonMissions.Culture => Frontier(city) && city.Culture < action.Amount / 5 ? 3000 : 0,
         _ => 0,
@@ -135,15 +170,20 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
             + city.Population + yields.Commerce;
     }
 
-    private IEnumerable<Choice> LeadChoices(Unit unit, IGreatPeopleService service)
+    private void LeadChoices(Unit unit, List<Choice> choices)
     {
-        if (!GreatPeopleData.Unit(ctx.Sim.Content, unit.Type).GreatGeneral || ctx.Team.Wars.Count == 0) yield break;
+        if (!GreatPeopleData.Unit(ctx.Sim.Content, unit.Type).GreatGeneral || ctx.Team.Wars.Count == 0) return;
+        var def = ctx.Def(unit);
         foreach (var position in ctx.Units.Where(ctx.Alive).Where(u => ctx.Def(u).Strength > 0).Select(u => u.Position).Distinct())
-            foreach (var action in service.AvailableActions(ctx.Sim, ctx.PlayerId, unit.Id, position).Where(a => a.Mission == GreatPersonMissions.Lead))
+        {
+            _actions.Clear();
+            GreatPersonActions.AddLeadActions(ctx.Sim, unit, def, position, _actions);
+            foreach (var action in _actions)
             {
                 var target = ctx.Sim.State.UnitById(int.Parse(action.Subject, CultureInfo.InvariantCulture));
-                yield return new(position, Command(unit, action), 9000 + Math.Min(500, ctx.Def(target).Strength * target.Health / 100), action.Subject);
+                choices.Add(new(position, Command(unit, action), 9000 + Math.Min(500, ctx.Def(target).Strength * target.Health / 100), action.Subject));
             }
+        }
     }
 
     private PerformMissionCommand Command(Unit unit, GreatPersonAction action) =>
