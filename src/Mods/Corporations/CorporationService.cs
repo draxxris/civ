@@ -33,6 +33,16 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
     }
     /// <summary>Corporations with a branch in the city; empty for a stale id, like the sibling queries.</summary>
     public IReadOnlyList<string> Present(Simulation sim, int city) => sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.ToArray() ?? [];
+    /// <summary><see cref="Present"/> without the copy, in id order, for a rule that reads it and writes nothing
+    /// while it enumerates.</summary>
+    internal IReadOnlyCollection<string> Branches(Simulation sim, int city) =>
+        (IReadOnlyCollection<string>?)sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations ?? [];
+    /// <summary>Whether the corporation has a branch in the city.</summary>
+    internal bool HasBranch(Simulation sim, int city, string corporation) =>
+        sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.Contains(corporation) == true;
+    /// <summary>How many corporations have a branch in the city.</summary>
+    internal int BranchCount(Simulation sim, int city) =>
+        sim.State.FindCity(city)?.Extensions.Get<CorporationCityState>(sim.Content)?.Corporations.Count ?? 0;
     /// <summary>The founding record is the headquarters: it names the city that completed the founding building, and
     /// a captured headquarters keeps it, as the headquarters income does.</summary>
     public bool IsHeadquartersOf(Simulation sim, int city, string corporation) =>
@@ -69,7 +79,7 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
     /// (<see cref="CorporationResourceSupply"/>), which counts its copies from the city's network itself and is asked
     /// from inside the resource count, so it must not count resources again.</summary>
     internal bool IsOperating(Simulation sim, int city, string corporation) => sim.State.FindCity(city) is { } target
-        && Founding(sim, corporation) is { } record && Present(sim, city).Contains(corporation)
+        && Founding(sim, corporation) is { } record && HasBranch(sim, city, corporation)
         && !Blocked(sim, target, HeadquartersTeam(sim, record)) && !Obsolete(sim, target.Owner, sim.Content.Get<CorporationDef>(corporation));
     /// <summary>Whether the player's team knows the corporation's <see cref="CorporationDef.ObsoleteTech"/>.</summary>
     internal static bool Obsolete(Simulation sim, int player, CorporationDef def) => def.ObsoleteTech is { } tech && sim.KnowsTech(player, tech);
@@ -96,7 +106,7 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
     /// of their consumed resources the city can use, gathered in one resource query for all of them.</summary>
     internal (IReadOnlyList<CorporationDef> Active, IReadOnlyDictionary<string, long> Counts) ActiveIn(Simulation sim, City city)
     {
-        var present = Present(sim, city.Id);
+        var present = Branches(sim, city.Id);
         if (present.Count == 0) return ([], NoCounts);
         var operating = present.Where(c => IsOperating(sim, city.Id, c)).Select(sim.Content.Get<CorporationDef>).ToArray();
         if (operating.Length == 0) return ([], NoCounts);
@@ -367,7 +377,7 @@ internal sealed class CorporationService : ICorporationService, IUnitTrainingRul
     internal static bool Competes(CorporationDef a, CorporationDef b) => a.Id != b.Id
         && (a.CompetingCorporations.Contains(b.Id, StringComparer.Ordinal) || b.CompetingCorporations.Contains(a.Id, StringComparer.Ordinal)
             || a.PrereqBonuses.Intersect(b.PrereqBonuses, StringComparer.Ordinal).Any());
-    internal string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Present(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
+    internal string? HeadquartersConflict(Simulation sim, int city, CorporationDef incoming) => Branches(sim, city).Any(c => Competes(sim, c, incoming) && Headquarters(sim, c) == city) ? "Cannot displace competing headquarters" : null;
     internal static void Add(Simulation sim, City city, CorporationDef def)
     {
         var state = city.Extensions.Get<CorporationCityState>(sim.Content) ?? new();

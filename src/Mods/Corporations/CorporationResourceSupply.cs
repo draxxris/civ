@@ -15,7 +15,7 @@ internal sealed class CorporationResourceSupply(CorporationService service) : IC
         Func<IReadOnlyCollection<string>, IReadOnlyDictionary<string, long>> networkCounts)
     {
         var producers = new List<CorporationDef>();
-        foreach (var id in service.Present(sim, city.Id))
+        foreach (var id in service.Branches(sim, city.Id))
         {
             var def = sim.Content.Get<CorporationDef>(id);
             // Not IsActive: that counts the city's resources, which is what is being answered here. A branch without its
