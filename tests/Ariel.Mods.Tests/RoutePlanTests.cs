@@ -17,39 +17,34 @@ public sealed class RoutePlanTests(LoadedMods mods) : IClassFixture<LoadedMods>
         Assert.Equal(looks.Length, looks.Distinct().Count());
     }
 
-    public static TheoryData<RouteLook, RouteLook> LookPairs()
-    {
-        var data = new TheoryData<RouteLook, RouteLook>();
-        foreach (var a in Enum.GetValues<RouteLook>())
-            foreach (var b in Enum.GetValues<RouteLook>())
-                data.Add(a, b);
-        return data;
-    }
-
-    /// <summary>Two tiles of a straight line of route, each also linked onward by one of several shapes (dead end, through,
-    /// bend, junction), so every way a tile builds its half of the link is met from both sides.</summary>
-    [Theory]
-    [MemberData(nameof(LookPairs))]
-    public void Halves_of_a_link_meet_at_the_shared_edge(RouteLook west, RouteLook east)
+    /// <summary>Two tiles of a straight line of route, for every pair of looks, each tile also linked onward by one of
+    /// several shapes (dead end, through, bend, junction), so every way a tile builds its half of the link is met from
+    /// both sides.</summary>
+    [Fact]
+    public void Halves_of_a_link_meet_at_the_shared_edge()
     {
         int[][] onward = [[], [3], [2], [1], [2, 4], [1, 3, 5]];
-        foreach (var westMore in onward)
-            foreach (var eastMore in onward)
-            {
-                var westCentre = Centre(0, 0);
-                var eastCentre = Centre(1, 0);
-                // West is tile 0 (direction 0 = east), east is tile 1 (direction 3 = west).
-                var westPlan = Plan(west, 0, 0, [(0, east, 1, 0)], westMore.Select(d => (d, west)));
-                var eastPlan = Plan(east, 1, 0, [(3, west, 0, 0)], eastMore.Select(d => ((d + 3) % 6, east)));
-                var a = westPlan.Paths.Single(p => Vector2.Distance(p.Samples[0].Position, (westCentre + eastCentre) / 2) < 0.3f).Samples[0];
-                var b = eastPlan.Paths.Single(p => Vector2.Distance(p.Samples[0].Position, (westCentre + eastCentre) / 2) < 0.3f).Samples[0];
+        var westCentre = Centre(0, 0);
+        var eastCentre = Centre(1, 0);
+        foreach (var west in Enum.GetValues<RouteLook>())
+            foreach (var east in Enum.GetValues<RouteLook>())
+                foreach (var westMore in onward)
+                    foreach (var eastMore in onward)
+                    {
+                        string shape = $"{west} [{string.Join(",", westMore)}] / {east} [{string.Join(",", eastMore)}]";
+                        // West is tile 0 (direction 0 = east), east is tile 1 (direction 3 = west).
+                        var westPlan = Plan(west, 0, 0, [(0, east, 1, 0)], westMore.Select(d => (d, west)));
+                        var eastPlan = Plan(east, 1, 0, [(3, west, 0, 0)], eastMore.Select(d => ((d + 3) % 6, east)));
+                        var a = westPlan.Paths.Single(p => Vector2.Distance(p.Samples[0].Position, (westCentre + eastCentre) / 2) < 0.3f).Samples[0];
+                        var b = eastPlan.Paths.Single(p => Vector2.Distance(p.Samples[0].Position, (westCentre + eastCentre) / 2) < 0.3f).Samples[0];
 
-                Assert.True(Vector2.Distance(a.Position, b.Position) < 1e-4f, $"{west}/{east}: edges {a.Position} and {b.Position}");
-                Assert.True(Vector2.Dot(a.Tangent, b.Tangent) < -0.9999f, $"{west}/{east}: tangents {a.Tangent} and {b.Tangent}");
-                Assert.Equal(0f, a.Along);
-                Assert.Equal(0f, b.Along);
-                Assert.Equal(west == east ? 0f : 1f, a.Blend + b.Blend, 4);
-            }
+                        Assert.True(Vector2.Distance(a.Position, b.Position) < 1e-4f, $"{shape}: edges {a.Position} and {b.Position}");
+                        Assert.True(Vector2.Dot(a.Tangent, b.Tangent) < -0.9999f, $"{shape}: tangents {a.Tangent} and {b.Tangent}");
+                        Assert.True(a.Along == 0f && b.Along == 0f, $"{shape}: the halves start {a.Along} and {b.Along} along");
+                        // Like looks do not blend; unlike looks crossfade, their shares at the edge adding up to one.
+                        float blend = MathF.Round(a.Blend + b.Blend, 4);
+                        Assert.True(blend == (west == east ? 0f : 1f), $"{shape}: blends add up to {blend}");
+                    }
     }
 
     [Fact]
