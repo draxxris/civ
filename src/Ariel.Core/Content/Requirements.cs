@@ -91,7 +91,7 @@ public sealed class RequirementService
     /// <summary>Evaluate only one requirement kind, for persistent effects with scoped activation gates.</summary>
     public RequirementResult EvaluateKind(Requirement? requirement, RequirementContext context, string kind)
     {
-        if (requirement == null || !Leaves(requirement).Any(l => l.Kind == kind)) return new(true, []);
+        if (requirement == null || !HasKind(requirement, kind)) return new(true, []);
         switch (requirement)
         {
             case Requirement.Leaf: return Evaluate(requirement, context);
@@ -106,7 +106,7 @@ public sealed class RequirementService
     private RequirementResult CombineKind(IReadOnlyList<Requirement> items, RequirementContext context, string kind, bool alternative)
     {
         // In All, branches without target leaves are neutral; in Any they only count when they actually pass.
-        var results = items.Select(r => Leaves(r).Any(l => l.Kind == kind) ? EvaluateKind(r, context, kind)
+        var results = items.Select(r => HasKind(r, kind) ? EvaluateKind(r, context, kind)
             : alternative ? Evaluate(r, context) : new RequirementResult(true, [])).ToArray();
         bool success = alternative ? results.Any(r => r.Success) : results.All(r => r.Success);
         var failures = results.SelectMany(r => r.Failures).ToArray();
@@ -120,6 +120,23 @@ public sealed class RequirementService
         var failures = results.SelectMany(r => r.Failures).ToArray();
         if (!success && failures.Length == 0) failures = [new(null, "No requirement alternative is available")];
         return new(success, success ? [] : failures);
+    }
+    /// <summary>Whether any leaf of <paramref name="r"/> is of <paramref name="kind"/>, without enumerating them: content
+    /// eligibility asks it of every building and unit's requirements.</summary>
+    private static bool HasKind(Requirement r, string kind)
+    {
+        switch (r)
+        {
+            case Requirement.Leaf leaf: return leaf.Kind == kind;
+            case Requirement.All all:
+                foreach (var item in all.Items) if (HasKind(item, kind)) return true;
+                return false;
+            case Requirement.Any any:
+                foreach (var item in any.Items) if (HasKind(item, kind)) return true;
+                return false;
+            case Requirement.Not not: return HasKind(not.Item, kind);
+            default: return false;
+        }
     }
     private static IEnumerable<Requirement.Leaf> Leaves(Requirement r) => r switch
     {
