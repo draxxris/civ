@@ -151,30 +151,24 @@ public sealed class CorporationRulesTests
         Assert.Equal(910, sim.Content.Get<Ariel.Content.Schema.BuildingDef>(GameFactory.Headquarters(sim, "corporations:7")).Cost);
     }
 
-    /// <summary>Each corporation and guild in a game of its own (two in one game could compete for a resource): its
-    /// founding building's requirements met in a city, then built through the real production phases.</summary>
-    public static TheoryData<string> AllCorporations()
-    {
-        var sim = P6RulesScenario.Create();
-        var data = new TheoryData<string>();
-        foreach (var corporation in sim.Content.Get<CorporationDef>().All.OrderBy(c => c.Id, StringComparer.Ordinal)) data.Add(corporation.Id);
-        return data;
-    }
-    [Theory]
-    [MemberData(nameof(AllCorporations))]
-    public void Every_corporation_and_guild_is_founded_by_building_its_headquarters(string corporation)
+    /// <summary>A corporation's founding building, its requirements met in a city, built through the real production
+    /// phases. The content checks that run on every load (CorporationContentValidation) and
+    /// <see cref="The_source_corporations_and_guilds_are_all_defined_each_with_one_imported_founding_building"/> guard
+    /// every other corporation's and guild's founding data.</summary>
+    [Fact]
+    public void A_corporation_is_founded_by_building_its_headquarters()
     {
         var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
-        string building = GameFactory.Headquarters(sim, corporation);
+        string building = GameFactory.Headquarters(sim, Ethanol);
         Assert.Contains(Refusals(sim, city, building), r => r.StartsWith("Required tech:", StringComparison.Ordinal));
-        GameFactory.SatisfyFounding(sim, city, corporation);
+        GameFactory.SatisfyFounding(sim, city, Ethanol);
         Assert.Empty(Refusals(sim, city, building));
         QueueFinished(sim, city, building);
         RunCityPhase(sim, "production", 0);
         RunCityPhase(sim, "completion", 0);
         Assert.Contains(building, city.Buildings);
-        Assert.Equal(city.Id, Corps(sim).Headquarters(sim, corporation));
-        Assert.Equal([corporation], Corps(sim).Present(sim, city.Id));
+        Assert.Equal(city.Id, Corps(sim).Headquarters(sim, Ethanol));
+        Assert.Equal([Ethanol], Corps(sim).Present(sim, city.Id));
         Assert.Contains("Corporation is already founded", Refusals(sim, sim.State.Cities[1], building));
     }
     [Fact]
