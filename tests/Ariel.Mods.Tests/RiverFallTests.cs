@@ -2,11 +2,19 @@ using Ariel.Client;
 using Ariel.Client.Terrain;
 using Ariel.Game;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Ariel.Mods.Tests;
 
 /// <summary>A river that reaches a cliff pours over it as a waterfall at one hex corner, over a ledge rock that sits on the
 /// rock wall, and a river along a cliff edge runs on at the foot. These tests pin that geometry.</summary>
+/// <remarks>Each theory builds one arrangement per layout and runs a group of checks on it, reporting every check that
+/// fails. Every check runs in every turn, on the wrap seam and at both river widths: direction tables, the seam and
+/// width-relative sizes change what it sees. Moving the strip to another tile (the chunk-line placements) changes which
+/// chunk owns and meshes each piece of water, and the tile hashes that place the wall's columns and wiggle the river's
+/// course. So checks that mesh the water or measure clearance from the columns (<see cref="Every"/>) also run in those
+/// placements; checks on the river's course, the ground and the ledge alone (<see cref="FieldLayouts"/>) do not, since
+/// another draw of the course's wiggle tests nothing new.</remarks>
 public sealed class RiverFallTests
 {
     // The strip's tiles, in its own frame (see Layout): the raised tile the river falls from, its raised neighbour to the
@@ -19,7 +27,7 @@ public sealed class RiverFallTests
     /// with rivers <see cref="RiverWidth"/> wide. Every direction and both ends of a curve reach the fall in one of the
     /// turns, and the placements put the fall on chunk lines and on the wrap seam.</summary>
     public sealed record Layout(string Name, int Turns = 0, bool Mirror = false, int Col = 10, int Row = 10, bool Wrap = false,
-        double RiverWidth = 0.16)
+        double RiverWidth = 0.16, bool ChunkLine = false)
     {
         public const int Size = 16;
 
@@ -55,7 +63,7 @@ public sealed class RiverFallTests
         .. Enumerable.Range(0, 6).Select(t => new Layout($"mirrored, turned {t}", t, Mirror: true)),
         // Every column of a chunk, on and off a chunk row's line (row 10's centres lie on one).
         .. from col in Enumerable.Range(8, 4) from row in new[] { 9, 10 } where (col, row) != (10, 10)
-           select new Layout($"at {col},{row}", Col: col, Row: row),
+           select new Layout($"at {col},{row}", Col: col, Row: row, ChunkLine: true),
         // The fall's corner on the seam, and on either side of it.
         new("across the seam at 15,9", Col: 15, Row: 9, Wrap: true),
         new("across the seam at 0,10", Col: 0, Row: 10, Wrap: true),
@@ -66,7 +74,11 @@ public sealed class RiverFallTests
         new("a wide river", RiverWidth: 0.3),
     ];
 
+    /// <summary>Every layout, for checks on the meshes the chunks build or on the wall's columns.</summary>
     public static TheoryData<string> Every => new(Layouts.Select(l => l.Name));
+
+    /// <summary>Every layout but the chunk-line placements, for checks on the river's course, the ground and the ledge.</summary>
+    public static TheoryData<string> FieldLayouts => new(Layouts.Where(l => !l.ChunkLine).Select(l => l.Name));
 
     /// <summary>A strip of seven raised tiles through the high tile, along its frame's east-west line, with a wall on their
     /// south-west and south-east sides (or the tiles <paramref name="raised"/> lists, walled the same way), laid on the map
@@ -75,7 +87,7 @@ public sealed class RiverFallTests
     /// between the low tiles below it. With <paramref name="sea"/>, the low side is sea instead and the river ends at the
     /// wall. <paramref name="rivers"/>, when given, replaces that river with these edges (a tile and a direction, in the
     /// strip's frame).</summary>
-    private static (TerrainField Field, Layout At) Strip(string layout = "turned 0", bool cliff = true, bool river = true,
+    private static Scene Strip(string layout = "turned 0", bool cliff = true, bool river = true,
         bool sea = false, (Hex Tile, int Direction)[]? rivers = null, Hex[]? raised = null)
     {
         var at = Layouts.Single(l => l.Name == layout);
@@ -103,7 +115,48 @@ public sealed class RiverFallTests
             s.Rivers[t] |= (byte)(1 << dir);
             s.Rivers[grid.Neighbor(new TileId(t), dir)!.Value.Value] |= (byte)(1 << (dir + 3) % 6);
         }
-        return (new TerrainField(s, 3, new TerrainTuning { RiverWidth = at.RiverWidth }), at);
+        return new Scene(new TerrainField(s, 3, new TerrainTuning { RiverWidth = at.RiverWidth }), at);
+    }
+
+    /// <summary>A strip laid out, with the meshes of the chunks within reach of its fall, each built once on first use.</summary>
+    private sealed class Scene(TerrainField terrain, Layout layout)
+    {
+        private RiverMeshData[]? _riverParts;
+        private RiverMeshData? _rivers;
+        private WaterfallMeshData[]? _falls;
+
+        public TerrainField Field => terrain;
+        public Layout At => layout;
+
+        /// <summary>Each chunk's river mesh.</summary>
+        public RiverMeshData[] RiverParts =>
+            _riverParts ??= [.. Chunks(terrain).Select(c => RiverMesher.Build(c, terrain)).OfType<RiverMeshData>()];
+
+        /// <summary>The chunks' river meshes run together. Only its vertex attributes are meaningful: the indices of each
+        /// part still count from that part's first vertex.</summary>
+        public RiverMeshData Rivers => _rivers ??= new RiverMeshData(
+            [.. RiverParts.SelectMany(p => p.Positions)], [.. RiverParts.SelectMany(p => p.Normals)],
+            [.. RiverParts.SelectMany(p => p.Lanes)], [.. RiverParts.SelectMany(p => p.Flow)],
+            [.. RiverParts.SelectMany(p => p.Info)], [.. RiverParts.SelectMany(p => p.Rock)], [.. RiverParts.SelectMany(p => p.Depth)],
+            [.. RiverParts.SelectMany(p => p.Indices)]);
+
+        /// <summary>Each chunk's waterfall mesh.</summary>
+        public WaterfallMeshData[] Falls =>
+            _falls ??= [.. Chunks(terrain).Select(c => WaterfallMesher.Build(c, terrain)).OfType<WaterfallMeshData>()];
+
+        public void Deconstruct(out TerrainField f, out Layout a) => (f, a) = (terrain, layout);
+    }
+
+    /// <summary>Runs every check on the scene and fails with all the checks that failed, by name.</summary>
+    private static void Check(Scene scene, params Action<Scene>[] checks)
+    {
+        var failures = new List<string>();
+        foreach (var check in checks)
+        {
+            try { check(scene); }
+            catch (XunitException e) { failures.Add($"{check.Method.Name}: {e.Message}"); }
+        }
+        if (failures.Count > 0) throw new XunitException(string.Join(Environment.NewLine, failures));
     }
 
     /// <summary>The hex corner three tiles of the strip share: the mean of their centres, unwrapped.</summary>
@@ -133,23 +186,27 @@ public sealed class RiverFallTests
             Math.Abs(f.Z - (c.Z0 + c.Z1) / 2) < (c.Z1 - c.Z0) / 2 + 3));
     }
 
-    private static WaterfallMeshData[] AllFalls(TerrainField field) =>
-        Chunks(field).Select(c => WaterfallMesher.Build(c, field)).OfType<WaterfallMeshData>().ToArray();
+    // A river comes down between two raised tiles, falls over the wall at the corner they share and runs on at the foot.
 
-    private static RiverMeshData AllRivers(TerrainField field)
-    {
-        var parts = Chunks(field).Select(c => RiverMesher.Build(c, field)).Where(d => d != null).ToArray();
-        return new RiverMeshData(
-            [.. parts.SelectMany(p => p!.Positions)], [.. parts.SelectMany(p => p!.Normals)],
-            [.. parts.SelectMany(p => p!.Lanes)], [.. parts.SelectMany(p => p!.Flow)],
-            [.. parts.SelectMany(p => p!.Info)], [.. parts.SelectMany(p => p!.Rock)], [.. parts.SelectMany(p => p!.Depth)],
-            [.. parts.SelectMany(p => p!.Indices)]);
-    }
+    [Theory, MemberData(nameof(FieldLayouts))]
+    public void A_river_along_a_cliff_falls_at_its_corner_and_runs_on_along_the_foot(string layout) => Check(Strip(layout),
+        FallsAtTheCornerBetweenTheRaisedTiles, GathersToTheWidthOfTheLipBeforeItFalls,
+        StartsAtTheFootUnderItsFallNotOnTheBrinkAboveIt, RunsInShortStepsWithNoJumpBetweenSamples,
+        ReachesItsFallRunningStraightOutOverTheLipWithoutAKink, RunsStraightAlongTheLipUnderItsFallInsteadOfTurningIntoTheCorner,
+        MeetsTheRiverItRunsOnIntoAtOnePointWithOneDirection, RunsOntoItsFallLevelWithItsBanks,
+        LedgeStandsNoLowerThanThePlateauBehindAnyPartOfItsLip);
 
     [Theory, MemberData(nameof(Every))]
-    public void A_river_along_a_cliff_falls_at_the_corner_between_the_raised_tiles(string layout)
+    public void The_water_of_a_river_along_a_cliff_runs_among_the_columns_and_is_meshed_over_and_under_its_fall(string layout) =>
+        Check(Strip(layout), RunsAgainstTheFaceAfterItsFallAndTheCliffKeepsItsStep,
+        RunsOnUnderTheLedgeAndTheTongueLiesOverItWithNoGroundBetween, SoftensInAtTheStartOfTheFootRiverInsteadOfEndingInACut,
+        NoGroundShowsThroughTheWaterRunningOntoAFall, ChurnsAgainstTheRockColumnsAndNowhereElse,
+        SheetIsAsNarrowAsItsLipAndFallsFromTheLedgeToTheFoot, PoolStaysInTheChannelOfTheRiverAlongTheFoot,
+        LiesLevelFromWaterlineToWaterline, GroundUnderTheRiverAlongTheFootStandsNoHigherThanItsWater);
+
+    private static void FallsAtTheCornerBetweenTheRaisedTiles(Scene scene)
     {
-        var (field, at) = Strip(layout);
+        var (field, at) = scene;
         var curve = Assert.Single(field.Rivers.Curves, c => c.Fall != null);
         var fall = curve.Fall!;
         Assert.True(fall.AlongFoot);
@@ -159,10 +216,9 @@ public sealed class RiverFallTests
         Assert.True(fall.DirectionX * (lx - cx) + fall.DirectionZ * (lz - cz) > 0, "the fall does not drop towards the low tile");
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void After_its_fall_the_river_runs_against_the_face_and_the_cliff_keeps_its_step(string layout)
+    private static void RunsAgainstTheFaceAfterItsFallAndTheCliffKeepsItsStep(Scene scene)
     {
-        var (field, at) = Strip(layout);
+        var field = scene.Field;
         var curve = field.Rivers.Curves.Single(c => c.Fall != null);
         // The middle of the edge's curve lies just out from the drawn face, on the line the wall's columns stand on.
         int mid = curve.Count / 2;
@@ -181,10 +237,9 @@ public sealed class RiverFallTests
         Assert.All(near, r => Assert.True(r.Y < water, $"a column stands at {r.Y:F3}, above the water at {water:F3}"));
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_gathers_to_the_width_of_the_lip_before_it_falls(string layout)
+    private static void GathersToTheWidthOfTheLipBeforeItFalls(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var upstream = field.Rivers.Curves.Where(c => c.Fall == null).SelectMany(c => new[]
         {
@@ -195,10 +250,9 @@ public sealed class RiverFallTests
             $"water {e.Item3:F2} wide reaches a lip {fall.HalfWidth:F2} wide"));
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_runs_on_under_the_ledge_and_the_tongue_lies_over_it_with_no_ground_between(string layout)
+    private static void RunsOnUnderTheLedgeAndTheTongueLiesOverItWithNoGroundBetween(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var ledge = field.LedgeOf(fall);
         double Along(double x, double z) => Dx(field, x - ledge.X) * ledge.DirectionX + (z - ledge.Z) * ledge.DirectionZ;
@@ -206,7 +260,7 @@ public sealed class RiverFallTests
         double high = ledge.Foot + 0.5 * (ledge.Y - ledge.Foot);
 
         // The river's water runs on, unfaded, to the back of the ledge rock...
-        var river = AllRivers(field);
+        var river = scene.Rivers;
         double reach = double.MinValue;
         for (int v = 0; v < river.VertexCount; v++)
         {
@@ -217,7 +271,7 @@ public sealed class RiverFallTests
         Assert.True(reach >= -ledge.BackIn, $"the river stops {-ledge.BackIn - reach:F3} short of the ledge rock");
 
         // ...where the tongue already lies on top of it, fully faded in.
-        var falls = Assert.Single(AllFalls(field));
+        var falls = Assert.Single(scene.Falls);
         double tongue = double.MaxValue;
         for (int v = 0; v < falls.WaterVertexCount; v++)
             if (falls.WaterInfo[v * 4] == WaterfallMesher.Lip && falls.WaterInfo[v * 4 + 3] > 0.99)
@@ -225,26 +279,9 @@ public sealed class RiverFallTests
         Assert.True(tongue <= reach, $"the tongue starts {tongue - reach:F3} past the end of the river");
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void The_water_whitens_without_a_seam_where_it_turns_down_over_the_nose(string layout)
+    private static void StartsAtTheFootUnderItsFallNotOnTheBrinkAboveIt(Scene scene)
     {
-        var (field, _) = Strip(layout);
-        var falls = Assert.Single(AllFalls(field));
-        float lip = float.MinValue, sheet = float.MaxValue;
-        for (int v = 0; v < falls.WaterVertexCount; v++)
-        {
-            float part = falls.WaterInfo[v * 4], foam = falls.WaterInfo[v * 4 + 2];
-            if (part == WaterfallMesher.Lip) lip = Math.Max(lip, foam);
-            if (part == WaterfallMesher.Sheet) sheet = Math.Min(sheet, foam);
-        }
-        Assert.Equal(WaterfallMesher.LipFoam, lip, 1e-5);
-        Assert.Equal(lip, sheet, 1e-5);
-    }
-
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_along_the_foot_starts_at_the_foot_under_its_fall_not_on_the_brink_above_it(string layout)
-    {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var ledge = field.LedgeOf(fall);
         var foot = field.Rivers.Curves.Single(c => c.Fall == fall);
@@ -262,11 +299,9 @@ public sealed class RiverFallTests
         Assert.True(Side(start) * downstream <= -fall.HalfWidth + 1e-9, $"the foot river starts {side:F3} along the wall from its fall, under its sheet");
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void Every_river_runs_in_short_steps_with_no_jump_between_samples(string layout)
+    private static void RunsInShortStepsWithNoJumpBetweenSamples(Scene scene)
     {
-        var (field, _) = Strip(layout);
-        foreach (var c in field.Rivers.Curves)
+        foreach (var c in scene.Field.Rivers.Curves)
             for (int i = 1; i < c.Count; i++)
             {
                 double dx = c.X[i] - c.X[i - 1], dz = c.Z[i] - c.Z[i - 1], step = Math.Sqrt(dx * dx + dz * dz);
@@ -274,10 +309,9 @@ public sealed class RiverFallTests
             }
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_reaches_its_fall_running_straight_out_over_the_lip_without_a_kink(string layout)
+    private static void ReachesItsFallRunningStraightOutOverTheLipWithoutAKink(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var feed = field.Rivers.Curves.Single(c => c.Feeds == fall);
         int end = feed.FeedsAtStart ? 0 : feed.Count - 1, step = feed.FeedsAtStart ? 1 : -1;
@@ -295,10 +329,9 @@ public sealed class RiverFallTests
         }
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_along_the_foot_runs_straight_along_the_lip_under_its_fall_instead_of_turning_into_the_corner(string layout)
+    private static void RunsStraightAlongTheLipUnderItsFallInsteadOfTurningIntoTheCorner(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var foot = field.Rivers.Curves.Single(c => c.Fall == fall);
         for (int i = 0; i < foot.Count; i++)
@@ -311,10 +344,9 @@ public sealed class RiverFallTests
         }
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_along_the_foot_meets_the_river_it_runs_on_into_at_one_point_with_one_direction(string layout)
+    private static void MeetsTheRiverItRunsOnIntoAtOnePointWithOneDirection(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var foot = field.Rivers.Curves.Single(c => c.Fall == fall);
         int node = fall.AtStart ? foot.Link.B : foot.Link.A, end = fall.AtStart ? foot.Count - 1 : 0;
@@ -331,14 +363,13 @@ public sealed class RiverFallTests
         }
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_along_the_foot_softens_in_at_its_start_instead_of_ending_in_a_cut(string layout)
+    private static void SoftensInAtTheStartOfTheFootRiverInsteadOfEndingInACut(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var foot = field.Rivers.Curves.Single(c => c.Fall == fall);
         int start = fall.AtStart ? 0 : foot.Count - 1;
-        var river = AllRivers(field);
+        var river = scene.Rivers;
         int ends = 0;
         for (int v = 0; v < river.VertexCount; v++)
         {
@@ -355,15 +386,13 @@ public sealed class RiverFallTests
         Assert.True(ends > 0, "no section at the foot river's start");
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void No_ground_shows_through_the_water_running_onto_a_fall(string layout)
+    private static void NoGroundShowsThroughTheWaterRunningOntoAFall(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var ledge = field.LedgeOf(fall);
         var lattice = new TerrainLattice(field);
-        var feeds = Chunks(field).Select(c => RiverMesher.Build(c, field)).OfType<RiverMeshData>();
-        foreach (var river in feeds)
+        foreach (var river in scene.RiverParts)
             for (int t = 0; t < river.Indices.Length; t += 3)
             {
                 int a = river.Indices[t], b = river.Indices[t + 1], c = river.Indices[t + 2];
@@ -389,11 +418,10 @@ public sealed class RiverFallTests
             }
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_along_the_foot_churns_against_the_rock_columns_and_nowhere_else(string layout)
+    private static void ChurnsAgainstTheRockColumnsAndNowhereElse(Scene scene)
     {
-        var (field, _) = Strip(layout);
-        var river = AllRivers(field);
+        var field = scene.Field;
+        var river = scene.Rivers;
         var rocks = field.CliffRocks(0, field.Period, -3, 30).ToArray();
         int against = 0;
         for (int v = 0; v < river.VertexCount; v++)
@@ -408,13 +436,12 @@ public sealed class RiverFallTests
         Assert.True(against > 0, "no water stands among the wall's columns");
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void The_sheet_is_as_narrow_as_its_lip_and_falls_from_the_ledge_to_the_foot(string layout)
+    private static void SheetIsAsNarrowAsItsLipAndFallsFromTheLedgeToTheFoot(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var ledge = field.LedgeOf(fall);
-        var data = Assert.Single(AllFalls(field));
+        var data = Assert.Single(scene.Falls);
         int sheet = 0;
         double lowest = double.MaxValue, highest = double.MinValue;
         for (int v = 0; v < data.WaterVertexCount; v++)
@@ -435,13 +462,12 @@ public sealed class RiverFallTests
         Assert.NotEmpty(data.Mist.Indices);
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_fall_into_a_river_along_the_foot_keeps_its_pool_in_the_channel(string layout)
+    private static void PoolStaysInTheChannelOfTheRiverAlongTheFoot(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var (lx, lz) = field.LedgeOf(fall).Landing;
-        var data = Assert.Single(AllFalls(field));
+        var data = Assert.Single(scene.Falls);
         for (int v = 0; v < data.WaterVertexCount; v++)
         {
             if (data.WaterInfo[v * 4] != WaterfallMesher.Pool || data.WaterInfo[v * 4 + 3] == 0) continue;
@@ -451,10 +477,9 @@ public sealed class RiverFallTests
         Assert.True(field.Rivers.Near(lx, lz), "the sheet lands outside the river along the foot");
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_runs_onto_its_fall_level_with_its_banks(string layout)
+    private static void RunsOntoItsFallLevelWithItsBanks(Scene scene)
     {
-        var (field, _) = Strip(layout);
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var ledge = field.LedgeOf(fall);
         // Just behind the ledge, on the plateau, the channel is barely cut into the ground.
@@ -463,10 +488,82 @@ public sealed class RiverFallTests
         Assert.True(carve < 0.01, $"the river runs onto its fall {carve:F3} below its banks");
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void No_rock_stands_where_a_fall_lands(string layout)
+    /// <summary>Where the brink runs slantwise across the lip, the ground behind the ledge's origin is already rounding
+    /// down over the edge. A slab set by that ground alone sank below the plateau beside it, and the wall columns, capped
+    /// under the slab, hid the sheet from the open water.</summary>
+    private static void LedgeStandsNoLowerThanThePlateauBehindAnyPartOfItsLip(Scene scene)
     {
-        var (field, _) = Strip(layout, sea: true);
+        var field = scene.Field;
+        var fall = field.Rivers.Falls.Single();
+        var ledge = field.LedgeOf(fall);
+        for (int k = 0; k <= 8; k++)
+        {
+            double s = fall.HalfWidth * (k / 4.0 - 1);
+            double x = fall.X - fall.DirectionZ * s - fall.DirectionX * 0.25, z = fall.Z + fall.DirectionX * s - fall.DirectionZ * 0.25;
+            double ground = field.HeightAt(x, z);
+            Assert.True(ground <= ledge.Y, $"the plateau {s:F2} across the lip stands {ground - ledge.Y:F3} above the ledge");
+        }
+    }
+
+    /// <summary>Water is level across: a cross-section's water lanes all lie at one height, along the foot of a wall (with
+    /// a fall or without one) as anywhere else. Where the ground rises above that level, it hides the water instead, but
+    /// where the drawn ground stands only a hair above it the water lies on that ground, so no lane rises further.</summary>
+    private static void LiesLevelFromWaterlineToWaterline(Scene scene)
+    {
+        var data = scene.Rivers;
+        for (int v = 0; v < data.VertexCount;)
+        {
+            int end = v;
+            double lo = double.MaxValue, hi = double.MinValue;
+            for (; end < data.VertexCount && data.Lanes[end * 2 + 1] == data.Lanes[v * 2 + 1]; end++)
+            {
+                if (Math.Abs(data.Lanes[end * 2]) > 1) continue;
+                double y = data.Positions[end * 3 + 1];
+                (lo, hi) = (Math.Min(lo, y), Math.Max(hi, y));
+            }
+            Assert.True(hi - lo <= RiverMesher.WaterOnGround + 1e-4, $"the water across a section at ({data.Positions[v * 3]:F2}, {data.Positions[v * 3 + 2]:F2}) tilts by {hi - lo:F3}");
+            v = end;
+        }
+    }
+
+    /// <summary>The low side climbs towards a wall over an apron of cliff lift, which reaches well out near the end of a run
+    /// of wall. Under the water of a river along the foot it is taken away, so that ground does not rise through the level
+    /// water and pinch the river to a sliver against the rocks. Its outer half is checked: the inner half runs in under the
+    /// wall's columns.</summary>
+    private static void GroundUnderTheRiverAlongTheFootStandsNoHigherThanItsWater(Scene scene)
+    {
+        var field = scene.Field;
+        var foot = field.Rivers.Curves.Single(c => c.Foot != null);
+        var river = scene.Rivers;
+        for (int v = 0; v < river.VertexCount; v++)
+        {
+            // The water inside its waterlines: on the waterlines it meets the ground, which may stand a little above
+            // it on the higher shore where the river rounds a corner.
+            double across = river.Lanes[v * 2];
+            if (Math.Abs(across) >= 1) continue;
+            double x = river.Positions[v * 3], y = river.Positions[v * 3 + 1], z = river.Positions[v * 3 + 2];
+            // Only the foot river's own water, on its open side of the centre line.
+            int i = Enumerable.Range(0, foot.Count).MinBy(k => Math.Pow(Dx(field, x - foot.X[k]), 2) + Math.Pow(z - foot.Z[k], 2));
+            double dx = Dx(field, x - foot.X[i]), dz = z - foot.Z[i];
+            double along = dx * foot.TX[i] + dz * foot.TZ[i];
+            // Past either end lies the river it runs on into, beyond the end of the wall.
+            if (Math.Abs(along) > RiverNetwork.SampleStep || i == 0 && along < -1e-6 || i == foot.Count - 1 && along > 1e-6) continue;
+            double side = dx * foot.Foot!.DirectionX + dz * foot.Foot.DirectionZ;
+            if (side < 0.25 * foot.Width[i] || side > 0.95 * foot.Width[i]) continue;
+            double ground = field.HeightAt(x, z);
+            Assert.True(ground <= y + 0.005, $"the ground stands {ground - y:F3} above the water at ({x:F2}, {z:F2}), {side / foot.Width[i]:F2} of the way out");
+        }
+    }
+
+    // A river that ends at the wall over the sea pours out of its mouth.
+
+    [Theory, MemberData(nameof(Every))]
+    public void A_mouth_over_a_sea_cliff_falls_clear_of_the_wall_and_the_sea_stacks(string layout) => Check(Strip(layout, sea: true),
+        MouthFallsAndTheRockWallStaysUnderTheWater, NoRockStandsWhereAFallLands, LedgeStandsNoLowerThanThePlateauBehindAnyPartOfItsLip);
+
+    private static void NoRockStandsWhereAFallLands(Scene scene)
+    {
+        var field = scene.Field;
         var fall = field.Rivers.Falls.Single();
         var ledge = field.LedgeOf(fall);
         double half = FallLedge.Width * ledge.Scale / 2;
@@ -486,37 +583,77 @@ public sealed class RiverFallTests
         }
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void The_ledge_stands_no_lower_than_the_plateau_behind_any_part_of_its_lip(string layout)
+    private static void MouthFallsAndTheRockWallStaysUnderTheWater(Scene scene)
     {
-        // Where the brink runs slantwise across the lip, the ground behind the ledge's origin is already rounding down over
-        // the edge. A slab set by that ground alone sank below the plateau beside it, and the wall columns, capped under
-        // the slab, hid the sheet from the open water.
-        foreach (bool sea in new[] { false, true })
+        var (field, at) = scene;
+        var mouth = Assert.Single(field.Rivers.Curves, c => c.Link.Kind == RiverLinkKind.Mouth);
+        var fall = Assert.IsType<RiverFall>(mouth.Fall);
+        Assert.False(fall.AlongFoot);
+        var (sx, sz) = at.Place(Below).ToPixel(1);
+        Assert.True(fall.DirectionX * Dx(field, sx - fall.X) + fall.DirectionZ * (sz - fall.Z) > 0, "the fall points away from the sea");
+        var ledge = field.LedgeOf(fall);
+        double half = FallLedge.Width * ledge.Scale / 2, slab = ledge.Y - FallLedge.SlabDepth * ledge.Scale * ledge.Stretch;
+        bool[] meets = new bool[2];
+        foreach (var rock in field.CliffRocks(fall.X - 1, fall.X + 1, fall.Z - 1, fall.Z + 1))
         {
-            var (field, _) = Strip(layout, sea: sea);
-            var fall = field.Rivers.Falls.Single();
-            var ledge = field.LedgeOf(fall);
-            for (int k = 0; k <= 8; k++)
-            {
-                double s = fall.HalfWidth * (k / 4.0 - 1);
-                double x = fall.X - fall.DirectionZ * s - fall.DirectionX * 0.25, z = fall.Z + fall.DirectionX * s - fall.DirectionZ * 0.25;
-                double ground = field.HeightAt(x, z);
-                Assert.True(ground <= ledge.Y, $"{(sea ? "sea" : "land")}: the plateau {s:F2} across the lip stands {ground - ledge.Y:F3} above the ledge");
-            }
+            double dx = Dx(field, rock.X - ledge.X), dz = rock.Z - ledge.Z;
+            double along = dx * ledge.DirectionX + dz * ledge.DirectionZ, side = -dx * ledge.DirectionZ + dz * ledge.DirectionX;
+            double radius = TerrainField.CliffRockRadius * rock.Scale;
+            // The wall meets the ledge on a side of the lip where a column stands under the ledge, or the foot of one
+            // beside it reaches the ledge's side (the ledge's own body fills the face between).
+            if (along >= -ledge.BackIn - radius && along <= ledge.NoseOut + radius)
+                for (int k = 0; k < 2; k++)
+                    if ((2 * k - 1) * side >= -half && Math.Abs(side) - radius <= half + 0.01) meets[k] = true;
+            if (Math.Abs(side) > half || along < -ledge.BackIn || along > ledge.NoseOut) continue;
+            double lean = Math.Sqrt(rock.TiltX * rock.TiltX + rock.TiltZ * rock.TiltZ);
+            double top = rock.Y + TerrainField.CliffRockHeight * rock.Scale * rock.Stretch * Math.Cos(lean);
+            Assert.True(top <= slab + 0.01, $"a wall column under the ledge stands at {top:F3}, through the slab at {slab:F3}");
         }
+        Assert.True(meets[0] && meets[1], $"the wall does not meet the ledge on {(meets[0] ? "one side" : meets[1] ? "the other side" : "either side")}, so it has a gap");
     }
 
+    // Rivers that meet a wall without pouring over it.
+
     [Theory, MemberData(nameof(Every))]
-    public void A_river_that_ends_at_a_corner_on_a_brink_has_no_fall(string layout)
+    public void A_river_that_does_not_pour_over_a_wall_has_no_fall_and_lies_level(string layout)
     {
         // The edge between the high tile and its east neighbour, ending at the corner on the wall with nothing beyond it.
-        var (field, _) = Strip(layout, rivers: [(High, 0)]);
-        var curve = Assert.Single(field.Rivers.Curves);
-        Assert.Null(curve.Fall);
-        Assert.Empty(field.Rivers.Falls);
-        Assert.Empty(AllFalls(field));
+        Check(Strip(layout, rivers: [(High, 0)]), EndsAtACornerOnABrinkWithNoFall);
+        // Only the high tile is raised. The river comes along the edge between its low east neighbour and the tile below
+        // it, already at the foot, runs on under the high tile's south-east wall and on between the low tiles.
+        Check(Strip(layout, raised: [High], rivers: [(East, 4), (High, 5), (Below, 3)]), RunsOnPastTheEndOfAWallWithNoFall,
+            LiesLevelFromWaterlineToWaterline, GroundUnderTheRiverAlongTheFootStandsNoHigherThanItsWater);
+        Check(Strip(layout, cliff: false), LiesLevelFromWaterlineToWaterline);
     }
+
+    private static void EndsAtACornerOnABrinkWithNoFall(Scene scene)
+    {
+        var curve = Assert.Single(scene.Field.Rivers.Curves);
+        Assert.Null(curve.Fall);
+        Assert.Empty(scene.Field.Rivers.Falls);
+        Assert.Empty(scene.Falls);
+    }
+
+    private static void RunsOnPastTheEndOfAWallWithNoFall(Scene scene)
+    {
+        Assert.Empty(scene.Field.Rivers.Falls);
+        Assert.Empty(scene.Falls);
+        // It still runs along the foot of the wall it passes under.
+        var foot = Assert.Single(scene.Field.Rivers.Curves, c => c.Foot != null);
+        Assert.Null(foot.Fall);
+    }
+
+    [Fact]
+    public void A_river_without_a_cliff_has_no_fall()
+    {
+        // With no wall anywhere nothing can pour over one, wherever the strip lies; its water is still drawn.
+        var scene = Strip(cliff: false);
+        Assert.Empty(scene.Field.Rivers.Falls);
+        Assert.Empty(scene.Falls);
+        Assert.True(scene.Rivers.VertexCount > 0);
+    }
+
+    // Rivers that rise at the foot of a wall.
 
     [Fact]
     public void A_river_that_starts_at_the_foot_of_a_cliff_springs_from_a_pond_under_the_wall()
@@ -530,20 +667,22 @@ public sealed class RiverFallTests
         Assert.True(startAtFoot ? curve.EndsDry : curve.StartsDry);
         // It rises in a pond, which lies back from the corner, clear of the wall's columns on both sides.
         var pond = Assert.IsType<RiverPond>(startAtFoot ? curve.StartPond : curve.EndPond);
-        foreach (var rock in field.CliffRocks(-1, field.Period + 1, -100, 100))
-        {
-            double gap = Math.Sqrt(Math.Pow(Dx(field, rock.X - pond.X), 2) + Math.Pow(rock.Z - pond.Z, 2))
-                - TerrainField.CliffRockRadius * rock.Scale - pond.Radius * (1 + RiverPond.Lobes);
-            Assert.True(gap > 0, $"a wall column stands {-gap:F3} into the spring's pond");
-        }
+        AssertClearOfWalls(field, pond);
     }
 
     [Theory, MemberData(nameof(Every))]
-    public void A_river_that_rises_along_the_foot_of_a_wall_springs_from_a_pond_in_the_corner(string layout)
+    public void A_river_that_rises_at_the_foot_of_a_wall_springs_from_a_pond_clear_of_it(string layout)
     {
         // Only the high tile is raised. The river rises at the corner where its south-east wall ends, and runs along the
         // foot of that wall and on between the low tiles. No river comes over the brink, so nothing falls.
-        var (field, at) = Strip(layout, raised: [High], rivers: [(High, 5), (Below, 3)]);
+        Check(Strip(layout, raised: [High], rivers: [(High, 5), (Below, 3)]), SpringsFromAPondInTheCorner);
+        // The wall the river rises along meets the raised east neighbour's wall at the corner it rises in.
+        Check(Strip(layout, rivers: [(High, 5), (Below, 3)]), KeepsItsPondClearOfBothWallsOfAnElbow);
+    }
+
+    private static void SpringsFromAPondInTheCorner(Scene scene)
+    {
+        var (field, at) = scene;
         Assert.Empty(field.Rivers.Falls);
         var (foot, pond) = FootSpring(field, at);
         // It rises in a spring: a pool broader than the river along the foot, but smaller than a pond in the open, so it
@@ -563,10 +702,17 @@ public sealed class RiverFallTests
         AssertClearOfWalls(field, pond);
     }
 
+    private static void KeepsItsPondClearOfBothWallsOfAnElbow(Scene scene)
+    {
+        Assert.Empty(scene.Field.Rivers.Falls);
+        AssertClearOfWalls(scene.Field, FootSpring(scene.Field, scene.At).Pond);
+    }
+
     [Theory, MemberData(nameof(Every))]
     public void A_spring_bubbles_on_its_water_under_a_breath_of_mist(string layout)
     {
-        var (field, at) = Strip(layout, raised: [High], rivers: [(High, 5), (Below, 3)]);
+        var scene = Strip(layout, raised: [High], rivers: [(High, 5), (Below, 3)]);
+        var (field, at) = scene;
         var (_, spring) = FootSpring(field, at);
         var parts = Chunks(field).Select(c => SpringMesher.Build(c, field)).OfType<SpringMeshData>().ToArray();
         // Drawn once, by the chunk that holds it.
@@ -575,7 +721,7 @@ public sealed class RiverFallTests
         Assert.Equal(SpringMesher.Wisps * 4, data.Mist.VertexCount);
         // Every bubble comes up on the water the river mesher draws inside the spring: at the height of the water lanes
         // (level, or lying on the ground just above it) there.
-        var river = AllRivers(field);
+        var river = scene.Rivers;
         double low = double.MaxValue, high = double.MinValue;
         for (int w = 0; w < river.VertexCount; w++)
         {
@@ -610,15 +756,6 @@ public sealed class RiverFallTests
         Assert.All(Chunks(field), c => Assert.Null(SpringMesher.Build(c, field)));
     }
 
-    [Theory, MemberData(nameof(Every))]
-    public void A_spring_in_the_elbow_of_two_walls_keeps_its_pond_clear_of_both(string layout)
-    {
-        // The wall the river rises along meets the raised east neighbour's wall at the corner it rises in.
-        var (field, at) = Strip(layout, rivers: [(High, 5), (Below, 3)]);
-        Assert.Empty(field.Rivers.Falls);
-        AssertClearOfWalls(field, FootSpring(field, at).Pond);
-    }
-
     /// <summary>The curve along the foot of the high tile's south-east wall, and the pond it rises in at the corner it
     /// shares with the east and lower tiles.</summary>
     private static (RiverCurve Foot, RiverPond Pond) FootSpring(TerrainField field, Layout at)
@@ -640,115 +777,5 @@ public sealed class RiverFallTests
                 - TerrainField.CliffRockRadius * rock.Scale - pond.Radius * (1 + RiverPond.Lobes);
             Assert.True(gap > 0, $"a wall column stands {-gap:F3} into the spring's pond");
         }
-    }
-
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_at_the_foot_that_runs_on_past_the_end_of_a_wall_has_no_fall(string layout)
-    {
-        // Only the high tile is raised. The river comes along the edge between its low east neighbour and the tile below
-        // it, already at the foot, runs on under the high tile's south-east wall and on between the low tiles.
-        var (field, _) = Strip(layout, raised: [High], rivers: [(East, 4), (High, 5), (Below, 3)]);
-        Assert.Empty(field.Rivers.Falls);
-        Assert.Empty(AllFalls(field));
-        // It still runs along the foot of the wall it passes under.
-        var foot = Assert.Single(field.Rivers.Curves, c => c.Foot != null);
-        Assert.Null(foot.Fall);
-    }
-
-    [Theory, MemberData(nameof(Every))]
-    public void Every_river_lies_level_from_waterline_to_waterline(string layout)
-    {
-        // Water is level across: a cross-section's water lanes all lie at one height, along the foot of a wall (with a
-        // fall or without one) as anywhere else. Where the ground rises above that level, it hides the water instead, but
-        // where the drawn ground stands only a hair above it the water lies on that ground, so no lane rises further.
-        foreach (var (field, _) in new[] { Strip(layout), Strip(layout, raised: [High], rivers: [(East, 4), (High, 5), (Below, 3)]),
-                     Strip(layout, cliff: false) })
-        {
-            var data = AllRivers(field);
-            for (int v = 0; v < data.VertexCount;)
-            {
-                int end = v;
-                double lo = double.MaxValue, hi = double.MinValue;
-                for (; end < data.VertexCount && data.Lanes[end * 2 + 1] == data.Lanes[v * 2 + 1]; end++)
-                {
-                    if (Math.Abs(data.Lanes[end * 2]) > 1) continue;
-                    double y = data.Positions[end * 3 + 1];
-                    (lo, hi) = (Math.Min(lo, y), Math.Max(hi, y));
-                }
-                Assert.True(hi - lo <= RiverMesher.WaterOnGround + 1e-4, $"the water across a section at ({data.Positions[v * 3]:F2}, {data.Positions[v * 3 + 2]:F2}) tilts by {hi - lo:F3}");
-                v = end;
-            }
-        }
-    }
-
-    [Theory, MemberData(nameof(Every))]
-    public void The_ground_under_a_river_along_the_foot_stands_no_higher_than_its_water(string layout)
-    {
-        // The low side climbs towards a wall over an apron of cliff lift, which reaches well out near the end of a run of
-        // wall. Under the water of a river along the foot it is taken away, so that ground does not rise through the
-        // level water and pinch the river to a sliver against the rocks. Its outer half is checked: the inner half runs
-        // in under the wall's columns.
-        foreach (var (field, _) in new[] { Strip(layout), Strip(layout, raised: [High], rivers: [(East, 4), (High, 5), (Below, 3)]) })
-        {
-            var foot = field.Rivers.Curves.Single(c => c.Foot != null);
-            var river = AllRivers(field);
-            for (int v = 0; v < river.VertexCount; v++)
-            {
-                // The water inside its waterlines: on the waterlines it meets the ground, which may stand a little above
-                // it on the higher shore where the river rounds a corner.
-                double across = river.Lanes[v * 2];
-                if (Math.Abs(across) >= 1) continue;
-                double x = river.Positions[v * 3], y = river.Positions[v * 3 + 1], z = river.Positions[v * 3 + 2];
-                // Only the foot river's own water, on its open side of the centre line.
-                int i = Enumerable.Range(0, foot.Count).MinBy(k => Math.Pow(Dx(field, x - foot.X[k]), 2) + Math.Pow(z - foot.Z[k], 2));
-                double dx = Dx(field, x - foot.X[i]), dz = z - foot.Z[i];
-                double along = dx * foot.TX[i] + dz * foot.TZ[i];
-                // Past either end lies the river it runs on into, beyond the end of the wall.
-                if (Math.Abs(along) > RiverNetwork.SampleStep || i == 0 && along < -1e-6 || i == foot.Count - 1 && along > 1e-6) continue;
-                double side = dx * foot.Foot!.DirectionX + dz * foot.Foot.DirectionZ;
-                if (side < 0.25 * foot.Width[i] || side > 0.95 * foot.Width[i]) continue;
-                double ground = field.HeightAt(x, z);
-                Assert.True(ground <= y + 0.005, $"the ground stands {ground - y:F3} above the water at ({x:F2}, {z:F2}), {side / foot.Width[i]:F2} of the way out");
-            }
-        }
-    }
-
-    [Theory, MemberData(nameof(Every))]
-    public void A_river_without_a_cliff_has_no_fall(string layout)
-    {
-        var (field, _) = Strip(layout, cliff: false);
-        Assert.Empty(field.Rivers.Falls);
-        Assert.Empty(AllFalls(field));
-        Assert.True(AllRivers(field).VertexCount > 0);
-    }
-
-    [Theory, MemberData(nameof(Every))]
-    public void A_mouth_over_a_sea_cliff_falls_and_the_rock_wall_stays_under_the_water(string layout)
-    {
-        var (field, at) = Strip(layout, sea: true);
-        var mouth = Assert.Single(field.Rivers.Curves, c => c.Link.Kind == RiverLinkKind.Mouth);
-        var fall = Assert.IsType<RiverFall>(mouth.Fall);
-        Assert.False(fall.AlongFoot);
-        var (sx, sz) = at.Place(Below).ToPixel(1);
-        Assert.True(fall.DirectionX * Dx(field, sx - fall.X) + fall.DirectionZ * (sz - fall.Z) > 0, "the fall points away from the sea");
-        var ledge = field.LedgeOf(fall);
-        double half = FallLedge.Width * ledge.Scale / 2, slab = ledge.Y - FallLedge.SlabDepth * ledge.Scale * ledge.Stretch;
-        bool[] meets = new bool[2];
-        foreach (var rock in field.CliffRocks(fall.X - 1, fall.X + 1, fall.Z - 1, fall.Z + 1))
-        {
-            double dx = Dx(field, rock.X - ledge.X), dz = rock.Z - ledge.Z;
-            double along = dx * ledge.DirectionX + dz * ledge.DirectionZ, side = -dx * ledge.DirectionZ + dz * ledge.DirectionX;
-            double radius = TerrainField.CliffRockRadius * rock.Scale;
-            // The wall meets the ledge on a side of the lip where a column stands under the ledge, or the foot of one
-            // beside it reaches the ledge's side (the ledge's own body fills the face between).
-            if (along >= -ledge.BackIn - radius && along <= ledge.NoseOut + radius)
-                for (int k = 0; k < 2; k++)
-                    if ((2 * k - 1) * side >= -half && Math.Abs(side) - radius <= half + 0.01) meets[k] = true;
-            if (Math.Abs(side) > half || along < -ledge.BackIn || along > ledge.NoseOut) continue;
-            double lean = Math.Sqrt(rock.TiltX * rock.TiltX + rock.TiltZ * rock.TiltZ);
-            double top = rock.Y + TerrainField.CliffRockHeight * rock.Scale * rock.Stretch * Math.Cos(lean);
-            Assert.True(top <= slab + 0.01, $"a wall column under the ledge stands at {top:F3}, through the slab at {slab:F3}");
-        }
-        Assert.True(meets[0] && meets[1], $"the wall does not meet the ledge on {(meets[0] ? "one side" : meets[1] ? "the other side" : "either side")}, so it has a gap");
     }
 }
