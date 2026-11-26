@@ -39,7 +39,9 @@ internal static class TradeData
         var team = sim.TeamOf(city.Owner);
         foreach (var scope in EffectScopes)
         {
-            var collected = ModifierSink.Collect(new ModifierContext(sim, scope, city.Owner, city, Team: team), routes);
+            var context = scope == ModifierScope.City ? ModifierContext.ForCity(sim, city.Owner, city)
+                : new ModifierContext(sim, scope, city.Owner, city, Team: team);
+            var collected = ModifierSink.Collect(context, routes);
             foreach (var line in collected.Lines)
                 if (line.Key.StartsWith("trade:", StringComparison.Ordinal)) sink.Add(line.Source, line.Key, line.Amount);
         }

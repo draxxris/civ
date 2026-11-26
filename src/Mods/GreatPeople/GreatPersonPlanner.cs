@@ -163,7 +163,7 @@ internal sealed class GreatPersonPlanner(AiContext ctx)
         var yields = Yields(city);
         if (GreatPeopleData.Unit(ctx.Sim.Content, unit.Type).GreatGeneral) return yields.Production * 10;
         var def = ctx.Sim.Content.Get<SpecialistDef>(specialist);
-        var modifiers = ModifierSink.Collect(new(ctx.Sim, ModifierScope.City, ctx.PlayerId, city)).Ledger;
+        var modifiers = ModifierSink.Collect(ModifierContext.ForCity(ctx.Sim, ctx.PlayerId, city)).Ledger;
         return def.Yields.Production * (100 + modifiers.Total("cities:production_percent")) / 100
             + def.Commerces.Research * (100 + modifiers.Total("economy:research_percent")) / 100
             + def.Commerces.Gold * (100 + modifiers.Total("economy:gold_percent")) / 100

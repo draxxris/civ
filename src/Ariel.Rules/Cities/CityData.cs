@@ -116,7 +116,7 @@ internal static class CityData
             categories.UnionWith(grants.Grants(sim, owner));
         return categories;
     });
-    internal static ModifierSink Effects(Simulation sim, City city) => ModifierSink.Collect(new(sim, ModifierScope.City, city.Owner, city, sim.State.Grid.TileAt(city.Position), Team: sim.TeamOf(city.Owner)));
+    internal static ModifierSink Effects(Simulation sim, City city) => ModifierSink.Collect(ModifierContext.ForCity(sim, city.Owner, city));
     internal static TileId Tile(Simulation sim, City city) => sim.State.Grid.TileAt(city.Position);
     internal static IEnumerable<Player> LivingPlayers(Simulation sim)
     {

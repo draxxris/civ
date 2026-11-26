@@ -40,7 +40,8 @@ internal static class GreatPeopleData
         content.Attachment<YieldGreatPeopleDef>(yield) ?? YieldGreatPeopleDef.None;
     internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => CityBuildingRules.Running(sim, city);
     internal static ModifierSink Effects(Simulation sim, ModifierScope scope, int player, City? city = null) =>
-        ModifierSink.Collect(new(sim, scope, player, city, Team: sim.TeamOf(player)));
+        ModifierSink.Collect(scope == ModifierScope.City && city is not null ? ModifierContext.ForCity(sim, player, city)
+            : new(sim, scope, player, city, Team: sim.TeamOf(player)));
     internal static string? ResolveUnit(Simulation sim, int player, string unitClass)
     {
         if (sim.Content.TryGet<S.CivilizationDef>(sim.State.PlayerById(player).Civilization, out var civ)

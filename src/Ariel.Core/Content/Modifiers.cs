@@ -31,7 +31,14 @@ public enum ModifierScope
     Unit,
 }
 /// <summary>Calculation subject. The calculating mod chooses the scope and supplies applicable subject ids.</summary>
-public sealed record ModifierContext(Simulation Sim, ModifierScope Scope, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null, Team? Team = null, Plot? ProposedPlot = null);
+public sealed record ModifierContext(Simulation Sim, ModifierScope Scope, int Player, City? City = null, TileId? Plot = null, Unit? Unit = null, Team? Team = null, Plot? ProposedPlot = null)
+{
+    /// <summary>The one way to ask about a city as a whole: its owner's view, its own plot and the player's team. City
+    /// sums are kept per context, so readers of one city that name it alike share kept sums, where a context that left
+    /// out the plot or the team was a separate entry every source computed again.</summary>
+    public static ModifierContext ForCity(Simulation sim, int player, City city) =>
+        new(sim, ModifierScope.City, player, city, sim.State.Grid.TileAt(city.Position), Team: sim.TeamOf(player));
+}
 /// <summary>Cross-mod contribution source. Contribute must not change simulation state, and what it adds must depend
 /// only on the context and the state: not on the sink it adds to, nor on anything outside the simulation.
 /// <para>A source may declare the state domains it never reads (<see cref="IStateReader.UnreadDomains"/>). Inside
@@ -300,7 +307,7 @@ public sealed class ModifierSink
             long stamp = sim.WriteStamp;
             int start = sink._lines.Count;
             sources[i].Contribute(context, sink);
-            cache.Set(i, context, new(sink._lines.GetRange(start, sink._lines.Count - start).ToArray(), stamp));
+            cache.Set(i, context, new(System.Runtime.InteropServices.CollectionsMarshal.AsSpan(sink._lines)[start..].ToArray(), stamp));
         }
     }
     private static void Verify(IModifierSource source, ModifierContext context, LedgerLine[] kept)
