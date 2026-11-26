@@ -10,7 +10,7 @@ internal static class P6RulesScenario
 {
     private static readonly Lazy<ContentDb> Content = new(() => BuildContent());
     private static readonly Lazy<ContentDb> HalfMaintenanceContent = new(() => BuildContent(new HalfMaintenanceMod()));
-    private static ContentDb BuildContent(IMod? extra = null)
+    private static ContentDb BuildContent(IMod? extra = null, string[]? references = null)
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         string configuration = dir.Parent!.Name;
@@ -19,11 +19,12 @@ internal static class P6RulesScenario
         var sources = names.Select(name => ModLoader.FromDirectory(Path.Combine(dir!.FullName, "src", "Mods", name, "bin", configuration, "net10.0"))).ToArray();
         var loaded = new LoadedMods();
         var all = loaded.Sources.Where(s => !sources.Any(n => n.Manifest.Id == s.Manifest.Id)).Concat(sources);
-        if (extra is not null) all = all.Append(new ModSource { Manifest = new() { Id = "probe", Version = "1", References = ["cities", "military", "foundation"] }, Root = loaded.Root, Instance = extra });
+        if (extra is not null) all = all.Append(new ModSource { Manifest = new() { Id = "probe", Version = "1", References = references ?? ["cities", "military", "foundation"] }, Root = loaded.Root, Instance = extra });
         return ModLoader.Build(all);
     }
-    /// <summary>The scenario's content with one more mod, built fresh.</summary>
-    public static ContentDb With(IMod extra) => BuildContent(extra);
+    /// <summary>The scenario's content with one more mod, built fresh. The mod may name only the content providers it
+    /// references: cities, military and foundation unless <paramref name="references"/> says otherwise.</summary>
+    public static ContentDb With(IMod extra, string[]? references = null) => BuildContent(extra, references);
     private sealed class HalfMaintenanceMod : IMod
     {
         public void Register(IModContext context) => context.Content<Ariel.Content.Schema.BuildingDef>().Override(new()
