@@ -2340,7 +2340,12 @@ Specialized planners handle empire governance and military campaigns:
 - **Great people (`GreatPersonPlanner`, contributed by the GreatPeople mod)**:
   Dynamically scores Great Person actions: evaluates empire-wide value of Golden Ages
   (scaled by population and revolution instability) versus immediate technology
-  bulbing, special building construction, or trade missions.
+  bulbing, special building construction, or trade missions. It asks each own city only
+  for its city actions, each soldier's tile only for leading, and its own tile for
+  the rest, from the same pieces as `GreatPersonActions.Available`. A trade mission
+  weighs a route to every foreign city, and scores at most 6,600, so trade missions are
+  weighed only when no choice scoring above that could be taken; a choice that could
+  not be taken changed nothing, so the order is the one the whole list sorts to.
 - **Corporations (`CorporationPlanner`, contributed by the Corporations mod)**: Spreads
   founded corporations and guilds to the empire's own cities while income allows.
   Founding goes through the city planner: the mod's `HeadquartersValuer` rates a
@@ -3019,7 +3024,11 @@ declare both sides.
   every other source of that scope declares:
   `ModifierSources.UnreadThroughCalculation(own, content, scope, self)`. The reader's own
   contribution is left out, since its declaration already covers it. Two sources that
-  each collect the other's scope this way would recurse, so neither may.
+  each collect the other's scope this way would recurse, so neither may. A source that
+  reads the rest of its own calculation, as trade routes read the city's trade
+  modifiers, sums it with `ModifierSink.Collect(context, except: itself)`: the same kept
+  contributions and verification, without asking itself, and never kept by the open
+  epoch as the whole calculation.
 - **Kept queries.** A rule's own derived answer can be kept across writes the same way:
   `KeptQuery<TKey, TValue>` keeps an answer per key with the write stamp it was computed
   at, under a reader's declaration (`IStateReader`), the same windows, kernel spans and
@@ -3034,7 +3043,8 @@ declare both sides.
   its resource set (`BuildingEffects.Available`), vicinity resource answers
   (`CityRequirements`) and single resource counts (`ResourceAccess.Count`). World keeps
   the resource network's flood per player and city (`ResourceNetwork.ConnectedCounts`
-  and `ConnectedTiles`) under `CityStateDomains.NeverReadByBuildings`, and production
+  and `ConnectedTiles`, which also answers whether two cities connect) under
+  `CityStateDomains.NeverReadByBuildings`, and production
   eligibility keeps one world-wide table of building class owners for wonder and class
   limits. A collection answer passes a content comparer (`KeptAnswerEquality`), since
   verification compares a reused answer with a fresh one. These answers matter most to

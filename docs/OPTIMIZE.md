@@ -160,6 +160,13 @@ To ensure repeatable and reliable performance comparisons:
    ```sh
    env -u ARIEL_TRACE_STARTUP DOTNET_TieredCompilation=0 mise run benchmark -- --world
    ```
+   Short `ai:play` loads (8 turns after a save) are just as sensitive: hot methods
+   reach tier 1 at different turns from run to run, and with `DOTNET_PROCESSOR_COUNT=1`
+   much later, so a single-threaded planner can differ by 30% between two identical
+   runs and by 3× between the parallel and one-processor runs (Pass 25). Compare
+   planners and rules with `DOTNET_TC_CallCountingDelayMs=0` (tier-up at once, flat
+   per-turn curves) next to the default, and prefer allocation, which tiering does not
+   move.
 3. **Disable Active Tracing**: Opt-in traces (`ARIEL_TRACE_STARTUP=1` or verbose
    loggers) introduce I/O overhead. Disable them during timing comparisons.
 4. **Warmup and Sampling**: Use at least one warmup iteration followed by multiple
@@ -242,6 +249,10 @@ ______________________________________________________________________
        ▼
 [Pass 22: Nov 24, 2026] Late-Game Turns: Shared Read Spans and Kept Answers
                         (Commits: 2f2c6ac8 .. b788e312)
+       │
+       ▼
+[Pass 25: Nov 26, 2026] The Great Person Planner and the Parallel-Run Rise
+                        (Commits: 6c2ef3de .. a7a47262)
 ```
 
 ______________________________________________________________________
@@ -3507,6 +3518,204 @@ All on the final code:
    query per city a turn, linear in cities.
 4. **Religion** stays under 8 ms; its flood is one per city per player turn.
 
+### Pass 25: The Great Person Planner and the Parallel-Run Rise
+
+- **Date**: 2026-11-26
+- **Commits**: `6c2ef3de` (route effects), `b9afed17` (planner), `a7a47262` (connection),
+  `b2f5f9b1` (mod versions), then the `ai:play --bin` tool and the documentation
+
+This pass takes items 2 and 3 of the Pass 23 "Still Slow" list: `great_people:planner`
+(about 95 to 100 ms a turn at turn 551) and the unexplained rise of `ai:civics`,
+`ai:economy` and `great_people:planner` in parallel runs. The planner turned out to be
+dominated by Trade's route profit, not by its own logic; the rise is JIT tier-up timing.
+Every final state is byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- Base: local main `f0d650cb`, its `Ariel.SyncCheck` build copied aside before any
+  change. Final: the tree after the tool commit. The alternating results and the game
+  totals ran through `mise run ai:play -- --bin DIR`, which this pass adds for timing a
+  copied build; the reference hashes and the first tier-up experiments at s450 ran the
+  copied binary's `hash-trace` directly.
+- Saves: s450 (turn 451) and s550 (turn 551), fresh from seed 3, 4 players, on the base
+  tree (40 cities, 420 units at 551); they give the Pass 24 hashes. Re-headed copies for
+  the final tree's versions (World 1.23.0, Trade 2.7.0, Great People 3.12.0) give the
+  same hashes as the originals.
+- Reference hashes, taken on `f0d650cb` before any change. All match on the final tree:
+
+  | Run | Hash |
+  | :-- | :-- |
+  | s450 + 4 / + 8 | `4313ee853653eacd` / `d5fb48fb74d90628` |
+  | s550 + 4 / + 8 | `a58adbc1e9f6647d` / `23bb41d03ee121d7` |
+  | Seed 3, 4 players, 160 turns | `e49124006d830b87` |
+  | Seed 1, 4 players, 100 turns | `348b462d1ec219fa` |
+  | Seed 5, 8 players, 150 turns | `7d049d95e0352b35` |
+  | Seed 7, 6 players, 150 turns, medieval start | `5a3db1cab7f4df42` |
+  | Seed 5, 4 players, 120 turns, industrial start | `dcb5af4daedc2c1e` |
+
+  The two later starts are the great-person games: the planner weighed 286 and 406
+  great people (and caravans), with trade missions, hurrying, joining, construction,
+  great works, leading, golden ages and technologies all scored.
+- Probes: temporary profiler scopes (not committed) around the planner's phases, each
+  part of `GreatPersonActions.Available`, the trade mission's parts, the route profit's
+  parts and each scope of the route effects.
+
+#### Where the Time Went
+
+At s550 + 8 on the base tree, summed over the eight turns: the planner weighed 43
+units, 40 of them caravans (`military:med_caravan`) that never found a choice to take (every trade
+mission paid less than a golden age is worth), so each was weighed again every turn.
+
+- **Trade missions**: 1,415 route profits, 955 ms and 334 MB, of the planner's 1,190 ms.
+  Of that, `TradeData.Effects` was 700 ms: it asked every modifier source directly for
+  the city, player and team calculations, bypassing both the epoch memo and the kept
+  contributions. `ResourceNetwork.Connected` (the capital bonus) flooded the network
+  again on each call, 164 ms.
+- **Everything at every city**: the planner asked `Available` at every city in the
+  world, so the technology choice (`Discovery`, 38 ms), the golden-age partners and the
+  team's trade mission modifier (55 ms) were computed once per city per person.
+- **City actions** (construction checks, hurry): 67 ms; the hurry score computing the
+  order's cost a second time, 39 ms.
+- In the great-person games, under the probes, the planner took 1.6 s (medieval, 150
+  turns) and 1.9 s (industrial, 120 turns), of which the route profit was 1.0 and 1.1 s.
+
+#### What Was Built
+
+1. **Route effects from the kept contributions** (`6c2ef3de`). `ModifierSink.Collect(context,
+   except)` sums every source but one from the same kept per-source contributions, asks
+   and verification; the open epoch does not keep it as the whole calculation.
+   `ModifierSink.Lines` reads the lines without a `Ledger` snapshot. `TradeData.Effects`
+   uses it with the same contexts as before, leaving out the route yields source.
+   Trade 2.7.0. In the ruleset's `MAX_TRADE_ROUTES` of 0 only trade missions ask it, but
+   a ruleset with routes asks it from every city's route yields.
+2. **The planner** (`b9afed17`). Own cities ask only their city actions
+   (`GreatPersonActions.OwnCityActions`), soldiers' tiles only lead actions, and its own
+   tile the rest; `TradeTerms` reads the capital and trade-mission modifier once per
+   person, and the route profit is skipped without a trade multiplier. Trade missions
+   score at most 6,600, so choices above that are tried first in the sorted order and
+   trade missions are weighed only if none could be taken. Great People 3.12.0.
+3. **Connections from the kept flood** (`a7a47262`). `ResourceNetwork.Connected` looks
+   the second city up in `ConnectedTiles`, the kept flood under the network's
+   declaration, instead of flooding. World 1.23.0. Six alternating runs at s550 with
+   tier-up pinned: planner 51 to 55 ms against 59 to 60 ms, 40.0 against 43.7 MiB.
+
+The caravans still weigh their missions each turn. The first caravan of a player pays
+for every foreign city's city-scope ledger cold (about 20 ms at s550), and the next ones
+reuse those contributions (2 to 4 ms each).
+
+#### Results
+
+Base and final ran alternately (base, final, final, base), 8 turns each, at load 1.2 to
+1.9, with the default JIT and with `DOTNET_TC_CallCountingDelayMs=0` (pinned). Figures
+are per turn over the last 6 turns, summed over threads; each cell gives the two runs:
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| s550, `great_people:planner`, pinned | 79.6 / 81.9 ms, 64.9 MiB | 52.5 / 49.6 ms, 40.0 MiB | −37%, −38% alloc |
+| s550, `great_people:planner`, default | 97.6 / 96.6 ms, 63.6 MiB | 58.5 / 63.3 ms, 40.5 MiB | −37% |
+| s450, `great_people:planner`, pinned | 77.2 / 75.8 ms, 59.0 MiB | 52.9 / 55.1 ms, 43.0 MiB | −29%, −27% alloc |
+| s450, `great_people:planner`, default | 130.6 / 135.3 ms, 58.5 MiB | 113.8 / 94.2 ms, 42.6 MiB | −22% |
+| s550, `modifiers:collect`, pinned | 185.3 / 186.8 ms, 156 MiB | 218.0 / 213.3 ms, 174 MiB | +16% (now counts the route effects) |
+| s550, AI, pinned | 377 / 383 ms | 359 / 347 ms | −7% |
+| s550, wall per turn, pinned | 648 / 660 ms | 641 / 620 ms | −3% |
+| s550, allocation per turn | 604 MiB | 575 MiB | −5% |
+| s450, AI, pinned | 303 / 293 ms | 281 / 276 ms | −7% |
+| s450, allocation per turn | 418 / 419 MiB | 401 MiB | −4% |
+| s550, `ai:cities`, pinned | 63.4 / 61.8 ms | 66.4 / 64.1 ms | +4%, see below |
+| s450, `ai:cities`, pinned | 60.5 / 58.1 ms | 65.2 / 61.1 ms | +6%, see below |
+| Medieval game (150 turns), planner total | 903 ms, 810 MB | 774 ms, 582 MB | −14%, −28% alloc |
+| Industrial game (120 turns), planner total | 1,432 ms, 1,284 MB | 830 ms, 700 MB | −42%, −45% alloc |
+
+`modifiers:collect` rises because the route effects' sums now go through it; before,
+they ran inside the planner uncounted. The two game totals are one run each of both
+builds with the default JIT, at load 2 to 3.
+
+`ai:cities` (which runs after the great person planner, on parallel threads) was higher
+in both final runs of both saves, with the same allocation. Six more alternating s550
+runs of the trees before and after step 3 put it at 60.3 to 63.3 ms before and 63.8 to
+67.0 ms after, in the quiet runs, and a probed run after step 3 at 63.7 ms. Step 3's
+kept floods are the likely link (the network asks 420 connections and 214 floods a turn
+at s550), but no probe isolated a cause; it is 2 to 4 ms against the planner's 25 to
+30 ms.
+
+#### The Parallel-Run Rise
+
+`ai:civics`, `ai:economy` and `great_people:planner` never use `ParallelScoring`, so at
+the default `--waves 1` they run on one thread in both modes: contention inside them
+is impossible. On the base tree:
+
+- **Same binary, same mode**: three parallel s450 + 8 runs gave the planner 111, 119
+  and 141 ms with equal allocation, which already spans Pass 23's 92 to 132 ms.
+- **Per turn**: in a parallel run the planner fell from 328 ms (turn 453) to 62 ms
+  (turn 459) for the same work, 172 route profits each turn. On one processor it stayed
+  at 180 to 260 ms. At s550 the one-processor run took 282 ms against 88 ms parallel.
+- **The JIT**: with `DOTNET_TieredCompilation=0` the planner was flat at about 90 ms
+  (s450) and 102 to 104 ms (s550) in both modes, and `ai:civics` and `ai:economy` matched
+  across modes too. With `DOTNET_TC_CallCountingDelayMs=0` (tier 1 with profile
+  guidance at once) all three were flat and fastest in both modes: planner 73 to 74 ms
+  at s450, 78 to 83 ms at s550. With `DOTNET_TieredPGO=0` the one-processor run stayed
+  slow (175 ms), so the delay is in reaching tier 1, not in the profile.
+- **Caches and epochs**: modifier collections and reuses per turn were the same in the
+  parallel and one-processor runs (2,947 against 2,937 collects, 4,689 against 4,597
+  reuses at s550), and allocation was equal. No cache or epoch was lost.
+- **Convergence**: a default s450 + 24 run settled at 84 ms over its last 22 turns.
+
+So the rise is when the hot methods reach tier 1. The runtime delays tier-1 promotion
+while new methods keep being compiled at tier 0, and a short load keeps compiling new
+code paths for several turns. Pass 23 added code paths (the kept queries' generic
+instantiations), which most likely moved that point within an 8-turn run; its base tree
+was not rebuilt to show it. It is not contention, a
+shared cache or a lost read epoch, and it costs nothing in a long game.
+
+#### Rejected and Not Built
+
+- **A planner cache of route profits** across the planner's moves: the profit reads the
+  foreign city's whole ledger, which a kept answer could only hold under what every
+  modifier source declares. The cold part is the shared modifier-collection cost at the
+  start of each player's chain (Pass 22 item 1). Not built.
+- **Sharing the player and team contexts** of the route effects with the plain ones (no
+  city): it would change which cache entries the sources' lines come from, resting on
+  no source reading the city in a player calculation. The player and team scopes cost
+  3.8 ms a turn together at s550, against 36 ms for the city scope. Not built.
+- **Skipping trade missions in a ruleset without routes**: the mission's gold still
+  uses the route profit. Not built.
+- **The hurry score's second cost calculation** (about 5 ms a turn at s550): the action
+  does not carry the cost, and `GreatPersonAction` is the public contract. Not built.
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash above matches the base tree. s550 + 8 also gives
+  `23bb41d03ee121d7` with `--waves max` and with `DOTNET_PROCESSOR_COUNT=1`; seed 1 (4
+  players, 100 turns) with `--waves max` gives `348b462d1ec219fa`, and the industrial
+  game with `--waves max` `dcb5af4daedc2c1e`.
+- `--verify-modifier-cache` and `--verify-read-epochs` together pass on s550 + 4 and
+  s450 + 4; `--verify-modifier-cache` passes on s550 + 2 after step 1 and on the whole
+  industrial game (120 turns).
+- With `MAX_TRADE_ROUTES` at 0 the route effects run only from trade missions. The
+  nested call from the route yields source inside a city calculation (a ruleset with
+  routes), and the extra kept entries it would make against the 32,768 cap, were not
+  exercised; they rest on inspection. At s550 the modifier cache never reached its cap.
+- `WriteWindowTests` covers the sum without one source: the left-out source is never
+  asked, the others' kept contributions are reused, and an epoch never keeps it as the
+  whole sum.
+- `mise run test`, `mise run test:e2e`, `mise run test:worldgen`, `mise run check:sync`
+  and `mise run build:game` pass.
+
+#### Still Slow, Ranked
+
+1. **Cold ledgers at the start of each player's chain** (Pass 22 item 1): about 36 ms a
+   turn of the planner's remaining 50 ms at s550 is foreign cities' city ledgers for the
+   first caravan of each player, and the same cold cost runs through every planner.
+2. **Caravans that never act** are weighed again each turn (40 of 43 weighings at s550).
+   Remembering why a unit found nothing would need an answer kept across turns.
+3. **`modifiers:collect`** in general, now about 215 ms a turn at s550 with tier-up
+   pinned.
+4. **A connection miss allocates the whole reached set** (`ConnectedTiles`), where the
+   flood used to read this thread's buffers. On large maps one network's set can reach
+   the large object heap; only the small s550 map (21 by 21) was measured.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -3596,3 +3805,6 @@ passes:
 |                                         |                      | Same                                                       | `ai:cities`              |         176–196 ms |           70–73 ms |                                  **-61%** |
 |                                         |                      | Same                                                       | Managed bytes per turn   |          1,034 MiB |            630 MiB |                                  **-39%** |
 |                                         |                      | Same, one processor, 6 turns from turn 551                 | Wall time (profiled)     |    5,257–5,457 ms |     2,805–3,263 ms |                           **-40 to -47%** |
+| **Pass 25: Great Person Planner** | `6c2ef3de`..`a7a47262` | Four-player AI game, last 6 of 8 turns from turn 551, tier-up pinned | `great_people:planner` | 80–82 ms | 50–53 ms | **-37%** |
+|                                         |                      | Same                                                       | Planner managed bytes per turn | 64.9 MiB | 40.0 MiB | **-38%** |
+|                                         |                      | 120-turn 4-player industrial-start game (seed 5)           | `great_people:planner` total | 1,432 ms | 830 ms | **-42%** |
