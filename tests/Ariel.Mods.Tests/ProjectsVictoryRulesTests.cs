@@ -108,7 +108,8 @@ public sealed class ProjectsVictoryRulesTests
         Assert.Contains(kind.Candidates(sim.Content), d => d.Id == internet);
         Learn(sim, 0, "research:computers");
         Assert.True(kind.Validate(sim, city.Id, internet).Success);
-        Assert.Equal(2000L * sim.Content.Get<S.GameSpeedDef>(Speed).CreatePercent / 100, kind.Calculate(sim, city.Id, internet).Cost);
+        // The shipped Internet costs 2000, scaled by normal speed's 176 % for projects: 2000 * 176 / 100 = 3520.
+        Assert.Equal(3520, kind.Calculate(sim, city.Id, internet).Cost);
         city.ProductionQueue.Add(new("projects_victory:project", internet, 100000));
         sim.AdvanceTurn();
         Assert.Equal(1, Pv(sim).TeamCount(sim, 0, internet));

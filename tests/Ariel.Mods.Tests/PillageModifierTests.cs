@@ -9,10 +9,11 @@ namespace Ariel.Mods.Tests;
 public sealed class PillageModifierTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     [Theory]
-    [InlineData(-33)]
-    [InlineData(-100)]
-    [InlineData(-150)]
-    public void Negative_pillage_modifiers_preserve_signed_truncation_treasury_and_replay(int percent)
+    // Gold is the 101 drawn plus 101 * percent / 100, truncated toward zero.
+    [InlineData(-33, 68)] // 101 * -33 = -3333 hundredths -> -33 (flooring would give -34): 101 - 33 = 68
+    [InlineData(-100, 0)] // 101 * -100 = -10100 hundredths -> -101: 101 - 101 = 0
+    [InlineData(-150, -50)] // 101 * -150 = -15150 hundredths -> -151 (flooring would give -152): 101 - 151 = -50
+    public void Negative_pillage_modifiers_preserve_signed_truncation_treasury_and_replay(int percent, int expected)
     {
         var source = new ModSource { Root = mods.Root, Manifest = new() { Id = "pillage_probe", Version = "1", References = ["military", "world"] }, Instance = new Probe(percent) };
         var content = ModLoader.Build(mods.Sources.Append(source));
@@ -28,10 +29,9 @@ public sealed class PillageModifierTests(LoadedMods mods) : IClassFixture<Loaded
         long treasury = sim.State.PlayerById(0).Treasury = 100;
         var (w, x, y, z) = sim.Rng.State;
         var expectedRng = DeterministicRng.Restore(w, x, y, z);
-        int raw = expectedRng.Next(101) + expectedRng.Next(101);
-        Assert.True(raw > 0);
-        Assert.NotEqual(0, raw % 100); // Distinguishes signed truncation from scaling the final multiplier.
-        int expected = raw + raw * percent / 100;
+        // The scenario's seed draws 101 gold from the deposit's two 0..100 rolls. 101 is not a multiple of 100, so the
+        // change's hundredths do not divide evenly and truncation toward zero differs from flooring.
+        Assert.Equal(101, expectedRng.Next(101) + expectedRng.Next(101));
         var loaded = SaveGame.Load(content, SaveGame.Save(sim));
         foreach (var game in new[] { sim, loaded })
         {

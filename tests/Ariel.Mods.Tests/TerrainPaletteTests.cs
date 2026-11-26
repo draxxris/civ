@@ -132,7 +132,8 @@ public sealed class TerrainPaletteTests(LoadedMods mods) : IClassFixture<LoadedM
     {
         var bytes = PaletteTable.Bytes(_palette, id => id == "world:ocean" ? Rgb.Hex(0x123456) : null);
 
-        Assert.Equal(PaletteTable.Width * PaletteTable.Rows * 4, bytes.Length);
+        // The shaders sample a 256 x 8 RGBA8 texture: 256 * 8 * 4 = 8192 bytes.
+        Assert.Equal(8192, bytes.Length);
         for (int i = 0; i < _palette.Layers.Count; i++)
         {
             var layer = _palette.Layers[i];

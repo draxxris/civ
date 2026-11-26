@@ -173,7 +173,8 @@ public sealed class VictoryRulesTests
         var sim = Scenario();
         Learn(sim, 1, "research:fission", "research:laser", "research:fusion");
         int max = Status(sim).MaxTurns;
-        Assert.Equal(250 * sim.Content.Get<S.GameSpeedDef>(Speed).VictoryDelayPercent / 100, max);
+        // The shipped time victory's 250 turns, delayed 200 % at normal speed: 250 * 200 / 100 = 500.
+        Assert.Equal(500, max);
         sim.State.Turn = max - 1;
         sim.AdvanceTurn();
         Assert.False(Status(sim).IsGameOver);

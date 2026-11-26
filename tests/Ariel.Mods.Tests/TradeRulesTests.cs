@@ -63,10 +63,12 @@ public sealed class TradeRulesTests(LoadedMods mods) : IClassFixture<LoadedMods>
         var sim = Scenario(); var city = sim.State.Cities[0]; city.Buildings.Add("cities:palace");
         var result = Service(sim).Calculate(sim, city.Id);
         var foreign = Assert.Single(result.Routes, r => r.Foreign);
-        int worldPercent = sim.Content.Attachment<WorldSizeTradeDef>(sim.Settings.WorldSize!)!.TradeProfitPercent;
-        int profitPercent = sim.Content.Attachment<RuleConstantsTradeDef>(sim.Content.Get<S.RuleConstantsDef>().All.Single().Id)!.TradeProfitPercent;
-        long basis = Math.Max(100, Math.Min(500, 5 * worldPercent) * profitPercent / 100);
-        Assert.Equal(basis * 225 / 100, foreign.ProfitHundredths);
+        // Derived by hand from this scenario and the shipped trade data (standard world 50 %, trade profit 20 %, their
+        // population 50 %): the partner's 10 population gives 10 * 50 = 500 hundredths and the 5-tile distance
+        // 5 * 50 = 250; min(500, 250) * 20 / 100 = 50, raised to the floor of 100. The modifier is 100 + 100 (foreign)
+        // + 25 (connected to the palace), the source city's population 1 adding max(0, (1 - 10) * 5) = 0:
+        // 100 * 225 / 100 = 225.
+        Assert.Equal(225, foreign.ProfitHundredths);
         Assert.Equal(foreign.ProfitHundredths, foreign.YieldsHundredths.Commerce);
         var yields = sim.Rules().CityYields.Calculate(sim, city.Id);
         Assert.Equal(result.Yields.Commerce, yields.Ledger.Lines.Where(l => l.Source == "trade:routes" && l.Key == "yield.flat.commerce").Sum(l => l.Amount));
