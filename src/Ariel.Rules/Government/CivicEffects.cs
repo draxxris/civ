@@ -63,7 +63,10 @@ internal sealed class CivicEffects : IModifierSource
     {
         Capital(city, c, buildings, sink);
         Wellbeing(sim, city, c, buildings, sink);
-        SpecialistCommerce(sim.Rules().Commerce, c.Id, c.SpecialistExtraCommerces * 100, sink);
+        // Every city calculation asks every civic the player runs, and few civics change specialists or buildings, so a
+        // civic without such changes is passed over: it would add only zero lines.
+        if (!c.SpecialistExtraCommerces.IsZero) SpecialistCommerce(sim.Rules().Commerce, c.Id, c.SpecialistExtraCommerces * 100, sink);
+        if (c.BuildingClassCommerceChanges.IsEmpty && c.BuildingHappinessChanges.IsEmpty && c.BuildingHealthChanges.IsEmpty) return;
         foreach (var b in buildings)
         {
             sink.AddCommerce(c.Id, c.BuildingClassCommerceChanges.GetValueOrDefault(b.DefaultBuilding));

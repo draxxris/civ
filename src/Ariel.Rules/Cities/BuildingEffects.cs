@@ -38,7 +38,9 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var other in CityData.Owned(sim, city.Owner))
         {
             if (other != city && !CityBuildingRules.MayRun(sim, other, ReachesOtherCities)) continue;
-            foreach (var building in CityData.Active(sim, other)) Global(sim, city, other, building, running, sink);
+            // Most of the owner's buildings reach no other city, and Global writes no line for them.
+            foreach (var building in CityData.Active(sim, other))
+                if (ReachesOtherCities(building)) Global(sim, city, other, building, running, sink);
         }
         foreach (var building in CityData.EffectiveBuildings(sim, city))
             if (building.ObsoleteSafeCommerceChanges != default)
@@ -58,15 +60,23 @@ internal sealed class BuildingEffects : IModifierSource
         foreach (var pair in Available(sim, city)) result[pair.Key] = pair.Value;
         foreach (var building in buildings)
         {
-            foreach (var bonus in building.ExtraFreeBonuses.Keys.Append(building.FreeBonus).OfType<string>().Distinct(StringComparer.Ordinal))
+            // The totals do not depend on the order, and most buildings grant no extra bonuses.
+            if (building.ExtraFreeBonuses.IsEmpty)
             {
-                int count = FreeBonusCount(sim, building, bonus);
-                if (count > 0) result[bonus] = result.GetValueOrDefault(bonus) + count;
+                if (building.FreeBonus is { } only) AddFree(sim, building, only, result);
+                continue;
             }
+            foreach (var bonus in building.ExtraFreeBonuses.Keys.Append(building.FreeBonus).OfType<string>().Distinct(StringComparer.Ordinal))
+                AddFree(sim, building, bonus, result);
         }
         foreach (var building in buildings)
             if (building.NoBonus is { } bonus) result.Remove(bonus);
         return result;
+    }
+    private static void AddFree(Simulation sim, S.BuildingDef building, string bonus, SortedDictionary<string, int> result)
+    {
+        int count = FreeBonusCount(sim, building, bonus);
+        if (count > 0) result[bonus] = result.GetValueOrDefault(bonus) + count;
     }
     // A count of -1 uses the world size. Zero grants no copies.
     internal static int FreeBonusCount(Simulation sim, S.BuildingDef building, string bonus)
@@ -171,13 +181,16 @@ internal sealed class BuildingEffects : IModifierSource
                 sink.Add(b.Id, HealthKeys.Bonus, b.BonusHealthChanges.GetValueOrDefault(bonus));
             }
         }
-        foreach (var slot in b.SpecialistSlots.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:slots:" + slot.Key, slot.Value);
-        foreach (var free in b.FreeSpecialistCounts.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:free:" + free.Key, free.Value);
+        if (!b.SpecialistSlots.IsEmpty)
+            foreach (var slot in b.SpecialistSlots.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:slots:" + slot.Key, slot.Value);
+        if (!b.FreeSpecialistCounts.IsEmpty)
+            foreach (var free in b.FreeSpecialistCounts.OrderBy(p => p.Key, StringComparer.Ordinal)) sink.Add(b.Id, "cities:free:" + free.Key, free.Value);
         if (!b.BuildingHappinessChanges.IsEmpty)
             foreach (var other in running) sink.Add(b.Id, "cities:happiness", b.BuildingHappinessChanges.GetValueOrDefault(other.DefaultBuilding));
     }
     private static void AddVicinity(Simulation sim, City city, S.BuildingDef b, IReadOnlyDictionary<string, int> bonuses, ModifierSink sink)
     {
+        if (b.VicinityBonusYieldChanges.IsEmpty) return;
         foreach (var pair in b.VicinityBonusYieldChanges.OrderBy(p => p.Key, StringComparer.Ordinal))
             if (VicinityBonuses.Has(sim, city, pair.Key, bonuses)) sink.AddYield(b.Id + ":vicinity:" + pair.Key, pair.Value);
     }
