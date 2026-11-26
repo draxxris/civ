@@ -89,6 +89,19 @@ public interface IVisibilityService
     /// <summary>Military calls this after movement; founding and turn boundaries also refresh sight.</summary>
     void Recompute(Simulation sim);
 }
+/// <summary>The World module's state domains for work on plots (<see cref="Ariel.Content.StateDomain"/>); sight,
+/// reveals and worker orders are in <see cref="UnitStateDomains"/>.</summary>
+public static class WorldStateDomains
+{
+    /// <summary>Work under way on plots: workers' build progress and the turns an improvement has grown toward its
+    /// upgrade. Private: no modifier source or kept query reads either; workers, the improvement step and the computer
+    /// player's worker planning do. A build or an upgrade that completes changes the plot itself, and its writer widens
+    /// first.</summary>
+    public const string PlotWork = "world:plot_work";
+    /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
+    public static readonly IReadOnlyList<string> PlotWorkOnly = [PlotWork],
+        WorkerTurnWrites = [PlotWork, UnitStateDomains.Units, UnitStateDomains.WorkerOrders];
+}
 /// <summary>World's entry point for a rule that reshapes plots once the map exists, such as a mod's environmental
 /// change. World keeps the map consistent: heights and cliffs, features that no longer fit, areas and lake flags.</summary>
 public interface ITerrainChanges

@@ -50,6 +50,8 @@ internal sealed class ResourceTurnRules
             Int128 odds = (Int128)range * _constructPercent / 100;
             if (_depletion) odds /= 10;
             if (_sim.Rng.Next(WorldTurnMath.Range(odds)) != 0) continue;
+            // A resource is the plot itself, beyond the improvement step's declared plot work.
+            _sim.WidenWriteWindow();
             plot.Bonus = bonus.Id;
             plot.DepletedMine = false;
             _bonusCounts[bonus.Id] = _bonusCounts.GetValueOrDefault(bonus.Id) + 1;
@@ -64,6 +66,7 @@ internal sealed class ResourceTurnRules
         if (RevealedEffect(plot, owner, improvement)?.MakesValid == true) return;
         Int128 odds = (Int128)improvement.DepletionRand * improvement.DepletionRand * _constructPercent / 100;
         if (odds <= 0 || _sim.Rng.Next(WorldTurnMath.Range(odds)) != 0) return;
+        _sim.WidenWriteWindow();
         plot.Improvement = _depletedMine.Id;
         plot.ImprovementTurns = 0;
         plot.DepletedMine = true;
@@ -80,6 +83,7 @@ internal sealed class ResourceTurnRules
         odds = odds * _worldSizeFactor / _bonusCounts[bonus];
         // Truncation to zero disables exhaustion, as in the reference.
         if (odds <= 0 || _sim.Rng.Next(WorldTurnMath.Range(odds)) != 0) return;
+        _sim.WidenWriteWindow();
         plot.Bonus = null;
         _bonusCounts[bonus]--;
         _sim.Events.Publish(new BonusDepleted(tile, bonus, owner));

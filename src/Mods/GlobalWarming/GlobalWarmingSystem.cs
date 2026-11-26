@@ -9,6 +9,11 @@ internal sealed class GlobalWarmingSystem : ITurnSystem
 {
     public string Id => "global_warming:warming";
     public int Order => TurnPhase.Environment;
+    /// <summary>Weighing the cities and rolling writes nothing: the rolls draw on the random stream, which is not
+    /// state a reader sees. A plot that degrades widens first (<see cref="Degrade"/>), so the cities' ledgers the
+    /// weighing reads are kept answers until then.</summary>
+    public IReadOnlyList<string>? WriteDomains => Nothing;
+    private static readonly IReadOnlyList<string> Nothing = [];
 
     public void Run(Simulation sim)
     {
@@ -81,6 +86,8 @@ internal sealed class GlobalWarmingSystem : ITurnSystem
             : !Water(sim, plot.Terrain) ? DegradeTerrain(sim, tile, plot)
             : (plot.Terrain, plot.Feature);
         if (nextTerrain == plot.Terrain && nextFeature == plot.Feature) return;
+        // A degraded plot changes its terrain or feature and loses its improvement: beyond any narrow declaration.
+        sim.WidenWriteWindow();
         if (Water(sim, nextTerrain) && !Water(sim, plot.Terrain)) plot.Route = null;
         plot.Improvement = null;
         plot.ImprovementTurns = 0;

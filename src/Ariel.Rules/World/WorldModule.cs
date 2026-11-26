@@ -56,6 +56,7 @@ public sealed class WorldModule : IPreparableMod
         context.RegisterStateDomain("sight", "Plots/*/Visible", "Plots/*/RevealedSnapshots");
         context.RegisterStateDomain("revealed", "Plots/*/Revealed");
         context.RegisterStateDomain("worker_orders", "Units/*/Extensions/world:worker_order");
+        context.RegisterPrivateStateDomain("plot_work", "Plots/*/BuildProgress", "Plots/*/ImprovementTurns");
         context.RegisterCommand<Ariel.Game.StartBuildCommand>("start_build");
         context.RegisterCommand<Ariel.Game.CancelBuildCommand>("cancel_build");
         context.TurnSystems.Register(workers);

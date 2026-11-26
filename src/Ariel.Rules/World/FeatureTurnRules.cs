@@ -61,6 +61,8 @@ internal sealed class FeatureTurnRules(Simulation sim, HashSet<TileId> worked)
 
     private void Change(TileId tile, string? previous, string? next)
     {
+        // A feature is the plot itself, beyond the improvement step's declared plot work.
+        sim.WidenWriteWindow();
         sim.State.Plots[tile.Value].Feature = next;
         sim.Events.Publish(new FeatureChanged(tile, previous, next));
     }

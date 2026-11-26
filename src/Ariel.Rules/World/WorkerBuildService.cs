@@ -15,6 +15,9 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
     private readonly BuildEligibility _eligibility = new(water);
     public string Id => "world:workers";
     public int Order => TurnPhase.Units;
+    /// <summary>A worker's turn adds build progress, spends the worker's moves and drops an order it can no longer
+    /// follow: plot work, units and worker orders. A build that completes widens first, since it changes the plot.</summary>
+    public IReadOnlyList<string>? WriteDomains => WorldStateDomains.WorkerTurnWrites;
     public string? Validate(Simulation sim, int player, int unit, string build) => _eligibility.Validate(sim, player, unit, build);
     public string? ValidateCancel(Simulation sim, int player, int unitId)
     {
@@ -118,6 +121,8 @@ internal sealed class WorkerBuildService(IWaterService water) : IWorkerBuildServ
     }
     private static void Complete(Simulation sim, Unit worker, TileId tile, S.BuildDef build)
     {
+        // A finished build changes the plot (its feature, improvement, route or terrain), the worker and sight.
+        sim.WidenWriteWindow();
         var plot = sim.State.Plots[tile.Value];
         if (plot.Feature is { } feature && build.FeatureEffects.TryGetValue(feature, out var effect) && effect.Remove)
         {
@@ -153,6 +158,9 @@ internal sealed class ImprovementTurnSystem : ITurnSystem
 {
     public string Id => "world:improvements";
     public int Order => TurnPhase.Map;
+    /// <summary>Improvements grow toward their upgrades: plot work. A feature that grows or disappears, a resource found
+    /// or exhausted and an upgrade that completes change the plot itself, and each widens first.</summary>
+    public IReadOnlyList<string>? WriteDomains => WorldStateDomains.PlotWorkOnly;
     public void Run(Simulation sim)
     {
         var worked = sim.State.Cities.SelectMany(c => c.Worked.Append(sim.State.Grid.TileAt(c.Position))).ToHashSet();
@@ -190,6 +198,7 @@ internal sealed class ImprovementTurnSystem : ITurnSystem
         time = time * 100 / Math.Max(1, 100 + modifier);
         plot.ImprovementTurns++;
         if (plot.ImprovementTurns < Math.Max(1, time)) return;
+        sim.WidenWriteWindow();
         plot.Improvement = next;
         plot.ImprovementTurns = 0;
     }
