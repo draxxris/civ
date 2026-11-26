@@ -52,6 +52,58 @@ public sealed class KeptQuery<TKey, TValue> where TKey : notnull
     }
 }
 
+/// <summary>Equality by content for kept answers that are collections, which <see cref="KeptQuery{TKey,TValue}"/>
+/// compares when verifying (<see cref="Simulation.VerifyWrites"/>): the default comparer would compare references and
+/// fail on every reuse.</summary>
+public static class KeptAnswerEquality
+{
+    /// <summary>The same keys with equal values, whatever the order.</summary>
+    public static IEqualityComparer<IReadOnlyDictionary<TKey, TValue>> Dictionary<TKey, TValue>() where TKey : notnull =>
+        DictionaryEquality<TKey, TValue>.Instance;
+
+    /// <summary>Equal items in the same order.</summary>
+    public static IEqualityComparer<IReadOnlyList<T>> Sequence<T>() => SequenceEquality<T>.Instance;
+
+    /// <summary>The same members.</summary>
+    public static IEqualityComparer<IReadOnlySet<T>> Set<T>() => SetEquality<T>.Instance;
+
+    private sealed class SetEquality<T> : IEqualityComparer<IReadOnlySet<T>>
+    {
+        public static readonly SetEquality<T> Instance = new();
+        public bool Equals(IReadOnlySet<T>? x, IReadOnlySet<T>? y) =>
+            ReferenceEquals(x, y) || x is not null && y is not null && x.Count == y.Count && x.SetEquals(y);
+        public int GetHashCode(IReadOnlySet<T> obj) => obj.Count;
+    }
+
+    private sealed class DictionaryEquality<TKey, TValue> : IEqualityComparer<IReadOnlyDictionary<TKey, TValue>> where TKey : notnull
+    {
+        public static readonly DictionaryEquality<TKey, TValue> Instance = new();
+        public bool Equals(IReadOnlyDictionary<TKey, TValue>? x, IReadOnlyDictionary<TKey, TValue>? y)
+        {
+            if (ReferenceEquals(x, y)) return true;
+            if (x is null || y is null || x.Count != y.Count) return false;
+            foreach (var (key, value) in x)
+                if (!y.TryGetValue(key, out var other) || !EqualityComparer<TValue>.Default.Equals(value, other)) return false;
+            return true;
+        }
+        public int GetHashCode(IReadOnlyDictionary<TKey, TValue> obj) => obj.Count;
+    }
+
+    private sealed class SequenceEquality<T> : IEqualityComparer<IReadOnlyList<T>>
+    {
+        public static readonly SequenceEquality<T> Instance = new();
+        public bool Equals(IReadOnlyList<T>? x, IReadOnlyList<T>? y)
+        {
+            if (ReferenceEquals(x, y)) return true;
+            if (x is null || y is null || x.Count != y.Count) return false;
+            for (int i = 0; i < x.Count; i++)
+                if (!EqualityComparer<T>.Default.Equals(x[i], y[i])) return false;
+            return true;
+        }
+        public int GetHashCode(IReadOnlyList<T> obj) => obj.Count;
+    }
+}
+
 /// <summary>One simulation's kept query answers (<see cref="KeptQuery{TKey,TValue}"/>): a table per query. The thread
 /// model and memory bound are the modifier cache's: AI scoring threads may read and fill it at once while nothing
 /// writes, entries are immutable, and it is emptied when it reaches <see cref="Capacity"/> entries, when the

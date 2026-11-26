@@ -4,17 +4,32 @@ using S = Ariel.Content.Schema;
 
 namespace Ariel.Rules.World;
 
-/// <summary>Plot group connectivity. Recomputed per query outside a read epoch, so tech, route and ownership edits never
-/// leave stale caches; inside one, where nothing can change, a city's counts are kept (<see cref="ConnectedCounts"/>).</summary>
+/// <summary>Plot group connectivity. Recomputed per query outside kernel work, so host edits of techs, routes and
+/// ownership never leave stale caches; inside a read epoch, where nothing can change, a city's counts are kept per
+/// thread, and inside kernel work a city's counts and reached plots are kept until something the flood reads is written
+/// (<see cref="ConnectedCounts"/>, <see cref="ConnectedTiles"/>).</summary>
 internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
 {
     public int ConnectedCount(Simulation sim, int player, int city, string bonus) => ConnectedCounts(sim, player, city).GetValueOrDefault(bonus);
     /// <summary>Inside a read epoch (<see cref="Simulation.OpenReadEpoch"/>) the state cannot change, so a thread keeps
     /// the epoch's answers: an AI segment asks the same city again for every view, eligibility check and exporter's
-    /// city group. Outside an epoch every call floods afresh.</summary>
+    /// city group. Across epochs, threads and writes the answer is also kept (<see cref="KeptQuery{TKey,TValue}"/>) until
+    /// something the flood reads is written: a city's production choice, a citizen reassignment or a plain unit move
+    /// leaves it standing. Outside kernel work every call floods afresh.</summary>
     public IReadOnlyDictionary<string, int> ConnectedCounts(Simulation sim, int player, int city) =>
-        _counts.GetOrAdd(sim, (player, city), 0, static (sim, key, _) => ConnectedCountsUncached(sim, key.Player, key.City));
+        _counts.GetOrAdd(sim, (player, city), this,
+            static (sim, key, network) => network._kept.Get(sim, key, () => ConnectedCountsUncached(sim, key.Player, key.City)));
     private readonly ReadEpochMemo<(int Player, int City), IReadOnlyDictionary<string, int>> _counts = new();
+    private readonly KeptQuery<(int Player, int City), IReadOnlyDictionary<string, int>> _kept =
+        new("world:connected_counts", new FloodReader(), KeptAnswerEquality.Dictionary<string, int>());
+    /// <summary>What the flood reads: plots' owners, terrain, routes, rivers, improvements, resources and which teams
+    /// revealed them, cities' places and owners, techs, wars, and units only through naval blockades. It reads none of
+    /// <see cref="CityStateDomains.NeverReadByBuildings"/> (owners only through plot culture's threshold, blockading
+    /// units only through the units domain's), the same promise building effects make for the counts they ask.</summary>
+    private sealed class FloodReader : IStateReader
+    {
+        public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.NeverReadByBuildings;
+    }
     private static IReadOnlyDictionary<string, int> ConnectedCountsUncached(Simulation sim, int player, int city)
     {
         var counts = new SortedDictionary<string, int>(StringComparer.Ordinal);
@@ -78,7 +93,13 @@ internal sealed class ResourceNetwork : IResourceNetwork, ICityConnectionService
         }
         return groups;
     }
-    public IReadOnlySet<TileId> ConnectedTiles(Simulation sim, int player, int city)
+    /// <summary>The plots the city's network reaches, kept as <see cref="ConnectedCounts"/> is: vicinity resources ask it
+    /// for every candidate building that needs one.</summary>
+    public IReadOnlySet<TileId> ConnectedTiles(Simulation sim, int player, int city) =>
+        _tiles.Get(sim, (player, city), () => ConnectedTilesUncached(sim, player, city));
+    private readonly KeptQuery<(int Player, int City), IReadOnlySet<TileId>> _tiles =
+        new("world:connected_tiles", new FloodReader(), KeptAnswerEquality.Set<TileId>());
+    private static IReadOnlySet<TileId> ConnectedTilesUncached(Simulation sim, int player, int city)
     {
         var target = sim.State.FindCity(city);
         if (target is null || target.Owner != player) return new HashSet<TileId>();
