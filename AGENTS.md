@@ -61,7 +61,7 @@ Launch example:
 ```sh
 Xvfb :99 -screen 0 1600x900x24 -nolisten tcp &
 DISPLAY=:99 ARIEL_TRACE_STARTUP=1 godot-mono --path src/Ariel.Godot -- --stage setup \
-    --screenshot /tmp/shots/s.png --frames 3
+    --screenshot /var/tmp/ariel/shots/s.png --frames 3
 pkill -f "Xvfb :99"
 ```
 

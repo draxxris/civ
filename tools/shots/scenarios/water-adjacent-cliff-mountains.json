@@ -1,5 +1,5 @@
 {
-  "// note": "Water-adjacent cliff mountains scenario: layout matching /tmp/cliffs.png with both bottom sides of left mountain cliffed",
+  "// note": "Water-adjacent cliff mountains scenario: layout matching /var/tmp/ariel/cliffs.png with both bottom sides of left mountain cliffed",
   "fill": { "terrain": "world:grass", "kind": "Flat" },
   "tiles": [
     { "at": [10, 10], "terrain": "world:plains", "kind": "Flat", "cliff": 48 },

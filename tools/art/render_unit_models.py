@@ -292,7 +292,7 @@ def main():
 
     textures_by_unit = resolve_unit_textures(names, args.source)
 
-    tmp_dir = Path("/tmp/ariel/model_shots")
+    tmp_dir = Path("/var/tmp/ariel/model_shots")
     tmp_dir.mkdir(parents=True, exist_ok=True)
     tasks_file = tmp_dir / "tasks.json"
     script_file = tmp_dir / "render_blender.py"
@@ -305,13 +305,13 @@ def main():
     script_file.write_text(BLENDER_SCRIPT)
 
     env = os.environ.copy()
-    pydeps = Path("/tmp/ariel/pydeps")
+    pydeps = Path("/var/tmp/ariel/pydeps")
     if not (pydeps / "numpy").exists():
         uv = shutil.which("uv")
         subprocess.run([uv, "pip", "install", "--target", str(pydeps), "numpy", "pillow"], check=True)
     env["PYTHONPATH"] = f"{pydeps}:{env['PYTHONPATH']}" if env.get("PYTHONPATH") else str(pydeps)
 
-    # Use PYTHONPATH=/tmp/ariel/pydeps in sys.path for PIL if needed
+    # Use PYTHONPATH=/var/tmp/ariel/pydeps in sys.path for PIL if needed
     if str(pydeps) not in sys.path:
         sys.path.insert(0, str(pydeps))
 

@@ -7,7 +7,7 @@ code is in `src/Ariel.Godot/Debug/DebugOptions.cs`.
 ## One capture
 
 ```sh
-mise run shot -- --focus hills --clean --pitch 30 --distance 9 --out-dir /tmp/shots --screenshot hills --stats
+mise run shot -- --focus hills --clean --pitch 30 --distance 9 --out-dir /var/tmp/ariel/shots --screenshot hills --stats
 ```
 
 - `--focus hills|forest|jungle|road|peak|river|city` centres on the best patch of that
@@ -32,7 +32,7 @@ scene) while the world builds and shaders compile, and each later pose `--pose-f
 
 ```sh
 mise run shot -- --stage game --world tiny --opponents 1 --open-screen diplomacy \
-  --press partner:1,give:Gold:more --screenshot /tmp/ariel/shots/deal.png --frames 3
+  --press partner:1,give:Gold:more --screenshot /var/tmp/ariel/shots/deal.png --frames 3
 ```
 
 `--open-screen` opens a screen a mod or a base module registers (here the Diplomacy
@@ -124,7 +124,7 @@ checked without launching the client. It needs Python 3 and Pillow, like the scr
 `tools/art`.
 
 ```sh
-python3 tools/shots/scenario_map.py tools/shots/scenarios/*.json --out /tmp/maps
+python3 tools/shots/scenario_map.py tools/shots/scenarios/*.json --out /var/tmp/ariel/maps
 ```
 
 Each file becomes a PNG named after the scenario. Files that are not scenarios, such as
@@ -166,7 +166,7 @@ mise run shot:mesh -- tools/shots/scenarios/waterfalls.json --focus 9,9 --layers
 `tools/Ariel.MeshPlot` sets the world up exactly as `mise run shot -- --scenario` does
 (a scene-sized world, seed 1 unless `--seed` says otherwise) and runs the game's own
 terrain, river and waterfall meshers, so the triangles are the ones on screen. It writes
-them to JSON; `tools/shots/mesh_plot.py` draws that file. Both land in `/tmp/ariel/mesh/`
+them to JSON; `tools/shots/mesh_plot.py` draws that file. Both land in `/var/tmp/ariel/mesh/`
 unless `--out` names the PNG.
 
 - `--focus COL,ROW` is the centre tile, in the scenario's own coordinates, the same as a
@@ -193,11 +193,11 @@ slope side, height and slope plans, and the peak in the land-to-ocean run. The s
 carries a hill at `10,9` and a peak at `10,16`.
 
 ```sh
-python3 tools/shots/cliffs-two-states.py --out /tmp/ariel/sheet.png
+python3 tools/shots/cliffs-two-states.py --out /var/tmp/ariel/sheet.png
 python3 tools/shots/cliffs-two-states.py --only end,corner --tuning CliffFillet=0.4
 ```
 
-The individual captures go to `/tmp/ariel/cliffs-two-states`. Pass `--shots-dir` to
+The individual captures go to `/var/tmp/ariel/cliffs-two-states`. Pass `--shots-dir` to
 change that, and `--skip-capture` to reassemble existing captures without launching the
 game.
 
@@ -216,7 +216,7 @@ units:
 stacks:
 
 ```sh
-mise run shot -- --stage map --scenario tools/shots/scenarios/unit-banners.json --world tiny --pitch 50 --distance 8 --out-dir /tmp/banners --screenshot banners
+mise run shot -- --stage map --scenario tools/shots/scenarios/unit-banners.json --world tiny --pitch 50 --distance 8 --out-dir /var/tmp/ariel/banners --screenshot banners
 ```
 
 ## City buildings
@@ -245,12 +245,12 @@ and over a lone hill next to a highway. `roads-bridges.json` has every land rout
 crossing one river.
 
 ```sh
-mise run shot -- --shots tools/shots/poses/roads-poses.json --scenario tools/shots/scenarios/roads-all.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/poses/roads-transitions-poses.json --scenario tools/shots/scenarios/roads-transitions.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/poses/roads-junctions-ground-poses.json --scenario tools/shots/scenarios/roads-junctions-ground.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/poses/roads-junctions-raised-poses.json --scenario tools/shots/scenarios/roads-junctions-raised.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/poses/roads-hills-poses.json --scenario tools/shots/scenarios/roads-hills.json --world tiny --clean --out-dir /tmp/roads
-mise run shot -- --shots tools/shots/poses/roads-bridges-poses.json --scenario tools/shots/scenarios/roads-bridges.json --world tiny --clean --out-dir /tmp/roads
+mise run shot -- --shots tools/shots/poses/roads-poses.json --scenario tools/shots/scenarios/roads-all.json --world tiny --clean --out-dir /var/tmp/ariel/roads
+mise run shot -- --shots tools/shots/poses/roads-transitions-poses.json --scenario tools/shots/scenarios/roads-transitions.json --world tiny --clean --out-dir /var/tmp/ariel/roads
+mise run shot -- --shots tools/shots/poses/roads-junctions-ground-poses.json --scenario tools/shots/scenarios/roads-junctions-ground.json --world tiny --clean --out-dir /var/tmp/ariel/roads
+mise run shot -- --shots tools/shots/poses/roads-junctions-raised-poses.json --scenario tools/shots/scenarios/roads-junctions-raised.json --world tiny --clean --out-dir /var/tmp/ariel/roads
+mise run shot -- --shots tools/shots/poses/roads-hills-poses.json --scenario tools/shots/scenarios/roads-hills.json --world tiny --clean --out-dir /var/tmp/ariel/roads
+mise run shot -- --shots tools/shots/poses/roads-bridges-poses.json --scenario tools/shots/scenarios/roads-bridges.json --world tiny --clean --out-dir /var/tmp/ariel/roads
 ```
 
 `--stats` reports `roads` (draped ribbons) and `route_parts` (decks, supports and masts)

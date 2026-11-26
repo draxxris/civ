@@ -382,13 +382,13 @@ change that covers the face but turns the top into a fence is not finished.
 
 - Run `mise run help` first. Use the mise tasks; do not call `godot-mono`, `dotnet` or
   `tools/*.sh` directly when a task covers the job.
-- Write temporary files to `/tmp/ariel`.
+- Write temporary files to `/var/tmp/ariel`.
 - Use `Xvfb`, not the Wayland desktop, so the client is not throttled and frame timing
   is real:
 
 ```sh
 Xvfb :99 -screen 0 1600x900x24 -nolisten tcp &
-DISPLAY=:99 mise run shot -- --stage world --clean --screenshot smoke --out-dir /tmp/ariel/smoke
+DISPLAY=:99 mise run shot -- --stage world --clean --screenshot smoke --out-dir /var/tmp/ariel/smoke
 pkill -f "Xvfb :99"
 ```
 
@@ -403,7 +403,7 @@ mise run shot -- \
   --scenario tools/shots/scenarios/cliffs-land.json \
   --world tiny --clean --frames 3 \
   --focus-tile 10,11 --yaw 0 --pitch 10 --distance 1.6 \
-  --out-dir /tmp/ariel/cliff-shots --screenshot land-low
+  --out-dir /var/tmp/ariel/cliff-shots --screenshot land-low
 ```
 
 - `--focus-tile col,row` uses the coordinates written in the scene file. The scene is
@@ -440,9 +440,9 @@ previous shot's value, so a file can sweep one thing.
 
 ```sh
 mise run shot -- \
-  --shots /tmp/ariel/cliff-poses.json \
+  --shots /var/tmp/ariel/cliff-poses.json \
   --scenario tools/shots/scenarios/cliffs-land.json --world tiny --clean --frames 3 \
-  --out-dir /tmp/ariel/cliff-shots
+  --out-dir /var/tmp/ariel/cliff-shots
 ```
 
 Debug modes persist across shots. If one shot uses `terrainDebug`, set
@@ -532,13 +532,13 @@ Two captures worth making for every cliff change, from the same plan pose:
 mise run shot -- \
   --scenario tools/shots/scenarios/cliffs-land.json --clean --frames 3 \
   --focus-tile 10,11 --pitch 89 --distance 6 --terrain-debug bands \
-  --out-dir /tmp/ariel/cliff-shots --screenshot land-height
+  --out-dir /var/tmp/ariel/cliff-shots --screenshot land-height
 
 # White lattice: mode 7, same pose.
 mise run shot -- \
   --scenario tools/shots/scenarios/cliffs-land.json --clean --frames 3 \
   --focus-tile 10,11 --pitch 89 --distance 6 --terrain-debug lattice \
-  --out-dir /tmp/ariel/cliff-shots --screenshot land-lattice
+  --out-dir /var/tmp/ariel/cliff-shots --screenshot land-lattice
 ```
 
 These are scene-only captures (no `--world`), so the background does not add generated
@@ -553,7 +553,7 @@ blue hex borders, and reports a scene whose authored cliffs break the rules.
 
 ```sh
 python3 tools/shots/scenario_map.py tools/shots/scenarios/cliffs-land.json \
-  --world tiny --hex 40 --out /tmp/ariel/cliff-maps
+  --world tiny --hex 40 --out /var/tmp/ariel/cliff-maps
 ```
 
 This is the fastest way to check that a mask names the edges you think it does.
@@ -572,9 +572,9 @@ renderer. If a scene names no position, pass `--map` to say what map it sits on.
 
 ```sh
 mise run shot:compare -- \
-  /tmp/ariel/cliff-shots/before.png \
-  /tmp/ariel/cliff-shots/after.png \
-  /tmp/ariel/cliff-shots/diff.png
+  /var/tmp/ariel/cliff-shots/before.png \
+  /var/tmp/ariel/cliff-shots/after.png \
+  /var/tmp/ariel/cliff-shots/diff.png
 ```
 
 This writes a side-by-side plus difference image and prints the differing pixel count.
@@ -592,7 +592,7 @@ specific:
   ramp. This is the step-versus-slope test.
 - `tools/shots/scenarios/cliffs-two-states.json`: a land-to-land run and a land-to-water
   run, so the inland wall and the coastal wall can be compared in one capture.
-  `python3 tools/shots/cliffs-two-states.py --out /tmp/ariel/sheet.png` captures all its
+  `python3 tools/shots/cliffs-two-states.py --out /var/tmp/ariel/sheet.png` captures all its
   poses (ends, corners, both sides, height and slope plans) in one Xvfb launch; use
   `--only name,name` for a subset and `--tuning Name=value` for an A/B.
 - `tools/shots/scenarios/cliff-river.json`: a river crossing a cliff, for the waterfall

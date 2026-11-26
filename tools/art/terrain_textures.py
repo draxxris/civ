@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Prepare generated terrain albedo and height PNGs. Requires Pillow and NumPy.
 
-Usage: python3 tools/art/terrain_textures.py --selection /tmp/p5/selection.json
+Usage: python3 tools/art/terrain_textures.py --selection /var/tmp/ariel/p5/selection.json
 The selection JSON maps each layer name to its selected candidate image path.
 Candidates and contact sheets stay outside the repository.
 """
@@ -95,7 +95,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--selection", type=Path, required=True)
     parser.add_argument("--output", type=Path, default=Path("src/Ariel.Rules/World/art/terrain"))
-    parser.add_argument("--work", type=Path, default=Path("/tmp/p5/contact-sheets"))
+    parser.add_argument("--work", type=Path, default=Path("/var/tmp/ariel/p5/contact-sheets"))
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     args.work.mkdir(parents=True, exist_ok=True)

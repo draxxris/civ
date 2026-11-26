@@ -194,7 +194,7 @@ The widget gallery shows every skinned control in each of its states. It loads n
 mise run start:ui-gallery
 
 xvfb-run -a godot-mono --rendering-driver opengl3 --path src/Ariel.Godot --resolution 1180x760 \
-  res://UiGallery.tscn -- --screenshot /tmp/gallery.png --popup
+  res://UiGallery.tscn -- --screenshot /var/tmp/ariel/gallery.png --popup
 ```
 
 `--popup` opens the dropdown before the capture. `--frames N` sets the frame wait
@@ -224,7 +224,7 @@ timeout 30 xvfb-run -a godot-mono --headless --path src/Ariel.Godot --quit-after
 
 xvfb-run -a -s "-screen 0 1600x900x24" env LIBGL_ALWAYS_SOFTWARE=1 \
   godot-mono --rendering-driver opengl3 --path src/Ariel.Godot --resolution 1600x900 \
-  -- --screenshot /tmp/ariel-setup.png --stage setup --frames 60
+  -- --screenshot /var/tmp/ariel/setup.png --stage setup --frames 60
 ```
 
 Screenshot stages: `setup`, `map`, `map-city`, `city`, `research`, `civics`, `path`,

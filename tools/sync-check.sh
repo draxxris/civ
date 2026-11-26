@@ -3,7 +3,7 @@
 set -u
 dotnet build tools/Ariel.SyncCheck --configuration Release -v quiet -nologo || exit 1
 exe=tools/Ariel.SyncCheck/bin/Release/net10.0/Ariel.SyncCheck
-out=/tmp/ariel/sync-check
+out=/var/tmp/ariel/sync-check
 mkdir -p "$out"
 DOTNET_PROCESSOR_COUNT=1 "$exe" hash-trace "$@" > "$out/serial.txt" & a=$!
 "$exe" hash-trace "$@" > "$out/parallel.txt" & b=$!

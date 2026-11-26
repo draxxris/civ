@@ -9,7 +9,7 @@ namespace Ariel.Mods.Tests;
 public sealed class ParallelAiPlanningTests(LoadedMods mods) : IClassFixture<LoadedMods>
 {
     private static string TempFile() =>
-        Path.Combine(Directory.CreateDirectory("/tmp/ariel").FullName, $"preferences-{Guid.NewGuid():N}.json");
+        Path.Combine(Directory.CreateDirectory("/var/tmp/ariel").FullName, $"preferences-{Guid.NewGuid():N}.json");
 
     private NewGameOptions DuelOptions() =>
         mods.Catalog.DefaultOptions() with { WorldSize = "foundation:worldsize_duel", Opponents = 1 };

@@ -2,14 +2,14 @@
 """Capture the cliffs-two-states scene in one launch and assemble a contact sheet.
 
     python3 tools/shots/cliffs-two-states.py
-    python3 tools/shots/cliffs-two-states.py --out /tmp/ariel/sheet.png --shots-dir /tmp/ariel/cliff-shots
+    python3 tools/shots/cliffs-two-states.py --out /var/tmp/ariel/sheet.png --shots-dir /var/tmp/ariel/cliff-shots
     python3 tools/shots/cliffs-two-states.py --skip-capture
     python3 tools/shots/cliffs-two-states.py --only end,west --tuning CliffRamp=2
 
 The scene is tools/shots/scenarios/cliffs-two-states.json. Every pose is taken from one
 `mise run shot --shots` launch, which captures on a private Xvfb display (no Wayland
 throttling) and builds only when the code changed. The sheet goes to docs/screenshots/cliffs-two-states.png
-unless --out says otherwise; the individual captures go to /tmp/ariel/cliffs-two-states.
+unless --out says otherwise; the individual captures go to /var/tmp/ariel/cliffs-two-states.
 """
 import argparse
 import json
@@ -22,7 +22,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 REPO = Path(__file__).resolve().parents[2]
 SCENE = REPO / "tools/shots/scenarios/cliffs-two-states.json"
 DEFAULT_OUT = REPO / "docs/screenshots/cliffs-two-states.png"
-DEFAULT_SHOTS = Path("/tmp/ariel/cliffs-two-states")
+DEFAULT_SHOTS = Path("/var/tmp/ariel/cliffs-two-states")
 
 # Yaw turns counter-clockwise from north: 0 looks north, 90 west, 180 south, 270 east.
 # Poses for one --shots launch. A missing field keeps the previous pose's value, so every

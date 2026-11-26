@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Join the terrain feature captures into one labelled contact sheet.
 
-    python3 tools/shots/terrain_features_sheet.py /tmp/tf docs/screenshots/terrain-features.png
+    python3 tools/shots/terrain_features_sheet.py /var/tmp/ariel/tf docs/screenshots/terrain-features.png
 """
 import sys
 from pathlib import Path

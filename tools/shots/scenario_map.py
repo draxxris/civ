@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Draw a top-down hex map of a capture scenario as a PNG.
 
-    python3 tools/shots/scenario_map.py tools/shots/scenarios/*.json --out /tmp/maps
+    python3 tools/shots/scenario_map.py tools/shots/scenarios/*.json --out /var/tmp/ariel/maps
     python3 tools/shots/scenario_map.py tools/shots/scenarios/cliffs-land.json --world tiny --hex 40
 
 The scene files are the ones the Godot client loads with `--scenario` (format in
@@ -572,8 +572,8 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__.splitlines()[0],
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("scenarios", nargs="+", type=Path, help="scenario JSON files (see tools/shots/scenarios/)")
-    parser.add_argument("--out", type=Path, default=Path("/tmp/scenario-maps"),
-                        help="output directory (default: /tmp/scenario-maps)")
+    parser.add_argument("--out", type=Path, default=Path("/var/tmp/ariel/scenario-maps"),
+                        help="output directory (default: /var/tmp/ariel/scenario-maps)")
     parser.add_argument("--world", default="tiny", help="world size: duel, tiny, small, standard, large, huge, giant, gigantic")
     parser.add_argument("--size", help="grid size as COLUMNSxROWS, overriding --world")
     parser.add_argument("--hex", type=int, default=32, help="hex radius in output pixels (default: 32)")

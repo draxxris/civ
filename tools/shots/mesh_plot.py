@@ -50,7 +50,7 @@ def main() -> int:
     p.add_argument("--seed", type=int, default=1, help="game seed, as mise run shot -- --seed (default 1)")
     p.add_argument("--layers", default=",".join(LAYERS), help=f"comma list of {', '.join(LAYERS)} (default all)")
     p.add_argument("--size", type=int, default=1000, help="plot width and height in pixels, beside a key panel (default 1000)")
-    p.add_argument("--out", help="PNG to write (default /tmp/ariel/mesh/<scenario>-<focus>.png)")
+    p.add_argument("--out", help="PNG to write (default /var/tmp/ariel/mesh/<scenario>-<focus>.png)")
     a = p.parse_args()
 
     layers = [l.strip() for l in a.layers.split(",") if l.strip()]
@@ -59,7 +59,7 @@ def main() -> int:
         p.error(f"unknown layer(s): {', '.join(unknown)}")
     scenario = (here / a.scenario).resolve()
     stem = scenario.stem + (f"-{a.focus.replace(',', '-')}" if a.focus else "") + ("-fall" if a.fall else "")
-    out = (here / a.out).resolve() if a.out else Path("/tmp/ariel/mesh") / f"{stem}.png"
+    out = (here / a.out).resolve() if a.out else Path("/var/tmp/ariel/mesh") / f"{stem}.png"
     out.parent.mkdir(parents=True, exist_ok=True)
     dump = out.with_suffix(".json")
 

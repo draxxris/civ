@@ -4,7 +4,7 @@
 # land in the output directory. Each client gets --limit seconds (default 600) before it is stopped.
 #   mise run check:multiplayer -- [--turns N] [--world duel] [--opponents N] [--out-dir DIR] [--limit SECONDS]
 set -u
-turns=3; world=duel; opponents=1; limit=600; out=/tmp/ariel/mp-smoke; port=$((47000 + RANDOM % 900))
+turns=3; world=duel; opponents=1; limit=600; out=/var/tmp/ariel/mp-smoke; port=$((47000 + RANDOM % 900))
 while [ $# -gt 0 ]; do
   case "$1" in
     --turns) turns=$2; shift 2 ;;
