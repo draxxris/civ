@@ -54,8 +54,13 @@ internal sealed partial class ReligionService
             return buildings;
         }
 
-        /// <summary>Decay removes buildings, so its city's cached activity is stale afterwards.</summary>
-        public void Forget(City city) => _active.Remove(city.Id);
+        /// <summary>Decay removes buildings, so its city's cached activity is stale afterwards; its connections are
+        /// asked again too, as they were before decay asked them through the pass.</summary>
+        public void Forget(City city)
+        {
+            _active.Remove(city.Id);
+            _connected.Remove(city.Id);
+        }
 
         public bool TradeConnected(City city, City source)
         {
