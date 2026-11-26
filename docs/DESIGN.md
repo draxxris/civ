@@ -2987,8 +2987,9 @@ declare both sides.
   property. A field belongs to at most one domain; overlapping registrations are
   rejected. Everything no domain names is the remainder. At most 64 domains, one bit
   each. A **private** domain (`RegisterPrivateStateDomain`) holds fields that no
-  modifier source reads, nor anything a source asks: only its own module's turn
-  systems, commands and planners read them. Every reader therefore counts it as unread
+  modifier source or kept query reads, nor anything either asks: turn systems, commands,
+  their validation, unit calculations (which are never kept) and planners may read them,
+  in any module. Every reader therefore counts it as unread
   without naming it. Examples are the AI's saved intent (`ai:intent`), research progress
   (`research:progress`), the government timers (`government:timers`), revolution
   instability (`revolution:instability`) and great-people points
@@ -3232,9 +3233,13 @@ declare both sides.
         which moves it to the end of the unit list. A field path cannot name a
         collection's membership or order, and a path over `Units` would overlap every unit
         domain.
-      - Broad writes by nature: deals, peace, great person missions, ranged attacks, and
-        the systems that resolve barbarians, corporations, councils, events, diplomacy and
-        victory once a turn.
+      - Broad writes by nature: deals, peace, great person missions and ranged attacks
+        write what kept readers read (trades, wars, buildings, techs, units).
+      - The once-a-turn map systems (barbarians, corporations, councils, events,
+        diplomacy, relations, religious attitudes, victory and others): several write only
+        their own state or nothing, but declaring them keeps no answer, because the
+        rollover window follows them and the chain's completions, faith spreads and
+        discoveries have already widened before them.
       - The rollover window: the turn ends and starts and the turn number changes, which
         every turn-based reader sees.
   - An undeclared source still counts private domains as unread, so it survives their

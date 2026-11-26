@@ -4055,24 +4055,19 @@ Per turn at s550, under the probes (whose timings run high).
 
 #### Results
 
-How the runs were made: 8 turns per run, with `DOTNET_TC_CallCountingDelayMs=0`. Figures
-are per turn over the last 6 turns, summed over threads. The quiet round ran at load 1.0
-to 1.3 with the final code before its version bump, which plays identically. The two
-alternating rounds ran at load 4.3 to 5.4, from other work on the machine, so their
-times are high and are given only as ranges.
+How the runs were made: base and final alternated, base then final on each save, in two
+rounds. Each run was 8 turns, at load 1.8 to 2.8, with `DOTNET_TC_CallCountingDelayMs=0`.
+Figures are per turn over the last 6 turns, summed over threads. Each cell gives both
+runs.
 
 | Subject | Base | Final | Change |
 | :-- | --: | --: | --: |
-| s550, `modifiers:collect` (quiet round) | 168.4 ms | 147.8 ms | −12% |
-| s550, `modifiers:collect` (loaded rounds) | 190.6–196.1 ms | 148.0–155.0 ms | −21 to −22% |
-| s550, `modifiers:collect` allocation | 132.7 MiB | 116.8 MiB | −12% |
-| s550, `global_warming:warming` (loaded rounds) | 22.0–22.1 ms, 13.5 MiB | 17.4–18.4 ms, 12.0 MiB | −17 to −21% |
-| s550, wall per turn (quiet round) | 582 ms | 558 ms | −4% |
-| s550, allocation per turn | 528 MiB | 508 MiB | −4% |
-| s450, `modifiers:collect` (quiet round) | 121.7 ms | 96.8 ms | −20% |
-| s450, `modifiers:collect` (loaded rounds) | 123.7–144.2 ms | 98.0–99.1 ms | −20 to −31% |
-| s450, `modifiers:collect` allocation | 85.7 MiB | 68.3 MiB | −20% |
-| s450, wall per turn (quiet round) | 432 ms | 414 ms | −4% |
+| s550, `modifiers:collect` | 176.4 / 168.7 ms, 132.6 MiB | 147.8 / 145.5 ms, 116.6 MiB | −14 to −16%, −12% alloc |
+| s550, `global_warming:warming` | 19.0 / 18.9 ms, 13.5 MiB | 17.2 / 16.5 ms, 12.0 MiB | −10%, −11% alloc |
+| s550, wall per turn | 585 / 582 ms | 555 / 554 ms | −5% |
+| s550, allocation per turn | 527 MiB | 507 MiB | −4% |
+| s450, `modifiers:collect` | 115.2 / 118.7 ms, 85.6 MiB | 93.5 / 100.2 ms, 68.2 MiB | −16 to −19%, −20% alloc |
+| s450, wall per turn | 427 / 431 ms | 404 / 417 ms | −3 to −5% |
 | s450, allocation per turn | 377 MiB | 358 MiB | −5% |
 
 The number of collects is unchanged (3,482 a turn at s550): the work saved is
@@ -4117,14 +4112,15 @@ All on the final code:
 - New tests:
   - ending a turn writes only the kernel's private turn progress;
   - a promotion writes only units and sight, an activity only units, and ending a
-    blockade widens to everything.
+    blockade widens to everything;
+  - puppet work, the draft reset and defense recovery, given every field they reset,
+    write only their declared domains (a wrong declaration fails it).
 - `mise run test`, `mise run check:sync`, `mise run test:e2e`, `mise run test:worldgen`
   and `mise run build:game` pass.
 - **Resting on inspection**, because no AI game exercises them:
   - Starting a blockade through `SetUnitActivityCommand`: it is the same widening as
     ending one, which a test covers.
-  - The rarely written private fields: draft flags, defense damage, and the Cities player
-    state created on its first reset (which widens).
+  - The Cities player state created on its first draft reset, which widens.
 
 #### Still Slow, Ranked
 
@@ -4235,6 +4231,6 @@ passes:
 | **Pass 26: Modifier Collection** | `9854783c`..`74c455b8` | Four-player AI game, last 6 of 8 turns from turn 551, tier-up pinned | `modifiers:collect` CPU | 214–216 ms | 172–173 ms | **-20%** |
 |                                         |                      | Same                                                       | Wall time (profiled)     |         623–626 ms |         585–589 ms |                                   **-6%** |
 |                                         |                      | Same                                                       | Managed bytes per turn   |            575 MiB |            527 MiB |                                   **-8%** |
-| **Pass 27: Honest Write Model** | `d513901b`..`33dc3298` | Four-player AI game, last 6 of 8 turns from turn 551, JIT pinned | `modifiers:collect` CPU | 168 ms | 148 ms | **-12%** |
-|                                         |                      | Same, from turn 451                                        | `modifiers:collect` CPU  |             122 ms |              97 ms |                                  **-20%** |
+| **Pass 27: Honest Write Model** | `d513901b`..`33dc3298` | Four-player AI game, last 6 of 8 turns from turn 551, JIT pinned | `modifiers:collect` CPU | 169–176 ms | 146–148 ms | **-14 to -16%** |
+|                                         |                      | Same, from turn 451                                        | `modifiers:collect` CPU  |         115–119 ms |         94–100 ms |                           **-16 to -19%** |
 |                                         |                      | Same, from turn 551                                        | Remainder stamps per turn |               170 |                43 |                                  **-75%** |

@@ -9,9 +9,10 @@ namespace Ariel.Content;
 /// the field (<c>Cities/*/Worked</c>, <c>Cities/*/Extensions/{module}:{component}/{field}</c>). The paths are used only
 /// to verify declarations; they do not route writes. A field belongs to at most one domain, and everything that no
 /// domain names is the state's remainder, which every reader reads.</summary>
-/// <para>A private domain (<see cref="Private"/>) is read only by its own module's turn systems, commands and planning
-/// code, never by a modifier source or by anything a source asks (<see cref="IStateReader"/>): the computer player's
-/// saved intent, or a tally only its own turn system spends, for instance. Every reader counts it as unread without
+/// <para>A private domain (<see cref="Private"/>) is never read by a modifier source or kept query, nor by anything
+/// either asks (<see cref="IStateReader"/>); turn systems, commands and their validation, unit calculations (never
+/// kept) and planning code of any module may read it: the computer player's saved intent, or a tally only its own
+/// turn system spends, for instance. Every reader counts it as unread without
 /// naming it.</para>
 public sealed record StateDomain(string Id, IReadOnlyList<string> Paths, bool Private = false);
 
