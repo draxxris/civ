@@ -30,7 +30,9 @@ it as a known failure.
 
 ## Temporary Files
 
-Write temporary files to `/tmp/ariel`.
+Write temporary files to `/var/tmp/ariel`. Do not use `/tmp`: it is a RAM-backed tmpfs
+here, so large saves, profiles and extracted trees count against memory and can trigger
+the out-of-memory killer.
 
 ## Testing
 
