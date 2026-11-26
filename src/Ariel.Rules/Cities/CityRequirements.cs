@@ -45,11 +45,19 @@ internal sealed class CityRequirements : ICityRequirementService
             _ => sim.Rules().Water.IsFreshWater(sim, t)
         };
     }
-    private bool Vicinity(Requirement.Leaf leaf, RequirementContext context)
+    private static bool Vicinity(Requirement.Leaf leaf, RequirementContext context)
     {
         if (context.City is not { } city) return false;
-        return VicinityBonuses.Has(context.Sim, city, leaf.Id, BuildingEffects.Bonuses(context.Sim, city), leaf.Count ?? 1);
+        var sim = context.Sim;
+        int count = leaf.Count ?? 1;
+        return VicinityKept.Get(sim, (city.Id, leaf.Id, count),
+            () => VicinityBonuses.Has(sim, city, leaf.Id, BuildingEffects.Bonuses(sim, city), count));
     }
+    /// <summary>A vicinity resource answer resolves the city's resource set, floods its network and walks its work area,
+    /// and production eligibility asks it for every candidate building from every scoring thread. It follows what
+    /// building effects follow for the same question, so it is kept under their declaration.</summary>
+    private static readonly KeptQuery<(int City, string Bonus, int Count), bool> VicinityKept =
+        new("cities:vicinity_bonus", new CityData.BuildingsReader());
 }
 internal sealed class BuildingRequirement(string kind) : IContentRequirementEvaluator
 {

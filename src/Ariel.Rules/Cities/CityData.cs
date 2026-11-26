@@ -24,8 +24,11 @@ internal static class CityData
     /// <summary>Constructed and granted buildings: every building the city could run. The running sets below only
     /// narrow it.</summary>
     internal static IEnumerable<string> Candidates(Simulation sim, City city) => city.Buildings.Concat(FreeBuildings(sim, city));
+    /// <summary>The buildings the city runs. Kept across scopes, threads and writes that leave buildings, grants and power
+    /// alone, as <see cref="EffectiveBuildings"/> is: production eligibility asks it of each city once per scoring
+    /// thread.</summary>
     internal static IEnumerable<S.BuildingDef> Active(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
-        CityReadScope.Memo(scope.Active, city, () =>
+        CityReadScope.Memo(scope.Active, city, () => ActiveKept.Get(sim, city.Id, () =>
         {
             // Power is a whole-area question (clean power anywhere in the team's area, or the city's own sources and
             // their resources), so it is asked only of a city that holds a building needing it.
@@ -33,15 +36,17 @@ internal static class CityData
             var buildings = Candidates(sim, city)
                 .Where(id => !sim.Content.Get<S.BuildingDef>(id).RequiresPower || (powered ??= IsPowered(sim, city)));
             return CityBuildingRules.Active(sim, city, buildings);
-        }));
+        })));
+    private static readonly KeptQuery<int, IReadOnlyList<S.BuildingDef>> ActiveKept =
+        new("cities:active_buildings", new BuildingsReader(), KeptAnswerEquality.Sequence<S.BuildingDef>());
     // Power sources do not require power. Exclude consumers before resolving sources and their resources.
     internal static IReadOnlyList<S.BuildingDef> ActiveWithoutPower(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
         CityReadScope.Memo(scope.ActiveWithoutPower, city, () => CityBuildingRules.Active(sim, city, Candidates(sim, city)
             .Where(id => !sim.Content.Get<S.BuildingDef>(id).RequiresPower))));
-    /// <summary>What power answers read: cities' owners, places and running buildings, with those buildings'
-    /// requirements, grants and resources, as building effects do (<see cref="BuildingEffects"/>), and nothing a turn
-    /// tallies, units, sight or worker orders.</summary>
-    private sealed class PowerReader : IStateReader
+    /// <summary>What power and building-set answers read: cities' owners, places and running buildings, with those
+    /// buildings' requirements, grants and resources, as building effects do (<see cref="BuildingEffects"/>), and nothing
+    /// a turn tallies, units, sight or worker orders.</summary>
+    internal sealed class BuildingsReader : IStateReader
     {
         public IReadOnlyList<string>? UnreadDomains(ContentDb content) =>
             CityStateDomains.UnreadThroughBuildings(CityStateDomains.NeverReadByBuildings, content);
@@ -49,8 +54,8 @@ internal static class CityData
     // Every wellbeing, building and yield query asks for power, each in a read span of its own, and the area question
     // resolves the buildings of every city the team has in the area: kept across writes, it is answered once per
     // building, grant or resource change instead.
-    private static readonly KeptQuery<(int Team, int Area), bool> AreaCleanPowerKept = new("cities:area_clean_power", new PowerReader());
-    private static readonly KeptQuery<int, (bool Powered, bool Dirty)> LocalPowerKept = new("cities:local_power", new PowerReader());
+    private static readonly KeptQuery<(int Team, int Area), bool> AreaCleanPowerKept = new("cities:area_clean_power", new BuildingsReader());
+    private static readonly KeptQuery<int, (bool Powered, bool Dirty)> LocalPowerKept = new("cities:local_power", new BuildingsReader());
     internal static bool IsAreaCleanPower(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
     {
         int team = sim.TeamOf(city.Owner).Id, area = sim.State.PlotAt(city.Position).AreaId;
@@ -73,10 +78,14 @@ internal static class CityData
         IsAreaCleanPower(sim, city) || LocalPower(sim, city).Powered;
     internal static bool IsDirtyPower(Simulation sim, City city) => !IsAreaCleanPower(sim, city) && LocalPower(sim, city).Dirty;
     /// <summary>Every building the city runs, free grants included. The whole-empire building, grant and power work is
-    /// shared by the scope: an eligibility pass asks this once per candidate and would otherwise repeat it 600 times.</summary>
+    /// shared by the scope: an eligibility pass asks this once per candidate and would otherwise repeat it 600 times.
+    /// It is also kept across scopes, threads and writes that leave buildings and grants alone: an empire-wide building
+    /// class requirement asks it of every city the player owns, from every AI scoring thread.</summary>
     internal static IReadOnlyList<S.BuildingDef> EffectiveBuildings(Simulation sim, City city) => CityReadScope.Run(sim, scope =>
-        CityReadScope.Memo(scope.Effective, city,
-            () => CityBuildingRules.Effective(sim, city, city.Buildings.Concat(FreeBuildings(sim, city))).ToArray()));
+        CityReadScope.Memo(scope.Effective, city, () => EffectiveKept.Get(sim, city.Id,
+            () => CityBuildingRules.Effective(sim, city, city.Buildings.Concat(FreeBuildings(sim, city))).ToArray())));
+    private static readonly KeptQuery<int, IReadOnlyList<S.BuildingDef>> EffectiveKept =
+        new("cities:effective_buildings", new BuildingsReader(), KeptAnswerEquality.Sequence<S.BuildingDef>());
     internal static string? ResolveBuilding(Simulation sim, City city, string category)
     {
         string civilization = sim.State.PlayerById(city.Owner).Civilization;

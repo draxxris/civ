@@ -77,9 +77,14 @@ internal sealed class BuildingEffects : IModifierSource
     }
     /// <summary>Connected copies after exchanges with other players, plus what the city's own rules supply it
     /// (<see cref="ResourceAccess.Supplied"/>), so this agrees with <see cref="ResourceAccess.Counts"/>. Only resources
-    /// the owner exchanges need a second lookup.</summary>
+    /// the owner exchanges need a second lookup. Kept across scopes, threads and writes as well
+    /// (<see cref="KeptQuery{TKey,TValue}"/>), under this source's own promise: every vicinity requirement and power
+    /// question of every scoring thread asks it.</summary>
     private static IReadOnlyDictionary<string, int> Available(Simulation sim, City city) =>
-        CityReadScope.Run(sim, scope => CityReadScope.Memo(scope.Available, city, () => AvailableUncached(sim, city)));
+        CityReadScope.Run(sim, scope => CityReadScope.Memo(scope.Available, city,
+            () => AvailableKept.Get(sim, city.Id, () => AvailableUncached(sim, city))));
+    private static readonly KeptQuery<int, IReadOnlyDictionary<string, int>> AvailableKept =
+        new("cities:available_resources", new CityData.BuildingsReader(), KeptAnswerEquality.Dictionary<string, int>());
     private static IReadOnlyDictionary<string, int> AvailableUncached(Simulation sim, City city)
     {
         var network = sim.Rules().Resources;

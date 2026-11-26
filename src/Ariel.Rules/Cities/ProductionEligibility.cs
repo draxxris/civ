@@ -87,13 +87,44 @@ internal static class ProductionEligibility
         // An unlimited class costs nothing to check, and most of the catalog declares no limit at all. Without this an
         // eligibility pass walked every unit and every city's buildings for each of them.
         if (limits.World < 0 && limits.Team < 0 && limits.Player < 0) return;
-        var owners = units ? sim.State.Units.Where(u => sim.Content.Get<S.UnitDef>(u.Type).DefaultUnit == category).Select(u => u.Owner)
-            : sim.State.Cities.SelectMany(c => c.Buildings.Where(b => sim.Content.Get<S.BuildingDef>(b).DefaultBuilding == category).Select(_ => c.Owner));
-        var all = owners.ToArray();
-        CheckLimit(failures, limits.World, all.Length, "WorldLimitReached");
+        IReadOnlyList<int> all = units
+            ? sim.State.Units.Where(u => sim.Content.Get<S.UnitDef>(u.Type).DefaultUnit == category).Select(u => u.Owner).ToArray()
+            : ClassOwners(sim).GetValueOrDefault(category) ?? [];
+        CheckLimit(failures, limits.World, all.Count, "WorldLimitReached");
         CheckLimit(failures, limits.Team, all.Count(p => sim.State.PlayerById(p).TeamId == sim.State.PlayerById(city.Owner).TeamId), "TeamLimitReached");
         int playerLimit = limits.Player < 0 ? -1 : limits.Player + limits.ExtraPlayer;
         CheckLimit(failures, playerLimit, all.Count(p => p == city.Owner), "PlayerLimitReached");
+    }
+    /// <summary>By building class, the owner of every constructed building of that class, one entry per copy, in city
+    /// order. Every limited candidate of every city asks it, and each ask scanned all cities' buildings; one scan
+    /// answers every class, and it is kept until buildings or city owners change.</summary>
+    private static IReadOnlyDictionary<string, int[]> ClassOwners(Simulation sim) => ClassOwnersKept.Get(sim, 0, () =>
+    {
+        var owners = new Dictionary<string, List<int>>(StringComparer.Ordinal);
+        foreach (var city in sim.State.Cities)
+            foreach (var id in city.Buildings)
+            {
+                string category = sim.Content.Get<S.BuildingDef>(id).DefaultBuilding;
+                if (!owners.TryGetValue(category, out var list)) owners[category] = list = new();
+                list.Add(city.Owner);
+            }
+        return owners.ToDictionary(pair => pair.Key, pair => pair.Value.ToArray(), StringComparer.Ordinal);
+    });
+    /// <summary>Keyed by 0: there is one answer, for the whole world.</summary>
+    private static readonly KeptQuery<int, IReadOnlyDictionary<string, int[]>> ClassOwnersKept =
+        new("cities:building_class_owners", new HoldingsReader(), new ClassOwnersEquality());
+    private sealed class ClassOwnersEquality : IEqualityComparer<IReadOnlyDictionary<string, int[]>>
+    {
+        public bool Equals(IReadOnlyDictionary<string, int[]>? x, IReadOnlyDictionary<string, int[]>? y) =>
+            x is not null && y is not null && x.Count == y.Count
+            && x.All(pair => y.TryGetValue(pair.Key, out var other) && pair.Value.AsSpan().SequenceEqual(other));
+        public int GetHashCode(IReadOnlyDictionary<string, int[]> obj) => obj.Count;
+    }
+    /// <summary>What the class owners read: each city's constructed buildings and its owner, none of the tallies, units,
+    /// sight or worker orders.</summary>
+    private sealed class HoldingsReader : IStateReader
+    {
+        public IReadOnlyList<string>? UnreadDomains(ContentDb content) => CityStateDomains.NeverReadByBuildings;
     }
     private static void CheckLimit(List<RequirementFailure> failures, int maximum, int count, string reason)
     {

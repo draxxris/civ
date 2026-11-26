@@ -16,7 +16,10 @@ internal sealed class CityBuildingService : ICityBuildingService
     {
         var city = sim.State.CityById(cityId);
         var definition = sim.Content.Get<Ariel.Content.Schema.BuildingDef>(building);
+        // Only a building powered by a resource needs the city's resource set, which resolves its running buildings.
+        if (definition.AreaCleanPower || definition.ProducesPower) return true;
+        if (definition.PowerBonus is null) return false;
         var bonuses = BuildingEffects.Bonuses(sim, city, CityData.ActiveWithoutPower(sim, city));
-        return definition.AreaCleanPower || CityData.ProvidesLocalPower(sim, city, definition, bonuses);
+        return CityData.ProvidesLocalPower(sim, city, definition, bonuses);
     }
 }

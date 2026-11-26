@@ -7,11 +7,23 @@ namespace Ariel.Game;
 /// <para>Supplied copies serve only their city: they are not on the trade network, so nothing can export them. A
 /// question about trade (what a player can offer, what it holds to sell) asks <see cref="TradeCount"/>, the network and
 /// deal part alone, which is what deal validation checks.</para>
-/// <para>The per-city memo belongs to the city read scope, not here: this is the uncached answer.</para></summary>
+/// <para>The per-city memo of a city's whole resource set belongs to the city read scope, not here. Only the single
+/// count, which requirement leaves and production eligibility ask of every candidate from every scoring thread, is kept
+/// across writes (<see cref="KeptQuery{TKey,TValue}"/>) under the building seams' declaration.</para></summary>
 public static class ResourceAccess
 {
     public static long Count(Simulation sim, int player, int city, string resource) =>
-        Counts(sim, player, city, [resource]).GetValueOrDefault(resource);
+        CountKept.Get(sim, (player, city, resource), () => Counts(sim, player, city, [resource]).GetValueOrDefault(resource));
+
+    private static readonly KeptQuery<(int Player, int City, string Resource), long> CountKept = new("world:resource_count", new AccessReader());
+
+    /// <summary>What a count reads: the network flood, the players' deals and what the resource suppliers read, which is
+    /// what building effects read for the same counts (<see cref="CityStateDomains.UnreadThroughBuildings"/>).</summary>
+    private sealed class AccessReader : Ariel.Content.IStateReader
+    {
+        public IReadOnlyList<string>? UnreadDomains(Ariel.Content.ContentDb content) =>
+            CityStateDomains.UnreadThroughBuildings(CityStateDomains.NeverReadByBuildings, content);
+    }
 
     public static IReadOnlyDictionary<string, long> Counts(Simulation sim, int player, int city, IReadOnlyCollection<string> resources)
     {
