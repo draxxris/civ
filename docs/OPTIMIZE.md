@@ -4190,7 +4190,7 @@ turn at s550.
   only to 43%: 1,865 F misses, plus 189 with no writer left.
 - **Same or different lines**: every F miss recomputed the same lines, 1,168 a turn over
   the footprint run. Different lines came only from O (16.5 a turn) and G (11).
-- **Kept queries**: about 390 a turn of their stale misses are F. The largest are
+- **Kept queries**: about 350 a turn of their stale misses are F. The largest are
   connected counts (69), active branches (58), active buildings (57), available
   resources (53), effective buildings (53) and connected tiles (40).
 
@@ -4207,7 +4207,8 @@ The writers behind the F class:
 | `CorporationEffects` | declared unit and sight writes, commerce rates | about 105 | 4.0 |
 
 Upgrades alone account for 398 stale misses a turn (24.3 ms probed) across all owners.
-Of `BuildingEffects`' 72 of them, 66 are foreign.
+Of `BuildingEffects`' 72 of them, 66 are foreign. About 390 of the 398 are in sources
+that never read units, the treasury or sight.
 
 #### What the Writers Touch
 
@@ -4238,8 +4239,11 @@ Every costly source reads other players' state, and nothing reads it through one
 - **`CivicEffects`**: civic anger (`CivicAnger`) reads every other nation's civics and
   city count, for every city. Its read set is always every player.
 - **`BuildingEffects`**: the available resources ask Diplomacy's
-  `AvailableResourceCounts`, which reads each trade partner's resource network. Any
-  player that trades resources reads its partners.
+  `AvailableResourceCounts`. That reads the owner's own network, the shared deal list
+  and, for every live deal, whether its two parties' teams are at war. So
+  `BuildingEffects` reads its own player's state, shared state, and other teams' wars,
+  which change only through war and peace, writes that involve both teams. Its F share
+  is reachable in principle.
 - **`ReligionEffects`**: shrine income counts every city in the world that holds the
   religion.
 - **Corporations**: headquarters and branch rules walk every city.
@@ -4308,10 +4312,10 @@ it.
      about three times high, so that is about 15 to 20 ms real, or 3% of an s550 turn.
 2. **True read sets shrink it further.**
    - Civic anger makes `CivicEffects` read every player.
-   - Trades make `BuildingEffects` read every partner.
    - Shrine and headquarters cities read every city.
-   - What reliably survives is the upgrade's share, about 24 ms of the 53 probed. A
-     narrower change captures that share without read sets (below).
+   - `BuildingEffects` stays reachable. It holds about 39 ms of the 53 probed, and the
+     upgrade accounts for 20 ms of that. A narrower change captures the upgrade's share
+     without read sets (below).
 3. **The proof needs hooks across the state access model.**
    - There is no read choke point. Recording means hooks in every mutable getter of the
      four entity types and of `ExtensionState`.
@@ -4335,11 +4339,15 @@ it.
    - Verification would compare `Units` matched by id, with the order as that domain's
      one field.
    - `BuildingEffects`, `TraitEffects`, `ReligionEffects`, `TimerModifiers` and
-     `ScriptedWonderService` never read units, the treasury or sight, so they keep their
-     entries across upgrades by any owner.
-   - That covers the 398 upgrade-only misses a turn (24.3 ms probed, 20.9 ms of it in
+     `ScriptedWonderService` declare units, the treasury and sight unread, so they would
+     keep their entries across upgrades by any owner.
+   - Before building it, check the blockade contract on `military:units`: kept readers
+     see units through blockades, so the upgrade of a blockading unit must widen.
+   - It would cover about 390 upgrade-only misses a turn (24 ms probed, 20.9 ms of it in
      `BuildingEffects`): about half of what owner stamps could reach, for a small kernel
      change and no read sets.
+   - The finding that an upgrade writes only its actor's entities rests on 5 footprinted
+     windows. The verify mode would test it in every run.
 2. **Narrow the chain's widenings to what they change.** This is the O class. One
    example is a completed building with no reach beyond its city and no resource, power
    or wonder effect. Such a widening could declare its city's domains and leave other
@@ -4454,3 +4462,4 @@ passes:
 | **Pass 27: Honest Write Model** | `d513901b`..`33dc3298` | Four-player AI game, last 6 of 8 turns from turn 551, JIT pinned | `modifiers:collect` CPU | 169–176 ms | 146–148 ms | **-14 to -16%** |
 |                                         |                      | Same, from turn 451                                        | `modifiers:collect` CPU  |         115–119 ms |         94–100 ms |                           **-16 to -19%** |
 |                                         |                      | Same, from turn 551                                        | Remainder stamps per turn |               170 |                43 |                                  **-75%** |
+| **Pass 28: Owner Stamps (not built)**   | docs only            | Four-player AI game from turn 551, probed                  | Stale misses only other players caused | 1,102 of 4,731 a turn | — | measured, not built |

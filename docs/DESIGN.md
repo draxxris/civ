@@ -3145,8 +3145,8 @@ declare both sides.
   Pass 28, and not built:
   - Only 23% of stale misses follow other players' writes alone.
   - The costly sources read other players' state: civic anger reads every nation's
-    civics and city count, available resources read trade partners' networks, and
-    shrines and headquarters walk every city.
+    civics and city count, available resources read other teams' wars through the
+    deal list, and shrines and headquarters walk every city.
   - Proving a reader's owner set would need a read recorder in every mutable entity
     getter, owner masks on every memo, and per-owner entity indexes.
 
