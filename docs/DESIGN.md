@@ -3016,7 +3016,24 @@ declare both sides.
   team's area has clean power, and whether a city powers itself and how cleanly
   (`CityData.IsAreaCleanPower`, `IsPowered`, `IsDirtyPower`). The reader declares what
   building effects declare: those answers follow running buildings, grants and
-  resources.
+  resources. The same declaration (`CityData.BuildingsReader`) keeps a city's
+  effective and running buildings (`CityData.EffectiveBuildings`, `CityData.Active`),
+  its resource set (`BuildingEffects.Available`), vicinity resource answers
+  (`CityRequirements`) and single resource counts (`ResourceAccess.Count`). World keeps
+  the resource network's flood per player and city (`ResourceNetwork.ConnectedCounts`
+  and `ConnectedTiles`) under `CityStateDomains.NeverReadByBuildings`, and production
+  eligibility keeps one world-wide table of building class owners for wonder and class
+  limits. A collection answer passes a content comparer (`KeptAnswerEquality`), since
+  verification compares a reused answer with a fresh one. These answers matter most to
+  AI scoring threads: each thread's own read scope is cold after every command, while a
+  kept answer is shared by every thread and survives the planner's production choices,
+  citizen reassignments and plain moves.
+- **Shared worker previews.** A legal build's preview (resulting yields and work) and a
+  plot's present yields depend on the player, tile and build, not on the worker, so
+  `PrepareWorkerMissionsCommand`'s evaluation shares them between its workers. The
+  contract exposes the legality parts separately for this:
+  `IWorkerBuildService.ValidateAt` (the worker's legality) and `ValidatePlot` (the
+  player, tile and build alone, which `ValidateAt` always includes).
 - **Widening before a rare broad write.** A declared writer whose usual work stays in
   its domains, but which now and then writes more, calls `Simulation.WidenWriteWindow()`
   just before the broad write. From then on the window counts as writing everything,

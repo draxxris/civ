@@ -3161,6 +3161,191 @@ are the measurement.
 
 ______________________________________________________________________
 
+### Pass 23: AI City and Worker Planning
+
+- **Date**: 2026-11-25
+- **Commits**: `892802e5`, `937c3899`, `ec259276`, `8dc50783`, `7387485a` (mod versions),
+  then the documentation
+
+This pass takes item 2 of the Pass 22 "Still Slow" list: `ai:cities` and `ai:workers`.
+Most of the city planner's time was production eligibility, and most of that was
+whole-empire answers that every scoring thread recomputed after every command. Most of
+the worker planner's time was previewing the same tiles and builds again for each
+worker. Every final state is byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- Base: local main `ee4c39ea`, extracted with `git archive` into `/tmp/ariel/p23/base`.
+  Final: `7387485a`. Both ran through `mise run ai:play`.
+- Saves: s450 (turn 451) and s550 (turn 551), fresh from seed 3, 4 players, on the
+  base tree, with corporations and religion active. Each has about 40 cities and 420
+  units at 551. They were re-headed for the final tree's mod versions (World 1.22.0,
+  Cities 1.49.0, AI 1.22.0); only the header changes.
+- Reference hashes, taken on `ee4c39ea` before any change. All match on the final tree:
+
+  | Run | Hash |
+  | :-- | :-- |
+  | s450 + 4 / + 8 | `4313ee853653eacd` / `d5fb48fb74d90628` |
+  | s550 + 2 / + 4 / + 8 | `8a7c12e45e220159` / `a58adbc1e9f6647d` / `23bb41d03ee121d7` |
+  | Seed 3, 4 players, 160 turns | `e49124006d830b87` |
+  | Seed 1, 4 players, 100 turns | `348b462d1ec219fa` |
+  | Seed 5, 8 players, 150 turns | `7d049d95e0352b35` |
+
+- The profile is `--profile` plus temporary `AiSeam` and `Rule` probes, none committed:
+  around each phase of `CityPlanner.Plan`, `Choose`, `Rate` and `BuildingWorth`, each
+  check of `ProductionEligibility.Building`, each requirement leaf kind, the resource
+  network flood, `ResourceAccess`, vicinity resources, the worker planner's phases and
+  the preview's validation, yields and work. Another agent shared the machine (load 2
+  to 9 during probes), so the probes compare summed calls, time and allocation within
+  one run more than across runs.
+
+#### Where the Time Went
+
+At s550 + 4 on the base tree, summed over threads, for the four turns:
+
+- **Production eligibility in `Rate`**: 8,098 building checks at 720 µs each, 5.8 s.
+  Requirements were 4.0 s of it: the vicinity `bonus` leaf (1,264 calls, about 440 µs:
+  a city's whole resource set, a network flood and its work area) and the empire-wide
+  `building-class` leaf (590 calls at 2.1 ms: every owned city's effective buildings).
+  World wonder and class limits scanned every city's buildings per candidate (370 µs).
+- **Resource network floods**: 11,800 at 290 µs, 3.4 s. On one processor there were
+  still 9,992, so the per-thread memo's cold threads explained only part; most floods
+  followed the end of an epoch after a command.
+- **`BuildingWorth`**: 545 µs per call, nearly all `ProvidesPower` resolving a city's
+  resource set and power-free running buildings for buildings that use no resource.
+- **Worker missions**: 55,600 previews per four turns. Validation was 6 µs each, and
+  41,500 failed on the plot's location rules alone; the 14,000 that passed spent 42 µs
+  each on the proposed plot's yields. About three in four repeated a tile and build an
+  earlier worker of the same evaluation had already previewed.
+- **The AI's options**: 2.9 ms per player turn, mostly `RequirementService.EvaluateKind`
+  enumerating leaves through nested LINQ iterators.
+
+#### What Was Built
+
+1. **Kept floods** (`892802e5`). `ResourceNetwork.ConnectedCounts` asks a `KeptQuery` on
+   an epoch-memo miss, and `ConnectedTiles` is kept too, both under
+   `CityStateDomains.NeverReadByBuildings`, the promise building effects already make
+   for the same counts. `KeptAnswerEquality` gives verification content comparers for
+   dictionaries, sequences and sets. World 1.22.0.
+2. **Kept eligibility answers** (`937c3899`). Under the building effects declaration
+   (`CityData.BuildingsReader`, formerly `PowerReader`): `CityData.EffectiveBuildings`
+   and `Active` per city, `BuildingEffects.Available` per city, vicinity resources per
+   (city, resource, count) and `ResourceAccess.Count` per (player, city, resource).
+   Building class limits read one kept world table of class owners.
+   `CityBuildingService.ProvidesPower` resolves the resource set only for a
+   resource-powered building. Cities 1.49.0.
+3. **Requirement kinds without iterators** (`ec259276`). `RequirementService.HasKind`
+   replaces `Leaves(...).Any(...)` in `EvaluateKind`. The AI's options build fell from
+   87 to 46 MiB per four turns.
+4. **Shared worker previews** (`8dc50783`). `IWorkerBuildService` gains `ValidateAt`
+   (Preview's legality alone) and `ValidatePlot` (the player, tile and build part).
+   `WorkerPlanner.BestBuildAt` asks the plot part once per tile and build, the worker's
+   own legality, then one shared preview per tile and build and one present yield per
+   tile, for one mission evaluation. AI 1.22.0.
+
+Probe totals at s550 + 4 after each step (summed over threads, four turns):
+
+| Step | Eligibility checks | Floods or previews | `ai:cities` | `ai:workers` |
+| :-- | --: | --: | --: | --: |
+| Base | 5,826 ms | 11,800 floods | 1,440 ms | 721 ms |
+| Kept floods | 3,964 ms | | 1,085 ms | 517 ms |
+| Kept building sets | 2,101 ms | | 717 ms | |
+| Class owners, resource sets, vicinity, power | 888 to 986 ms | | 497 to 545 ms | |
+| Shared previews | | yields 14,070 to 4,344 | | 397 ms |
+
+#### Results
+
+Base and final ran alternately (base, final, final, base), 8 turns each, at load 1.9 to
+4.0. Figures are per turn over the last 4 turns (turns 553 to 555 still carry
+compilation and cold caches after a load); each cell gives the two runs:
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| s550 + 8, wall per turn | 1,081 / 1,211 ms | 827 / 853 ms | −24 to −30% |
+| s550 + 8, turn systems | 445 / 507 ms | 361 / 358 ms | −19 to −29% |
+| s550 + 8, AI | 574 / 651 ms | 420 / 474 ms | −17 to −35% |
+| s550 + 8, `ai:cities` | 176 / 196 ms | 70 / 73 ms | −60% |
+| s550 + 8, `ai:workers` | 73 / 93 ms | 53 / 58 ms | −21 to −43% |
+| s550 + 8, `ai:citizens` | 49 / 53 ms | 28 / 28 ms | −43% |
+| s550 + 8, `modifiers:collect` (summed over threads) | 296 / 344 ms | 235 / 223 ms | −21 to −35% |
+| s550 + 8, `cities:production` | 43 / 49 ms | 13 / 14 ms | −70% |
+| s550 + 8, `great_people:births` | 56 / 69 ms | 29 / 27 ms | −50% |
+| s550 + 8, allocation per turn | 1,034 / 1,032 MiB | 631 / 629 MiB | −39% |
+| s550 + 8, wall per turn over the last 6 turns | 1,118 / 1,275 ms | 987 / 1,026 ms | −12 to −20% |
+| s450 + 8, wall per turn | 786 / 821 ms | 846 / 804 ms | within noise |
+| s450 + 8, `ai:cities` | 106 / 117 ms | 87 / 85 ms | −19% |
+| s450 + 8, allocation per turn | 582 / 581 MiB | 431 / 431 MiB | −26% |
+| s550 + 6 on one processor, wall per turn (turns 553 to 557) | 5,257 / 5,457 ms | 2,805 / 3,263 ms | −40 to −49% |
+
+The kept floods and building sets serve turn systems too: production, great-people
+births, revolution and culture fell at 550, because they read the same resource and
+building answers between declared writes.
+
+At s450, `ai:civics` (40 / 41 to 54 / 48 ms), `ai:economy` (24 / 29 to 31 / 31 ms) and
+`great_people:planner` (one final run, 132 ms against 92 to 100) were slower in the
+parallel runs, with unchanged allocation. On one processor all three fell (at s550,
+`ai:civics` 229 / 218 to 169 / 209 ms, `great_people:planner` 431 / 477 to 302 / 370 ms).
+The kept answer table never filled (a temporary counter on its clear at s450 + 4 stayed
+at zero). The cause is not known; it is listed below.
+
+#### Rejected and Deferred
+
+- **Per-category class-owner answers**: the first form of the limits change kept the
+  owners per class. It computed 721 times in 1,460 asks per four turns, because each
+  class was asked only a few times between writes, and limits fell only from 410 to
+  317 ms. Replaced by one world table, 127 ms.
+- **A short-circuiting boolean eligibility path** (cheap checks first, requirements
+  stopping at the first failure): after the kept answers, requirements were about
+  0.4 s per four turns summed over threads, and the planner-thread share of `Rate` 139
+  to 174 ms. Not built.
+- **Keeping the site table across production choices**: `SitePlanner` rebuilds its
+  whole-map tables after every command, and a city's expansion check cost 1.9 ms
+  (25 ms per turn). Its plot values ask the mods' resource valuers, whose reads no
+  declaration bounds, so it cannot be a kept answer. Not built.
+- **The economy in `ReviewCivicGoalCommand`**: its dependencies digest asks
+  `PlayerEconomy.Calculate`, 7.5 ms and 2.4 MB per player turn, almost all cold city
+  ledgers at the start of the player's kernel span (Pass 22 item 1). Not attempted.
+- **Keeping the economy or the worker evaluation across turns**: kept answers end with
+  the outermost kernel span by design. Not attempted.
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash above matches the base tree.
+- `--verify-modifier-cache` and `--verify-read-epochs` together pass on s550 + 2 (on the
+  tree before the worker change), s550 + 4 and s450 + 4.
+- s550 + 8 gives `23bb41d03ee121d7` with `--waves max` and with
+  `DOTNET_PROCESSOR_COUNT=1`; seed 1 (4 players, 100 turns) with `--waves max` gives
+  `348b462d1ec219fa`.
+- `mise run test:e2e`, `mise run test:worldgen`, `mise run check:sync` and
+  `mise run build:game` pass. The first `mise run test` passed 2293 of 2295. The two
+  failures were `LobbyTests.Starting_gives_every_peer_the_same_world_and_a_seat_to_play`
+  and `MultiplayerGameTests.A_player_who_returns_takes_their_seat_back_in_sync` ("the
+  game did not get there", a wall-clock wait), with the load average at 30 to 45. A full
+  unfiltered re-run of `tests/Ariel.Mods.Tests` on the same tree passed 2370 of 2370.
+
+#### Still Slow, Ranked
+
+At s550 + 8 on the final tree, per turn:
+
+1. **Modifier collection**, about 225 to 235 ms summed over threads, mostly cold
+   ledgers at the start of each kernel span (Pass 22 item 1), which also makes the civic
+   review's economy cost 7.5 ms per player turn.
+2. **`great_people:planner`**, about 95 to 100 ms, now ahead of `ai:cities`, and
+   `ai:military` (75 to 105 ms).
+3. **The unexplained parallel-run rise** of `ai:civics`, `ai:economy` and
+   `great_people:planner` at s450 described under "Results".
+4. **Site scoring after every command** (about 25 ms per turn) and the AI's options
+   (about 2 ms per player turn).
+5. **Growth and work assignment**: `cities:growth` about 35 to 39 ms and
+   `cities:assign_work` 40 to 45 ms.
+
+`mise run benchmark` was not run in this pass. The alternating `ai:play` runs above
+are the measurement.
+
+______________________________________________________________________
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization
@@ -3244,3 +3429,7 @@ passes:
 | **Pass 22: Late-Game Turns**            | `2f2c6ac8`..`b788e312` | Four-player AI game, per turn at turns 554-559 (saved game) | Wall time (profiled)     |    1,289–1,315 ms |    1,010–1,096 ms |                           **-15 to -23%** |
 |                                         |                      | Same                                                       | `global_warming:warming` |         101–102 ms |           19–20 ms |                                  **-81%** |
 |                                         |                      | Same, per turn at turns 454-459 (saved game)               | Wall time (profiled)     |    1,055–1,062 ms |           916–926 ms |                                  **-13%** |
+| **Pass 23: AI City and Worker Planning** | `892802e5`..`7387485a` | Four-player AI game, last 4 of 8 turns from turn 551 (saved game) | Wall time (profiled) | 1,081–1,211 ms | 827–853 ms | **-23 to -30%** |
+|                                         |                      | Same                                                       | `ai:cities`              |         176–196 ms |           70–73 ms |                                  **-61%** |
+|                                         |                      | Same                                                       | Managed bytes per turn   |          1,034 MiB |            630 MiB |                                  **-39%** |
+|                                         |                      | Same, one processor, 6 turns from turn 551                 | Wall time (profiled)     |    5,257–5,457 ms |     2,805–3,263 ms |                           **-40 to -47%** |
