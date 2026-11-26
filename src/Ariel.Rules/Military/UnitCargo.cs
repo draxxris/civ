@@ -64,7 +64,7 @@ internal sealed partial class UnitService
     private static string? UnloadError(Simulation sim, Unit unit, TileId to)
     {
         if (sim.State.Grid.HexOf(to) == unit.Position) return UnloadLocation(sim, unit);
-        var error = MovementService.TerrainEntry(sim, unit, MilitaryData.Definition(sim, unit), sim.State.Plots[to.Value], MilitaryData.Effects(sim, unit));
+        var error = MovementService.TerrainEntry(sim, unit, MilitaryData.Definition(sim, unit), to, MilitaryData.Effects(sim, unit));
         if (error is not null) return error;
         return sim.Rules().Movement.CanEnter(sim, unit.Id, sim.State.Grid.TileAt(unit.Position), to);
     }
@@ -114,7 +114,7 @@ internal sealed partial class UnitService
     {
         var def = MilitaryData.Definition(sim, unit);
         if (def.Domain != "military:domain_air")
-            return MovementService.TerrainEntry(sim, unit, def, sim.State.PlotAt(unit.Position), MilitaryData.Effects(sim, unit));
+            return MovementService.TerrainEntry(sim, unit, def, sim.State.Grid.TileAt(unit.Position), MilitaryData.Effects(sim, unit));
         return AirBaseError(sim, unit, unit.Position);
     }
     internal static string? AirBaseError(Simulation sim, Unit unit, Hex target)

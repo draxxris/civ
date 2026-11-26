@@ -7,6 +7,9 @@ internal sealed class MovementService : IMovementService
 {
     public string? CanEnter(Simulation sim, int unitId, TileId from, TileId to, bool attack = false) => Query(sim, unitId).CanEnter(from, to, attack);
     internal MovementQuery Query(Simulation sim, int unit) => new(sim, sim.State.UnitById(unit));
+    /// <summary>A query that keeps its plot facts in <paramref name="plots"/>, begun for it and for nothing else while it
+    /// is used: a search asks a hundred plots or more, which a dense table answers without hashing or growing.</summary>
+    internal MovementQuery Query(Simulation sim, int unit, PlotFactTable plots) => new(sim, sim.State.UnitById(unit), plots);
 
     private static string? CanEnter(MovementQuery q, TileId from, TileId to, bool attack)
     {
@@ -28,7 +31,7 @@ internal sealed class MovementService : IMovementService
     {
         var (sim, unit, def) = (q.Sim, q.Unit, q.Def);
         var plot = sim.State.Plots[to.Value];
-        var error = TerrainEntry(sim, unit, def, plot, q.Effects);
+        var error = TerrainEntry(sim, unit, def, to, q.Effects);
         if (error is not null && AutoLoadTransport(sim, unit, def, to) is null) return error;
         if (!TerritoryEntry(sim, unit, def, plot.Owner)) return "Closed borders";
         var target = sim.State.Grid.HexOf(to);
@@ -61,10 +64,11 @@ internal sealed class MovementService : IMovementService
         return null;
     }
     private static bool ValidTile(Simulation sim, TileId tile) => tile.Value >= 0 && tile.Value < sim.State.Grid.Count;
-    internal static string? TerrainEntry(Simulation sim, Unit unit, S.UnitDef def, Plot plot, Ariel.Content.ModifierSink effects)
+    internal static string? TerrainEntry(Simulation sim, Unit unit, S.UnitDef def, TileId tile, Ariel.Content.ModifierSink effects)
     {
+        var plot = sim.State.Plots[tile.Value];
         var terrain = sim.Content.Get<S.TerrainDef>(plot.Terrain);
-        if (!DomainEntry(sim, unit, def, terrain.IsWater, plot)) return "Wrong domain";
+        if (!DomainEntry(sim, unit, def, terrain.IsWater, tile)) return "Wrong domain";
         if (def.CanMoveImpassable) return null;
         if (terrain.Impassable) return "Impassable terrain";
         if (plot.Feature is { } feature && sim.Content.Get<S.FeatureDef>(feature).Impassable) return "Impassable feature";
@@ -79,14 +83,19 @@ internal sealed class MovementService : IMovementService
     }
     private static bool TerrainTechnology(Simulation sim, Unit unit, S.UnitDef def, string terrain) =>
         def.TerrainPassableTechs.TryGetValue(terrain, out var tech) && tech is not null && sim.KnowsTech(unit.Owner, tech);
-    private static bool PeakEntry(Simulation sim, Unit unit, Ariel.Content.ModifierSink effects) =>
-        MilitaryData.Effect(effects, "move_peaks") > 0 || MilitaryData.Techs(sim, unit.Owner).Any(t => t.CanPassPeaks);
-    private static bool DomainEntry(Simulation sim, Unit unit, S.UnitDef def, bool water, Plot plot)
+    private static bool PeakEntry(Simulation sim, Unit unit, Ariel.Content.ModifierSink effects)
+    {
+        if (MilitaryData.Effect(effects, "move_peaks") > 0) return true;
+        foreach (var tech in sim.TeamOf(unit.Owner).Techs)
+            if (sim.Content.Get<S.TechDef>(tech).CanPassPeaks) return true;
+        return false;
+    }
+    private static bool DomainEntry(Simulation sim, Unit unit, S.UnitDef def, bool water, TileId tile)
     {
         if (def.CanMoveAllTerrain) return true;
         return def.Domain switch {
             "military:domain_land" => !water,
-            "military:domain_sea" => water || FriendlyCoastalCity(sim, unit, plot),
+            "military:domain_sea" => water || FriendlyCoastalCity(sim, unit, tile),
             "military:domain_air" => false, // Rebase/air missions need a separate, non-adjacent command.
             _ => false,
         };
@@ -94,16 +103,14 @@ internal sealed class MovementService : IMovementService
     private static int? AutoLoadTransport(Simulation sim, Unit unit, S.UnitDef def, TileId to)
     {
         if (def.Domain != "military:domain_land" || def.CanMoveAllTerrain || MilitaryData.Read(sim, unit).TransportId is not null) return null;
-        if (!sim.Content.Get<S.TerrainDef>(sim.State.Plots[to.Value].Terrain).IsWater) return null;
+        if (!sim.Content.Get<S.TerrainDef>(sim.State.Plots[to.Value].Terrain).IsWater || !sim.State.HasUnitsAt(to)) return null;
         var target = sim.State.Grid.HexOf(to);
         return sim.State.UnitsAt(target).OrderByDescending(u => u.Owner == unit.Owner).ThenBy(u => u.Id)
             .Where(u => UnitService.LoadError(sim, unit, u, target) is null).Select(u => (int?)u.Id).FirstOrDefault();
     }
-    private static bool FriendlyCoastalCity(Simulation sim, Unit unit, Plot plot)
+    private static bool FriendlyCoastalCity(Simulation sim, Unit unit, TileId tile)
     {
-        int index = Array.IndexOf(sim.State.Plots, plot);
-        var tile = new TileId(index);
-        var city = sim.State.CityAt(sim.State.Grid.HexOf(tile));
+        var city = sim.State.CityAtTile(tile);
         return city is not null && MilitaryData.Friendly(sim, unit.Owner, city.Owner)
             && sim.State.Grid.Neighbors(tile).Any(n => sim.Content.Get<S.TerrainDef>(sim.State.Plots[n.Value].Terrain).IsWater
                 && !MilitaryData.CrossesCliff(sim, tile, n));
@@ -112,7 +119,8 @@ internal sealed class MovementService : IMovementService
         || MilitaryData.Friendly(sim, unit.Owner, owner) || MilitaryData.Enemy(sim, unit.Owner, owner.Value) || def.RivalTerritory || def.BaseTrade > 0 || def.TradeMultiplier > 0
         || sim.Rules().Relations.MayEnter(sim, sim.TeamOf(unit.Owner).Id, sim.TeamOf(owner.Value).Id);
     internal static bool HostilePlot(Simulation sim, Unit unit, Hex target) =>
-        sim.State.UnitsAt(target).Any(other => MilitaryData.VisibleEnemy(sim, unit.Owner, other))
+        sim.State.Grid.TryTile(target, out var tile) && sim.State.HasUnitsAt(tile)
+            && sim.State.UnitsAt(target).Any(other => MilitaryData.VisibleEnemy(sim, unit.Owner, other))
         || sim.State.CityAt(target) is { } city && MilitaryData.Enemy(sim, unit.Owner, city.Owner);
     private static bool CanAttack(Simulation sim, Unit unit, S.UnitDef def, Ariel.Content.ModifierSink effects) =>
         def.Strength > 0 && !def.OnlyDefensive && (!MilitaryData.Read(sim, unit).Attacked || MilitaryData.Effect(effects, "blitz") > 0);
@@ -134,9 +142,11 @@ internal sealed class MovementService : IMovementService
     private static bool InControl(MovementQuery q, TileId tile)
     {
         var grid = q.Sim.State.Grid;
+        // Most plots are empty: asking first spares enumerating an empty one.
         foreach (var n in grid.Neighbors(tile))
-            foreach (var other in q.Sim.State.UnitsAt(grid.HexOf(n)))
-                if (q.Controls(other)) return true;
+            if (q.Sim.State.HasUnitsAt(n))
+                foreach (var other in q.Sim.State.UnitsAt(grid.HexOf(n)))
+                    if (q.Controls(other)) return true;
         return false;
     }
     private static bool HasControl(Simulation sim, Unit unit, Unit other) => MilitaryData.VisibleEnemy(sim, unit.Owner, other)
@@ -288,10 +298,11 @@ internal sealed class MovementService : IMovementService
         internal readonly Func<Unit, bool> Controls;
         private readonly Dictionary<int, bool> control = new();
         private Dictionary<int, PlotFacts>? _plots;
+        private readonly PlotFactTable? _table;
         private StepInputs? _step;
-        internal MovementQuery(Simulation sim, Unit unit)
+        internal MovementQuery(Simulation sim, Unit unit, PlotFactTable? table = null)
         {
-            Sim = sim; Unit = unit;
+            Sim = sim; Unit = unit; _table = table;
             Def = MilitaryData.Definition(sim, unit); Effects = MilitaryData.Effects(sim, unit);
             Controls = HasControlOver;
         }
@@ -307,7 +318,7 @@ internal sealed class MovementService : IMovementService
         }
         internal int StepCost(TileId from, TileId to) => MovementService.StepCost(this, from, to);
         /// <summary>What one plot answers for this unit, each part worked out on first use.</summary>
-        private struct PlotFacts
+        internal struct PlotFacts
         {
             public Known Known;
             public string? Entry;
@@ -315,9 +326,14 @@ internal sealed class MovementService : IMovementService
             public int RegularCost;
         }
         [Flags]
-        private enum Known : byte { Entry = 1, InControl = 2, Controlled = 4, RegularCost = 8 }
-        private PlotFacts Facts(TileId tile) => _plots is not null && _plots.TryGetValue(tile.Value, out var facts) ? facts : default;
-        private void Store(TileId tile, PlotFacts facts) => (_plots ??= new())[tile.Value] = facts;
+        internal enum Known : byte { Entry = 1, InControl = 2, Controlled = 4, RegularCost = 8 }
+        private PlotFacts Facts(TileId tile) => _table is not null ? _table.Get(tile.Value)
+            : _plots is not null && _plots.TryGetValue(tile.Value, out var facts) ? facts : default;
+        private void Store(TileId tile, PlotFacts facts)
+        {
+            if (_table is not null) _table.Set(tile.Value, facts);
+            else (_plots ??= new())[tile.Value] = facts;
+        }
         /// <summary>The plot's own entry for a move that does not attack (<see cref="MovementService.PlotEntry"/>).</summary>
         internal string? PlotEntry(TileId to)
         {
@@ -404,5 +420,31 @@ internal sealed class MovementService : IMovementService
             if (def.Capture is { } type && !MilitaryData.Definition(sim, unit).NoCapture)
                 sim.Rules().Units.Create(sim, unit.Owner, type, target, captured => captured.MovesLeft = 0);
         }
+    }
+}
+
+/// <summary>Per-plot movement facts for one query at a time, by tile index: an entry counts only when its stamp is the
+/// current use's, so <see cref="Begin"/> clears nothing. Map-sized and reused (a <see cref="PathSearch"/> keeps one per
+/// thread), never shared by two queries at once.</summary>
+internal sealed class PlotFactTable
+{
+    private MovementService.MovementQuery.PlotFacts[] _facts = [];
+    private int[] _stamp = [];
+    private int _generation;
+
+    /// <summary>Start a new use over a map of <paramref name="tiles"/> plots, forgetting every earlier entry.</summary>
+    public void Begin(int tiles)
+    {
+        if (_stamp.Length != tiles) { _facts = new MovementService.MovementQuery.PlotFacts[tiles]; _stamp = new int[tiles]; _generation = 0; }
+        if (_generation == int.MaxValue) { Array.Clear(_stamp); _generation = 0; }
+        _generation++;
+    }
+
+    public MovementService.MovementQuery.PlotFacts Get(int tile) => _stamp[tile] == _generation ? _facts[tile] : default;
+
+    public void Set(int tile, MovementService.MovementQuery.PlotFacts facts)
+    {
+        _stamp[tile] = _generation;
+        _facts[tile] = facts;
     }
 }

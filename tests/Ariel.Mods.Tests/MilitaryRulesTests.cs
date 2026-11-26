@@ -223,6 +223,34 @@ public sealed class MilitaryRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
     }
 
     [Fact]
+    public void Pathfinding_reuses_its_buffers_without_carrying_one_search_into_the_next()
+    {
+        var sim = GameFactory.Scenario(mods.Content);
+        var paths = Service<IPathfindingService>(sim);
+        var start = sim.State.Grid.HexOf(sim.State.Grid.TileAt(3, 3));
+        var unit = Add(sim, 0, sim.State.Grid.TileAt(start).Value);
+        var near = start.Neighbor(0).Neighbor(0);
+        var first = paths.FindPath(sim, unit.Id, near);
+        Assert.NotNull(first);
+        // A peak the unit cannot enter: the search floods everything it can reach and reports it.
+        var peak = start.Neighbor(3).Neighbor(3);
+        sim.State.PlotAt(peak).Kind = PlotKind.Peak;
+        Assert.Null(paths.FindPath(sim, unit.Id, peak, false, out var reach));
+        Assert.NotNull(reach);
+        Assert.DoesNotContain(sim.State.Grid.TileAt(peak), reach);
+        Assert.Contains(sim.State.Grid.TileAt(start), reach);
+        Assert.Contains(sim.State.Grid.TileAt(near), reach);
+        // Every tile it reports is one a search to it finds, and the first search repeats exactly.
+        foreach (var tile in reach.Where(t => t != sim.State.Grid.TileAt(start)).Take(20))
+            Assert.NotNull(paths.FindPath(sim, unit.Id, sim.State.Grid.HexOf(tile)));
+        var again = paths.FindPath(sim, unit.Id, near);
+        Assert.NotNull(again);
+        Assert.Equal(first.Steps, again.Steps);
+        Assert.Equal(first.Cost, again.Cost);
+        Assert.Equal(first.StepTurns, again.StepTurns);
+    }
+
+    [Fact]
     public void First_strikes_and_lethal_withdrawal_use_the_same_round_model_as_preview()
     {
         var sim = GameFactory.Scenario(mods.Content);
