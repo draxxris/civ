@@ -42,20 +42,13 @@ public sealed class AiPlannerTests
     }
 
     [Fact]
-    public void Without_the_feature_mods_the_ai_still_plays()
+    public void Without_the_feature_mods_their_services_and_planners_are_absent()
     {
+        // AbsentModGameTests plays an AI game on this content.
         var content = BaseWithProbe.Value;
         Assert.Null(content.Services.Find<ICorporationService>());
         Assert.Null(content.Services.Find<IGreatPeopleService>());
         Assert.DoesNotContain(content.Services.Get<IAiPlanner>(), p => p.Id is "corporations:planner" or "great_people:planner");
-
-        var sim = GameFactory.CreateAi(content, seed: 5, players: 2);
-        for (int turn = 0; turn < 30; turn++) sim.AdvanceTurn();
-        foreach (var player in sim.State.Players.Where(p => p.Ai == "ai:standard"))
-        {
-            Assert.True(sim.State.Cities.Count(c => c.Owner == player.Id) >= 1, $"player {player.Id} has no city");
-            Assert.True(sim.TeamOf(player.Id).Techs.Count > 0, $"player {player.Id} researched nothing");
-        }
     }
 
     [Fact]
@@ -101,8 +94,9 @@ public sealed class AiPlannerTests
     }
 
     [Fact]
-    public void The_base_game_plays_ai_turns_with_none_of_the_feature_mods()
+    public void The_base_game_holds_none_of_the_feature_mods()
     {
+        // AbsentModGameTests plays an AI game on this content.
         var content = GameContent.Build(Rules, []);
         var rules = content.Rules();
         Assert.Null(content.Services.Find<IEspionageService>());
@@ -122,14 +116,6 @@ public sealed class AiPlannerTests
         Assert.Null(GameFactory.BarbarianFaction(content));
         Assert.DoesNotContain(content.Services.Get<IAiPlanner>(), p => !p.Id.StartsWith("ai:", StringComparison.Ordinal));
         Assert.Empty(content.Services.Get<IProductionWishes>());
-
-        var sim = GameFactory.CreateAi(content, seed: 3, players: 3);
-        for (int turn = 0; turn < 40; turn++) sim.AdvanceTurn();
-        foreach (var player in sim.State.Players.Where(p => p.Ai == "ai:standard"))
-        {
-            Assert.True(sim.State.Cities.Count(c => c.Owner == player.Id) >= 1, $"player {player.Id} has no city");
-            Assert.True(sim.TeamOf(player.Id).Techs.Count > 0, $"player {player.Id} researched nothing");
-        }
     }
 
     [Fact]

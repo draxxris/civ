@@ -39,21 +39,18 @@ public sealed class ReligionRulesTests(LoadedMods mods) : IClassFixture<LoadedMo
         ModLoader.Build(new LoadedMods().Sources.Where(s => s.Manifest.Id != "religion")));
 
     [Fact]
-    public void Without_the_mod_the_base_game_has_no_religion_and_the_ai_still_plays()
+    public void Without_the_mod_the_base_game_has_no_religion()
     {
+        // AbsentModGameTests plays an AI game on this content.
         var content = WithoutReligion.Value;
         Assert.Null(content.Services.Find<IReligionService>());
         Assert.False(content.CommandTypes.Contains("religion:set_state_religion"));
         Assert.DoesNotContain(content.Services.Get<Ariel.Ai.IAiPlanner>(), p => p.Id.StartsWith("religion:", StringComparison.Ordinal));
         Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.Founds?.Kind == "religion");
 
-        var sim = GameFactory.CreateAi(content, seed: 5, players: 2);
-        for (int turn = 0; turn < 30; turn++) sim.AdvanceTurn();
-        foreach (var player in sim.State.Players.Where(p => p.Ai == "ai:standard"))
-            Assert.True(sim.State.Cities.Count(c => c.Owner == player.Id) >= 1, $"player {player.Id} has no city");
-
         // The temples, missionaries, the inquisitor and the faiths' promotions are the mod's own content.
-        var city = sim.State.Cities.First();
+        var sim = GameFactory.Scenario(content);
+        var city = City(sim, 40, population: 3);
         Assert.DoesNotContain(content.Get<S.BuildingDef>().All, b => b.Id.StartsWith("religion:", StringComparison.Ordinal));
         Assert.DoesNotContain(content.Get<S.UnitDef>().All, u => u.Id.StartsWith("religion:", StringComparison.Ordinal));
         var session = new Ariel.Client.GameSession(sim, city.Owner);

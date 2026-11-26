@@ -34,8 +34,9 @@ public sealed class AirCombatTests(LoadedMods mods) : IClassFixture<LoadedMods>
     }
 
     [Fact]
-    public void Without_the_mod_aircraft_cannot_be_trained_or_intercept_and_the_ai_still_plays()
+    public void Without_the_mod_aircraft_cannot_be_trained_or_intercept()
     {
+        // AbsentModGameTests plays an AI game on this content.
         var content = WithoutAirCombat.Value;
         Assert.Null(content.Rules().AirOperations);
         Assert.Null(content.Services.Find<IAirMissionService>());
@@ -50,12 +51,6 @@ public sealed class AirCombatTests(LoadedMods mods) : IClassFixture<LoadedMods>
             f => f.Explanation == "Air operations are unavailable");
         var session = new GameSession(sim); session.SelectUnit(fighter.Id);
         Assert.DoesNotContain(session.DescribeUnit(fighter)!.Actions, a => a.Id.StartsWith("air_mission:", StringComparison.Ordinal));
-
-        var game = GameFactory.CreateAi(content, seed: 5, players: 2);
-        for (int turn = 0; turn < 30; turn++) game.AdvanceTurn();
-        foreach (var player in game.State.Players.Where(p => p.Ai == "ai:standard"))
-            Assert.True(game.State.Cities.Count(c => c.Owner == player.Id) >= 1, $"player {player.Id} has no city");
-        Assert.DoesNotContain(game.State.Units, u => game.Content.Get<Ariel.Content.Schema.UnitDef>(u.Type).Domain == "military:domain_air");
     }
 
     /// <summary>A fighter at full health in a city of player 0.</summary>

@@ -51,24 +51,12 @@ public sealed class BarbarianRulesTests
     }
 
     [Fact]
-    public void Without_the_mod_no_hostile_player_appears_and_the_ai_still_plays()
+    public void Without_the_mod_there_is_no_hostile_faction_or_its_turn_systems()
     {
+        // AbsentModGameTests plays an AI game on this content.
         var content = ModLoader.Build(new LoadedMods().Sources.Where(s => s.Manifest.Id != "barbarians"));
         Assert.Null(GameFactory.BarbarianFaction(content));
         Assert.DoesNotContain(content.TurnSystems.All, s => s.Id.StartsWith("barbarians:", StringComparison.Ordinal));
-
-        var sim = GameFactory.CreateAi(content, seed: 5, players: 2);
-        var goodies = new List<GoodyReceived>();
-        for (int turn = 0; turn < 30; turn++)
-        {
-            sim.AdvanceTurn();
-            goodies.AddRange(sim.Events.PreviousTurn.OfType<GoodyReceived>());
-        }
-        Assert.Null(GameFactory.BarbarianPlayer(sim));
-        Assert.Equal(2, sim.State.Players.Count);
-        Assert.All(sim.State.Players, p => Assert.True(sim.State.Cities.Any(c => c.Owner == p.Id), $"player {p.Id} has no city"));
-        // Huts still pay out, but never with hostile villagers: they would need a hostile faction to belong to.
-        Assert.All(goodies, g => Assert.Null(sim.Content.Get<S.GoodyDef>(g.Goody).BarbarianUnit));
     }
 
     [Fact]
