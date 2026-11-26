@@ -191,7 +191,9 @@ public sealed class GameState
     public List<City> Cities { get; set; } = new();
     /// <summary>Next monotonic city id.</summary>
     public int NextCityId { get; set; } = 1;
-    /// <summary>Units in id order. Bulk edits require RebuildIndexes.</summary>
+    /// <summary>Units in the order they were added: new units get rising ids, but an upgrade removes its unit and adds
+    /// it again under the same id, at the end (<see cref="Ariel.Content.KernelStateDomains.UnitOrder"/>). Bulk edits require
+    /// RebuildIndexes.</summary>
     public List<Unit> Units { get; set; } = new();
     /// <summary>Next monotonic unit id.</summary>
     public int NextUnitId { get; set; } = 1;

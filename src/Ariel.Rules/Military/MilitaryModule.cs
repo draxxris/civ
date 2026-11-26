@@ -44,8 +44,8 @@ public sealed class MilitaryModule : IPreparableMod
         context.RegisterService<Ariel.Content.IModifierSource>("promotions", new PromotionEffects());
 
         context.RegisterStateComponent<MilitaryUnitState>("unit_state");
-        context.RegisterStateDomain("units", "Units/*/Position", "Units/*/MovesLeft", "Units/*/Health", "Units/*/Promotions",
-            "Units/*/Extensions/military:unit_state");
+        context.RegisterStateDomain("units", "Units/*/Type", "Units/*/Position", "Units/*/MovesLeft", "Units/*/Health",
+            "Units/*/Experience", "Units/*/Promotions", "Units/*/Extensions/military:unit_state");
         context.RegisterStateComponent<MilitaryPlayerState>("player_state");
         context.RegisterStateComponent<MilitaryGameState>("combat_history");
         context.RegisterCommand<MoveUnitPathCommand>("move_unit");

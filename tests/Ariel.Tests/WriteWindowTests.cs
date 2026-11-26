@@ -357,8 +357,8 @@ public sealed class WriteWindowTests
         }));
         var domains = content.StateDomains;
         ulong plans = domains.Mask(["a:plans"], out _), work = domains.Mask(["a:work"], out _);
-        // The kernel's turn progress is private in every registry, beside the module's own.
-        plans |= domains.Mask(KernelStateDomains.TurnProgressOnly, out _);
+        // The kernel's turn progress and unit order are private in every registry, beside the module's own.
+        plans |= domains.Mask([KernelStateDomains.TurnProgress, KernelStateDomains.UnitOrder], out _);
         Assert.Equal(plans, domains.PrivateMask);
         Assert.Equal(plans, domains.UnreadMask(new CultureSource(), content)); // declares nothing, still never reads it
         Assert.Equal(plans | work, domains.UnreadMask(new TreasurySource { Unread = ["a:work"] }, content));
@@ -514,5 +514,33 @@ public sealed class WriteWindowTests
         var node = JsonNode.Parse("""{"Cities":[{"Worked":[1],"FoodStored":3,"Extensions":{"a:state":{"Manual":true,"Other":1}}}]}""")!;
         content.StateDomains.Strip(node, content.StateDomains.Mask(["a:work"], out _));
         Assert.Equal("""{"Cities":[{"FoodStored":3,"Extensions":{"a:state":{"Other":1}}}]}""", node.ToJsonString());
+    }
+
+    [Fact]
+    public void The_unit_order_domain_holds_the_lists_order_and_no_field_may_hold_the_list_or_its_ids()
+    {
+        // The kernel's order domain is over the unit list, so no module may name the list itself or its elements' ids.
+        Assert.Throws<ArgumentException>(() => Content(Source("a", ctx => ctx.RegisterStateDomain("x", "Units"))));
+        Assert.Throws<ArgumentException>(() => Content(Source("a", ctx => ctx.RegisterStateDomain("x", "Units/*/Id"))));
+        var content = Content(Source("a", ctx => ctx.RegisterStateDomain("moves", "Units/*/MovesLeft")));
+        var domains = content.StateDomains;
+        Assert.NotEqual(0UL, domains.Mask([KernelStateDomains.UnitOrder], out bool unknown) & domains.PrivateMask);
+        Assert.False(unknown);
+
+        // Stripped by the order, a list compares matched by id: a reorder vanishes, a removal does not.
+        ulong order = domains.Mask([KernelStateDomains.UnitOrder], out _);
+        string Stripped(string json, ulong mask)
+        {
+            var node = JsonNode.Parse(json)!;
+            domains.Strip(node, mask);
+            return node.ToJsonString();
+        }
+        const string before = """{"Units":[{"Id":3,"MovesLeft":1},{"Id":1,"MovesLeft":2},{"Id":2,"MovesLeft":3}]}""";
+        const string moved = """{"Units":[{"Id":1,"MovesLeft":2},{"Id":2,"MovesLeft":3},{"Id":3,"MovesLeft":1}]}""";
+        const string removed = """{"Units":[{"Id":1,"MovesLeft":2},{"Id":2,"MovesLeft":3}]}""";
+        Assert.Equal(Stripped(before, order), Stripped(moved, order));
+        Assert.NotEqual(Stripped(before, 0), Stripped(moved, 0));
+        Assert.NotEqual(Stripped(before, order), Stripped(removed, order));
+        Assert.Equal("""{"Units":[{"Id":1},{"Id":2},{"Id":3}]}""", Stripped(before, order | domains.Mask(["a:moves"], out _)));
     }
 }

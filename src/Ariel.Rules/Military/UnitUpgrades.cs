@@ -80,6 +80,9 @@ internal static class UnitUpgrades
     internal static void Apply(Simulation sim, Unit unit, string targetId)
     {
         var target = sim.Content.Get<S.UnitDef>(targetId);
+        // The command declares the unit, sight, the treasury and the list's order (UnitStateDomains.UpgradeWrites). A
+        // blockade reads its unit's type, so upgrading a blockading unit changes what kept readers see: widen first.
+        if (MilitaryData.Read(sim, unit).Activity == UnitActivity.Blockade) sim.WidenWriteWindow();
         sim.State.PlayerById(unit.Owner).Treasury -= Price(sim, unit, target);
         var converted = new Unit { Id = unit.Id, Owner = unit.Owner, Type = targetId, Position = unit.Position,
             Experience = Math.Min(unit.Experience, MilitaryData.Constants(sim).MaxExperienceAfterUpgrade), Health = unit.Health,

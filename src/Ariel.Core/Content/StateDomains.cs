@@ -14,7 +14,18 @@ namespace Ariel.Content;
 /// kept) and planning code of any module may read it: the computer player's saved intent, or a tally only its own
 /// turn system spends, for instance. Every reader counts it as unread without
 /// naming it.</para>
-public sealed record StateDomain(string Id, IReadOnlyList<string> Paths, bool Private = false);
+/// <para>A domain may also hold the order of an id-keyed list (<see cref="Orders"/>): which place each element has,
+/// but not which elements the list holds, nor any of their fields. No field path can name a list's order, so
+/// verification compares such a list matched by each element's <c>Id</c> once a window that declares the order closes.
+/// A writer that only moves an element within the list, as an upgrade does by removing a unit and adding it again, can
+/// then declare what it writes; one that adds or removes an element writes the list's membership, which no domain
+/// holds.</para>
+public sealed record StateDomain(string Id, IReadOnlyList<string> Paths, bool Private = false)
+{
+    /// <summary>The lists whose element order this domain holds, by their paths from the state's root (<c>Units</c>).
+    /// Each element is an object with an integer <c>Id</c>, which no domain may hold.</summary>
+    public IReadOnlyList<string> Orders { get; init; } = [];
+}
 
 /// <summary>A rule that reads the state and can say which state domains it never reads, directly or through any rule
 /// it asks: a modifier source, or a provider another module's rule calls while it computes.</summary>
@@ -42,6 +53,13 @@ public static class KernelStateDomains
     /// answer standing.</summary>
     public const string TurnProgress = "kernel:turn_progress";
     internal static readonly IReadOnlyList<string> TurnProgressPaths = ["Players/*/EndedTurn", "TurnOrder"];
+    /// <summary>The order of the unit list (<c>Units</c>), and nothing else: not which units it holds, nor their
+    /// fields. Removing a unit and adding it again, as an upgrade does, moves it to the end of the list and every later
+    /// unit up one place. Private: no modifier source or kept query depends on the order, since each one that walks the
+    /// units counts them, sums integers over them, tests whether any matches or collects them into a set. Turn systems,
+    /// commands and planners walk the list in order, and they may.</summary>
+    public const string UnitOrder = "kernel:unit_order";
+    internal static readonly IReadOnlyList<string> UnitOrderLists = ["Units"];
     /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
     public static readonly IReadOnlyList<string> TurnProgressOnly = [TurnProgress];
 }
@@ -64,6 +82,7 @@ public sealed class StateDomainRegistry
     public StateDomainRegistry()
     {
         Register(new(KernelStateDomains.TurnProgress, KernelStateDomains.TurnProgressPaths, Private: true), KernelStateDomains.Owner);
+        Register(new(KernelStateDomains.UnitOrder, [], Private: true) { Orders = KernelStateDomains.UnitOrderLists }, KernelStateDomains.Owner);
     }
 
     /// <summary>Registered domains in registration order; a domain's bit is its index.</summary>
@@ -82,14 +101,19 @@ public sealed class StateDomainRegistry
             throw new ArgumentException($"State domain '{domain.Id}' must belong to '{owner}'");
         if (_index.ContainsKey(domain.Id)) throw new InvalidOperationException($"Duplicate state domain '{domain.Id}'");
         if (_domains.Count == Capacity) throw new InvalidOperationException($"More than {Capacity} state domains");
-        if (domain.Paths.Count == 0) throw new ArgumentException($"State domain '{domain.Id}' names no field");
-        foreach (var path in domain.Paths)
+        if (domain.Paths.Count == 0 && domain.Orders.Count == 0) throw new ArgumentException($"State domain '{domain.Id}' names no field");
+        foreach (var path in domain.Paths.Concat(domain.Orders))
             if (path.Length == 0 || path.Split('/').Any(s => s.Length == 0) || path.EndsWith('*'))
                 throw new ArgumentException($"State domain '{domain.Id}' has a malformed path '{path}'");
         foreach (var other in _domains)
+        {
             foreach (var path in domain.Paths)
-                if (other.Paths.Any(p => Overlap(p, path)))
+                if (other.Paths.Any(p => Overlap(p, path)) || other.Orders.Any(list => OrderOverlap(list, path)))
                     throw new ArgumentException($"State domain '{domain.Id}' path '{path}' overlaps '{other.Id}'");
+            foreach (var list in domain.Orders)
+                if (other.Orders.Any(o => SameList(o, list)) || other.Paths.Any(p => OrderOverlap(list, p)))
+                    throw new ArgumentException($"State domain '{domain.Id}' order of '{list}' overlaps '{other.Id}'");
+        }
         if (domain.Private) PrivateMask |= 1UL << _domains.Count;
         _index.Add(domain.Id, _domains.Count);
         _domains.Add(domain);
@@ -138,12 +162,36 @@ public sealed class StateDomainRegistry
     public bool Contains(string id) => _index.ContainsKey(id);
 
     /// <summary>Remove every field of the domains in <paramref name="mask"/> from a state JSON tree, so that what is
-    /// left can be compared before and after a write that declared only those domains.</summary>
+    /// left can be compared before and after a write that declared only those domains. A list whose order one of them
+    /// holds is sorted by its elements' ids instead, so that what is left compares the list matched by id.</summary>
     public void Strip(JsonNode root, ulong mask)
     {
         for (int i = 0; i < _domains.Count; i++)
             if ((mask & (1UL << i)) != 0)
+            {
                 foreach (var path in _domains[i].Paths) Strip(root, path.Split('/'), 0);
+                foreach (var list in _domains[i].Orders) SortById(root, list.Split('/'), 0);
+            }
+    }
+
+    private static void SortById(JsonNode? node, string[] segments, int at)
+    {
+        if (node is null) return;
+        if (at == segments.Length)
+        {
+            if (node is not JsonArray array) return;
+            var items = array.ToArray();
+            array.Clear();
+            foreach (var item in items.OrderBy(item => long.Parse(item!["Id"]!.ToJsonString(), System.Globalization.CultureInfo.InvariantCulture)))
+                array.Add(item);
+            return;
+        }
+        if (segments[at] == "*")
+        {
+            if (node is JsonArray all) foreach (var item in all) SortById(item, segments, at + 1);
+            else if (node is JsonObject every) foreach (var (_, value) in every) SortById(value, segments, at + 1);
+        }
+        else if (node is JsonObject obj && obj.TryGetPropertyValue(segments[at], out var child)) SortById(child, segments, at + 1);
     }
 
     private static void Strip(JsonNode? node, string[] segments, int at)
@@ -160,6 +208,27 @@ public sealed class StateDomainRegistry
         if (node is not JsonObject obj) return;
         if (last) obj.Remove(segment);
         else if (obj.TryGetPropertyValue(segment, out var child)) Strip(child, segments, at + 1);
+    }
+
+    // A list's order overlaps a field path that holds the whole list (the list itself, or an object that contains it)
+    // or names its elements' ids, by which verification matches them.
+    private static bool OrderOverlap(string list, string path)
+    {
+        var x = list.Split('/'); var y = path.Split('/');
+        if (y.Length != x.Length + 2 && y.Length > x.Length) return false;
+        for (int i = 0; i < Math.Min(x.Length, y.Length); i++)
+            if (x[i] != y[i] && x[i] != "*" && y[i] != "*") return false;
+        return y.Length <= x.Length || (y[x.Length] == "*" && y[^1] == "Id");
+    }
+
+    // Two orders overlap when they may name the same list.
+    private static bool SameList(string a, string b)
+    {
+        var x = a.Split('/'); var y = b.Split('/');
+        if (x.Length != y.Length) return false;
+        for (int i = 0; i < x.Length; i++)
+            if (x[i] != y[i] && x[i] != "*" && y[i] != "*") return false;
+        return true;
     }
 
     // Two paths overlap when one names a field the other contains or the same field.

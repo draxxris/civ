@@ -59,6 +59,9 @@ public sealed class PillageCommand : MilitaryUnitCommand
 public sealed class UpgradeUnitCommand : MilitaryUnitCommand
 {
     public string Target { get; init; } = "";
+    /// <summary>The unit, sight, the treasury and the unit list's order (<see cref="UnitStateDomains.UpgradeWrites"/>);
+    /// upgrading a blockading unit widens first.</summary>
+    public override IReadOnlyList<string>? WriteDomains => UnitStateDomains.UpgradeWrites;
     protected override UnitAction Action => UnitAction.Upgrade;
     protected override string Argument => Target;
 }
