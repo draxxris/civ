@@ -92,13 +92,15 @@ internal sealed class MilitaryPlanner(AiContext ctx, ArmyPlan army, CityPlanner 
     {
         var service = ctx.Service<IUnitService>();
         var promotions = ctx.Sim.Content.Get<PromotionDef>().All;
-        while (ctx.Alive(unit) && unit.Experience >= service.ExperienceNeeded(ctx.Sim, unit.Id))
+        // A promotion is open only to its combat types, and never to a unit without moves left: such a unit fails every
+        // validation, so the experience it needs (a unit ledger) is not asked. A promotion keeps the unit's type.
+        if (ctx.Def(unit).CombatType is not { } combat) return;
+        while (ctx.Alive(unit) && unit.MovesLeft > 0 && unit.Experience >= service.ExperienceNeeded(ctx.Sim, unit.Id))
         {
             var role = PromotionRoleOf(unit);
-            // A promotion is open only to its combat types, so the rest are not validated: each validation recomputes
-            // the experience the unit needs from its modifiers.
-            string? combat = ctx.Def(unit).CombatType;
-            var best = promotions.Where(p => combat is not null && p.CombatTypes.GetValueOrDefault(combat)
+            // The other combat types' promotions are not validated: each validation recomputes the experience the unit
+            // needs from its modifiers.
+            var best = promotions.Where(p => p.CombatTypes.GetValueOrDefault(combat)
                     && service.Validate(ctx.Sim, ctx.PlayerId, unit.Id, UnitAction.Promote, p.Id) is null)
                 .OrderByDescending(p => Value(p, role)).ThenBy(p => p.Id, StringComparer.Ordinal).FirstOrDefault();
             if (best is null || !ctx.Issue(new PromoteMilitaryUnitCommand { Player = ctx.PlayerId, Unit = unit.Id, Promotion = best.Id })) return;

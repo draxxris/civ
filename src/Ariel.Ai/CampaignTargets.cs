@@ -21,9 +21,25 @@ internal sealed class CampaignTargets(AiContext ctx)
     public City? SelectPrimaryTargetCity(int area)
     {
         var goal = AiIntent.Read(ctx).Campaigns.GetValueOrDefault(area);
-        if (goal is not null && Reusable(goal, Dependencies())) return goal.City is { } id ? ctx.Sim.State.FindCity(id) : null;
+        if (goal is not null && StillReusable(goal)) return goal.City is { } id ? ctx.Sim.State.FindCity(id) : null;
         return ChoosePrimary(area);
     }
+
+    /// <summary>Whether <see cref="SelectPrimaryTargetCity"/> finds a city for <paramref name="area"/>. The held goal's
+    /// city and a fresh choice are both looked up first: only when exactly one of them exists does the answer depend on
+    /// whether the goal is still reusable, so only then are the dependencies digested (a whole player economy).</summary>
+    public bool HasPrimaryTarget(int area)
+    {
+        bool fresh = ChoosePrimary(area) is not null;
+        if (AiIntent.Read(ctx).Campaigns.GetValueOrDefault(area) is not { } goal) return fresh;
+        bool held = goal.City is { } id && ctx.Sim.State.FindCity(id) is not null;
+        if (held == fresh) return held;
+        return StillReusable(goal) ? held : fresh;
+    }
+
+    /// <summary><see cref="Reusable"/> against the current dependencies, testing the goal's age before digesting them.</summary>
+    private bool StillReusable(CampaignGoal goal) =>
+        AiIntent.Reusable(ctx, goal.EvaluatedTurn, goal.ReviewTurn) && goal.Dependencies == Dependencies();
 
     // Read-only evaluation also runs during replay validation. Queries never issue commands or modify saved intent.
     internal SortedDictionary<int, CampaignGoal> Evaluate(IEnumerable<int> areas)

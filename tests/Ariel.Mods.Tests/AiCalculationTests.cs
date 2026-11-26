@@ -559,16 +559,29 @@ public sealed class AiCalculationTests(LoadedMods mods) : IClassFixture<LoadedMo
         sim.State.PlotAt(hidden.Position).Revealed.Clear();
         var ctx = NewAi(sim, "AiContext", sim, 0);
         var targets = NewAi(sim, "CampaignTargets", ctx);
+        // Sealift asks only whether a target exists, which must always agree with the selection itself.
+        void Agrees(int area) =>
+            Assert.Equal(Call(targets, "SelectPrimaryTargetCity", area) is not null, (bool)Call(targets, "HasPrimaryTarget", area)!);
+        int area = sim.State.PlotAt(sim.State.CityById(2).Position).AreaId;
         Assert.Null(Call(targets, "SelectPrimaryTargetCity", 0));
+        Agrees(0); Agrees(area);
+        var issue = Method<Func<GameCommand, bool>>(ctx, "Issue");
         var war = new DeclareWarCommand { Player = 0, Target = 1 };
-        Assert.True(Method<Func<GameCommand, bool>>(ctx, "Issue")(war));
+        Assert.True(issue(war));
         Parallel.For(0, 16, _ => Assert.Equal(2, ((City)Call(targets, "SelectPrimaryTargetCity", 0)!).Id));
+        Agrees(0); Agrees(area);
+        // A held goal (city 2) that a capture leaves standing as a city but no longer a target: only the dependencies
+        // tell the two answers apart.
+        Assert.True(issue(new Ariel.Ai.ReviewCampaignGoalsCommand { Player = 0, Areas = [area] }));
+        Agrees(area);
         sim.Rules().CityCapture.Capture(sim, 2, 0);
         Call(ctx, "Refresh");
         Assert.Null(Call(targets, "SelectPrimaryTargetCity", 0));
+        Agrees(0); Agrees(area);
         sim.State.PlotAt(hidden.Position).Revealed.Add(sim.TeamOf(0).Id);
         Call(ctx, "Refresh");
         Assert.Equal(3, ((City)Call(targets, "SelectPrimaryTargetCity", 0)!).Id);
+        Agrees(0); Agrees(area);
     }
 
     [Theory]

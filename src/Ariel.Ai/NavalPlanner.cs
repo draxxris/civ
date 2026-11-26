@@ -21,7 +21,7 @@ internal sealed class NavalPlanner(AiContext ctx, UnitOrders orders, AttackPlann
         foreach (var unit in free)
         {
             int area = _targets.Area(unit.Position);
-            if (_targets.SelectPrimaryTargetCity(area) is not null || _targets.OverseasTarget(area) is null || _targets.Port(area) is not { } port)
+            if (_targets.HasPrimaryTarget(area) || _targets.OverseasTarget(area) is null || _targets.Port(area) is not { } port)
             { remaining.Add(unit); continue; }
             ctx.Done.Add(unit.Id);
             if (unit.Position != port.Position) ctx.MoveToward(unit, port.Position);
