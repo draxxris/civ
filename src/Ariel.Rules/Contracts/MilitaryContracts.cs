@@ -84,12 +84,13 @@ public interface ICombatService
 /// player and team ledgers kept across writes survive moves (<see cref="MoveUnitPathCommand.WriteDomains"/>).</summary>
 public static class UnitStateDomains
 {
-    /// <summary>Where units stand and how far they may still move: every unit's position, moves left and Military unit
-    /// state (activity, transport, whether it moved or attacked, experience bookkeeping). A reader of a city, player or
+    /// <summary>Where units stand, how far they may still move and how healthy they are: every unit's position, moves
+    /// left, hit points and Military unit state (activity, transport, whether it moved or attacked, experience
+    /// bookkeeping). A reader of a city, player or
     /// team calculation that sees units only through naval blockades (<see cref="INavalBlockadeService"/>) may count
     /// this domain as unread, because every writer that declares it widens its window
-    /// (<see cref="Simulation.WidenWriteWindow()"/>) before it changes a unit whose activity is
-    /// <see cref="UnitActivity.Blockade"/>. A reader that counts the units in a city does read it.</summary>
+    /// (<see cref="Simulation.WidenWriteWindow()"/>) before it changes what a blockade reads of a unit whose activity is
+    /// <see cref="UnitActivity.Blockade"/>: its position, activity or transport, or its health falling to zero. A reader that counts the units in a city does read it.</summary>
     public const string Units = "military:units";
     /// <summary>What each team sees now and remembers of each plot: plots' visible teams and revealed memories, but
     /// not which teams have revealed a plot (<see cref="Revealed"/>).</summary>

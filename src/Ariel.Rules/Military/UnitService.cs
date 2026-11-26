@@ -177,6 +177,8 @@ internal sealed partial class UnitService(MovementService movement) : IUnitServi
     {
         var unit = sim.State.UnitById(unitId);
         if (unit.Extensions.Get<MilitaryUnitState>(sim.Content) is not null) return;
+        // Free promotions and initial experience are outside the unit domain a refresh declares.
+        sim.WidenWriteWindow();
         var state = MilitaryData.Edit(sim, unit); state.CreatedTurn = sim.State.Turn;
         foreach (var promotion in MilitaryData.Definition(sim, unit).FreePromotions.Where(p => p.Value).OrderBy(p => p.Key, StringComparer.Ordinal)) unit.Promotions.Add(promotion.Key);
         var effects = MilitaryData.Effects(sim, unit);
@@ -207,8 +209,13 @@ internal sealed partial class UnitService(MovementService movement) : IUnitServi
 
 internal sealed class UnitTurnSystem(IUnitService units) : IPlayerTurnSystem
 {
+    private static readonly IReadOnlyList<string> Writes = [UnitStateDomains.Units];
     public string Id => "military:units";
     public int Order => TurnPhase.Units + 10; // Workers spend their moves before this refresh.
+    /// <summary>A refresh writes units' moves, health and Military state: the unit domain. Initializing a unit that has
+    /// no Military state yet widens first. A blockading unit keeps what the blockade reads of it: a refresh moves no
+    /// unit, heals but never kills, and changes only a sentry's or a fortified unit's activity state.</summary>
+    public IReadOnlyList<string>? WriteDomains => Writes;
     public void Run(Simulation sim, int player)
     {
         foreach (var unit in sim.State.Units.Where(u => u.Owner == player).OrderBy(u => u.Id).ToArray()) Refresh(sim, unit);
