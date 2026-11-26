@@ -4366,6 +4366,234 @@ it.
 
 ______________________________________________________________________
 
+### Pass 29: The Unit List's Order, and Per-City Widenings (Measured)
+
+- **Date**: 2026-11-26
+- **Commits**: `79d8728b` (the unit order domain and the upgrade's declaration), then the
+  documentation
+
+This pass took the two recommendations of Pass 28. The first, a state domain for the
+unit list's order so that upgrades can declare what they write, is built. The second,
+narrowing the per-player chain's widenings to the city they change, was inventoried and
+measured. Its ceiling is about 2.5% of the stale misses, and it needs a reader contract
+across modules, so under the architecture rule in AGENTS.md it stops at the design. Every
+final state is byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- **Builds**: base `a00d06c0`; final `79d8728b`. Each `Ariel.SyncCheck` build was copied
+  aside and run through `mise run ai:play -- --bin DIR`.
+- **Saves**: s450 and s550 from Pass 28, which carry the base tree's content hash. The
+  final tree bumps Military to 1.40.0, so its copies were re-headed with the new content
+  hash and version. The re-headed s550 + 4 gives `a58adbc1e9f6647d`, as the original does.
+- **Reference hashes**: unchanged from Pass 25, all nine matching on base and final.
+- **Probes**: the Pass 28 probe, plus a tag on each widening that names its city and
+  what it completed (a building, a unit, a faith that arrives or leaves, a worker's build
+  and the city working its plot), and the context's city on each stale miss. Never
+  committed; kept in the scratch directory as `p29/probe29.patch`, with the counterfactual
+  `p29/citycf.py`. Runs: s550 + 4, 3 probed turns. Probe timings run about three times
+  the profiler's.
+
+#### Task 1: The Unit List's Order
+
+`UpgradeUnitCommand` removes its unit and adds a converted one under the same id, which
+goes to the end of `GameState.Units`. A field path cannot name that. The kernel now has
+order domains:
+
+- `StateDomain.Orders` names id-keyed lists whose element order the domain holds, and
+  nothing else: not which elements the list holds, nor their fields.
+- `Strip` sorts such a list by `Id`, so window verification compares it matched by id: a
+  reorder passes, while an added or removed element, or any field outside the declared
+  domains, still fails.
+- Registration rejects a field path that holds an ordered list or names its elements'
+  ids, and two orders of one list.
+- The kernel registers `kernel:unit_order` over `Units`, private in every registry. Every
+  kept reader that walks the units counts them, sums integers over them, tests whether
+  any matches, or collects them into a set, so none depends on the order. That rests on
+  inspection of every `Units` walk in the rules and mods; `--verify-modifier-cache`
+  checks it wherever a run upgrades.
+
+What the upgrade writes, from its code and the Pass 28 footprints:
+
+- the owner's treasury (`economy:treasury`);
+- the unit's type, moves, experience (capped by `MaxExperienceAfterUpgrade`), free
+  promotions and Military unit state. Type and experience were in the remainder, and
+  `military:units` now holds them. Type is written only by unit creation, which is
+  undeclared, and by the upgrade; experience also by combat, goody huts and missions,
+  which widen or are undeclared;
+- sight, which it recomputes; first reveals and contacts widen as after a move;
+- the unit list's order.
+
+It declares exactly those (`UnitStateDomains.UpgradeWrites`).
+
+The blockade contract: a blockade reads its unit's definition (whether it is a ship
+that may pillage), and the upgrade keeps the unit's Military state, so a blockading unit
+stays blockading under a new type. `UnitUpgrades.Apply` therefore widens to everything
+first when the unit blockades, the Pass 27 pattern. The contract on `military:units`
+now names the type.
+
+The writers that add or remove units cannot share the domain: training, disbanding,
+combat deaths, great person births, and units a mission or a wonder creates. They change
+the list's membership and `NextUnitId`. Verification would have to compare two trees
+with an element on one side only, and `CivicEffects` counts the units in a city, so
+membership is not private. Most of them sit in windows that widen anyway: a completion,
+a fight, a birth.
+
+| Writer | Stamps a turn at s550, before | After | Declares now |
+| :-- | --: | --: | :-- |
+| `UpgradeUnitCommand` | 1.7 remainder | 1.7 domain | `military:units`, `world:sight`, `economy:treasury`, `kernel:unit_order` |
+
+Per turn at s550, under the probes:
+
+| Subject | Base | Final |
+| :-- | --: | --: |
+| Remainder stamps | 42.7 | 41.0 |
+| Kept contribution hits | 9,579 | 9,982 |
+| Misses, cold / inside an open window | 1,448 / 2,050 | 1,448 / 2,050 |
+| Misses, stale, same lines | 4,705 | 4,301 |
+| `BuildingEffects` stale misses | 346 (180 ms probed) | 272 (162 ms) |
+| Misses whose only writer is an upgrade | 398 (24.3 ms probed) | 9 (0.5 ms) |
+| Kept-query hits / stale misses | 7,759 / 1,499 | 7,837 / 1,324 |
+
+The 9 left are readers that do read units: `CivicEffects`, Corporations' effects and the
+undeclared sources.
+
+Results, base and final alternated on each save, two rounds, 8 turns each at load 0.8 to
+1.3 with `DOTNET_TC_CallCountingDelayMs=0`. Per turn over the last 6 turns, summed over
+threads; each cell gives both runs.
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| s550, `modifiers:collect` | 147.9 / 147.4 ms, 116.6 MiB | 144.0 / 143.7 ms, 114.7 MiB | −2.5%, −1.7% alloc |
+| s550, wall per turn | 549 / 546 ms | 550 / 550 ms | within noise |
+| s550, allocation per turn | 507 MiB | 505 MiB | −0.4% |
+| s450, `modifiers:collect` | 95.5 / 97.4 ms, 68.3 MiB | 96.7 / 95.0 ms, 67.0 MiB | within noise, −1.9% alloc |
+| s450, wall per turn | 408 / 408 ms | 404 / 403 ms | −1% |
+| s450, allocation per turn | 358 MiB | 356 MiB | −0.6% |
+
+The probed saving (24 ms) became about 4 ms real at s550: the probe's timings run high,
+and many of the entries an upgrade invalidated were invalidated again by a later
+widening before anyone read them.
+
+#### Task 2: Per-City Widenings
+
+The inventory: the widenings of the per-player chain over 3 probed turns at s550.
+
+| Widening | Windows widened a turn | What it wrote |
+| :-- | --: | :-- |
+| `cities:completion` | 5.7 | 18 buildings and 7 units in 3 turns |
+| `religion:city_turns` | 2.3 | 16 faiths arriving, 5 leaving |
+| `research:progress` | 2.7 | discoveries, team-wide |
+| `world:workers` | 2.3 | 10 finished builds |
+
+Every completion also publishes `BuildingCompleted`, which four subscribers handle
+(founding, hurry anger, scripted wonders, golden ages), so the event bus widens the
+window to everything even when the order did not.
+
+There is no per-city ledger validated per city: the modifier cache keys entries by
+(source, context), and kept queries by their own key, but both test validity against
+the global stamps.
+
+The counterfactual (`p29/citycf.py`) replayed every stale miss of a city context. It
+counted a miss as saved when every writer since its entry noted cities, every noted
+city was another city, and every noted write was of an allowed kind. That assumes a
+perfect per-city reader contract, which does not exist.
+
+| Writes treated as city-local | Saved misses a turn | Probed ms |
+| :-- | --: | --: |
+| Buildings with no reach beyond their city, judged by their definition fields (8 of the 10 completed) | 30.3 | 9.0 |
+| Every completed building | 37.3 | 9.9 |
+| Buildings and units | 46.7 | 11.0 |
+| Every completion, faith spread and decay, and worker build | 107.3 | 26.2 |
+
+Out of 4,325 stale misses a turn (294 ms probed). The completion window's own
+in-window misses add at most 37 a turn (9 ms probed). Kept queries are untimed: at most
+229 of their 1,321 stale misses a turn have only city-tagged writers.
+
+Why the 46% of Pass 28 does not convert: an own widening is rarely the only writer. For
+`BuildingEffects` the remaining writers are discoveries (75 of its misses a turn), the
+rollover and map systems (53 each) and moves that reveal (53). Of the ten buildings
+completed, the papermill gives a resource to the network and the school of law speeds
+production in every city, so 8 are city-local by their definition fields. That judgement
+rests on the fields, not on a proven reader contract.
+
+What per-city stamps would take:
+
+- **Event subscribers declare.** `Subscribe<T>(name, handler, writeDomains)`, so that a
+  handled event no longer widens to everything, and each subscriber widens before its
+  real write: a founding, a golden age, a scripted wonder's units, hurry anger.
+- **Per-city stamps.** `long[] _cityStamps`, indexed by city id and grown by doubling (a
+  few KiB, never on the large object heap), and a per-domain stamp for writes scoped to a
+  city. `WidenWriteWindow(city, domains)` names city-partitioned domains (all paths under
+  `Cities/*/`, plus a new `cities:buildings` over `Cities/*/Buildings`). `WrittenSince`
+  and `WritingNow` take the context's city. A city context ignores another city's
+  stamp, and player and team contexts and kept queries treat it as a full write. The
+  checks stay array-indexed and allocation-free.
+- **A reader contract.** A source opts in by saying it sees other cities' buildings only
+  through a building "reach" predicate: free resources, global and area effects, class
+  limits, power, free buildings granted elsewhere, shrines, headquarters and trade
+  connections. That predicate spans Cities, Religion, Corporations, ScriptedWonders,
+  GreatPeople, Economy and the resource network. This is a reader-side read set, which
+  Pass 28 found cannot be proven without a read recorder; `--verify-modifier-cache` would
+  only test it empirically.
+- **Per-city verification.** The window check strips the city-scoped domains only within
+  the cities the window names, matching `Cities` by id.
+
+Against that, the realistic gain is about 9 ms probed: 3 ms real, or 0.5% of an s550
+turn. Faith spreads cannot be city-local, because shrine income counts every city that
+holds the faith. Worker builds cannot either, because improvements and routes feed the
+resource network.
+
+#### Rejected and Not Built
+
+- **Per-city stamps** (above): the ceiling is too small for a kernel, event-bus and
+  cross-module contract change.
+- **Narrowing the failed completion**: `CityProduction.Complete` widens before its check
+  that the order is still valid. The invalid branch writes only the queue, the treasury
+  and the pending commit, all declared, so the widening could move after it. The probe
+  saw no such completion in 3 turns, so it would gain nothing measurable for a Cities
+  version bump. It is free to build later.
+- **Splitting the completion window per city**: every read in a completing city follows
+  its own widening, so per-city nested windows would keep nothing more.
+- **Upgrading in place**: keeping the unit's place in the list would change the unit
+  order, and with it the hash.
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash matches the base. s550 + 8 gives `23bb41d03ee121d7` with
+  `--waves max` and with `DOTNET_PROCESSOR_COUNT=1`. Seed 1 with `--waves max` gives
+  `348b462d1ec219fa`.
+- Each run alone, under a 10 GiB memory cap, on the re-headed saves:
+  - `--verify-modifier-cache` on s450 + 4 and s550 + 2, each also with `--waves max`;
+  - `--verify-read-epochs` on s550 + 2 and s450 + 4;
+  - `--verify-modifier-cache` over whole games: the industrial start (seed 5, 4 players,
+    120 turns, 9 minutes), the medieval start (seed 7, 6 players, 150 turns, 17 minutes)
+    and seed 5 with 8 players over 150 turns (22 minutes).
+- New tests:
+  - an upgrade with capped experience writes only units, sight, the treasury and the
+    unit order. Without the order domain it fails verification, and so does a disband
+    declared with it;
+  - upgrading a blockader widens to everything;
+  - an order domain's registration rules, and `Strip` matching a list by id.
+- `mise run test`, `mise run check:sync`, `mise run test:e2e`, `mise run test:worldgen`
+  and `mise run build:game` pass.
+- **Resting on inspection**: upgrading a blockader in a real game (no AI game blockades),
+  which the test covers.
+
+#### Still Slow, Ranked
+
+1. **The rollover and map systems** (31% of stale misses, Pass 28 class G) and
+   **discoveries**: the writers that block most of what remains, and structural.
+2. **Owner stamps**, after owner-indexed entity access and a read recorder (Pass 28).
+3. **Unit membership**: creation and removal need a membership domain, a two-tree
+   comparison in verification, and `NextUnitId`. Most of them happen in windows that
+   widen anyway.
+4. **Unit calculations are never kept** (Pass 26 item 2).
+
+______________________________________________________________________
+
 ## Comprehensive Performance Summary
 
 The following table aggregates all recorded performance measurements across optimization
@@ -4463,3 +4691,5 @@ passes:
 |                                         |                      | Same, from turn 451                                        | `modifiers:collect` CPU  |         115–119 ms |         94–100 ms |                           **-16 to -19%** |
 |                                         |                      | Same, from turn 551                                        | Remainder stamps per turn |               170 |                43 |                                  **-75%** |
 | **Pass 28: Owner Stamps (not built)**   | docs only            | Four-player AI game from turn 551, probed                  | Stale misses only other players caused | 1,102 of 4,731 a turn | — | measured, not built |
+| **Pass 29: Unit Order Domain** | `79d8728b` | Four-player AI game, last 6 of 8 turns from turn 551, JIT pinned | `modifiers:collect` CPU | 147–148 ms | 144 ms | **-2.5%** |
+|                                         |                      | Same, probed                                               | Stale misses with an upgrade as only writer | 398 a turn | 9 a turn | **-98%** |

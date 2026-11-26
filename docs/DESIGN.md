@@ -2986,7 +2986,15 @@ declare both sides.
   `ManualWork` and `AvoidGrowth`. A path uses `*` for every array element or object
   property. A field belongs to at most one domain; overlapping registrations are
   rejected. Everything no domain names is the remainder. At most 64 domains, one bit
-  each. A **private** domain (`RegisterPrivateStateDomain`) holds fields that no
+  each. A domain may also hold the **order of an id-keyed list** (`StateDomain.Orders`):
+  which place each element has, but not which elements the list holds nor their fields.
+  The kernel registers one, the private `kernel:unit_order` over `Units`, because an
+  upgrade removes its unit and adds it again at the end of the list, and no field path
+  can name that. Verification strips an order by sorting the list by `Id`, so a reorder
+  passes and an added or removed element still fails. No field path may hold an ordered
+  list or its elements' ids. It is private because no kept reader depends on the unit
+  order: each one that walks the units counts them, sums integers over them, tests
+  whether any matches or collects them into a set. A **private** domain (`RegisterPrivateStateDomain`) holds fields that no
   modifier source or kept query reads, nor anything either asks: turn systems, commands,
   their validation, unit calculations (which are never kept) and planners may read them,
   in any module. Every reader therefore counts it as unread
@@ -3097,12 +3105,13 @@ declare both sides.
     widens when the tier flips.
   - `military:units`: readers of kept calculations see units only through naval
     blockades (`INavalBlockadeService`, which the resource network asks, reads only units
-    whose activity is `Blockade`: their position, activity, transport, owner and whether
-    their health is above zero). A declared writer widens before it changes what a
-    blockade reads of such a unit: moving one ends its blockade, and a unit that falls to
-    zero health stops blockading, and setting an activity widens when a blockade starts or
-    ends. The domain holds positions, moves left, hit points, promotions and the Military
-    unit state. A reader that counts units in a city, as `CivicEffects` does
+    whose activity is `Blockade`: their type (a ship that may pillage), position,
+    activity, transport, owner and whether their health is above zero). A declared writer
+    widens before it changes what a blockade reads of such a unit: moving one ends its
+    blockade, a unit that falls to zero health stops blockading, setting an activity
+    widens when a blockade starts or ends, and upgrading a blockader changes its type. The
+    domain holds types, positions, moves left, hit points, experience, promotions and the
+    Military unit state. A reader that counts units in a city, as `CivicEffects` does
     for military happiness, reads the domain.
   - `government:timers`: readers see whether anarchy lasts, and the timer system widens
     on its last turn. `cities:occupation`: readers see whether the city is in occupation
@@ -3152,6 +3161,15 @@ declare both sides.
 
   A reader that reads another player's state therefore needs no declaration today. Any
   per-owner design must start with that recorder.
+- **Stamps are not per city either.** A completion, a faith spread or a worker's build in
+  one city widens its player's whole chain step, and every city's entries go stale.
+  Per-city stamps were measured in docs/OPTIMIZE.md, Pass 29, and not built: with every
+  such widening treated as city-local they would keep about 2.5% of the stale misses,
+  because the same entries are nearly always invalidated by a discovery, the rollover or
+  a map system too. They would need write declarations on event subscribers (a handled
+  `BuildingCompleted` widens to everything), per-city stamps checked by city contexts, a
+  reader contract saying which sources see other cities' buildings and through which
+  definition fields, and per-city window verification.
 - **Thread model.** Writes, windows and stamps happen only on the thread that runs the
   kernel. AI scoring threads (`ParallelScoring`) read one simulation inside a read epoch,
   when no window opens or closes. They share the cache, which is a
@@ -3179,6 +3197,10 @@ declare both sides.
       recomputes, whose first reveals and contacts widen as after a move.
     - `SetUnitActivityCommand` writes `military:units`, and widens to everything when a
       blockade starts or ends.
+    - `UpgradeUnitCommand` writes `UnitStateDomains.UpgradeWrites`: `military:units`
+      (the type, capped experience, moves, free promotions and Military unit state),
+      `world:sight`, `economy:treasury` and `kernel:unit_order`. Upgrading a blockader
+      widens to everything first.
     - `StartBuildCommand` writes `economy:treasury` and `world:worker_orders`.
     - `SetEspionageWeightCommand` writes `espionage:points`.
   - Unit moves: `MoveUnitPathCommand` writes `UnitStateDomains.MoveWrites`:
@@ -3242,10 +3264,11 @@ declare both sides.
     - Writers: the other global systems, and every command not listed. Three kinds of
       write keep them undeclared, and each needs more than a declaration (docs/OPTIMIZE.md,
       Pass 27):
-      - Entity membership and order: `UpgradeUnitCommand` removes and re-adds the unit,
-        which moves it to the end of the unit list. A field path cannot name a
-        collection's membership or order, and a path over `Units` would overlap every unit
-        domain.
+      - Entity membership: creating or removing a unit (training, disbanding, combat
+        deaths, great person births, units a mission or wonder creates) changes which
+        units the list holds, and `NextUnitId`. The order domain does not cover that:
+        verification would need to compare two trees with an element on one side only,
+        and `CivicEffects` counts the units in a city, so membership is not private.
       - Broad writes by nature: deals, peace, great person missions and ranged attacks
         write what kept readers read (trades, wars, buildings, techs, units).
       - The once-a-turn map systems (barbarians, corporations, councils, events,
