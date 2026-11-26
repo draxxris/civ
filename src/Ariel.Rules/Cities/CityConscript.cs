@@ -87,6 +87,8 @@ internal sealed class CityConscript(ICityWorkService work, ICityCultureService c
     }
     internal static void ResetDrafts(Simulation sim, int player)
     {
+        // A player without the Cities player state gains one here: a write beyond the declared drafts.
+        if (sim.State.PlayerById(player).Extensions.Get<CityPlayerState>(sim.Content) is null) sim.WidenWriteWindow();
         var state = CityData.PlayerState(sim, player);
         state.ConscriptCountThisTurn = 0;
         sim.State.PlayerById(player).Extensions.Set(sim.Content, state);

@@ -137,6 +137,8 @@ internal sealed class Timers : ITimers
     /// <summary>Drop the timers that ended: at the start of a turn (<paramref name="turnEnd"/> false) those whose time
     /// is up or whose holder is gone, at the end of a player's turn the owner's <see cref="TimerExpiry.OwnerTurnEnd"/>
     /// ones. Nothing is allocated when nothing ends.</summary>
+    /// <summary>What the expiry steps declare: nothing, as an expiry widens.</summary>
+    internal static readonly IReadOnlyList<string> WritesNothing = [];
     internal void Expire(Simulation sim, bool turnEnd, int player = -1)
     {
         if (Read(sim) is not { Timers.Count: > 0 } state) return;
@@ -145,6 +147,9 @@ internal sealed class Timers : ITimers
         for (int i = 0; i < list.Count && first < 0; i++)
             if (Ends(sim, list[i], turnEnd, player, out _)) first = i;
         if (first < 0) return;
+        // Timers carry effects that sources read, and ending one runs its kind and subscribers: the expiry steps declare
+        // that they write nothing, so an expiry widens first.
+        sim.WidenWriteWindow();
         var ended = new List<(GameTimer Timer, TimerEnd Reason)>();
         int write = first;
         for (int read = first; read < list.Count; read++)
@@ -194,6 +199,8 @@ internal sealed class TimersTurnStart(Timers timers) : ITurnSystem
 {
     public string Id => "foundation:timers";
     public int Order => TurnPhase.GameBegin;
+    /// <summary>Nothing, unless a timer ends, which widens (<see cref="Timers.Expire"/>).</summary>
+    public IReadOnlyList<string>? WriteDomains => Timers.WritesNothing;
     public void Run(Simulation sim) => timers.Expire(sim, turnEnd: false);
 }
 
@@ -202,5 +209,7 @@ internal sealed class TimersTurnEnd(Timers timers) : IPlayerTurnSystem
 {
     public string Id => "foundation:timers_turn_end";
     public int Order => TimerSystems.TurnEndOrder;
+    /// <summary>Nothing, unless a timer ends, which widens (<see cref="Timers.Expire"/>).</summary>
+    public IReadOnlyList<string>? WriteDomains => Timers.WritesNothing;
     public void Run(Simulation sim, int player) => timers.Expire(sim, turnEnd: true, player);
 }

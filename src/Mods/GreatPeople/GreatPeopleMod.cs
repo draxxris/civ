@@ -67,6 +67,10 @@ internal sealed class GoldenAgeTimers : IPlayerTurnSystem
 {
     public string Id => "great_people:golden_age_timers";
     public int Order => TurnPhase.PlayerEnd + 2;
+    /// <summary>Outside a golden age the step writes nothing; a turn of one counts down and widens first, since sources
+    /// read whether it lasts.</summary>
+    public IReadOnlyList<string>? WriteDomains => Nothing;
+    private static readonly IReadOnlyList<string> Nothing = [];
     public void Run(Simulation sim, int player) => GoldenAges.Tick(sim, player);
     public void Run(Simulation sim) { foreach (var player in sim.State.Players.OrderBy(p => p.Id)) Run(sim, player.Id); }
 }

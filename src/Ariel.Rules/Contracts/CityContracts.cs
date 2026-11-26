@@ -253,10 +253,17 @@ public static class CityStateDomains
     /// disorder (<see cref="GovernmentStatus.IsDisorder"/>), which every writer that declares it widens before
     /// changing.</summary>
     public const string Occupation = "cities:occupation";
+    /// <summary>This turn's drafts: whether each city has drafted and how many the player has. Private: only draft
+    /// validation and the turn's reset read them.</summary>
+    public const string Drafts = "cities:drafts";
+    /// <summary>A city's defense damage and whether it was bombarded this turn. Private: only combat, which is a unit
+    /// calculation and never kept, and the recovery step read them.</summary>
+    public const string Defense = "cities:defense";
     /// <summary>Declarations, one list each, so the kernel resolves each once.</summary>
     public static readonly IReadOnlyList<string> WorkOnly = [Work], QueueOnly = [Queue], WorkAndQueue = [Work, Queue],
         GrowthAndWork = [Growth, Work], CultureOnly = [Culture], ProductionWrites = [Production, Queue, EconomyStateDomains.Treasury],
-        BordersWrites = [PlotCulture, Work], ConscriptAngerOnly = [ConscriptAnger], OccupationOnly = [Occupation];
+        BordersWrites = [PlotCulture, Work], ConscriptAngerOnly = [ConscriptAnger], OccupationOnly = [Occupation],
+        DraftsOnly = [Drafts], DefenseOnly = [Defense];
     /// <summary>The domains a rule that follows a city's buildings, techs, civics, resources, holdings and grants never
     /// reads: who works the city and what it builds, and the tallies a turn counts up and down (food and population,
     /// culture points in cities and on plots, production bookkeeping, conscription and hurry anger, the treasury). Culture points count as unread for a

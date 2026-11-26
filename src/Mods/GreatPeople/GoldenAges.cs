@@ -32,6 +32,7 @@ internal static class GoldenAges
     {
         var state = sim.State.PlayerById(player).Extensions.Get<GreatPeoplePlayerState>(sim.Content);
         if (state is null || state.GoldenAgeTurns <= 0 || sim.State.Turn < state.FirstGoldenAgeTurn) return;
+        sim.WidenWriteWindow();
         state.GoldenAgeTurns--;
         Sync(sim, player, state.GoldenAgeTurns > 0);
     }

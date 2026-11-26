@@ -35,6 +35,10 @@ public sealed class CitiesModule : IPreparableMod
         context.RegisterStateDomain("plot_culture", "Plots/*/Culture");
         context.RegisterStateDomain("conscript_anger", "Cities/*/Extensions/cities:city_state/ConscriptAngerTurns");
         context.RegisterPrivateStateDomain("occupation", "Cities/*/Extensions/cities:city_state/OccupationTurns");
+        context.RegisterPrivateStateDomain("drafts", "Cities/*/Extensions/cities:city_state/DraftedThisTurn",
+            "Players/*/Extensions/cities:player_state/ConscriptCountThisTurn");
+        context.RegisterPrivateStateDomain("defense", "Cities/*/Extensions/cities:city_state/DefenseDamage",
+            "Cities/*/Extensions/cities:city_state/BombardedThisTurn");
         context.RegisterStateDomain("production", "Cities/*/Extensions/cities:city_state/PendingCommit",
             "Cities/*/Extensions/cities:city_state/Overflow", "Cities/*/Extensions/cities:city_state/FeatureProduction");
         context.RegisterService<ICityAppearanceService>("city_appearance", new CityAppearanceService());
@@ -76,10 +80,10 @@ public sealed class CitiesModule : IPreparableMod
         context.RegisterCommand<MoveCityQueueCommand>("move_city_queue");
         context.RegisterCommand<ConscriptCityCommand>("conscript");
         context.RegisterCommand<ResolveCityConquestCommand>("resolve_conquest");
-        context.TurnSystems.Register(new CityPhase("puppet_work", TurnPhase.PlayerBegin, PreparePuppet));
+        context.TurnSystems.Register(new CityPhase("puppet_work", TurnPhase.PlayerBegin, PreparePuppet, CityStateDomains.WorkOnly));
         context.TurnSystems.Register(new CityPhase("conquest_timers", TurnPhase.PlayerEnd, SettleConquest, CityStateDomains.OccupationOnly));
-        context.TurnSystems.Register(new ConscriptPlayerPhase("reset_drafts", TurnPhase.PlayerBegin, CityConscript.ResetDrafts));
-        context.TurnSystems.Register(new CityPhase("defense_recovery", TurnPhase.PlayerBegin + 1, RecoverDefense));
+        context.TurnSystems.Register(new ConscriptPlayerPhase("reset_drafts", TurnPhase.PlayerBegin, CityConscript.ResetDrafts, CityStateDomains.DraftsOnly));
+        context.TurnSystems.Register(new CityPhase("defense_recovery", TurnPhase.PlayerBegin + 1, RecoverDefense, CityStateDomains.DefenseOnly));
         context.TurnSystems.Register(new ConscriptPlayerPhase("conscript_anger", TurnPhase.PlayerEnd, CityConscript.DecayAnger, CityStateDomains.ConscriptAngerOnly));
         context.TurnSystems.Register(new AssignWorkPhase(work));
         context.TurnSystems.Register(new CityPhase("growth", TurnPhase.CityGrowth, growth.Run, CityStateDomains.GrowthAndWork));
