@@ -118,14 +118,9 @@ public sealed class HexGrid
     /// <summary>Returns the canonical edge in a direction from a tile, or null if off-map.</summary>
     public HexEdge? EdgeIn(TileId tile, int direction) =>
         Neighbor(tile, direction) is { } next ? HexEdge.Of(tile, next) : null;
-    /// <summary>Distinct neighbors, excluding self on narrow wrapped maps.</summary>
-    public IEnumerable<TileId> Neighbors(TileId tile)
-    {
-        // Only narrow wrapped maps can map distinct directions to the same tile (or self).
-        HashSet<TileId>? seen = Spec.Wrap && Spec.Width < 3 ? new() { tile } : null;
-        for (int i = 0; i < 6; i++)
-            if (Neighbor(tile, i) is { } n && (seen is null || seen.Add(n))) yield return n;
-    }
+    /// <summary>Distinct neighbors, excluding self on narrow wrapped maps. A <c>foreach</c> over the result allocates
+    /// nothing; LINQ over it boxes it once, as it did the iterator it replaces.</summary>
+    public NeighborTiles Neighbors(TileId tile) => new(this, tile);
     /// <summary>Neighbors expressed as canonical axial coordinates.</summary>
     public IEnumerable<Hex> Neighbors(Hex hex) => Neighbors(TileAt(hex)).Select(HexOf);
     /// <summary>Shortest hex distance across east–west wrap images.</summary>
@@ -200,4 +195,61 @@ public sealed class HexGrid
     public IEnumerable<Hex> Range(Hex center, int radius) => Range(TileAt(center), radius).Select(HexOf);
     /// <summary>Ring expressed as canonical axial coordinates, in the same ascending TileId order.</summary>
     public IEnumerable<Hex> Ring(Hex center, int radius) => Ring(TileAt(center), radius).Select(HexOf);
+}
+
+/// <summary>A tile's distinct neighbors in <see cref="Hex.Directions"/> order (<see cref="HexGrid.Neighbors(TileId)"/>):
+/// directions off a bounded edge are skipped, and on a narrow wrapped map (fewer than three columns), where two
+/// directions can name one tile or the tile itself, only a direction's first appearance counts and the tile itself never
+/// does. A value type, so that the searches and floods that ask it for every tile they reach allocate nothing.</summary>
+public readonly struct NeighborTiles : IEnumerable<TileId>
+{
+    private readonly HexGrid _grid;
+    private readonly TileId _tile;
+
+    internal NeighborTiles(HexGrid grid, TileId tile) { _grid = grid; _tile = tile; }
+
+    public Enumerator GetEnumerator() => new(_grid, _tile);
+    IEnumerator<TileId> IEnumerable<TileId>.GetEnumerator() => GetEnumerator();
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public struct Enumerator : IEnumerator<TileId>
+    {
+        private readonly HexGrid _grid;
+        private readonly TileId _tile;
+        private readonly bool _narrow;
+        private int _direction;
+
+        internal Enumerator(HexGrid grid, TileId tile)
+        {
+            _grid = grid; _tile = tile; _direction = -1; Current = default;
+            // Only narrow wrapped maps can map distinct directions to the same tile (or self).
+            _narrow = grid.Spec.Wrap && grid.Spec.Width < 3;
+        }
+
+        public TileId Current { get; private set; }
+        readonly object System.Collections.IEnumerator.Current => Current;
+
+        public bool MoveNext()
+        {
+            while (++_direction < 6)
+            {
+                if (_grid.Neighbor(_tile, _direction) is not { } next || _narrow && Repeats(next)) continue;
+                Current = next;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>Whether <paramref name="next"/> is the tile itself or a neighbor an earlier direction already gave.</summary>
+        private readonly bool Repeats(TileId next)
+        {
+            if (next == _tile) return true;
+            for (int d = 0; d < _direction; d++)
+                if (_grid.Neighbor(_tile, d) == next) return true;
+            return false;
+        }
+
+        public void Reset() { _direction = -1; Current = default; }
+        public readonly void Dispose() { }
+    }
 }

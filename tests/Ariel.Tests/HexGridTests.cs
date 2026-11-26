@@ -5,6 +5,50 @@ namespace Ariel.Tests;
 
 public class HexGridTests
 {
+    [Theory]
+    [InlineData(1, 3, true)]
+    [InlineData(2, 4, true)]
+    [InlineData(3, 3, true)]
+    [InlineData(6, 5, true)]
+    [InlineData(1, 3, false)]
+    [InlineData(2, 4, false)]
+    [InlineData(6, 5, false)]
+    public void NeighborTilesYieldEachDirectionsFirstDistinctTileExceptSelf(int width, int height, bool wrap)
+    {
+        var grid = new HexGrid(new(width, height, wrap));
+        foreach (var tile in grid.Tiles)
+        {
+            // The reference: the directions in order, skipping off-map ones, the tile itself and repeats.
+            var expected = new List<TileId>();
+            for (int direction = 0; direction < 6; direction++)
+                if (grid.Neighbor(tile, direction) is { } next && next != tile && !expected.Contains(next)) expected.Add(next);
+            var walked = new List<TileId>();
+            foreach (var next in grid.Neighbors(tile)) walked.Add(next);
+            Assert.Equal(expected, walked);
+            // Through the interface (LINQ) and a second enumeration of the same value, the same tiles.
+            var neighbors = grid.Neighbors(tile);
+            Assert.Equal(expected, neighbors.ToList());
+            Assert.Equal(expected, neighbors.ToList());
+            using var enumerator = ((IEnumerable<TileId>)neighbors).GetEnumerator();
+            while (enumerator.MoveNext()) { }
+            enumerator.Reset();
+            Assert.Equal(expected.Count > 0, enumerator.MoveNext());
+        }
+    }
+
+    [Fact]
+    public void NeighborTilesAllocateNothingInAForeach()
+    {
+        var grid = new HexGrid(new(20, 12, true));
+        int count = 0;
+        foreach (var tile in grid.Neighbors(new TileId(30))) count += tile.Value; // JIT the loop first
+        long before = GC.GetAllocatedBytesForCurrentThread();
+        for (int i = 0; i < grid.Count; i++)
+            foreach (var tile in grid.Neighbors(new TileId(i))) count += tile.Value;
+        Assert.Equal(0, GC.GetAllocatedBytesForCurrentThread() - before);
+        Assert.True(count > 0);
+    }
+
     [Fact]
     public void OddRowCoordinatesAndTileIndicesRoundTripWithWrapNormalization()
     {
