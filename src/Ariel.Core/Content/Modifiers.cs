@@ -108,6 +108,9 @@ public sealed class ModifierSink
     /// <summary>Ledger snapshot, including all typed effects and keyed values. Unchanged until the next line is
     /// added; a snapshot taken earlier never changes.</summary>
     public Ledger Ledger => _ledger ??= new(_lines);
+    /// <summary>The lines added so far, in order, without building a <see cref="Ledger"/> snapshot: for a reader that
+    /// only picks some of them. This view changes as lines are added.</summary>
+    public IReadOnlyList<LedgerLine> Lines => _lines;
     /// <summary>Summed amount for a key, zero when absent; equal to <c>Ledger.Total(key)</c> without building the
     /// snapshot.</summary>
     public long Total(string key)
@@ -242,23 +245,34 @@ public sealed class ModifierSink
     {
         var sim = context.Sim;
         if (Memo.TryGet(sim, context, out var known)) return known.Copy();
-        ModifierSink sink;
+        var sink = Sum(context, null);
+        Memo.Set(sim, context, sink.Copy());
+        return sink;
+    }
+    /// <summary>Sum every registered source but <paramref name="except"/>, from the same kept contributions as
+    /// <see cref="Collect(ModifierContext)"/>, for a source whose own contribution reads the rest of its calculation: trade
+    /// routes weigh the city's trade modifiers, and asking the whole calculation would ask the routes again. The sum is
+    /// not the context's whole calculation, so the open epoch does not keep it.</summary>
+    public static ModifierSink Collect(ModifierContext context, IModifierSource except) => Sum(context, except);
+    private static ModifierSink Sum(ModifierContext context, IModifierSource? except)
+    {
+        var sim = context.Sim;
         using (sim.Profiler.Measure(ProfileKind.Rule, "modifiers:collect"))
         {
-            sink = new ModifierSink(sim.Content.Commerce);
+            var sink = new ModifierSink(sim.Content.Commerce);
             var sources = sim.Content.Services.Get<IModifierSource>();
             var table = Table(sim.Content, sources);
             var asks = table.Asks[(int)context.Scope];
             if (!sim.KeepsAnswers || !Kept(context))
             {
                 for (int i = 0; i < sources.Count; i++)
-                    if (asks[i]) sources[i].Contribute(context, sink);
+                    if (ReferenceEquals(sources[i], except)) continue;
+                    else if (asks[i]) sources[i].Contribute(context, sink);
                     else if (sim.VerifyWrites) VerifySkipped(sources[i], context);
             }
-            else Contribute(sim, sources, table.Masks, asks, context, sink);
+            else Contribute(sim, sources, table.Masks, asks, context, sink, except);
+            return sink;
         }
-        Memo.Set(sim, context, sink.Copy());
-        return sink;
     }
     /// <summary>Whether a calculation's contributions are kept across writes: city, player and team calculations, which
     /// every turn system and planner asks again. Unit and plot calculations are not: combat and placement previews ask
@@ -267,11 +281,12 @@ public sealed class ModifierSink
     private static bool Kept(ModifierContext context) => context.ProposedPlot is null
         && context.Scope is ModifierScope.City or ModifierScope.Player or ModifierScope.Team;
     private static void Contribute(Simulation sim, IReadOnlyList<IModifierSource> sources, ulong[] unread, bool[] asks,
-        ModifierContext context, ModifierSink sink)
+        ModifierContext context, ModifierSink sink, IModifierSource? except)
     {
         var cache = sim.ModifierCache;
         for (int i = 0; i < sources.Count; i++)
         {
+            if (ReferenceEquals(sources[i], except)) continue;
             if (!asks[i]) { if (sim.VerifyWrites) VerifySkipped(sources[i], context); continue; }
             ulong mask = unread[i];
             if (sim.WritingNow(mask)) { sources[i].Contribute(context, sink); continue; }

@@ -130,6 +130,48 @@ public sealed class WriteWindowTests
     }
 
     [Fact]
+    public void A_sum_without_one_source_leaves_it_unasked_and_shares_the_others_kept_contributions()
+    {
+        var (sim, treasury, culture) = Game();
+        sim.State.PlayerById(0).Treasury = 40;
+        sim.State.PlayerById(0).Culture = 3;
+        ModifierSink? without = null, whole = null;
+        int t = 0, c = 0;
+        Assert.True(sim.TryApply(new Script(s =>
+        {
+            Player(s);
+            (t, c) = (treasury.Calls, culture.Calls);
+            without = ModifierSink.Collect(new(s, ModifierScope.Player, 0), culture);
+            Assert.Equal(t, treasury.Calls); // the kept contribution of the plain sum
+            Assert.Equal(c, culture.Calls); // left out, so never asked
+            whole = Player(s);
+        }) { Player = 0 }, out _));
+        Assert.Equal(40, without!.Total("probe:treasury"));
+        Assert.Equal(0, without.Total("probe:culture"));
+        Assert.Equal(new YieldVector(40, 0, 0), without.FlatYield);
+        Assert.Equal(["probe:treasury", "yield.flat.food"], without.Lines.Where(l => l.Source == "treasury").Select(l => l.Key));
+        Assert.DoesNotContain(without.Lines, l => l.Source == "culture");
+        Assert.Equal(3, whole!.Total("probe:culture")); // the partial sum is not kept as the whole one
+        // Outside kernel work every other source is asked afresh, the left-out one still not.
+        (t, c) = (treasury.Calls, culture.Calls);
+        Assert.Equal(0, ModifierSink.Collect(new(sim, ModifierScope.Player, 0), culture).Total("probe:culture"));
+        Assert.Equal((t + 1, c), (treasury.Calls, culture.Calls));
+    }
+
+    [Fact]
+    public void An_epoch_keeps_the_whole_sum_and_never_the_sum_without_a_source()
+    {
+        var (sim, _, culture) = Game();
+        sim.State.PlayerById(0).Culture = 5;
+        using (sim.OpenReadEpoch())
+        {
+            Assert.Equal(0, ModifierSink.Collect(new(sim, ModifierScope.Player, 0), culture).Total("probe:culture"));
+            Assert.Equal(5, Player(sim).Total("probe:culture"));
+            Assert.Equal(0, ModifierSink.Collect(new(sim, ModifierScope.Player, 0), culture).Total("probe:culture"));
+        }
+    }
+
+    [Fact]
     public void Nothing_is_reused_outside_kernel_work_where_a_host_may_edit_the_state_directly()
     {
         var (sim, treasury, _) = Game();

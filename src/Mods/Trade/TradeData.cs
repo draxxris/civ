@@ -28,19 +28,28 @@ internal static class TradeData
             return !plot.IsLake && sim.Content.Get<S.TerrainDef>(plot.Terrain).IsWater;
         });
     }
+    private static readonly ModifierScope[] EffectScopes = [ModifierScope.City, ModifierScope.Player, ModifierScope.Team];
+    /// <summary>The trade lines of the city's, its owner's and its team's calculations, every source but the routes'
+    /// own: route output is not an input to its own calculation, which also prevents query recursion. The sums come
+    /// from the kept contributions (<see cref="ModifierSink.Collect(ModifierContext, IModifierSource)"/>).</summary>
     internal static ModifierSink Effects(Simulation sim, City city)
     {
         var sink = new ModifierSink();
-        foreach (var scope in new[] { ModifierScope.City, ModifierScope.Player, ModifierScope.Team })
+        var routes = RouteYields(sim);
+        var team = sim.TeamOf(city.Owner);
+        foreach (var scope in EffectScopes)
         {
-            var collected = new ModifierSink();
-            var context = new ModifierContext(sim, scope, city.Owner, city, Team: sim.TeamOf(city.Owner));
-            // Route output is not an input to its own calculation. This also prevents query recursion.
-            foreach (var source in sim.Content.Services.Get<IModifierSource>().Where(s => s is not TradeEffects)) source.Contribute(context, collected);
-            foreach (var line in collected.Ledger.Lines.Where(l => l.Key.StartsWith("trade:", StringComparison.Ordinal)))
-                sink.Add(line.Source, line.Key, line.Amount);
+            var collected = ModifierSink.Collect(new ModifierContext(sim, scope, city.Owner, city, Team: team), routes);
+            foreach (var line in collected.Lines)
+                if (line.Key.StartsWith("trade:", StringComparison.Ordinal)) sink.Add(line.Source, line.Key, line.Amount);
         }
         return sink;
+    }
+    private static IModifierSource RouteYields(Simulation sim)
+    {
+        foreach (var source in sim.Content.Services.Get<IModifierSource>())
+            if (source is TradeEffects) return source;
+        throw new InvalidOperationException("The trade module's route yields source is not registered");
     }
     internal static IEnumerable<S.TraitDef> Traits(Simulation sim, int player) =>
         sim.Rules().Peoples?.Traits(sim, player) ?? [];
