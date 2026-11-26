@@ -6,33 +6,31 @@ namespace Ariel.Mods.Corporations;
 /// <summary>Load-time checks for the invariants the schema cannot express. Frozen content reference validation covers
 /// unknown corporations and resources, so this only checks what it cannot: rules that would fail silently (a branch
 /// that pays its spreader, a corporation no building founds, a founding building that founds nothing, an executive that
-/// spreads a corporation nobody defines). <see cref="Validate"/> runs when the mod registers; <see cref="FoundingBuildings"/>
-/// and <see cref="Executives"/> read every mod's buildings and units, and the founders registered for them, and so run
-/// on frozen content (<see cref="Ariel.Game.IContentCheck"/>).</summary>
+/// spreads a corporation nobody defines). All of them run on frozen content (<see cref="Ariel.Game.IContentCheck"/>):
+/// <see cref="Rows"/> checks every corporation any mod defines, and <see cref="FoundingBuildings"/> and
+/// <see cref="Executives"/> read every mod's buildings and units, and the founders registered for them.</summary>
 internal static class CorporationContentValidation
 {
     /// <summary>Checks the corporations' own rows.</summary>
-    public static void Validate(IReadOnlyList<CorporationDef> definitions)
+    public static IEnumerable<string> Rows(IEnumerable<CorporationDef> definitions)
     {
-        var errors = new List<string>();
         foreach (var def in definitions.OrderBy(d => d.Id, StringComparer.Ordinal))
         {
             if (def.SpreadCost < 0)
-                errors.Add($"{def.Id}: negative SpreadCost would pay the spreader");
+                yield return $"{def.Id}: negative SpreadCost would pay the spreader";
             if (def.MaintenanceHundredths < 0)
-                errors.Add($"{def.Id}: negative MaintenanceHundredths would subsidise the branch");
+                yield return $"{def.Id}: negative MaintenanceHundredths would subsidise the branch";
             if (def.CompetingCorporations.Contains(def.Id, StringComparer.Ordinal))
-                errors.Add($"{def.Id}: competes with itself, so it would evict its own branches");
+                yield return $"{def.Id}: competes with itself, so it would evict its own branches";
             if (def.NaturalSpreadPercent <= 0)
-                errors.Add($"{def.Id}: NaturalSpreadPercent {def.NaturalSpreadPercent} would never spread with Realistic Guilds/Corporations");
+                yield return $"{def.Id}: NaturalSpreadPercent {def.NaturalSpreadPercent} would never spread with Realistic Guilds/Corporations";
             if (def.PrereqBonuses.Length == 0 && def.FoundingBuildingClasses.Count == 0)
-                errors.Add($"{def.Id}: consumes no resource and has no FoundingBuildingClasses, so Realistic Guilds/Corporations would found it with its technology alone");
+                yield return $"{def.Id}: consumes no resource and has no FoundingBuildingClasses, so Realistic Guilds/Corporations would found it with its technology alone";
             if (def.PrereqBonuses.Length > 0 && def.FoundingBuildingClasses.Count > 0)
-                errors.Add($"{def.Id}: consumes a resource, which gates its founding; FoundingBuildingClasses is only for a corporation that consumes none");
+                yield return $"{def.Id}: consumes a resource, which gates its founding; FoundingBuildingClasses is only for a corporation that consumes none";
             foreach (var (building, count) in def.FoundingBuildingClasses.Where(p => p.Value < 1))
-                errors.Add($"{def.Id}: FoundingBuildingClasses needs {count} of {building}; a count must be at least 1");
+                yield return $"{def.Id}: FoundingBuildingClasses needs {count} of {building}; a count must be at least 1";
         }
-        if (errors.Count > 0) throw new InvalidDataException("Corporation content validation failed:\n" + string.Join("\n", errors));
     }
 
     /// <summary>Every corporation has exactly one founding building (a building whose <c>Founds</c> names it), which a
@@ -104,6 +102,13 @@ internal static class CorporationContentValidation
             _ => true,
         };
     }
+}
+
+/// <summary>Runs <see cref="CorporationContentValidation.Rows"/> once content freezes, so a corporation another mod
+/// defines is held to the same rules as this mod's own.</summary>
+internal sealed class CorporationRowCheck : Ariel.Game.IContentCheck
+{
+    public IEnumerable<string> Problems(ContentDb content) => CorporationContentValidation.Rows(content.Get<CorporationDef>().All);
 }
 
 /// <summary>Runs <see cref="CorporationContentValidation.FoundingBuildings"/> once content freezes.</summary>

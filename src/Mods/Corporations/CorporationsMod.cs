@@ -52,9 +52,8 @@ public sealed class CorporationsMod : IPreparableMod
         Ariel.Rules.ContentRegistration.Load(context, WorldSizes);
         var definitions = Corporations.Read(context.Data);
         foreach (var definition in definitions) context.Content<CorporationDef>().Register(definition);
-        // The schema covers reference resolution and sign-free fields; these invariants are rules-level. The founding
-        // buildings and executives are checked once content freezes, with every building founder registered.
-        CorporationContentValidation.Validate(definitions);
+        // The schema covers reference resolution and sign-free fields; these invariants are rules-level. The rows, the
+        // founding buildings and the executives are checked once content freezes, with every building founder registered.
         var service = new CorporationService();
         var natural = service.Natural;
         context.RegisterService<ICorporationService>("corporations", service);
@@ -75,6 +74,7 @@ public sealed class CorporationsMod : IPreparableMod
         context.RegisterService<IBuildingFounder>("headquarters", new CorporationFounder(service));
         context.RegisterService<Ariel.Ai.IAiValuer<Ariel.Ai.BuildingSubject>>("headquarters_valuer", new HeadquartersValuer());
         context.RegisterService<IMission>("spread", new SpreadCorporationMission(service));
+        context.RegisterService<IContentCheck>("rows", new CorporationRowCheck());
         context.RegisterService<IContentCheck>("founding_buildings", new FoundingBuildingCheck());
         context.RegisterService<IContentCheck>("executives", new ExecutiveTrainingCheck());
         context.RegisterService<Ariel.Ai.IAiPlanner>("planner", new CorporationAiPlanner(service));
