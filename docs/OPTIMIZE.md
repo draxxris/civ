@@ -4592,6 +4592,184 @@ All on the final code:
    widen anyway.
 4. **Unit calculations are never kept** (Pass 26 item 2).
 
+### Pass 30: The Military Planner
+
+- **Date**: 2026-11-26
+- **Commits**: `a4f8ad59` (neighbors without allocating), `2384c065` (path search
+  buffers and movement checks), `bba6dbb2` (sealift's target question), then the
+  documentation
+
+This pass profiled `ai:military` by phase. It found three costs that could be removed
+without changing behaviour: the neighbor arrays every path search and contact scan
+allocated, the fresh buffers each path search built, and the economy that sealift
+digested only to learn whether a campaign had a target. The largest remaining costs are
+structural: the sight recompute and contact scan each move triggers, and the economy
+behind campaign review. Every final state is byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- **Builds**: base `37c04cd8`; final `bba6dbb2`. Each `Ariel.SyncCheck` build was copied
+  aside and run through `mise run ai:play -- --bin DIR`, with
+  `DOTNET_TC_CallCountingDelayMs=0`.
+- **Saves**: s450 and s550 from Pass 28. The final tree bumps Military to 1.41.0 and AI
+  to 1.23.0, so its copies were re-headed with the new content hash and versions.
+- **Reference hashes**: unchanged from Pass 25, all nine matching on base and final.
+- **Probes**: a phase tag around each step of `MilitaryPlanner.Plan` (`m:*`), campaign
+  review and selection (`a:*`), `ExperienceNeeded` (`m:xpneeded`), and each phase's path
+  searches and issued moves. Never committed. Probe timings ran under machine load of 4
+  to 14 from other jobs, so the phase tables lean on allocation and call counts.
+
+#### Where the Time Went
+
+Per turn at s550 (last 6 of 8 turns), probed base, with the final's allocation. The
+final probed run was loaded (its unchanged phases read up to 2.7 times base), so its
+milliseconds are not shown; the unprobed totals are under Results.
+
+| Phase | Base ms | Base MiB | Final MiB | Calls (base / final) |
+| :-- | --: | --: | --: | --: |
+| `ai:military`, all | 87.8 | 64.6 | 48.8 | 14 / 14 |
+| Attack (with its moves) | 29.7 | 20.8 | 20.6 | |
+| Moves the planner issues (sight, contacts) | 32.7 | 10.9 | 9.9 | 21 / 21 |
+| Campaign review (validation economy) | 12.2 | 15.8 | 15.8 | |
+| Rest | 13.8 | 7.1 | 6.4 | |
+| Support and ranged strike | 10.0 | 7.1 | 7.0 | |
+| Sealift | 9.2 | 14.3 | 0.2 | |
+| Navy | 8.4 | 2.7 | 2.4 | |
+| Promotions, before and after (unit ledgers) | 10.1 | 9.7 | 9.3 | |
+| `ExperienceNeeded` | 5.7 | 8.7 | 8.3 | 865 / 832 |
+| Upgrades (about 80 of 82 rejected) | 3.8 | 1.9 | 1.9 | |
+| Path searches | 5.2 | 2.9 | 2.8 | 44 / 44 |
+| Combat odds | under 2 | | | |
+
+Over the whole medieval game (seed 7, 6 players, 150 turns), where paths matter more.
+The probed base run's ms are shown for scale. The final probed run's ms are left out:
+load changed between the runs (`world:sight_recompute`, unchanged code, read 19% lower),
+and the unprobed runs under Results show the planner's time flat on this game.
+
+| Phase | Base ms | Base MiB | Final MiB | Calls (base / final) |
+| :-- | --: | --: | --: | --: |
+| `ai:military` | 1,941 | 942 | 815 | 989 |
+| Path searches | 539 | 182 | 99 | 2,365 |
+| Moves the planner issues | 856 | 357 | 337 | 1,574 |
+| Scout | 342 | 132 | 114 | 989 |
+| Garrison | 288 | 112 | 92 | 989 |
+| Sealift | 36 | 38 | 2 | 989 |
+| `relations:discover_contacts` | 648 | 301 | 244 | 4,657 |
+| `ExperienceNeeded` | 147 | 166 | 148 | 27,463 / 24,123 |
+
+That game rarely assaults: one assault in 150 turns. Its combat is hunting and ranged
+strikes, so its military cost is paths and moves.
+
+#### What Was Built
+
+- **Neighbors without allocating** (`a4f8ad59`): `HexGrid.Neighbors` returns
+  `NeighborTiles`, a value type with a struct enumerator, instead of an array. It walks
+  `Hex.Directions` in order and skips off-map tiles. On a wrapping map narrower than 3
+  it skips the tile itself and repeats, as the array did. Every `foreach` caller keeps
+  its order, and contact discovery and path search stop allocating per tile.
+- **Path search buffers** (`2384c065`): `PathfindingService` takes a per-thread
+  `PathSearch` with cost, parent and generation-stamp arrays, the open queue, the
+  touched list and a `PlotFactTable`. That is the pattern `ResourceNetwork.Search`
+  follows (Pass 12). The movement query takes that table, so plot facts no longer go
+  into a fresh dictionary each search. A nested search on the same thread gets its own
+  buffers.
+- **Movement checks** (`2384c065`): `InControl`, `HostilePlot` and `AutoLoadTransport`
+  check `HasUnitsAt` before walking a plot's units. `TerrainEntry` and the domain checks
+  take the tile, so a friendly coastal city comes from `CityAtTile` instead of
+  `Array.IndexOf`. `PeakEntry` loops over the team's techs instead of using LINQ.
+- **Sealift's target question** (`bba6dbb2`): sealift asked `SelectPrimaryTargetCity`
+  only whether an area had a target. That checked the kept campaign goal's dependency
+  digest, which computes the whole `PlayerEconomy`. `CampaignTargets.HasPrimaryTarget`
+  answers the same yes or no. When the kept goal and a fresh choice agree, it is that
+  answer. Only when they disagree does it test whether the goal is still reusable, age
+  first and digest last, exactly as selection would. Selection also tests the goal's
+  age before its digest.
+- **Promotions**: `Promote` returns for a unit without a combat type before asking for
+  its experience threshold, and checks moves before the threshold.
+
+#### Rejected and Not Built
+
+- **A movement query memo per read epoch**: only 4% of searches repeat a unit within an
+  epoch.
+- **A net-gold-only economy for campaign review**: building the economy's lines costs
+  about 3 ms. The rest is `CityYields` over the modifier ledgers, which the planner
+  shares with every other reader.
+- **Pruning reinforcements by an admissible distance bound**: about 3% of the medieval
+  military cost, and it needs a new pathfinder API.
+- **Skipping the second promotion pass for unchanged experience, or bounding
+  `ExperienceNeeded`**: not provable without keeping unit ledgers (rejected in Passes 19
+  and 20).
+- **Checking upgrades before issuing them**: speculative waves record a rejected
+  command's tiles, so an issued command cannot be dropped without changing the plan.
+- **Sight only for the mover, or incremental sight**: the dominant remaining cost, and
+  a structural refactor that Pass 20 already rejected.
+- **Interning `"military:" + key` in `MilitaryData.Effect`**: too small to measure.
+
+#### Results
+
+Per turn over the last 6 of 8 turns, JIT pinned, profiler on, two alternating rounds
+at load 2.6 (base, final, final, base):
+
+| Subject | Base | Final |
+| :-- | --: | --: |
+| s450 `ai:military` | 35.0 / 37.5 ms, 30.1 MiB | 26.9 / 27.3 ms, 19.4 MiB (**-25%**) |
+| s550 `ai:military` | 89.7 / 86.4 ms, 64.6 MiB | 75.3 / 73.6 ms, 48.8 MiB (**-15%**) |
+| s450 wall time | 410 / 420 ms | 388 / 398 ms (**-5%**) |
+| s550 wall time | 577 / 561 ms | 543 / 541 ms (**-5%**) |
+| s450 managed bytes | 356 MiB | 338 MiB |
+| s550 managed bytes | 505 MiB | 479 MiB |
+
+Two later rounds at loads of 4 to 9 agree on allocation, but not on time: one base
+round at each save came in far slower (708 ms and 811 ms), and a final s450 round came
+in above its base (437 ms against 413 ms). Load drove both.
+
+Whole games, base, final, final, base, at loads of 4 to 9:
+
+| Game | Base wall | Final wall | Base bytes | Final bytes | `ai:military` base / final |
+| :-- | --: | --: | --: | --: | --: |
+| Medieval, seed 7, 6 players, 150 turns | 16.4 / 15.2 s | 16.0 / 16.0 s | 10.90 GiB | 10.46 GiB | 1,746 / 1,600 → 1,586 / 1,606 ms |
+| Seed 5, 8 players, 150 turns | 12.4 / 12.1 s | 11.3 / 11.1 s | 7.00 GiB | 6.66 GiB | 1,415 / 1,357 → 1,202 / 1,186 ms |
+
+On the medieval game the wall time is within noise, but allocation falls 4%. The
+8-player game allocates 5% less. Its wall time read 9% lower, but
+`world:sight_recompute`, whose code did not change, fell as much, so most of that is
+load.
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash matches the base. s550 + 8 gives `23bb41d03ee121d7` with
+  `--waves max` and with `DOTNET_PROCESSOR_COUNT=1`. Seed 1 with `--waves max` gives
+  `348b462d1ec219fa`. s550 + 2 gives `8a7c12e45e220159` on base and final.
+- Each run alone, under a 10 GiB memory cap, on the re-headed saves:
+  `--verify-modifier-cache` on s550 + 2 (also with `--waves max`) and on s450 + 4, and
+  `--verify-read-epochs` on s550 + 2 and s450 + 4.
+- New tests:
+  - `NeighborTiles` yields each direction's first distinct tile, never the tile itself,
+    over seven map shapes including narrow wraps, and allocates nothing in a `foreach`;
+  - a reused path search carries nothing into the next: a flood that fails reports only
+    reachable tiles, each of which a later search finds, and the first search repeats
+    exactly;
+  - `HasPrimaryTarget` agrees with target selection through war, capture and
+    revelation.
+- `mise run test`, `mise run check:sync`, `mise run test:e2e`, `mise run test:worldgen`
+  and `mise run build:game` pass.
+
+#### Still Slow, Ranked
+
+1. **Sight and contacts per move**: each move the planner issues recomputes the owner's
+   sight and scans for contacts. That is about a third of `ai:military` at s550 and
+   nearly half on the medieval game. It needs incremental or mover-only sight, which is
+   structural.
+2. **Campaign review's economy**: validation computes `PlayerEconomy`, which
+   `CityYields` and cold modifier ledgers dominate. That cost is shared with every
+   reader.
+3. **Unit ledgers are never kept** (Pass 26 item 2), so promotions and
+   `ExperienceNeeded` rebuild them: about 10 ms a turn at s550.
+4. **Rejected upgrades**: about 80 of 82 a turn at s550. The waves hold them, so the
+   planner cannot drop them.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -4693,3 +4871,7 @@ passes:
 | **Pass 28: Owner Stamps (not built)**   | docs only            | Four-player AI game from turn 551, probed                  | Stale misses only other players caused | 1,102 of 4,731 a turn | — | measured, not built |
 | **Pass 29: Unit Order Domain** | `79d8728b` | Four-player AI game, last 6 of 8 turns from turn 551, JIT pinned | `modifiers:collect` CPU | 147–148 ms | 144 ms | **-2.5%** |
 |                                         |                      | Same, probed                                               | Stale misses with an upgrade as only writer | 398 a turn | 9 a turn | **-98%** |
+| **Pass 30: Military Planner** | `a4f8ad59`..`bba6dbb2` | Four-player AI game, last 6 of 8 turns from turn 551, JIT pinned | `ai:military` CPU | 86–90 ms | 74–75 ms | **-15%** |
+|                                         |                      | Same, from turn 451                                        | `ai:military` CPU        |           35–38 ms |           27 ms |                                  **-25%** |
+|                                         |                      | Same, from turn 551                                        | Wall time (profiled)     |         561–577 ms |         541–543 ms |                                   **-5%** |
+|                                         |                      | 150-turn 8-player game (seed 5)                            | Managed bytes            |         7.00 GiB |         6.66 GiB |                                   **-5%** |

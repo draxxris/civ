@@ -103,7 +103,8 @@ map. `HexGrid` converts axial coordinates, offset coordinates and row-major `Til
 values. Columns normalize across east–west wrap. Rows never wrap.
 
 - `HexGrid.Neighbors` returns distinct neighbors in direction order, without
-  self-neighbors.
+  self-neighbors. It returns a value type (`NeighborTiles`), so a `foreach` over it
+  allocates nothing; LINQ over it boxes it once.
 - Directions are east, northeast, northwest, west, southwest and southeast.
 - `HexGrid.Distance` measures the shortest distance across wrap images.
 - `HexGrid.Range` and `Ring` clip to the map and enumerate distinct tiles in ascending
@@ -2557,12 +2558,15 @@ is reduced across eight optimization areas:
   pathfinding queries (keyed by unit ID, destination tile, and attack mode) are cached
   within the segment. Garrison selection carries its reachability path directly into the
   resulting movement command, eliminating duplicate searches. Within A\*
-  (`PathfindingService`), costs and parent pointers are consolidated into a single local
-  table (`Dictionary<TileId, (int Cost, TileId Parent)>`), removing a second dictionary
-  and its growth allocations per search. One `MovementService.MovementQuery` serves a
+  (`PathfindingService`), each search borrows its thread's `PathSearch`: map-sized cost,
+  parent and stamp arrays, the open queue, and the movement query's plot facts
+  (`PlotFactTable`). An entry counts only when its stamp is the current search's, so
+  nothing is cleared or allocated between searches; a search opened inside another on
+  the same thread gets its own set. One `MovementService.MovementQuery` serves a
   whole search (and `ValidatePath` a whole path): it keeps each plot's entry error,
   zone-of-control facts and regular step cost, so a plot reached from six neighbours is
-  judged once; `CanStep` is the search's only movement call. An exhausted non-attack
+  judged once; `CanStep` is the search's only movement call. The plot checks skip empty
+  plots without enumerating their units (`GameState.HasUnitsAt`). An exhausted non-attack
   search can hand back the tiles it reached (`IPathfindingService.FindPath` with an
   `out` reach); the segment keeps that set per unit and answers a later non-attack
   query for a goal outside it with no path, without searching. Attack searches never
@@ -2574,7 +2578,10 @@ is reduced across eight optimization areas:
   failure; it runs sequentially inside a parallel AI turn. After a successful
   `ReviewCampaignGoalsCommand`, `CampaignTargets.Reviewed` takes the dependency digest
   the review stored for the first theater instead of computing it again: the review
-  writes only the private `ai:intent` domain, which the digest does not read.
+  writes only the private `ai:intent` domain, which the digest does not read. Sealift
+  asks only whether a theater has a target (`CampaignTargets.HasPrimaryTarget`): the
+  held goal's city and a fresh choice are looked up first, and the dependencies (a
+  whole player economy) are digested only when exactly one of them exists.
 - **Candidate pruning and allocation reduction**: Cheap legality and budget checks
   precede expensive evaluations. In `CityPlanner`, unaffordable wonder candidates are
   rejected before evaluating production eligibility or building values. In
