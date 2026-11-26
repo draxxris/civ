@@ -148,9 +148,15 @@ internal sealed partial class DiplomacyService
             return counts.GetValueOrDefault(resource);
         }
     }
+    /// <summary>The player's layout, kept for the rest of a read epoch or span: every city's resource query with exports
+    /// asks it, and building it floods once per group. Outside one it is built afresh. A layout is used by one thread
+    /// only (the memo's tables are per thread), so its lazily gathered member counts need no lock.</summary>
+    private static CityGroups Layout(Simulation sim, int player, (int City, IReadOnlyDictionary<string, int> Counts)? known = null) =>
+        Layouts.GetOrAdd(sim, player, known, static (sim, player, known) => new CityGroups(sim, player, known));
+    private static readonly ReadEpochMemo<int, CityGroups> Layouts = new();
     private static long PhysicalCopies(Simulation sim, int player, string resource)
     {
-        var layout = new CityGroups(sim, player);
+        var layout = Layout(sim, player);
         return layout.Groups.Sum(g => layout.Copies(g, resource));
     }
     /// <summary>The capital, or the oldest city when the player has no capital building.</summary>
@@ -330,7 +336,7 @@ internal sealed partial class DiplomacyService
             long own = connected.GetValueOrDefault(resource);
             long exports = flows.Exports.GetValueOrDefault(resource);
             long physical = exports == 0 ? own
-                : Math.Min(own, Remaining(target, resource, exports, groups ??= new CityGroups(sim, player, (city, connected))));
+                : Math.Min(own, Remaining(target, resource, exports, groups ??= Layout(sim, player, (city, connected))));
             long imports = flows.Imports.GetValueOrDefault(resource);
             if (imports == 0) { result[resource] = physical; continue; }
             if (!rooted) rooted = ConnectedToRoot(sim, player, target);
