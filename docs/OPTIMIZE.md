@@ -3716,6 +3716,229 @@ All on the final code:
    flood used to read this thread's buffers. On large maps one network's set can reach
    the large object heap; only the small s550 map (21 by 21) was measured.
 
+### Pass 26: Modifier Collection in the Late Game
+
+- **Date**: 2026-11-26
+- **Commits**: `9854783c` (unit refresh declared), `6afc746d` (building and civic
+  effects), `74c455b8` (one city context), `4a038455` (mod versions), then the
+  documentation
+
+This pass takes item 3 of the Pass 25 "Still Slow" list, `modifiers:collect`. Probes
+put it at about 390 to 420 ms a turn at s550, summed over threads. Most of that cost
+was recomputing contributions that came back unchanged: 99% of stale recomputes made
+the same lines. So the lever is how precisely writes invalidate kept contributions.
+Most of that work needs the rollover and map systems declared. That is a structural
+change, so this pass reports it rather than building it. Every final state is
+byte-identical to the base tree.
+
+#### Method, Saves and Hashes
+
+- **Builds**:
+  - Base: `032354d2`. Its `Ariel.SyncCheck` build was copied aside before any change.
+  - Final: the tree after `4a038455`, copied aside the same way.
+  - Timing ran through `mise run ai:play -- --bin DIR`.
+- **Saves**: s450 (turn 451) and s550 (turn 551), fresh from seed 3 with 4 players, on
+  the base tree. Copies re-headed for the final versions give the same hashes. Those
+  versions are Cities 1.50.0, Government 2.9.0, Military 1.38.0, Great People 3.13.0
+  and Trade 2.8.0.
+- **Reference hashes**: unchanged from Pass 25, and all match on the final tree:
+
+  | Run | Hash |
+  | :-- | :-- |
+  | s450 + 4 / + 8 | `4313ee853653eacd` / `d5fb48fb74d90628` |
+  | s550 + 4 / + 8 | `a58adbc1e9f6647d` / `23bb41d03ee121d7` |
+  | Seed 3, 4 players, 160 turns | `e49124006d830b87` |
+  | Seed 1, 4 players, 100 turns | `348b462d1ec219fa` |
+  | Seed 5, 8 players, 150 turns | `7d049d95e0352b35` |
+  | Seed 7, 6 players, 150 turns, medieval start | `5a3db1cab7f4df42` |
+  | Seed 5, 4 players, 120 turns, industrial start | `dcb5af4daedc2c1e` |
+
+- **Probes**: temporary profiler scopes, not committed. They recorded:
+  - the outermost caller and the context kind of each collect;
+  - each source's hits and misses, with the reason for a miss: cold in the span, an
+    open window, or stale;
+  - the writer behind each remainder stamp;
+  - a stale recompute's lines compared with the kept ones;
+  - timing inside `BuildingEffects` and inside Diplomacy's resource counts.
+
+  Probe timings run high, so the experiments below are judged by counts.
+
+#### Where the Time Went
+
+These figures are per turn at s550 on the base tree, measured with the probes on.
+
+- **By context**: 3,629 outer collects a turn.
+
+  | Context | Calls | Time | Allocation |
+  | :-- | --: | --: | --: |
+  | City (kept) | 952 | 230–300 ms | 100–110 MiB |
+  | Unit (never kept) | 2,035 | 82 ms | 61 MiB |
+  | Player | 404 | 26 ms | — |
+  | Team | 239 | 2 ms | — |
+
+- **By caller**:
+  - `great_people:planner` 56 ms, over 631 calls (207 of them the route effects);
+  - `military:units` 46 ms;
+  - `ai:military` 38 ms;
+  - `ai:civics` 32 ms;
+  - `great_people:births` 30 ms;
+  - `cities:assign_work` 28 ms;
+  - `global_warming:warming` 21 ms.
+- **By source**: about 8,050 kept hits against 8,600 misses. The costliest misses:
+
+  | Source | Misses | Cost per miss |
+  | :-- | --: | --: |
+  | `BuildingEffects` | 684 | about 200 µs |
+  | `CivicEffects` | 944 | about 54 µs |
+  | `CorporationEffects` | 944 | about 32 µs |
+
+- **Why a miss**:
+  - Cold, once per span (`cities:assign_work`, births): about 50 ms.
+  - An open window (warming, growth, world improvements and workers): about 70 ms.
+  - Stale: about 140 ms. Stale recomputes made the same lines 4,168 times a turn and
+    different lines 34 times.
+- **Remainder stamps**: about 182 a turn, from about 40 undeclared writers:
+  - the 16 direct end-turn stamps;
+  - six per-player chain systems at 15 each: defense recovery, puppet work, draft
+    reset, the turn-end timers, the golden-age timers and the unit refresh;
+  - the AI's commands: commerce rates, unit activity, builds, research, promotions
+    and upgrades;
+  - every rollover and map system.
+- **Inside a `BuildingEffects` miss**:
+  - The parts cost about 88 µs for the running set, 104 µs for the effective set,
+    120 µs for the local lines, 68 µs for the global lines and 199 µs for the available
+    bonuses.
+  - Within the available bonuses, Diplomacy's resource exchanges took 405 ms over 8
+    turns (1,789 calls).
+  - Nearly all of that was member cities' `ConnectedCounts`: 6,113 calls, 378 ms and
+    67 MB. These go stale together with the buildings.
+
+#### What Was Built
+
+1. **The unit refresh declared** (`9854783c`). Military 1.38.0.
+   - `military:units` writes only moves, healing and the Military unit state, so it
+     now declares `military:units`. That domain now includes `Units/*/Health`.
+   - Giving a unit its Military state for the first time (free promotions, initial
+     experience) widens the window first.
+   - The blockade contract now lists what a blockade reads: position, activity,
+     transport, and health falling to zero. A refresh moves no unit and never kills.
+   - Under the probes, the refresh's own collects fell from 53 ms and 40 MiB to 18 ms
+     and 11 MiB a turn.
+2. **Skipping work that adds no line** (`6afc746d`). Cities 1.50.0, Government 2.9.0.
+   - `BuildingEffects` calls `Global` only for buildings that reach other cities.
+   - It also skips the extra-bonus merge and the slot, free-specialist and vicinity
+     sorts when they are empty.
+   - `CivicEffects` skips specialist commerce and the building loop for civics that
+     have neither.
+   - The lines and their order are unchanged.
+3. **One city context** (`74c455b8`). Great People 3.13.0, Trade 2.8.0.
+   - Kept entries are keyed by the whole context. Births, the planner and Trade's
+     route effects named a city without its plot or team, so every source computed
+     those entries again.
+   - `ModifierContext.ForCity` names a city as a whole, and every such reader now uses
+     it.
+   - Misses fell from 8,617 to 8,384 a turn, and `BuildingEffects` misses from 686 to
+     645.
+   - A source's new lines are now copied from a span.
+
+#### Results
+
+How the runs were made:
+
+- Base and final alternated: base then final on each save, in two rounds.
+- Each run was 8 turns, at load 1.3 to 1.5, with `DOTNET_TC_CallCountingDelayMs=0`.
+- Figures are per turn over the last 6 turns, summed over threads. Each cell gives
+  both runs.
+
+| Subject | Base | Final | Change |
+| :-- | --: | --: | --: |
+| s550, `modifiers:collect` | 213.5 / 215.5 ms, 174.2 MiB | 172.7 / 171.9 ms, 132.6 MiB | −20%, −24% alloc |
+| s550, collect calls | 3,483 | 3,482 | same |
+| s550, `military:units` | 36.9 / 41.1 ms, 39.8 MiB | 8.7 / 9.3 ms, 9.8 MiB | −77% |
+| s550, wall per turn | 623 / 626 ms | 585 / 589 ms | −6% |
+| s550, allocation per turn | 575 MiB | 527 MiB | −8% |
+| s450, `modifiers:collect` | 141.8 / 142.3 ms, 104.9 MiB | 119.6 / 124.4 ms, 85.6 MiB | −14%, −18% alloc |
+| s450, `military:units` | 13.3 / 12.9 ms, 14.3 MiB | 4.8 / 4.9 ms, 4.9 MiB | −63% |
+| s450, wall per turn | 460 / 461 ms | 435 / 445 ms | −4% |
+| s450, allocation per turn | 402 MiB | 377 MiB | −6% |
+
+The `modifiers:collect` figures here are the profiler's own, without probes. That is
+why they are lower than the probed 390 to 420 ms the pass started from.
+
+#### Rejected and Not Built
+
+Each of these was measured and then reverted:
+
+- **Declaring the other undeclared chain systems**: defense recovery, puppet work,
+  draft reset, and the turn-end and golden-age timers.
+  - The test was an unsound experiment in which these systems stamped nothing.
+  - No kept hit was gained, because the rollover and map systems stamp the remainder
+    in between anyway.
+- **Declaring the AI's commands**:
+  - With the six most frequent commands and the direct end-turn stamps all
+    suppressed, `BuildingEffects` misses fell only from 684 to 571, which is −7% of
+    all misses.
+  - With every command suppressed, misses fell 29%, but the hash diverged.
+- **Keeping `GrantCategories`** under the buildings' declaration: 3,963 of its 7,419
+  computes still ran inside open windows, and allocation did not drop.
+- **Array bookkeeping in `CityBuildingRules.Selection`**: it saved about 1 KB a call
+  and nothing measurable. The running set's cost is power and requirements.
+- **The `MayRun` gates**:
+  - Adding one to `BuildingMilitaryEffects` made it slower (253 to 299 ms) and
+    allocate more.
+  - Removing the one in the global loop raised allocation from 47 to 72 MB.
+- **Trimming the resource exchanges**: their cost is member cities' connected counts.
+  Those are the resource network's kept answers going stale, so there is nothing local
+  to trim.
+
+#### Structural Finding
+
+- **The cost**: stale recomputes take about 140 ms a turn under the probes, and 99% of
+  them return the same lines.
+- **The cause**: mainly remainder stamps between the per-player chains. They come from:
+  - the rollover and map systems (34 writers for the `ai:civics` reads alone);
+  - the AI's commands.
+
+  A single remainder stamp invalidates every kept contribution.
+- **The fix**: making these writes precise needs one of two changes:
+  - declare every rollover and map system and every AI command, each with a contract
+    like those of Pass 18;
+  - or split the remainder into finer domains.
+
+  Either one is a refactor of the write model, not a cache.
+
+#### Verification
+
+All on the final code:
+
+- Every reference hash matches the base.
+- s550 + 8 gives `23bb41d03ee121d7` with `--waves max` and with
+  `DOTNET_PROCESSOR_COUNT=1`. Seed 1 with `--waves max` gives `348b462d1ec219fa`.
+- `--verify-modifier-cache` and `--verify-read-epochs`, each run alone, pass on s550 + 2
+  and s450 + 4.
+- `--verify-modifier-cache` passes over the whole seed 5, 8-player, 150-turn game.
+- `mise run test`, `mise run check:sync`, `mise run test:e2e`, `mise run test:worldgen`
+  and `mise run build:game` pass.
+- **Resting on inspection**, because no AI game exercises them:
+  - The blockade side of the unit refresh's declaration. The AI plans no blockades, so
+    no run had a blockading unit. A refresh moves no unit, its heal rate is never
+    negative, and it changes the activity only of a sentry or a fortified unit.
+  - The readers of unit health that count the unit domain as unread. Each one tests
+    only `Health > 0` or `Health <= 0` (blockades, sight, the revolution garrison
+    count), and a refresh never takes a unit across zero.
+  - `ForCity` giving the same lines as the old contexts. No source reads the context's
+    team. Plot reads happen only in plot scope, or default to the city's own tile.
+
+#### Still Slow, Ranked
+
+1. **Remainder stamps**, the structural finding: about 140 ms a turn of stale
+   recomputes at s550, under the probes.
+2. **Unit calculations are never kept**: 2,035 a turn, costing 82 ms and 61 MiB under
+   the probes.
+3. **The resource network's connected counts** inside `BuildingEffects` misses (Pass
+   24 item 1): about 50 ms a turn.
+4. **Cold city ledgers** at the start of each span (Pass 22 item 1): about 50 ms.
+
 ______________________________________________________________________
 
 ## Comprehensive Performance Summary
@@ -3808,3 +4031,6 @@ passes:
 | **Pass 25: Great Person Planner** | `6c2ef3de`..`a7a47262` | Four-player AI game, last 6 of 8 turns from turn 551, tier-up pinned | `great_people:planner` | 80–82 ms | 50–53 ms | **-37%** |
 |                                         |                      | Same                                                       | Planner managed bytes per turn | 64.9 MiB | 40.0 MiB | **-38%** |
 |                                         |                      | 120-turn 4-player industrial-start game (seed 5)           | `great_people:planner` total | 1,432 ms | 830 ms | **-42%** |
+| **Pass 26: Modifier Collection** | `9854783c`..`74c455b8` | Four-player AI game, last 6 of 8 turns from turn 551, tier-up pinned | `modifiers:collect` CPU | 214–216 ms | 172–173 ms | **-20%** |
+|                                         |                      | Same                                                       | Wall time (profiled)     |         623–626 ms |         585–589 ms |                                   **-6%** |
+|                                         |                      | Same                                                       | Managed bytes per turn   |            575 MiB |            527 MiB |                                   **-8%** |

@@ -3090,9 +3090,12 @@ declare both sides.
     widens when the tier flips.
   - `military:units`: readers of kept calculations see units only through naval
     blockades (`INavalBlockadeService`, which the resource network asks, reads only units
-    whose activity is `Blockade`). A declared writer widens before it changes such a
-    unit: moving one ends its blockade. A reader that counts units in a city, as
-    `CivicEffects` does for military happiness, reads the domain.
+    whose activity is `Blockade`: their position, activity, transport, owner and whether
+    their health is above zero). A declared writer widens before it changes what a
+    blockade reads of such a unit: moving one ends its blockade, and a unit that falls to
+    zero health stops blockading. The domain holds positions, moves left, hit points and
+    the Military unit state. A reader that counts units in a city, as `CivicEffects` does
+    for military happiness, reads the domain.
   - `government:timers`: readers see whether anarchy lasts, and the timer system widens
     on its last turn. `cities:occupation`: readers see whether the city is in occupation
     or disorder, and `SettleConquest` widens when that ends.
@@ -3115,7 +3118,10 @@ declare both sides.
   source's lines and the write stamp they were made at. An entry is used while no domain
   the source may read, and not the remainder, was stamped later. Reused lines rebuild
   the typed vectors exactly. Only city, player and team calculations without a
-  `ProposedPlot` are kept. Unit and plot calculations come from combat and placement
+  `ProposedPlot` are kept. Entries are per context, so a reader that asks about a city as
+  a whole names it with `ModifierContext.ForCity` (owner's view, the city's plot, the
+  player's team) and shares the entries every other such reader made; a context that
+  left out the plot or the team would be its own entry that every source computes again. Unit and plot calculations come from combat and placement
   previews, often of a probe unit asked about once, so they are summed directly. An
   undeclared source is still kept, but any write outside the private domains
   invalidates it. Memory is bounded at 32,768 entries: a full table is emptied and
@@ -3146,6 +3152,11 @@ declare both sides.
     civilians. A goody hut and a first contact widen before they write. A first reveal
     widens by `world:revealed` (`Plots/*/Revealed`).
   - Writers (the per-player turn chain):
+    - `military:units` (the unit refresh) writes `military:units`: moves, healing and
+      the Military unit state. It moves no unit, heals but never kills, and changes only a
+      sentry's or a fortified unit's activity, so a blockade sees nothing of it.
+      Initializing a unit that has no Military state yet (free promotions, initial
+      experience) widens to everything.
     - `cities:assign_work` writes `cities:work`, and `cities:growth` writes
       `cities:growth` and `cities:work`.
     - `cities:culture` writes `cities:culture`, and `cities:borders` writes
