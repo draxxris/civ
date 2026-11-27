@@ -555,6 +555,60 @@ public sealed class RiverFallTests
         }
     }
 
+    /// <summary>Every river, waterfall and mist mesh the chunks build is well formed, whatever it looks like: whole
+    /// triangles of three distinct in-range indices, every per-vertex array as long as the positions say, finite
+    /// positions and normals, and each connected piece a single sheet with no holes or joins (V − E + F is 1 for each
+    /// piece), as every strip, sheet, pool and puff the builders emit is.</summary>
+    [Theory]
+    [InlineData("turned 0", false)]
+    [InlineData("across the seam at 0,10", false)]
+    [InlineData("turned 0", true)]
+    public void Every_water_mesh_is_whole_triangles_over_finite_vertices_in_single_sheets(string layout, bool sea)
+    {
+        var scene = Strip(layout, sea: sea);
+        Assert.NotEmpty(scene.Falls);
+        foreach (var (part, river) in scene.RiverParts.Select((r, i) => ($"river {i}", r)))
+            AssertSheets(part, river.Positions, river.Indices, (river.Normals, 3), (river.Lanes, 2), (river.Flow, 2),
+                (river.Info, 2), (river.Rock, 1), (river.Depth, 1));
+        foreach (var (part, fall) in scene.Falls.Select((f, i) => ($"fall {i}", f)))
+        {
+            AssertSheets(part + " water", fall.WaterPositions, fall.WaterIndices, (fall.WaterNormals, 3), (fall.WaterLanes, 2),
+                (fall.WaterInfo, 4));
+            AssertSheets(part + " mist", fall.Mist.Positions, fall.Mist.Indices, (fall.Mist.Corners, 2), (fall.Mist.Info, 4));
+        }
+    }
+
+    private static void AssertSheets(string part, float[] positions, int[] indices, params (float[] Values, int Width)[] attributes)
+    {
+        Assert.True(positions.Length % 3 == 0, $"{part}: {positions.Length} position floats");
+        int vertices = positions.Length / 3;
+        foreach (var (values, width) in attributes)
+            Assert.True(values.Length == vertices * width, $"{part}: {values.Length} floats for {vertices} vertices of {width}");
+        Assert.True(positions.All(float.IsFinite), $"{part}: a position is not finite");
+        if (attributes.Length > 0 && attributes[0].Width == 3)
+            Assert.True(attributes[0].Values.All(float.IsFinite), $"{part}: a normal is not finite");
+        Assert.True(indices.Length % 3 == 0, $"{part}: {indices.Length} indices");
+        var root = Enumerable.Range(0, vertices).ToArray();
+        int Find(int v) => root[v] == v ? v : root[v] = Find(root[v]);
+        var edges = new HashSet<(int, int)>();
+        var used = new HashSet<int>();
+        for (int t = 0; t < indices.Length; t += 3)
+        {
+            int a = indices[t], b = indices[t + 1], c = indices[t + 2];
+            Assert.True(new[] { a, b, c }.All(i => i >= 0 && i < vertices), $"{part}: triangle {t / 3} ({a}, {b}, {c}) of {vertices} vertices");
+            Assert.True(a != b && b != c && a != c, $"{part}: triangle {t / 3} ({a}, {b}, {c}) repeats a vertex");
+            foreach (var (u, v) in new[] { (a, b), (b, c), (c, a) })
+            {
+                edges.Add((Math.Min(u, v), Math.Max(u, v)));
+                root[Find(u)] = Find(v);
+            }
+            used.UnionWith([a, b, c]);
+        }
+        int pieces = used.Select(Find).Distinct().Count();
+        Assert.True(used.Count - edges.Count + indices.Length / 3 == pieces,
+            $"{part}: {used.Count} vertices, {edges.Count} edges and {indices.Length / 3} triangles in {pieces} pieces");
+    }
+
     // A river that ends at the wall over the sea pours out of its mouth.
 
     [Theory, MemberData(nameof(Every))]
