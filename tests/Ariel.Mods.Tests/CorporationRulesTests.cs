@@ -172,6 +172,37 @@ public sealed class CorporationRulesTests
         Assert.Equal([Ethanol], Corps(sim).Present(sim, city.Id));
         Assert.Contains("Corporation is already founded", Refusals(sim, sim.State.Cities[1], building));
     }
+    /// <summary>A guild consumes no resource: its Master Guild waits on its technology and then on as many buildings of
+    /// its trade across the empire as its refusal names, one short of that still refused.</summary>
+    [Fact]
+    public void A_guild_is_founded_by_its_master_guild_once_the_empire_has_the_buildings_of_its_trade()
+    {
+        const string Apothecaries = "corporations:apotheguild", Apothecary = "cities:apothecary";
+        var sim = P6RulesScenario.Create(); var city = sim.State.Cities[0];
+        string hall = GameFactory.Headquarters(sim, Apothecaries);
+        var refusals = Refusals(sim, city, hall);
+        Assert.All(GameFactory.FoundingTechs(sim, Apothecaries), tech => Assert.Contains("Required tech: " + tech, refusals));
+        GameFactory.GrantFoundingTechs(sim, city, Apothecaries);
+        var wants = System.Text.RegularExpressions.Regex.Match(Assert.Single(Refusals(sim, city, hall)),
+            $"^Requires (\\d+) empire buildings of class: {Apothecary}$");
+        Assert.True(wants.Success);
+        int needed = int.Parse(wants.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture);
+        // One apothecary in each of the player's cities, founding more cities until there are enough.
+        var owned = sim.State.Cities.Where(c => c.Owner == 0).ToList();
+        while (owned.Count < needed) owned.Add(P6RulesScenario.AddCity(sim, 0, 20 + 10 * owned.Count));
+        foreach (var at in owned.Take(needed - 1)) at.Buildings.Add(Apothecary);
+        Assert.Equal([wants.Value], Refusals(sim, city, hall));
+        owned[needed - 1].Buildings.Add(Apothecary);
+        Assert.Empty(Refusals(sim, city, hall));
+
+        QueueFinished(sim, city, hall);
+        RunCityPhase(sim, "production", 0);
+        RunCityPhase(sim, "completion", 0);
+        Assert.Contains(hall, city.Buildings);
+        Assert.Equal(city.Id, Corps(sim).Headquarters(sim, Apothecaries));
+        Assert.Equal([Apothecaries], Corps(sim).Present(sim, city.Id));
+        Assert.Contains("Corporation is already founded", Refusals(sim, sim.State.Cities[1], hall));
+    }
     [Fact]
     public void The_headquarters_is_unavailable_before_the_technology_and_needs_a_connected_resource()
     {
