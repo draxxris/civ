@@ -57,7 +57,7 @@ hide = true
 run = "tools/cool-wait.sh"
 
 [tasks.test]
-description = "Build once, then run the default tests (excludes E2E, extractor and world generation tests)"
+description = "Build once, then run the default tests (excludes E2E, verify, extractor and world generation tests)"
 depends = ["assets", "cool"]
 env = { DOTNET_gcServer = "1" }
 run = '''
@@ -67,14 +67,14 @@ mise run test:nobuild
 '''
 
 [tasks."test:nobuild"]
-description = "Run the default tests on the current build (excludes E2E, extractor and world generation tests)"
+description = "Run the default tests on the current build (excludes E2E, verify, extractor and world generation tests)"
 depends = ["assets", "cool"]
 # Server GC is the single biggest GC win; disabling tiered compilation stops the suite from spending its first
 # seconds in tier-0 code and re-JITting hot paths it only reaches a few times.
 env = { DOTNET_gcServer = "1", DOTNET_TieredCompilation = "0" }
 run = '''
 set -u
-filter='Category!=Extractor&Category!=E2E&Category!=WorldGen'
+filter='Category!=Extractor&Category!=E2E&Category!=WorldGen&Category!=Verify'
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 # One test host per project, all at once. Each project's output is buffered to its own file so the
@@ -108,6 +108,12 @@ run = "dotnet test Ariel.slnx --filter 'Category=WorldGen'"
 description = "Run E2E tests"
 depends = ["assets", "cool"]
 run = "dotnet test Ariel.slnx --filter 'Category=E2E'"
+
+[tasks."test:verify"]
+description = "Run the verification tests: they play real AI turns with a speed-up cache's checker on (read epochs), slower than the default suite"
+depends = ["assets", "cool"]
+env = { DOTNET_gcServer = "1", DOTNET_TieredCompilation = "0" }
+run = "dotnet test Ariel.slnx --filter 'Category=Verify'"
 
 [tasks."test:extractor"]
 description = "Run extractor tests"

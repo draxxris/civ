@@ -36,6 +36,6 @@ cd "$tree/$test_project"
 rm -rf bin
 dotnet build -v quiet -nologo > /dev/null
 exec "$tool/dotnet-stryker" --project "$project" "${mutate[@]}" --disable-bail --skip-version-check \
-  --test-case-filter "${ARIEL_MUTATION_FILTER:-Category!=Extractor&Category!=E2E&Category!=WorldGen}" \
+  --test-case-filter "${ARIEL_MUTATION_FILTER:-Category!=Extractor&Category!=E2E&Category!=WorldGen&Category!=Verify}" \
   --concurrency "${ARIEL_MUTATION_CONCURRENCY:-2}" --reporter json --reporter html --reporter progress \
   --output "$out" "$@"

@@ -95,6 +95,7 @@ public sealed class AiTests(LoadedMods mods, ITestOutputHelper output) : IClassF
     }
 
     [Fact]
+    [Trait("Category", "Verify")]
     public void Ai_turns_write_nothing_inside_their_read_epochs_and_play_as_without_verification()
     {
         var verified = GameFactory.CreateAi(mods.Content, seed: 9); verified.VerifyReadEpochs = true;

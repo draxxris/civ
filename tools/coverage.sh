@@ -8,7 +8,7 @@
 # --filter 'FullyQualifiedName~Ariel.Mods.Tests.ResearchRulesTests.' to see what one class covers. Mod assemblies loaded
 # from the payload folders are covered too; test assemblies and test mods are left out (tools/coverage.runsettings).
 set -euo pipefail
-filter='Category!=Extractor&Category!=E2E&Category!=WorldGen'
+filter='Category!=Extractor&Category!=E2E&Category!=WorldGen&Category!=Verify'
 if [[ "${1:-}" == --filter ]]; then filter="$filter&($2)"; shift 2; fi
 out=${ARIEL_COVERAGE_DIR:-/var/tmp/ariel/coverage}/$(date +%Y%m%d-%H%M%S)
 mkdir -p "$out"

@@ -46,6 +46,10 @@ Run tests using `mise`:
   registrations, `MapSpec`/`HexGrid` layout, terrain/relief generation, or river and
   cliff generation).
 - `mise run test:e2e`: Runs end-to-end simulation tests.
+- `mise run test:verify`: Runs the verification tests (`Category=Verify`): real AI turns with
+  a speed-up cache's checker on, such as read epochs. Slower than the default suite and not
+  run by it. Run it when changing kept caches or write declarations, together with
+  `--verify-modifier-cache` and `--verify-read-epochs` on a late-game save.
 - `mise run test:extractor`: Runs extractor tests.
 
 ### Running and Testing the Game
